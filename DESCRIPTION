@@ -1,0 +1,34 @@
+Package: dcmstan
+Title: Generate 'Stan' Code for Estimating Diagnostic Classification Models
+Version: 0.0.0.9000
+Authors@R: c(
+    person("W. Jake", "Thompson", , "wjakethompson@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7339-0300")),
+    person("Jeffrey", "Hoover", , "jeffrey.c.hoover@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0002-0276-0308")),
+    person("Auburn", "Jimenez", , "auburn.jimenez34@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0002-7072-2960")),
+    person("University of Kansas", role = "cph"),
+    person("Institute of Education Sciences", role = "fnd")
+  )
+Description: What the package does (one paragraph).
+    Continuation lines should be indented.
+License: MIT + file LICENSE
+URL: https://dcmstan.r-dcm.org, https://github.com/r-dcm/dcmstan
+BugReports: https://github.com/r-dcm/dcmstan/issues
+Depends:
+    R (>= 4.3.0)
+Imports: 
+    cli,
+    dplyr,
+    rlang (>= 1.1.0),
+    S7,
+    tibble
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/Needs/website: r-dcm/rdcmtemplate
+Encoding: UTF-8
+Language: en-US
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
