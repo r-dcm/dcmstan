@@ -5,7 +5,9 @@
 #' @param distribution A distribution statement for the prior
 #'   (e.g., `normal(0, 2)`). For a complete list of available distributions, see
 #'   the *Stan* documentation at <https://mc-stan.org/docs/>.
-#' @param type
+#' @param type The type of parameter to apply the prior to. Parameter types will
+#'   vary by model. Use [get_parameters()] to see list of possible types for
+#'   the chosen model.
 #' @param coefficient Name of a specific parameter within the defined parameter
 #'   type. If `NA` (the default), the prior is applied to all parameters within
 #'   the type.
@@ -47,22 +49,29 @@ prior <- function(distribution, type,
 #' @examples
 #' default_dcm_priors(lcdm(), unconstrained())
 #' default_dcm_priors(dina(), independent())
-default_dcm_priors <- function(measurement_model = lcdm(),
-                               structural_model = unconstrained()) {
-  S7::check_is_S7(measurement, class = measurement)
-  S7::check_is_S7(structural, class = structural)
+default_dcm_priors <- function(measurement_model = NULL,
+                               structural_model = NULL) {
+  meas_priors <- if (is.null(measurement_model)) {
+    NULL
+  } else {
+    S7::check_is_S7(measurement_model, class = measurement)
+    switch(measurement_model@model,
+           lcdm = lcdm_priors(),
+           dina = dina_priors(),
+           dino = dino_priors(),
+           crum = crum_priors())
+  }
 
-  meas_priors <- switch(measurement@model,
-                        lcdm = lcdm_priors(),
-                        dina = dina_priors(),
-                        dino = dino_priors(),
-                        crum = crum_priors())
+  strc_priors <- if (is.null(structural_model)) {
+    NULL
+  } else {
+    S7::check_is_S7(structural_model, class = structural)
+    switch(structural_model@model,
+           unconstrained = unconstrained_priors(),
+           independent = independent_priors())
+  }
 
-  strc_priors <- switch(structural@model,
-                        unconstrained = unconstrained_priors(),
-                        independent = independent_priors())
-
-  c(meas_priors, strc_priors)
+  c(dcmprior(), meas_priors, strc_priors)
 }
 
 ## measurement model defaults -----
@@ -95,7 +104,7 @@ independent_priors <- function() {
 
 
 # dcmprior class ---------------------------------------------------------------
-dcmprior <- S7::new_class("dcmprior",
+dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
   properties = list(
     distribution = S7::new_property(
       class = S7::class_character,
@@ -108,13 +117,8 @@ dcmprior <- S7::new_class("dcmprior",
         }
       }
     ),
-    type = S7::new_property(
-      class = S7::class_character,
-      validator = function(value) {
-        if (any(is.na(value))) "must not be missing"
-      },
-      default = NA_character_
-    ),
+    type = S7::new_property(class = S7::class_character,
+                            default = NA_character_),
     coefficient = S7::new_property(class = S7::class_character,
                                    default = NA_character_),
     lower_bound = S7::new_property(class = S7::class_numeric,
@@ -124,6 +128,7 @@ dcmprior <- S7::new_class("dcmprior",
     prior = S7::new_property(
       class = S7::class_character,
       getter = function(self) {
+        if (!length(self@distribution)) return(character())
         mapply(
           function(lb, ub, dist) {
             if (is.na(lb) && is.na(ub)) {
@@ -143,12 +148,14 @@ dcmprior <- S7::new_class("dcmprior",
   validator = function(self) {
     reverse <- mapply(\(dist, lb, ub) lb >= ub,
                       self@prior, self@lower_bound, self@upper_bound)
-    bad <- cli::cli_vec(names(reverse[reverse & !is.na(reverse)]),
-                        style = list("vec-last" = ", and "))
-    err <- cli::cli_fmt(cli::cli_text("@lower_bound must less than ",
-                                      "@upper_bound. ",
-                                      "Problematic specifications: ",
-                                      "{.val {bad}}"))
+    if (length(reverse)) {
+      bad <- cli::cli_vec(names(reverse[reverse & !is.na(reverse)]),
+                          style = list("vec-last" = ", and "))
+      err <- cli::cli_fmt(cli::cli_text("@lower_bound must be less than ",
+                                        "@upper_bound. ",
+                                        "Problematic specifications: ",
+                                        "{.val {bad}}"))
+    }
     if (any(reverse, na.rm = TRUE)) {
       err
     }
@@ -157,7 +164,9 @@ dcmprior <- S7::new_class("dcmprior",
 
 
 # dcmprior methods -------------------------------------------------------------
-S7::method(as_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
+prior_tibble <- S7::new_generic("prior_tibble", "x")
+
+S7::method(prior_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
   tib <- tibble::tibble(
     distribution = x@distribution,
     type = x@type,
@@ -174,7 +183,7 @@ S7::method(as_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
 }
 
 S7::method(print, dcmprior) <- function(x, ...) {
-  print(as_tibble(x), ...)
+  print(prior_tibble(x), ...)
 }
 
 S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
@@ -189,9 +198,9 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
   }
 
   all_priors <- if (!replace) {
-    do.call(dplyr::bind_rows, lapply(list(x, ...), as_tibble, .keep_all = TRUE))
+    do.call(dplyr::bind_rows, lapply(list(x, ...), prior_tibble, .keep_all = TRUE))
   } else {
-    do.call(dplyr::bind_rows, lapply(list(x, ...), as_tibble, .keep_all = TRUE)) |>
+    do.call(dplyr::bind_rows, lapply(list(x, ...), prior_tibble, .keep_all = TRUE)) |>
       dplyr::distinct(.data$type, .data$coefficient, .keep_all = TRUE)
   }
 

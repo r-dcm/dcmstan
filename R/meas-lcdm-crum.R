@@ -4,14 +4,14 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf) {
                                rename_att = TRUE, rename_item = TRUE,
                                type = "lcdm",
                                attribute_structure = strc)
-  strc_params <- all_params %>%
+  strc_params <- all_params |>
     dplyr::filter(.data$class == "structural")
-  meas_params <- all_params %>%
-    dplyr::filter(.data$class != "structural") %>%
+  meas_params <- all_params |>
+    dplyr::filter(.data$class != "structural") |>
     dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
                                                  "intercept",
-                                               TRUE ~ .data$attributes)) %>%
-    dplyr::select("item_id", "parameter", param_name = "coef") %>%
+                                               TRUE ~ .data$attributes)) |>
+    dplyr::select("item_id", "parameter", param_name = "coef") |>
     dplyr::mutate(
       param_level = dplyr::case_when(
         .data$parameter == "intercept" ~ 0,
@@ -32,17 +32,17 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf) {
         .data$param_level == 0 ~ glue::glue("real {param_name};"),
         .data$param_level >= 1 ~ glue::glue("real{constraint} {param_name};")
       )
-    ) %>%
+    ) |>
     dplyr::filter(.data$param_level <= max_interaction)
 
-  intercepts <- meas_params %>%
-    dplyr::filter(.data$param_level == 0) %>%
+  intercepts <- meas_params |>
+    dplyr::filter(.data$param_level == 0) |>
     dplyr::pull(.data$param_def)
-  main_effects <- meas_params %>%
-    dplyr::filter(.data$param_level == 1) %>%
+  main_effects <- meas_params |>
+    dplyr::filter(.data$param_level == 1) |>
     dplyr::pull(.data$param_def)
-  interactions <- meas_params %>%
-    dplyr::filter(.data$param_level >= 2) %>%
+  interactions <- meas_params |>
+    dplyr::filter(.data$param_level >= 2) |>
     dplyr::pull(.data$param_def)
 
   interaction_stan <- if (length(interactions) > 0) {
@@ -73,25 +73,25 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf) {
     stats::model.matrix(stats::as.formula(paste0("~ .^",
                                                  max(ncol(all_profiles),
                                                      2L))),
-                        all_profiles) %>%
-    tibble::as_tibble(.name_repair = model_matrix_name_repair) %>%
-    tibble::rowid_to_column(var = "profile_id") %>%
+                        all_profiles) |>
+    tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
+    tibble::rowid_to_column(var = "profile_id") |>
     tidyr::pivot_longer(-"profile_id", names_to = "parameter",
                         values_to = "valid_for_profile")
 
   pi_def <- tidyr::expand_grid(item_id = unique(meas_params$item_id),
-                               profile_id = seq_len(nrow(all_profiles))) %>%
+                               profile_id = seq_len(nrow(all_profiles))) |>
     dplyr::left_join(dplyr::select(meas_params, "item_id", "parameter",
                                    "param_name"),
                      by = "item_id",
-                     multiple = "all", relationship = "many-to-many") %>%
+                     multiple = "all", relationship = "many-to-many") |>
     dplyr::left_join(profile_params, by = c("profile_id", "parameter"),
-                     relationship = "many-to-one") %>%
-    dplyr::filter(.data$valid_for_profile == 1) %>%
-    dplyr::group_by(.data$item_id, .data$profile_id) %>%
+                     relationship = "many-to-one") |>
+    dplyr::filter(.data$valid_for_profile == 1) |>
+    dplyr::group_by(.data$item_id, .data$profile_id) |>
     dplyr::summarize(meas_params = paste(unique(.data$param_name),
                                          collapse = "+"),
-                     .groups = "drop") %>%
+                     .groups = "drop") |>
     glue::glue_data("pi[{item_id},{profile_id}] = inv_logit({meas_params});")
 
   transformed_parameters_block <- glue::glue(

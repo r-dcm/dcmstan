@@ -1,5 +1,6 @@
 Package: dcmstan
-Title: Generate 'Stan' Code for Estimating Diagnostic Classification Models
+Title: Generate 'Stan' Code for Estimating Diagnostic Classification
+    Models
 Version: 0.0.0.9000
 Authors@R: c(
     person("W. Jake", "Thompson", , "wjakethompson@gmail.com", role = c("aut", "cre"),
@@ -11,8 +12,8 @@ Authors@R: c(
     person("University of Kansas", role = "cph"),
     person("Institute of Education Sciences", role = "fnd")
   )
-Description: What the package does (one paragraph).
-    Continuation lines should be indented.
+Description: What the package does (one paragraph).  Continuation lines
+    should be indented.
 License: MIT + file LICENSE
 URL: https://dcmstan.r-dcm.org, https://github.com/r-dcm/dcmstan
 BugReports: https://github.com/r-dcm/dcmstan/issues
@@ -21,13 +22,18 @@ Depends:
 Imports: 
     cli,
     dplyr,
+    glue,
+    rdcmchecks (>= 0.0.0.9000),
     rlang (>= 1.1.0),
     S7,
-    tibble
+    tibble,
+    tidyr
 Suggests: 
     testthat (>= 3.0.0)
-Config/testthat/edition: 3
+Remotes: 
+    r-dcm/rdcmchecks
 Config/Needs/website: r-dcm/rdcmtemplate
+Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)

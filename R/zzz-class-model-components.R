@@ -75,7 +75,7 @@ independent <- function() {
 #'   corresponding `meas_*()` function.
 #'
 #' @noRd
-measurement <- S7::new_class("measurement",
+measurement <- S7::new_class("measurement", package = "dcmstan",
   properties = list(
     model = S7::new_property(
       class = S7::class_character,
@@ -118,7 +118,7 @@ measurement <- S7::new_class("measurement",
 #'   corresponding `strc_*()` function.
 #'
 #' @noRd
-structural <- S7::new_class("structural",
+structural <- S7::new_class("structural", package = "dcmstan",
   properties = list(
     model = S7::new_property(
       class = S7::class_character,
@@ -166,18 +166,20 @@ model_property <- S7::new_property(
 )
 
 ## Measurement models -----
-LCDM <- S7::new_class("LCDM", parent = measurement,
+LCDM <- S7::new_class("LCDM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-DINA <- S7::new_class("DINA", parent = measurement,
+DINA <- S7::new_class("DINA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-DINO <- S7::new_class("DINO", parent = measurement,
+DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-CRUM <- S7::new_class("CRUM", parent = measurement,
+CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
+                               package = "dcmstan",
                                properties = list(model = model_property))
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
+                             package = "dcmstan",
                              properties = list(model = model_property))
