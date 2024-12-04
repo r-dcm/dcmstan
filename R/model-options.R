@@ -5,7 +5,10 @@ print_choices <- function(x, last = ", or ") {
 }
 
 meas_choices <- function() {
-  c("lcdm", "dina", "dino", "crum")
+  c("Loglinear cognitive diagnostic model (LCDM)" = "lcdm",
+    "Deterministic input, noisy \"and\" gate (DINA)" = "dina",
+    "Deterministic input, noisy \"or\" gate (DINO)" = "dino",
+    "Compensatory reparameterized unified model (C-RUM)" = "crum")
 }
 
 strc_choices <- function() {

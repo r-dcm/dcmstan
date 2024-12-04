@@ -38,10 +38,7 @@ prior <- function(distribution, type,
 #' View the prior distributions that are applied by default when using a given
 #' measurement and structural model.
 #'
-#' @param measurement_model A measurement model object (e.g., [lcdm()],
-#'   [dina()]).
-#' @param structural_model A structural model object (e.g., [unconstrained()],
-#'   [independent()]).
+#' @inheritParams dcm_specify
 #'
 #' @returns A `dcmprior` object.
 #' @export

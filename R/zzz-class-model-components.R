@@ -50,7 +50,7 @@ crum <- function() {
 #' The currently supported options for structural models are: unconstrained and
 #' independent. See details for additional information on each model.
 #'
-#' @returns A structrual model object.
+#' @returns A structural model object.
 #' @export
 #'
 #' @name structural-model

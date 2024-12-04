@@ -5,16 +5,9 @@
 #' diagnostic model to estimated, we can create a list of all included
 #' parameters for which a prior can be specified.
 #'
+#' @inheritParams dcm_specify
 #' @param x A model specification (e.g., [dcm_specify()], measurement model
 #'   (e.g., [lcdm()]), or structural model (e.g., [unconstrained()]) object.
-#' @param qmatrix The Q-matrix. A data frame with 1 row per item and 1 column
-#'   per attribute. May optionally include an additional column of item
-#'   identifiers. If an identifier column is included, this should be specified
-#'   with `identifier`. All cells for the remaining attribute columns should be
-#'   either 0 (item does not measure the attribute) or 1 (item does measure the
-#'   attribute).
-#' @param identifier Optional. If present, the quoted name of the column in the
-#'   `qmatrix` that contains item identifiers.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A [tibble][tibble::tibble-package] showing the available parameter

@@ -11,7 +11,7 @@ unconstrained()
 independent()
 }
 \value{
-A structrual model object.
+A structural model object.
 }
 \description{
 Structural models define how the attributes are related to one another.
