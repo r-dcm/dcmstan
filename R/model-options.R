@@ -8,9 +8,10 @@ meas_choices <- function() {
   c("Loglinear cognitive diagnostic model (LCDM)" = "lcdm",
     "Deterministic input, noisy \"and\" gate (DINA)" = "dina",
     "Deterministic input, noisy \"or\" gate (DINO)" = "dino",
-    "Compensatory reparameterized unified model (C-RUM)" = "crum")
+    "Compensatory reparameterized unified model (C-RUM)" = "crum",
+    "Hierarchical diagnostic classification model" = "hdcm")
 }
 
 strc_choices <- function() {
-  c("unconstrained", "independent")
+  c("unconstrained", "independent", "hierarchical")
 }
