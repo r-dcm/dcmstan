@@ -12,5 +12,6 @@ meas_choices <- function() {
 }
 
 strc_choices <- function() {
-  c("unconstrained", "independent")
+  c("Unconstrained" = "unconstrained",
+    "Independent attributes" = "independent")
 }
