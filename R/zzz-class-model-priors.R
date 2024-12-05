@@ -52,11 +52,15 @@ default_dcm_priors <- function(measurement_model = NULL,
     NULL
   } else {
     S7::check_is_S7(measurement_model, class = measurement)
-    switch(measurement_model@model,
-           lcdm = lcdm_priors(),
-           dina = dina_priors(),
-           dino = dino_priors(),
-           crum = crum_priors())
+    switch(
+      measurement_model@model,
+      lcdm = lcdm_priors(
+        max_interaction = measurement_model@model_args$max_interaction
+      ),
+      dina = dina_priors(),
+      dino = dino_priors(),
+      crum = crum_priors()
+    )
   }
 
   strc_priors <- if (is.null(structural_model)) {
@@ -72,10 +76,15 @@ default_dcm_priors <- function(measurement_model = NULL,
 }
 
 ## measurement model defaults -----
-lcdm_priors <- function() {
-  c(prior("normal(0, 2)", type = "intercept"),
-    prior("lognormal(0, 1)", type = "maineffect"),
-    prior("normal(0, 2)", type = "interaction"))
+lcdm_priors <- function(max_interaction) {
+  prior <- c(prior("normal(0, 2)", type = "intercept"),
+             prior("lognormal(0, 1)", type = "maineffect"))
+  if (max_interaction > 1) {
+    prior <- c(prior,
+               prior("normal(0, 2)", type = "interaction"))
+  }
+
+  return(prior)
 }
 
 dina_priors <- function() {
