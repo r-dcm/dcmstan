@@ -23,6 +23,7 @@ Imports:
     cli,
     dplyr,
     glue,
+    lifecycle,
     rdcmchecks (>= 0.0.0.9000),
     rlang (>= 1.1.0),
     S7,
