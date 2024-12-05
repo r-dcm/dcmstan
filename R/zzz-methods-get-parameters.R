@@ -29,7 +29,7 @@ get_parameters <- S7::new_generic("get_parameters", "x",
 
 # Methods for measurement models -----------------------------------------------
 S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL) {
-  check_number_whole(x@model_args$max_interaction, min = 1L,
+  check_number_whole(x@model_args$max_interaction, min = 1,
                      allow_infinite = TRUE)
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
