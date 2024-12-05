@@ -101,7 +101,7 @@ measurement <- S7::new_class("measurement", package = "dcmstan",
     err <- cli::cli_fmt(
       cli::cli_text("@model_args contains unknown arguments for ",
                     "{.fun {paste0('meas_', self@model)}}: ",
-                    "{.val {diff}}")
+                    "{.var {diff}}")
     )
     if (!all(names(self@model_args) %in%
                names(as.list(formals(paste0("meas_", self@model)))))) {
@@ -144,7 +144,7 @@ structural <- S7::new_class("structural", package = "dcmstan",
     err <- cli::cli_fmt(
       cli::cli_text("@model_args contains unknown arguments for ",
                     "{.fun {paste0('strc_', self@model)}}: ",
-                    "{.val {diff}}")
+                    "{.var {diff}}")
     )
     if (!all(names(self@model_args) %in%
              names(as.list(formals(paste0("strc_", self@model)))))) {
