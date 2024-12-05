@@ -43,6 +43,12 @@ crum <- function() {
   CRUM(model = "crum")
 }
 
+#' @rdname measurement-model
+#' @export
+hdcm <- function() {
+  HDCM(model = "hdcm")
+}
+
 
 #' Structural models for diagnostic classification
 #'
@@ -63,6 +69,12 @@ unconstrained <- function() {
 #' @export
 independent <- function() {
   INDEPENDENT(model = "independent")
+}
+
+#' @rdname structural-model
+#' @export
+hierarchical <- function() {
+  HIERARCHICAL(model = "hierarchical")
 }
 
 
@@ -174,7 +186,8 @@ DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-
+HDCM <- S7::new_class("HDCM", parent = measurement, package = "dcmstan",
+                      properties = list(model = model_property))
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
@@ -183,3 +196,6 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
+HIERARCHICAL <- S7::new_class("HIERARCHICAL", parent = structural,
+                              package = "dcmstan",
+                              properties = list(model = model_property))
