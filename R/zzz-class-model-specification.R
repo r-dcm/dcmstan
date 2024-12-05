@@ -145,12 +145,8 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
 
 
 # dcm_specification methods ----------------------------------------------------
-# x <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix, identifier = "item")
-
-
 S7::method(print, dcm_specification) <- function(x) {
-  att_items <- glue::glue("{{.val {names(x@qmatrix_meta$attribute_names)}}} ",
-                          "({{{colSums(x@qmatrix)}}} item{{?s}})")
+  # model name -----
   mod_name <- names(meas_choices())[
     which(meas_choices() == x@measurement_model@model)
   ]
@@ -158,6 +154,37 @@ S7::method(print, dcm_specification) <- function(x) {
                    mod_name, perl = TRUE)
   mod_name <- gsub("^([A-Z])", "\\L\\1", mod_name, perl = TRUE)
 
+  # count items per attribute -----
+  att_items <- glue::glue("{{.val {names(x@qmatrix_meta$attribute_names)}}} ",
+                          "({{{colSums(x@qmatrix)}}} item{{?s}})")
+
+  # structural model name -----
+  strc_mod_name <- names(strc_choices())[
+    which(strc_choices() == x@structural_model@model)
+  ]
+
+  # prior distributions -----
+  prior_statements <- x@priors |>
+    prior_tibble() |>
+    dplyr::mutate(
+      class = dplyr::case_when(.data$type == "structural" ~ "structural",
+                               .default = "measurement"),
+      prior = gsub("rep_vector\\(([0-9\\.]+), C\\)",
+                   paste(rep("\\1", length(att_items)),
+                         collapse = ", "),
+                   .data$prior),
+
+      prior = dplyr::case_when(
+        is.na(.data$coefficient) ~
+          glue::glue("{{.emph {.data$type}}} ~ {.data$prior}"),
+        !is.na(.data$coefficient) ~
+          glue::glue("{{.var {.data$coefficient}}} ~ {.data$prior}")
+      )
+    ) |>
+    dplyr::arrange(.data$class, .data$coefficient) |>
+    dplyr::pull("prior")
+
+  # printing -----
   cli::cli_text("A {mod_name} measuring ",
                 "{length(x@qmatrix_meta$attribute_names)} attributes with ",
                 "{nrow(x@qmatrix)} items.")
@@ -166,5 +193,8 @@ S7::method(print, dcm_specification) <- function(x) {
   cli::cli_bullets(rlang::set_names(att_items, "*"))
   cli::cli_text("")
   cli::cli_alert_info("Attribute structure:")
-  cli::cli_text()
+  cli::cli_bullets(rlang::set_names(strc_mod_name, " "))
+  cli::cli_text("")
+  cli::cli_alert_info("Prior distributions:")
+  cli::cli_bullets(rlang::set_names(prior_statements, " "))
 }
