@@ -4,17 +4,17 @@
 #' @rdname model-choices
 #' @noRd
 meas_choices <- function() {
-  c("Loglinear cognitive diagnostic model (LCDM)" = "lcdm",
-    "Deterministic input, noisy \"and\" gate (DINA)" = "dina",
-    "Deterministic input, noisy \"or\" gate (DINO)" = "dino",
-    "Compensatory reparameterized unified model (C-RUM)" = "crum")
+  c("loglinear cognitive diagnostic model (LCDM)" = "lcdm",
+    "deterministic input, noisy \"and\" gate (DINA)" = "dina",
+    "deterministic input, noisy \"or\" gate (DINO)" = "dino",
+    "compensatory reparameterized unified model (C-RUM)" = "crum")
 }
 
 #' @rdname model-choices
 #' @noRd
 strc_choices <- function() {
-  c("Unconstrained" = "unconstrained",
-    "Independent attributes" = "independent")
+  c("unconstrained" = "unconstrained",
+    "independent attributes" = "independent")
 }
 
 
@@ -26,9 +26,20 @@ strc_choices <- function() {
 #'
 #' @returns A string.
 #' @noRd
-print_choices <- function(x, last = ", or ") {
-  txt <- cli::cli_fmt(
-    cli::cli_text("{.val {cli::cli_vec(x, style = list('vec-last' = last))}}")
-  )
+print_choices <- function(x, sep = ", ", last = ", or ", format = FALSE) {
+  txt <- if (format) {
+    cli::cli_fmt(
+      cli::cli_text(
+        "{.val {cli::cli_vec(x, style = list('vec-last' = last,
+                                             'vec-sep' = sep))}}"
+      )
+    )
+  } else {
+    cli::cli_fmt(
+      cli::cli_text(
+        "{cli::cli_vec(x, style = list('vec-last' = last, 'vec-sep' = sep))}"
+      )
+    )
+  }
   txt
 }
