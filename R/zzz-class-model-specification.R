@@ -149,7 +149,7 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
 
 
 # dcm_specification methods ----------------------------------------------------
-S7::method(print, dcm_specification) <- function(x) {
+S7::method(print, dcm_specification) <- function(x, ...) {
   # model name -----
   mod_name <- names(meas_choices())[
     which(meas_choices() == x@measurement_model@model)
