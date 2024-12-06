@@ -54,3 +54,6 @@ dcm_specify(qmatrix = qmatrix,
             measurement_model = lcdm(),
             structural_model = unconstrained())
 }
+\seealso{
+\link{measurement-model}, \link{structural-model}
+}

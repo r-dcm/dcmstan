@@ -22,6 +22,7 @@
 #'   default prior distributions defined by [default_dcm_priors()] are used.
 #'
 #' @returns A `dcm_specification` object.
+#' @seealso [measurement-model], [structural-model]
 #' @export
 #'
 #' @examples
@@ -156,7 +157,6 @@ S7::method(print, dcm_specification) <- function(x, ...) {
   ]
   mod_name <- gsub("(?<!model) (\\([A-Z]*\\))", " \\1 model",
                    mod_name, perl = TRUE)
-  mod_name <- gsub("^([A-Z])", "\\L\\1", mod_name, perl = TRUE)
 
   # count items per attribute -----
   att_items <- glue::glue("{{.val {names(x@qmatrix_meta$attribute_names)}}} ",

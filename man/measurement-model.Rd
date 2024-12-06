@@ -25,16 +25,16 @@ A measurement model object.
 }
 \description{
 The measurement model defines how the items relate to the attributes. The
-currently supported options for measurement models are: loglinear cognitive
-diagnostic model (LCDM); deterministic input, noisy "and" gate (DINA);
-deterministic input, noisy "or" gate (DINO); and compensatory reparameterized
-unified model (C-RUM). See details for additional information on each model.
+currently supported options for measurement models are:
+loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); and compensatory, reparameterized unified model (C-RUM).
+See details for additional information on each model.
 }
 \details{
 Additional details...
 }
 \examples{
 lcdm()
+
 lcdm(max_interaction = 2)
 
 dina()

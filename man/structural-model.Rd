@@ -15,6 +15,15 @@ A structural model object.
 }
 \description{
 Structural models define how the attributes are related to one another.
-The currently supported options for structural models are: unconstrained and
-independent. See details for additional information on each model.
+The currently supported options for structural models are:
+unconstrained and independent attributes.
+See details for additional information on each model.
+}
+\details{
+Additional details...
+}
+\examples{
+unconstrained()
+
+independent()
 }

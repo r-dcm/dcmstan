@@ -16,8 +16,19 @@ test_that("structural models have functions", {
 
 test_that("printing works", {
   expect_snapshot({
+    print_choices(meas_choices(), format = TRUE)
+    print_choices(strc_choices(), format = TRUE)
+    print_choices(meas_choices(), last = ", and ", format = TRUE)
+  })
+
+  expect_snapshot({
     print_choices(meas_choices())
     print_choices(strc_choices())
     print_choices(meas_choices(), last = ", and ")
+  })
+
+  expect_snapshot({
+    print_choices(names(meas_choices()), sep = "; ", last = "; ",
+                  format = FALSE)
   })
 })

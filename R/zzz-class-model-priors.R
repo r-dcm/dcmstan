@@ -1,6 +1,8 @@
-#' Define a prior distributions
+#' Prior definitions for diagnostic classification models
 #'
-#'
+#' Define prior distributions for types of parameters or specific parameters
+#' within a model. For a complete list of types and parameters available for a
+#' given model, see [get_parameters()].
 #'
 #' @param distribution A distribution statement for the prior
 #'   (e.g., `normal(0, 2)`). For a complete list of available distributions, see
@@ -16,10 +18,15 @@
 #' @param upper_bound Optional. The upper bound where the distribution should be
 #'   truncated.
 #'
-#' @returns
+#' @returns A `dcmprior` object.
+#' @seealso [get_parameters()]
 #' @export
 #'
 #' @examples
+#' prior(normal(0, 2), type = "intercept")
+#'
+#' c(prior(beta(5, 17), type = "slip"),
+#'   prior(beta(5, 25), type = "guess"))
 prior <- function(distribution, type,
                   coefficient = NA, lower_bound = NA, upper_bound = NA) {
   call <- as.list(match.call()[-1])
