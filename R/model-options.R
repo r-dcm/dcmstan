@@ -24,7 +24,7 @@ strc_choices <- function() {
 #' @param last A string specifying how the last two elements of the vector
 #'   should be separated.
 #'
-#' @returns
+#' @returns A string.
 #' @noRd
 print_choices <- function(x, last = ", or ") {
   txt <- cli::cli_fmt(

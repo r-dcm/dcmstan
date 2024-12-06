@@ -2,7 +2,7 @@
 #'
 #' @param x A character string or call to be converted to a character string.
 #'
-#' @returns
+#' @returns A string.
 #' @noRd
 deparse_no_string <- function(x) {
   if (!is.character(x)) {
