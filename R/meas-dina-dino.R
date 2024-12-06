@@ -21,19 +21,19 @@ meas_dina <- function(qmatrix, priors) {
 
   # priors -----
   item_priors <- dina_parameters(qmatrix = qmatrix,
-                                 rename_items = TRUE) %>%
-    dplyr::left_join(prior_tibble(priors), by = c("type", "coefficient")) %>%
-    dplyr::rename(coef_def = "prior") %>%
-    dplyr::left_join(prior_tibble(priors) %>%
-                       dplyr::filter(is.na(.data$coefficient)) %>%
+                                 rename_items = TRUE) |>
+    dplyr::left_join(prior_tibble(priors), by = c("type", "coefficient")) |>
+    dplyr::rename(coef_def = "prior") |>
+    dplyr::left_join(prior_tibble(priors) |>
+                       dplyr::filter(is.na(.data$coefficient)) |>
                        dplyr::select(-"coefficient"),
-                     by = c("type")) %>%
-    dplyr::rename(type_def = "prior") %>%
+                     by = c("type")) |>
+    dplyr::rename(type_def = "prior") |>
     dplyr::mutate(
       prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
                                is.na(.data$coef_def) ~ .data$type_def),
       prior_def = glue::glue("{coefficient} ~ {prior};")
-    ) %>%
+    ) |>
     dplyr::pull("prior_def")
 
   # return -----

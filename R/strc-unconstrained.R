@@ -13,16 +13,16 @@ strc_unconstrained <- function(qmatrix, priors) {
                      by = c("type", "coefficient"),
                      relationship = "one-to-one") |>
     dplyr::rename(coef_def = "prior") |>
-    dplyr::left_join(prior_tibble(priors) %>%
-                       dplyr::filter(is.na(.data$coefficient)) %>%
+    dplyr::left_join(prior_tibble(priors) |>
+                       dplyr::filter(is.na(.data$coefficient)) |>
                        dplyr::select(-"coefficient"),
                      by = "type", relationship = "many-to-one") |>
-    dplyr::rename(type_def = "prior") %>%
+    dplyr::rename(type_def = "prior") |>
     dplyr::mutate(
       prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
                                is.na(.data$coef_def) ~ .data$type_def),
       prior_def = glue::glue("{coefficient} ~ {prior};")
-    ) %>%
+    ) |>
     dplyr::pull("prior_def")
 
   return(list(parameters = parameters_block,
