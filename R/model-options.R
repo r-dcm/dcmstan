@@ -1,6 +1,7 @@
 print_choices <- function(x, last = ", or ") {
-  vec <- cli::cli_vec(x, style = list("vec-last" = last))
-  txt <- cli::cli_fmt(cli::cli_text("{.val {vec}}"))
+  txt <- cli::cli_fmt(
+    cli::cli_text("{.val {cli::cli_vec(x, style = list('vec-last' = last))}}")
+  )
   txt
 }
 

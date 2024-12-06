@@ -147,7 +147,7 @@ structural <- S7::new_class("structural", package = "dcmstan",
                     "{.var {diff}}")
     )
     if (!all(names(self@model_args) %in%
-             names(as.list(formals(paste0("strc_", self@model)))))) {
+               names(as.list(formals(paste0("strc_", self@model)))))) {
       err
     }
   }

@@ -104,8 +104,9 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
   item_priors <- meas_params %>%
     dplyr::mutate(
       type = dplyr::case_when(.data$param_level == 0 ~ "intercept",
-                               .data$param_level == 1 ~ "maineffect",
-                               .data$param_level > 1 ~ "interaction")) %>%
+                              .data$param_level == 1 ~ "maineffect",
+                              .data$param_level > 1 ~ "interaction")
+    ) %>%
     dplyr::left_join(prior_tibble(priors),
                      by = c("type", "param_name" = "coefficient"),
                      relationship = "one-to-one") %>%
@@ -118,7 +119,8 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
     dplyr::mutate(
       prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
                                is.na(.data$coef_def) ~ .data$type_def),
-      prior_def = glue::glue("{param_name} ~ {prior};")) %>%
+      prior_def = glue::glue("{param_name} ~ {prior};")
+    ) %>%
     dplyr::pull("prior_def")
 
   # return -----
@@ -130,4 +132,3 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
 meas_crum <- function(qmatrix, priors) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
 }
-

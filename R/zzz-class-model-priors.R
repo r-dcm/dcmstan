@@ -204,9 +204,11 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
   }
 
   all_priors <- if (!replace) {
-    do.call(dplyr::bind_rows, lapply(list(x, ...), prior_tibble, .keep_all = TRUE))
+    do.call(dplyr::bind_rows,
+            lapply(list(x, ...), prior_tibble, .keep_all = TRUE))
   } else {
-    do.call(dplyr::bind_rows, lapply(list(x, ...), prior_tibble, .keep_all = TRUE)) |>
+    do.call(dplyr::bind_rows,
+            lapply(list(x, ...), prior_tibble, .keep_all = TRUE)) |>
       dplyr::distinct(.data$type, .data$coefficient, .keep_all = TRUE)
   }
 

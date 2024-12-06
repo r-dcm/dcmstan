@@ -21,7 +21,8 @@ strc_unconstrained <- function(qmatrix, priors) {
     dplyr::mutate(
       prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
                                is.na(.data$coef_def) ~ .data$type_def),
-      prior_def = glue::glue("{coefficient} ~ {prior};")) %>%
+      prior_def = glue::glue("{coefficient} ~ {prior};")
+    ) %>%
     dplyr::pull("prior_def")
 
   return(list(parameters = parameters_block,

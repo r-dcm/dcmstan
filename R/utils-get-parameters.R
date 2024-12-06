@@ -14,7 +14,7 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
       tibble::rowid_to_column(var = "item_number")
   }
 
-  att_names <- colnames(qmatrix[,-which(colnames(qmatrix) == identifier)])
+  att_names <- colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
   qmatrix <- qmatrix |>
     dplyr::select(-{{ identifier }}) |>
     dplyr::rename_with(~glue::glue("att{1:(ncol(qmatrix) - 1)}"),
@@ -41,8 +41,8 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
       coefficient = glue::glue("l{item_id}_{param_level}",
                                "{gsub(\"__\", \"\", atts)}"),
       type = dplyr::case_when(.data$param_level == 0 ~ "intercept",
-                               .data$param_level == 1 ~ "maineffect",
-                               .data$param_level >= 2 ~ "interaction"),
+                              .data$param_level == 1 ~ "maineffect",
+                              .data$param_level >= 2 ~ "interaction"),
       attributes = dplyr::case_when(.data$param_level == 0 ~ NA_character_,
                                     .data$param_level >= 1 ~ .data$parameter)
     ) |>

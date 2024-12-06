@@ -83,7 +83,8 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
       validator = function(value) {
         if (!all(vapply(value, is.numeric, logical(1)))) {
           "must contain only numeric values of 0 or 1"
-        } else if (!all(vapply(value, \(x) all(x %in% c(0L, 1L)), logical(1)))) {
+        } else if (!all(vapply(value, \(x) all(x %in% c(0L, 1L)),
+                               logical(1)))) {
           "must contain only values of 0 or 1"
         }
       }

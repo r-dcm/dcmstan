@@ -394,21 +394,3 @@ test_that("combining parameters in a specification works", {
                  get_parameters(independent(), qmatrix = test_qmatrix)
                ))
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

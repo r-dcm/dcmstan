@@ -49,7 +49,8 @@ one_down_params <- function(x, item) {
                                       logical(1), att = all_atts[att])]
 
       att_comp[level] <- paste("l", item, "_", level,
-                               sapply(att_combos, paste, collapse = ""), sep = "", collapse = "+")
+                               sapply(att_combos, paste, collapse = ""),
+                               sep = "", collapse = "+")
     }
     comps[[att]] <- paste(att_comp, collapse = "+")
   }
