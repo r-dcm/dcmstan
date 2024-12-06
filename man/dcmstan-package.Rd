@@ -6,7 +6,7 @@
 \alias{dcmstan-package}
 \title{dcmstan: Generate 'Stan' Code for Estimating Diagnostic Classification Models}
 \description{
-What the package does (one paragraph). Continuation lines should be indented.
+Diagnostic classification models are psychometric models used to categorically estimate respondents mastery, or proficiency, on a set of predefined skills (Bradshaw, 2016, \doi{10.1002/9781118956588.ch13}). Diagnostic models can be estimated with 'Stan'; however, the necessary scripts can be long and complicated. This package automates the creation of 'Stan' scripts for diagnostic classifcation models. Specify different types of diagnostic models, define prior distributions, and automatically generate the necessary 'Stan' code for estimating the model.
 }
 \seealso{
 Useful links:

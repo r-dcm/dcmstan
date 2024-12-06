@@ -1,3 +1,18 @@
+#' 'Stan' code for the LCDM and C-RUM models
+#'
+#' Create the `parameters` and `transformed parameters` blocks that are needed
+#' for the LCDM and C-RUM models. The function also returns the code that
+#' defines the prior distributions for each parameter, which is used in the
+#' `model` block.
+#'
+#' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param priors Priors for the model, specified through a combination of
+#'   [default_dcm_priors()] and [prior()].
+#'
+#' @returns A list with three element: `parameters`, `transformed_parameters`,
+#'   and `priors`.
+#' @rdname lcdm-crum
+#' @noRd
 meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
@@ -129,6 +144,8 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
               priors = item_priors))
 }
 
+#' @rdname lcdm-crum
+#' @noRd
 meas_crum <- function(qmatrix, priors) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
 }

@@ -1,3 +1,17 @@
+#' 'Stan' code for an unconstrained structural model
+#'
+#' Create the `parameters` and `transformed parameters` blocks that are needed
+#' for an unconstrained structural model. The function also returns the code
+#' that defines the prior distributions for each parameter, which is used in the
+#' `model` block.
+#'
+#' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param priors Priors for the model, specified through a combination of
+#'   [default_dcm_priors()] and [prior()].
+#'
+#' @returns A list with three element: `parameters`, `transformed_parameters`,
+#'   and `priors`.
+#' @noRd
 strc_unconstrained <- function(qmatrix, priors) {
   parameters_block <-
     glue::glue(

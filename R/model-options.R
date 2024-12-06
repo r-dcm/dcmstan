@@ -1,10 +1,8 @@
-print_choices <- function(x, last = ", or ") {
-  txt <- cli::cli_fmt(
-    cli::cli_text("{.val {cli::cli_vec(x, style = list('vec-last' = last))}}")
-  )
-  txt
-}
-
+#' Choices for model specifications
+#'
+#' @returns A named character vector.
+#' @rdname model-choices
+#' @noRd
 meas_choices <- function() {
   c("Loglinear cognitive diagnostic model (LCDM)" = "lcdm",
     "Deterministic input, noisy \"and\" gate (DINA)" = "dina",
@@ -12,7 +10,25 @@ meas_choices <- function() {
     "Compensatory reparameterized unified model (C-RUM)" = "crum")
 }
 
+#' @rdname model-choices
+#' @noRd
 strc_choices <- function() {
   c("Unconstrained" = "unconstrained",
     "Independent attributes" = "independent")
+}
+
+
+#' Combine multiple words into a single string
+#'
+#' @param x A character vector.
+#' @param last A string specifying how the last two elements of the vector
+#'   should be separated.
+#'
+#' @returns
+#' @noRd
+print_choices <- function(x, last = ", or ") {
+  txt <- cli::cli_fmt(
+    cli::cli_text("{.val {cli::cli_vec(x, style = list('vec-last' = last))}}")
+  )
+  txt
 }

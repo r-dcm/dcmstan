@@ -1,3 +1,23 @@
+#' Determine the possible parameters for an LCDM or C-RUM model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param max_interaction For the LCDM, the highest level interaction that
+#'   should be included in the model. For the C-RUM, this is always 1 (i.e.,
+#'   main effects only).
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
+#' @param rename_items Logical. Should the output rename and number the items to
+#'   have consistent and generic names (e.g., `1`, `2`; `TRUE`) or keep the
+#'   original item names in the Q-matrix (`FALSE`, the default). If there are no
+#'   identifiers in the Q-matrix, generic names are always used.
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
 lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
                             rename_attributes = FALSE, rename_items = FALSE) {
   if (is.null(identifier)) {
@@ -71,6 +91,21 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
   return(all_params)
 }
 
+
+#' Determine the possible parameters for a DINA or DINO model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param rename_items Logical. Should the output rename and number the items to
+#'   have consistent and generic names (e.g., `1`, `2`; `TRUE`) or keep the
+#'   original item names in the Q-matrix (`FALSE`, the default). If there are no
+#'   identifiers in the Q-matrix, generic names are always used.
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
 dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
   if (is.null(identifier)) {
     qmatrix <- qmatrix |>
@@ -108,6 +143,12 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 
 
 # Other utilities --------------------------------------------------------------
+#' Consistent naming for model matrix output
+#'
+#' @param x A character vector of column names.
+#'
+#' @returns A cleaned vector of column names.
+#' @noRd
 model_matrix_name_repair <- function(x) {
   x <- gsub("\\(|\\)", "", x)
   x <- gsub(":", "__", x)

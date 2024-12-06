@@ -33,6 +33,18 @@ create_profiles <- function(attributes) {
 
 
 
+#' Identify the lower level components of an LCDM parameter
+#'
+#' @param x A character string indicating the attributes measured by an item,
+#'   seperated by a double underscore (`__`).
+#' @param item The item number.
+#'
+#' @returns A character string with the component parameters.
+#' @noRd
+#'
+#' @examples
+#' one_down_params("1__2", item = 4)
+#' one_down_params("1__3__4", item = 11)
 one_down_params <- function(x, item) {
   all_atts <- strsplit(x, split = "__")[[1]]
   if (length(all_atts) <= 1) return("")
