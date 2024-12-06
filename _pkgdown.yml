@@ -1,0 +1,6 @@
+url: https://dcmstan.r-dcm.org
+
+template:
+  package: rdcmtemplate
+  bootstrap: 5
+

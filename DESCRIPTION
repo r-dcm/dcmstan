@@ -33,7 +33,7 @@ Suggests:
     dcmdata (>= 0.0.0.9000),
     spelling,
     testthat (>= 3.0.0)
-Remotes:  
+Remotes: 
     r-dcm/rdcmchecks,
     r-dcm/dcmdata
 Config/Needs/website: r-dcm/rdcmtemplate
