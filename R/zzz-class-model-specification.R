@@ -43,6 +43,9 @@ dcm_specify <- function(qmatrix, identifier = NULL,
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
+  if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {
+    measurement_model@model_args$max_interaction <- 1L
+  }
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
                                  structural_model = structural_model)
