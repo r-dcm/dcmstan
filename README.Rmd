@@ -27,22 +27,45 @@ knitr::opts_chunk$set(
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit)
 <!-- badges: end -->
 
-The goal of dcmstan is to ...
+# Overview
+
+dcmstan provides functionality to automatically generate [Stan](https://mc-stan.org) code for estimating diagnostic classification models.
+Using dcmstan, you can:
+
+* Mix and match different [measurement](https://dcmstan.r-dcm.org/reference/measurement-model) and [structural](https://dcmstan.r-dcm.org/reference/structural-model) models to specify a diagnostic model with `dcm_specify()`,
+* Define `prior()` distributions, and
+* Generate Stan code for the model, given the specifications and priors with `generate_stan()`
+
+dcmstan is used as a backend for generating the Stan code needed to estimate and evaluate with the [measr](https://measr.info) package.
+If you use measr to estimate your models, you will not need to use dcmstan to generate Stan code yourself.
 
 ## Installation
 
 You can install the development version of dcmstan from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("r-dcm/dcmstan")
+# install.packages("pak")
+pak::pak("r-dcm/dcmstan")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+## Usage
 
 ```{r example}
 library(dcmstan)
-## basic example code
+library(dcmdata)
+
+new_model <- dcm_specify(qmatrix = mdm_qmatrix, identifier = "item",
+                         measurement_model = lcdm(),
+                         structural_model = unconstrained())
+
+generate_stan(new_model)
 ```
+
+---
+
+## Contributions and Code of Conduct
+
+Contributions are welcome.
+To ensure a smooth process, please review the [Contributing Guide](https://dcmstan.r-dcm.org/CONTRIBUTING.html).
+Please note that the dcmdata project is released with a [Contributor Code of Conduct](https://dcmstan.r-dcm.org/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
