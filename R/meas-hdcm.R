@@ -1,13 +1,22 @@
-meas_hdcm <- function(qmatrix, max_interaction = Inf, hierarchy) {
-  # attribute labels -----
-  att_labels <- qmatrix |>
-    tidyr::pivot_longer(cols = dplyr::everything(), names_to = "att_label",
-                        values_to = "drop") |>
-    dplyr::select(-"drop") |>
-    dplyr::distinct() |>
-    tibble::rowid_to_column(var = "att") |>
-    dplyr::mutate(att = stringr::str_c("att", as.character(.data$att)))
-
+#' 'Stan' code for the HDCM models
+#'
+#' Create the `parameters` and `transformed parameters` blocks that are needed
+#' for the LCDM and C-RUM models. The function also returns the code that
+#' defines the prior distributions for each parameter, which is used in the
+#' `model` block.
+#'
+#' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param priors Priors for the model, specified through a combination of
+#'   [default_dcm_priors()] and [prior()].
+#' @param hierarchy A tibble specifying the attribute hierarchy (via
+#'   [ggdag::clean_qmatrix()]).
+#'
+#' @returns A list with three element: `parameters`, `transformed_parameters`,
+#'   and `priors`.
+#' @rdname lcdm-crum
+#' @noRd
+meas_hdcm <- function(qmatrix, priors, max_interaction = Inf, hierarchy,
+                      att_labels) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
@@ -75,7 +84,7 @@ meas_hdcm <- function(qmatrix, max_interaction = Inf, hierarchy) {
 
   # transformed parameters block -----
   hier_profiles <- create_hierarchical_profiles(attributes = ncol(qmatrix),
-                                                hierarchy)
+                                                hierarchy, att_labels)
 
   profile_params <-
     stats::model.matrix(stats::as.formula(paste0("~ .^",
