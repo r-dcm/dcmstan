@@ -37,7 +37,9 @@ Imports:
     tidyr
 Suggests: 
     dcmdata (>= 0.0.0.9000),
+    ggdag,
     spelling,
+    stringr,
     testthat (>= 3.0.0)
 Remotes: 
     r-dcm/rdcmchecks,
