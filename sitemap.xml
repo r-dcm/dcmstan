@@ -1,9 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://dcmstan.r-dcm.org/404.html</loc></url>
+<url><loc>https://dcmstan.r-dcm.org/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://dcmstan.r-dcm.org/CONTRIBUTING.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/LICENSE-text.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/LICENSE.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/authors.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/index.html</loc></url>
+<url><loc>https://dcmstan.r-dcm.org/reference/create_profiles.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/dcm_specify.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/dcmstan-package.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/default_dcm_priors.html</loc></url>
