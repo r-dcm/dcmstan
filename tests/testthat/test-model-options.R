@@ -2,7 +2,16 @@ test_that("measurement models have functions", {
   m_choice <- meas_choices()
   for (i in seq_along(m_choice)) {
     expect_true(inherits(eval(rlang::sym(m_choice[i])), "function"))
-    S7::check_is_S7(do.call(m_choice[i], args = list()), measurement)
+    if (m_choice[i] == "hdcm") {
+      mod_args <- list(hierarchy = ggdag::tidy_dagitty(" dag { x -> y }"),
+                       att_labels = tibble::tibble(att = c("att1",
+                                                           "att2"),
+                                                   att_labels = c("Test 1",
+                                                                  "Test 2")))
+    } else {
+      mod_args <- list()
+    }
+    S7::check_is_S7(do.call(m_choice[i], args = mod_args), measurement)
   }
 })
 
