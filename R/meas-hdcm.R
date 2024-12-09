@@ -9,7 +9,7 @@
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #' @param hierarchy A tibble specifying the attribute hierarchy (via
-#'   [ggdag::clean_qmatrix()]).
+#'   [ggdag::tidy_dagitty()]).
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.

@@ -10,7 +10,7 @@ create_hierarchical_profiles(attributes, hierarchy, att_labels)
 \item{attributes}{Positive integer. The number of attributes being measured.}
 
 \item{hierarchy}{A tibble specifying the attribute hierarchy (via
-\code{\link[ggdag:clean_qmatrix]{ggdag::clean_qmatrix()}}).}
+\code{\link[ggdag:tidy_dagitty]{ggdag::tidy_dagitty()}}).}
 
 \item{att_labels}{A tibble mapping the generic attribute names to the
 attribute names from the user-specified Q-matrix.}

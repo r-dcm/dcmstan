@@ -39,7 +39,7 @@ create_profiles <- function(attributes) {
 #'
 #' @param attributes Positive integer. The number of attributes being measured.
 #' @param hierarchy A tibble specifying the attribute hierarchy (via
-#'   [ggdag::clean_qmatrix()]).
+#'   [ggdag::tidy_dagitty()]).
 #' @param att_labels A tibble mapping the generic attribute names to the
 #'   attribute names from the user-specified Q-matrix.
 #'
