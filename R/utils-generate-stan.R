@@ -32,6 +32,50 @@ create_profiles <- function(attributes) {
 
 
 
+#' Generate mastery profiles for hierarchical measurement model
+#'
+#' Given an attribute hierarchy, generate the consistent patterns of attribute
+#' mastery.
+#'
+#' @param attributes Positive integer. The number of attributes being measured.
+#' @param hierarchy A tibble specifying the attribute hierarchy created using
+#'   `ggdag`.
+#'
+#' @return A [tibble][tibble::tibble-package] with all possible attribute
+#'   mastery profiles. Each row is a profile, and each column indicates whether
+#'   the attribute in that column was mastered (1) or not mastered (0). Thus,
+#'   the tibble will have `2^attributes` rows, and `attributes` columns.
+#' @export
+#'
+#' @examples
+#' create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } "))
+#' create_hierarchical_profiles(4,
+#'                              ggdag::tidy_dagitty(" dag {x -> y -> z -> a} "))
+create_hierarchical_profiles <- function(attributes, hierarchy) {
+  check_number_whole(attributes, min = 1)
+
+  all_profiles <- create_profiles(attributes)
+
+  hierarchy <- hierarchy |>
+    tibble::as_tibble() |>
+    dplyr::select("name", "direction", "to") |>
+    dplyr::left_join(att_labels, by = c("name" = "att_label")) |>
+    dplyr::select(name = "att", "direction", "to") |>
+    dplyr::left_join(att_labels, by = c("to" = "att_label")) |>
+    dplyr::select("name", "direction", to = "att") |>
+    dplyr::filter(!is.na(.data$direction))
+
+  for (jj in seq_len(nrow(hierarchy))) {
+    all_profiles <- all_profiles |>
+      dplyr::filter(!!rlang::sym(hierarchy$name[jj]) >=
+                      !!rlang::sym(hierarchy$to[jj]))
+  }
+
+  return(all_profiles)
+}
+
+
+
 
 #' Identify the lower level components of an LCDM parameter
 #'
