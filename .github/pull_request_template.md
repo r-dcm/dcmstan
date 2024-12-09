@@ -1,5 +1,5 @@
 <!--
-Please keep the below portion in your PR. Your issue will not be reviewed until all boxes are checked (i.e., replace `[ ]` by `[x]`). In certain (rare) cases, you may be exempted if you give a brief explanation. Thanks!
+If you are proposing a new model to be included, please keep the below portion in your PR and complete the checklist. Your issue will not be reviewed until all boxes are checked (i.e., replace `[ ]` by `[x]`). If you are not proposing a new model, you may remove the checklist.
 -->
 
 ---
