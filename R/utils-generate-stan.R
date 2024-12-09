@@ -38,8 +38,11 @@ create_profiles <- function(attributes) {
 #' mastery.
 #'
 #' @param attributes Positive integer. The number of attributes being measured.
-#' @param hierarchy A tibble specifying the attribute hierarchy created using
-#'   `ggdag`.
+#' @param hierarchy A tibble specifying the attribute hierarchy (via
+#'   [ggdag::clean_qmatrix()]).
+#' @param att_labels A tibble mapping the generic attribute names to the
+#'   attribute names from the user-specified Q-matrix.
+#'
 #'
 #' @return A [tibble][tibble::tibble-package] with all possible attribute
 #'   mastery profiles. Each row is a profile, and each column indicates whether
@@ -48,10 +51,24 @@ create_profiles <- function(attributes) {
 #' @export
 #'
 #' @examples
-#' create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } "))
+#' create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } ").
+#'                              att_labels = tibble::tibble(att = c("att1",
+#'                                                                  "att2",
+#'                                                                  "att3"),
+#'                                                          att_label =c("A1",
+#'                                                                       "A2",
+#'                                                                       "A3")))
 #' create_hierarchical_profiles(4,
-#'                              ggdag::tidy_dagitty(" dag {x -> y -> z -> a} "))
-create_hierarchical_profiles <- function(attributes, hierarchy) {
+#'                              ggdag::tidy_dagitty(" dag {x -> y -> z -> a} "),
+#'                              att_labels = tibble::tibble(att = c("att1",
+#'                                                                  "att2",
+#'                                                                  "att3",
+#'                                                                  "att4"),
+#'                                                          att_label =c("A1",
+#'                                                                       "A2",
+#'                                                                       "A3",
+#'                                                                       "A4")))
+create_hierarchical_profiles <- function(attributes, hierarchy, att_labels) {
   check_number_whole(attributes, min = 1)
 
   all_profiles <- create_profiles(attributes)
