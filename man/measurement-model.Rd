@@ -30,7 +30,42 @@ loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", g
 See details for additional information on each model.
 }
 \details{
-Additional details...
+The LCDM (Henson et al., 2009; Henson & Templin, 2019) is a general
+diagnostic classification model that subsumes the other more restrictive
+models. The probability of a respondent providing a correct response is
+parameterized like a regression model. For each item, the LCDM includes an
+intercept, which represents the log-odds of providing a correct response
+when none of the attributes required by the item are present. Main effect
+parameters represent the increase in the log-odds for each required attribute
+that is present. Finally, interaction terms define the change in log-odds
+(after the main effects) when more than one of the required attributes are
+present.
+
+The C-RUM (Hartz, 2002) is similar to the LCDM, but is constrained to only
+include the intercept and main effect parameters. That is, no interaction
+terms are included for the C-RUM.
+
+The DINA model (de la Torre & Douglas, 2004; Junker & Sijtsma, 2001) is a
+restrictive non-compensatory model. For each item two parameters are
+estimated. A guessing parameter defines the probability of a respondent
+providing a correct response when not all of the required attributes are
+present. Conversely, a slipping parameter defines the probability of
+providing an incorrect response when all of the required attributes are
+present. Thus, the DINA model takes an "all-or-nothing" approach. Either a
+respondent has all of the attributes required for an item, or they do not.
+There is no increase in the probability of providing a correct response if
+only a subset of the required attributes is present.
+
+The DINO model (Templin & Henson, 2006) is the inverse of the DINA model.
+Whereas the DINA model is "all-or-nothing", the DINO model can be thought of
+as "anything-or-nothing". In the DINO model, the guessing parameter defines
+the probability of a correct response when none of the required attributes
+are present. The slipping parameter is the probability of an incorrect
+response when any of the required attributes is present. Therefore, when
+using the DINO model, the presence of any of the required attributes results
+in an increased probability of a correct response, and there is no additional
+increase in probability for the presence of more than one of the required
+attributes.
 }
 \examples{
 lcdm()
@@ -38,4 +73,35 @@ lcdm()
 lcdm(max_interaction = 2)
 
 dina()
+}
+\references{
+de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
+trait models for cognitive diagnosis. \emph{Psychometrika, 69}(3), 333-353.
+\doi{10.1007/BF02295640}
+
+Hartz, S. M. (2002). \emph{A Bayesian framework for the unified model
+for assessing cognitive abilities: Blending theory with practicality}
+(Publication No. 3044108) [Doctoral dissertation, University of Illinois
+at Urbana-Champaign]. ProQuest Dissertations Publishing.
+
+Henson, R. A., Templin, J. L., & Willse, J. T. (2009). Defining
+a family of cognitive diagnosis models using log-linear models with latent
+variables. \emph{Psychometrika, 74}(2), 191-210. \doi{10.1007/s11336-008-9089-5}
+
+Henson, R., & Templin, J. L. (2019). Loglinear cognitive
+diagnostic model (LCDM). In M. von Davier & Y.-S. Lee (Eds.), \emph{Handbook of
+Diagnostic Classification Models} (pp. 171-185). Springer International
+Publishing. \doi{10.1007/978-3-030-05584-4_8}
+
+Junker, B. W., & Sijtsma, K. (2001). Cognitive assessment models
+with few assumptions, and connections with nonparametric item response
+theory. \emph{Applied Psychological Measurement, 25}(3), 258-272.
+\doi{10.1177/01466210122032064}
+
+Templin, J. L., & Henson, R. A. (2006). Measurement of
+psychological disorders using cognitive diagnosis models. \emph{Psychological
+Methods, 11}(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
+}
+\seealso{
+\link[=structural-model]{Structural models}
 }
