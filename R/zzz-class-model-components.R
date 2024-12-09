@@ -104,8 +104,11 @@ crum <- function() {
 
 #' @rdname measurement-model
 #' @export
-hdcm <- function() {
-  HDCM(model = "hdcm")
+hdcm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
+  HDCM(model = "hdcm",
+       list(max_interaction = max_interaction,
+            hierarchy = hierarchy,
+            att_labels = att_labels))
 }
 
 
