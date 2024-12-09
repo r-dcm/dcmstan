@@ -166,6 +166,7 @@ S7::method(print, dcm_specification) <- function(x, ...) {
   strc_mod_name <- names(strc_choices())[
     which(strc_choices() == x@structural_model@model)
   ]
+  strc_mod_name <- gsub("^([a-z])", "\\U\\1", strc_mod_name, perl = TRUE)
 
   # prior distributions -----
   prior_statements <- x@priors |>
