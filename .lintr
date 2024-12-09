@@ -1,0 +1,18 @@
+linters: linters_with_defaults() # see vignette("lintr")
+exclusions: list(
+    "R/import-standalone-obj-type.R",
+    "R/import-standalone-types-check.R",
+    "R/meas-lcdm-crum.R" = list(
+      object_usage_linter = Inf
+    ),
+    "R/zzz-class-model-components.R" = list(
+      object_name_linter = Inf
+    ),
+    "R/zzz-methods-get-parameters.R" = list(
+      object_name_linter = Inf
+    ),
+    "tests/testthat/test-zzz-methods-get-parameters.R" = list(
+      indentation_linter = Inf
+    )
+  )
+encoding: "UTF-8"

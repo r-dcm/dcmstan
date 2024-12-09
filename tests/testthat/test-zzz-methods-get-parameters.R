@@ -333,23 +333,64 @@ test_that("independent parameters work", {
   expect_equal(params, params2)
 })
 
+# dcm specification parameters -------------------------------------------------
+test_that("warnings are produced for unnecessary arguments", {
+  test_qmatrix <- tibble::tibble(
+    att1 = c(1, 0, 1, 1),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1),
+    att4 = c(0, 0, 1, 1)
+  )
 
+  spec1 <- dcm_specify(qmatrix = test_qmatrix)
+  expect_warning(get_parameters(spec1, qmatrix = test_qmatrix),
+                 "should not be specified")
+  expect_warning(get_parameters(spec1, qmatrix = test_qmatrix,
+                                identifier = "item"),
+                 "should not be specified")
+  expect_warning(get_parameters(spec1, identifier = "item"),
+                 "should not be specified")
+})
 
+test_that("combining parameters in a specification works", {
+  test_qmatrix <- tibble::tibble(
+    att1 = c(1, 0, 1, 1),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1),
+    att4 = c(0, 0, 1, 1)
+  )
 
+  spec1 <- dcm_specify(qmatrix = test_qmatrix)
+  expect_equal(get_parameters(spec1),
+               dplyr::bind_rows(
+                 get_parameters(lcdm(), qmatrix = test_qmatrix),
+                 get_parameters(unconstrained(), qmatrix = test_qmatrix)
+               ))
 
+  spec2 <- dcm_specify(qmatrix = test_qmatrix,
+                       measurement_model = lcdm(max_interaction = 2))
+  expect_equal(get_parameters(spec2),
+               dplyr::bind_rows(
+                 get_parameters(lcdm(max_interaction = 2),
+                                qmatrix = test_qmatrix),
+                 get_parameters(unconstrained(), qmatrix = test_qmatrix)
+               ))
 
+  spec3 <- dcm_specify(qmatrix = test_qmatrix,
+                       measurement_model = crum(),
+                       structural_model = independent())
+  expect_equal(get_parameters(spec3),
+               dplyr::bind_rows(
+                 get_parameters(crum(), qmatrix = test_qmatrix),
+                 get_parameters(independent(), qmatrix = test_qmatrix)
+               ))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  spec3 <- dcm_specify(qmatrix = test_qmatrix,
+                       measurement_model = dino(),
+                       structural_model = independent())
+  expect_equal(get_parameters(spec3),
+               dplyr::bind_rows(
+                 get_parameters(dino(), qmatrix = test_qmatrix),
+                 get_parameters(independent(), qmatrix = test_qmatrix)
+               ))
+})

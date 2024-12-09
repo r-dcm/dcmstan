@@ -1,0 +1,26 @@
+url: https://dcmstan.r-dcm.org
+
+template:
+  package: rdcmtemplate
+  bootstrap: 5
+
+reference:
+- title: Model specifications
+  contents:
+  - dcm_specify
+  - create_profiles
+
+- subtitle: Model components
+  contents:
+  - measurement-model
+  - structural-model
+
+- subtitle: Priors
+  contents:
+  - default_dcm_priors
+  - prior
+  - get_parameters
+
+- title: Generate 'Stan' code
+  contents:
+  - generate_stan

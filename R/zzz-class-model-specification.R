@@ -22,6 +22,7 @@
 #'   default prior distributions defined by [default_dcm_priors()] are used.
 #'
 #' @returns A `dcm_specification` object.
+#' @seealso [measurement-model], [structural-model]
 #' @export
 #'
 #' @examples
@@ -43,6 +44,9 @@ dcm_specify <- function(qmatrix, identifier = NULL,
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
+  if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {
+    measurement_model@model_args$max_interaction <- 1L
+  }
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
                                  structural_model = structural_model)
@@ -83,7 +87,8 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
       validator = function(value) {
         if (!all(vapply(value, is.numeric, logical(1)))) {
           "must contain only numeric values of 0 or 1"
-        } else if (!all(vapply(value, \(x) all(x %in% c(0L, 1L)), logical(1)))) {
+        } else if (!all(vapply(value, \(x) all(x %in% c(0L, 1L)),
+                               logical(1)))) {
           "must contain only values of 0 or 1"
         }
       }
@@ -145,19 +150,46 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
 
 
 # dcm_specification methods ----------------------------------------------------
-# x <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix, identifier = "item")
-
-
-S7::method(print, dcm_specification) <- function(x) {
-  att_items <- glue::glue("{{.val {names(x@qmatrix_meta$attribute_names)}}} ",
-                          "({{{colSums(x@qmatrix)}}} item{{?s}})")
+S7::method(print, dcm_specification) <- function(x, ...) {
+  # model name -----
   mod_name <- names(meas_choices())[
     which(meas_choices() == x@measurement_model@model)
   ]
   mod_name <- gsub("(?<!model) (\\([A-Z]*\\))", " \\1 model",
                    mod_name, perl = TRUE)
-  mod_name <- gsub("^([A-Z])", "\\L\\1", mod_name, perl = TRUE)
 
+  # count items per attribute -----
+  att_items <- glue::glue("{{.val {names(x@qmatrix_meta$attribute_names)}}} ",
+                          "({{{colSums(x@qmatrix)}}} item{{?s}})")
+
+  # structural model name -----
+  strc_mod_name <- names(strc_choices())[
+    which(strc_choices() == x@structural_model@model)
+  ]
+  strc_mod_name <- gsub("^([a-z])", "\\U\\1", strc_mod_name, perl = TRUE)
+
+  # prior distributions -----
+  prior_statements <- x@priors |>
+    prior_tibble() |>
+    dplyr::mutate(
+      class = dplyr::case_when(.data$type == "structural" ~ "structural",
+                               .default = "measurement"),
+      prior = gsub("rep_vector\\(([0-9\\.]+), C\\)",
+                   paste(rep("\\1", length(att_items)),
+                         collapse = ", "),
+                   .data$prior),
+
+      prior = dplyr::case_when(
+        is.na(.data$coefficient) ~
+          glue::glue("{{.emph {.data$type}}} ~ {.data$prior}"),
+        !is.na(.data$coefficient) ~
+          glue::glue("{{.var {.data$coefficient}}} ~ {.data$prior}")
+      )
+    ) |>
+    dplyr::arrange(.data$class, .data$coefficient) |>
+    dplyr::pull("prior")
+
+  # printing -----
   cli::cli_text("A {mod_name} measuring ",
                 "{length(x@qmatrix_meta$attribute_names)} attributes with ",
                 "{nrow(x@qmatrix)} items.")
@@ -166,5 +198,8 @@ S7::method(print, dcm_specification) <- function(x) {
   cli::cli_bullets(rlang::set_names(att_items, "*"))
   cli::cli_text("")
   cli::cli_alert_info("Attribute structure:")
-  cli::cli_text()
+  cli::cli_bullets(rlang::set_names(strc_mod_name, " "))
+  cli::cli_text("")
+  cli::cli_alert_info("Prior distributions:")
+  cli::cli_bullets(rlang::set_names(prior_statements, " "))
 }

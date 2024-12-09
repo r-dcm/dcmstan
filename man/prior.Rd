@@ -2,7 +2,7 @@
 % Please edit documentation in R/zzz-class-model-priors.R
 \name{prior}
 \alias{prior}
-\title{Define a prior distributions}
+\title{Prior definitions for diagnostic classification models}
 \usage{
 prior(distribution, type, coefficient = NA, lower_bound = NA, upper_bound = NA)
 }
@@ -25,6 +25,20 @@ truncated.}
 \item{upper_bound}{Optional. The upper bound where the distribution should be
 truncated.}
 }
+\value{
+A \code{dcmprior} object.
+}
 \description{
-Define a prior distributions
+Define prior distributions for types of parameters or specific parameters
+within a model. For a complete list of types and parameters available for a
+given model, see \code{\link[=get_parameters]{get_parameters()}}.
+}
+\examples{
+prior(normal(0, 2), type = "intercept")
+
+c(prior(beta(5, 17), type = "slip"),
+  prior(beta(5, 25), type = "guess"))
+}
+\seealso{
+\code{\link[=get_parameters]{get_parameters()}}
 }

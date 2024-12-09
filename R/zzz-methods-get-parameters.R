@@ -27,9 +27,28 @@ get_parameters <- S7::new_generic("get_parameters", "x",
                                     S7::S7_dispatch()
                                   })
 
+# Method for DCM specification -------------------------------------------------
+S7::method(get_parameters, dcm_specification) <- function(x, qmatrix,
+                                                          identifier = NULL) {
+  if (lifecycle::is_present(qmatrix) || !is.null(identifier)) {
+    arg <- rlang::caller_arg(x)
+    cli::cli_warn(
+      glue::glue("{{.arg qmatrix}} and {{.arg identifier}} should not be
+                 specified for {{.cls dcm_specification}} objects. Using",
+                 "{{.code {arg}@qmatrix}} instead.",
+                 .sep = " ")
+    )
+  }
+
+  dplyr::bind_rows(
+    get_parameters(x@measurement_model, qmatrix = x@qmatrix),
+    get_parameters(x@structural_model, qmatrix = x@qmatrix)
+  )
+}
+
 # Methods for measurement models -----------------------------------------------
 S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL) {
-  check_number_whole(x@model_args$max_interaction, min = 1L,
+  check_number_whole(x@model_args$max_interaction, min = 1,
                      allow_infinite = TRUE)
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 

@@ -1,6 +1,8 @@
-#' Define a prior distributions
+#' Prior definitions for diagnostic classification models
 #'
-#'
+#' Define prior distributions for types of parameters or specific parameters
+#' within a model. For a complete list of types and parameters available for a
+#' given model, see [get_parameters()].
 #'
 #' @param distribution A distribution statement for the prior
 #'   (e.g., `normal(0, 2)`). For a complete list of available distributions, see
@@ -16,10 +18,15 @@
 #' @param upper_bound Optional. The upper bound where the distribution should be
 #'   truncated.
 #'
-#' @returns
+#' @returns A `dcmprior` object.
+#' @seealso [get_parameters()]
 #' @export
 #'
 #' @examples
+#' prior(normal(0, 2), type = "intercept")
+#'
+#' c(prior(beta(5, 17), type = "slip"),
+#'   prior(beta(5, 25), type = "guess"))
 prior <- function(distribution, type,
                   coefficient = NA, lower_bound = NA, upper_bound = NA) {
   call <- as.list(match.call()[-1])
@@ -52,12 +59,16 @@ default_dcm_priors <- function(measurement_model = NULL,
     NULL
   } else {
     S7::check_is_S7(measurement_model, class = measurement)
-    switch(measurement_model@model,
-           lcdm = lcdm_priors(),
-           dina = dina_priors(),
-           dino = dino_priors(),
-           crum = crum_priors(),
-           hdcm = hdcm_priors())
+    switch(
+      measurement_model@model,
+      lcdm = lcdm_priors(
+        max_interaction = measurement_model@model_args$max_interaction
+      ),
+      dina = dina_priors(),
+      dino = dino_priors(),
+      crum = crum_priors(),
+      hdcm = hdcm_priors()
+    )
   }
 
   strc_priors <- if (is.null(structural_model)) {
@@ -74,10 +85,15 @@ default_dcm_priors <- function(measurement_model = NULL,
 }
 
 ## measurement model defaults -----
-lcdm_priors <- function() {
-  c(prior("normal(0, 2)", type = "intercept"),
-    prior("lognormal(0, 1)", type = "maineffect"),
-    prior("normal(0, 2)", type = "interaction"))
+lcdm_priors <- function(max_interaction) {
+  prior <- c(prior("normal(0, 2)", type = "intercept"),
+             prior("lognormal(0, 1)", type = "maineffect"))
+  if (max_interaction > 1) {
+    prior <- c(prior,
+               prior("normal(0, 2)", type = "interaction"))
+  }
+
+  return(prior)
 }
 
 hdcm_priors <- lcdm_priors
@@ -200,9 +216,11 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
   }
 
   all_priors <- if (!replace) {
-    do.call(dplyr::bind_rows, lapply(list(x, ...), prior_tibble, .keep_all = TRUE))
+    do.call(dplyr::bind_rows,
+            lapply(list(x, ...), prior_tibble, .keep_all = TRUE))
   } else {
-    do.call(dplyr::bind_rows, lapply(list(x, ...), prior_tibble, .keep_all = TRUE)) |>
+    do.call(dplyr::bind_rows,
+            lapply(list(x, ...), prior_tibble, .keep_all = TRUE)) |>
       dplyr::distinct(.data$type, .data$coefficient, .keep_all = TRUE)
   }
 

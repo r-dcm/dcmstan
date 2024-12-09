@@ -1,17 +1,30 @@
-meas_lcdm <- function(qmatrix, max_interaction = Inf) {
+#' 'Stan' code for the LCDM and C-RUM models
+#'
+#' Create the `parameters` and `transformed parameters` blocks that are needed
+#' for the LCDM and C-RUM models. The function also returns the code that
+#' defines the prior distributions for each parameter, which is used in the
+#' `model` block.
+#'
+#' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param priors Priors for the model, specified through a combination of
+#'   [default_dcm_priors()] and [prior()].
+#'
+#' @returns A list with three element: `parameters`, `transformed_parameters`,
+#'   and `priors`.
+#' @rdname lcdm-crum
+#' @noRd
+meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
   # parameters block -----
-  all_params <- get_parameters(qmatrix = qmatrix, item_id = NULL,
-                               rename_att = TRUE, rename_item = TRUE,
-                               type = "lcdm",
-                               attribute_structure = strc)
-  strc_params <- all_params |>
-    dplyr::filter(.data$class == "structural")
+  all_params <- lcdm_parameters(qmatrix = qmatrix,
+                                max_interaction = max_interaction,
+                                rename_attributes = TRUE,
+                                rename_items = TRUE)
+
   meas_params <- all_params |>
-    dplyr::filter(.data$class != "structural") |>
     dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
                                                  "intercept",
                                                TRUE ~ .data$attributes)) |>
-    dplyr::select("item_id", "parameter", param_name = "coef") |>
+    dplyr::select("item_id", "parameter", param_name = "coefficient") |>
     dplyr::mutate(
       param_level = dplyr::case_when(
         .data$parameter == "intercept" ~ 0,
@@ -63,7 +76,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf) {
     "",
     "  ////////////////////////////////// item main effects",
     "  {glue::glue_collapse(main_effects, sep = \"\n  \")}{interaction_stan}",
-    .sep = "\n"
+    .sep = "\n", .trim = FALSE
   )
 
   # transformed parameters block -----
@@ -99,14 +112,40 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf) {
     "",
     "  ////////////////////////////////// probability of correct response",
     "  {glue::glue_collapse(pi_def, sep = \"\n  \")}",
-    .sep = "\n"
+    .sep = "\n", .trim = FALSE
   )
 
+  # priors -----
+  item_priors <- meas_params |>
+    dplyr::mutate(
+      type = dplyr::case_when(.data$param_level == 0 ~ "intercept",
+                              .data$param_level == 1 ~ "maineffect",
+                              .data$param_level > 1 ~ "interaction")
+    ) |>
+    dplyr::left_join(prior_tibble(priors),
+                     by = c("type", "param_name" = "coefficient"),
+                     relationship = "one-to-one") |>
+    dplyr::rename(coef_def = "prior") |>
+    dplyr::left_join(prior_tibble(priors) |>
+                       dplyr::filter(is.na(.data$coefficient)) |>
+                       dplyr::select(-"coefficient"),
+                     by = c("type"), relationship = "many-to-one") |>
+    dplyr::rename(type_def = "prior") |>
+    dplyr::mutate(
+      prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
+                               is.na(.data$coef_def) ~ .data$type_def),
+      prior_def = glue::glue("{param_name} ~ {prior};")
+    ) |>
+    dplyr::pull("prior_def")
+
+  # return -----
   return(list(parameters = parameters_block,
-              transformed_parameters = transformed_parameters_block))
+              transformed_parameters = transformed_parameters_block,
+              priors = item_priors))
 }
 
-meas_crum <- function(qmatrix) {
-  meas_lcdm(qmatrix, max_interaction = 1L)
+#' @rdname lcdm-crum
+#' @noRd
+meas_crum <- function(qmatrix, priors) {
+  meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
 }
-
