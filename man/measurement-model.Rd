@@ -76,13 +76,14 @@ using the DINO model, the presence of any of the required attributes results
 in an increased probability of a correct response, and there is no additional
 increase in probability for the presence of more than one of the required
 attributes.
-}
-\examples{
-lcdm()
 
-lcdm(max_interaction = 2)
-
-dina()
+The HDCM (Templin & Bradshaw, 2014) is an adaptation of the LCDM, where the
+LCDM measurement model is applied with an attribute hierarchy. The HDCM
+restricts which attribute mastery profiles are possible since not all
+attribute mastery profiles are possible under a given attribute hierarchy.
+Thus, the HDCM estimates the same intercept, main effect, and interaction
+parameters as the LCDM, except the HDCM has fewer possible attribute
+mastery profiles than the LCDM.
 }
 \references{
 de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
@@ -111,6 +112,11 @@ theory. \emph{Applied Psychological Measurement, 25}(3), 258-272.
 Templin, J. L., & Henson, R. A. (2006). Measurement of
 psychological disorders using cognitive diagnosis models. \emph{Psychological
 Methods, 11}(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
+
+Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
+classification models: A family of models for estimating and testing
+attribute hierarchies. \emph{Psychometrika, 79}(2), 317-339
+\doi{10.1007/s11336-013-9362-0}
 }
 \seealso{
 \link[=structural-model]{Structural models}
