@@ -1,15 +1,17 @@
 #' 'Stan' code for the HDCM models
 #'
 #' Create the `parameters` and `transformed parameters` blocks that are needed
-#' for the LCDM and C-RUM models. The function also returns the code that
-#' defines the prior distributions for each parameter, which is used in the
-#' `model` block.
+#' for the HDCM. The function also returns the code that defines the prior
+#' distributions for each parameter, which is used in the `model` block.
 #'
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #' @param hierarchy A tibble specifying the attribute hierarchy (via
 #'   [ggdag::tidy_dagitty()]).
+#' @param att_labels A tibble specifying the mapping between the generic
+#'   attribute labels and the attribute names specified in the user-specified
+#'   Q-matrix.
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.

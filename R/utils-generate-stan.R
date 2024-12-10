@@ -32,7 +32,7 @@ create_profiles <- function(attributes) {
 
 
 
-#' Generate mastery profiles for hierarchical measurement model
+#' Generate constrained mastery profiles for hierarchical measurement model
 #'
 #' Given an attribute hierarchy, generate the consistent patterns of attribute
 #' mastery.
@@ -51,7 +51,7 @@ create_profiles <- function(attributes) {
 #' @export
 #'
 #' @examples
-#' create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } ").
+#' create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } "),
 #'                              att_labels = tibble::tibble(att = c("att1",
 #'                                                                  "att2",
 #'                                                                  "att3"),
@@ -97,7 +97,7 @@ create_hierarchical_profiles <- function(attributes, hierarchy, att_labels) {
 #' Identify the lower level components of an LCDM parameter
 #'
 #' @param x A character string indicating the attributes measured by an item,
-#'   seperated by a double underscore (`__`).
+#'   separated by a double underscore (`__`).
 #' @param item The item number.
 #'
 #' @returns A character string with the component parameters.
