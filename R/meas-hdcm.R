@@ -7,11 +7,6 @@
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
-#' @param hierarchy A tibble specifying the attribute hierarchy (via
-#'   [ggdag::tidy_dagitty()]).
-#' @param att_labels A tibble specifying the mapping between the generic
-#'   attribute labels and the attribute names specified in the user-specified
-#'   Q-matrix.
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.

@@ -22,6 +22,13 @@ hdcm(max_interaction = Inf, hierarchy = NULL, att_labels = NULL)
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
 include in the model.}
+
+\item{hierarchy}{A tibble specifying the attribute hierarchy (via
+\code{\link[ggdag:tidy_dagitty]{ggdag::tidy_dagitty()}}).}
+
+\item{att_labels}{A tibble specifying the mapping between the generic
+attribute labels and the attribute names specified in the user-specified
+Q-matrix.}
 }
 \value{
 A measurement model object.

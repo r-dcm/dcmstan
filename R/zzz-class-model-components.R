@@ -7,6 +7,11 @@
 #'
 #' @param max_interaction For the LCDM, the highest item-level interaction to
 #'   include in the model.
+#' @param hierarchy A tibble specifying the attribute hierarchy (via
+#'   [ggdag::tidy_dagitty()]).
+#' @param att_labels A tibble specifying the mapping between the generic
+#'   attribute labels and the attribute names specified in the user-specified
+#'   Q-matrix.
 #'
 #' @returns A measurement model object.
 #'
