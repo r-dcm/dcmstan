@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-generate-stan.R
 \name{create_hierarchical_profiles}
 \alias{create_hierarchical_profiles}
-\title{Generate mastery profiles for hierarchical measurement model}
+\title{Generate constrained mastery profiles for hierarchical measurement model}
 \usage{
 create_hierarchical_profiles(attributes, hierarchy, att_labels)
 }
@@ -26,7 +26,7 @@ Given an attribute hierarchy, generate the consistent patterns of attribute
 mastery.
 }
 \examples{
-create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } ").
+create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } "),
                              att_labels = tibble::tibble(att = c("att1",
                                                                  "att2",
                                                                  "att3"),
