@@ -53,6 +53,14 @@
 #' increase in probability for the presence of more than one of the required
 #' attributes.
 #'
+#' The HDCM (Templin & Bradshaw, 2014) is an adaptation of the LCDM, where the
+#' LCDM measurement model is applied with an attribute hierarchy. The HDCM
+#' restricts which attribute mastery profiles are possible since not all
+#' attribute mastery profiles are possible under a given attribute hierarchy.
+#' Thus, the HDCM estimates the same intercept, main effect, and interaction
+#' parameters as the LCDM, except the HDCM has fewer possible attribute
+#' mastery profiles than the LCDM.
+#'
 #' @name measurement-model
 #' @seealso [Structural models][structural-model]
 #' @export
@@ -78,6 +86,10 @@
 #' @references Templin, J. L., & Henson, R. A. (2006). Measurement of
 #'   psychological disorders using cognitive diagnosis models. *Psychological
 #'   Methods, 11*(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
+#' @references Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
+#'   classification models: A family of models for estimating and testing
+#'   attribute hierarchies. *Psychometrika, 79*(2), 317-339
+#'   \doi{10.1007/s11336-013-9362-0}
 #'
 #' @examples
 #' lcdm()
@@ -85,6 +97,11 @@
 #' lcdm(max_interaction = 2)
 #'
 #' dina()
+#'
+#' hdcm(max_interaction = 2,
+#'      hierarchy = ggdag::tidy_dagitty(" dag { x -> y -> z} "),
+#'      att_labels = tibble::tibble(att = c("att1", "att2", "att3"),
+#'                                  att_labels = c("x", "y", "z)))
 lcdm <- function(max_interaction = Inf) {
   LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
