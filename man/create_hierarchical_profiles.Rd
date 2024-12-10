@@ -30,17 +30,17 @@ create_hierarchical_profiles(3, ggdag::tidy_dagitty(" dag { x -> y -> z } "),
                              att_labels = tibble::tibble(att = c("att1",
                                                                  "att2",
                                                                  "att3"),
-                                                         att_label =c("A1",
-                                                                      "A2",
-                                                                      "A3")))
+                                                         att_label =c("x",
+                                                                      "y",
+                                                                      "z")))
 create_hierarchical_profiles(4,
                              ggdag::tidy_dagitty(" dag {x -> y -> z -> a} "),
                              att_labels = tibble::tibble(att = c("att1",
                                                                  "att2",
                                                                  "att3",
                                                                  "att4"),
-                                                         att_label =c("A1",
-                                                                      "A2",
-                                                                      "A3",
-                                                                      "A4")))
+                                                         att_label =c("x",
+                                                                      "y",
+                                                                      "z",
+                                                                      "a")))
 }

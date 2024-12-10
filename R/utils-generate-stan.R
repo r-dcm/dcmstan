@@ -55,19 +55,19 @@ create_profiles <- function(attributes) {
 #'                              att_labels = tibble::tibble(att = c("att1",
 #'                                                                  "att2",
 #'                                                                  "att3"),
-#'                                                          att_label =c("A1",
-#'                                                                       "A2",
-#'                                                                       "A3")))
+#'                                                          att_label =c("x",
+#'                                                                       "y",
+#'                                                                       "z")))
 #' create_hierarchical_profiles(4,
 #'                              ggdag::tidy_dagitty(" dag {x -> y -> z -> a} "),
 #'                              att_labels = tibble::tibble(att = c("att1",
 #'                                                                  "att2",
 #'                                                                  "att3",
 #'                                                                  "att4"),
-#'                                                          att_label =c("A1",
-#'                                                                       "A2",
-#'                                                                       "A3",
-#'                                                                       "A4")))
+#'                                                          att_label =c("x",
+#'                                                                       "y",
+#'                                                                       "z",
+#'                                                                       "a")))
 create_hierarchical_profiles <- function(attributes, hierarchy, att_labels) {
   check_number_whole(attributes, min = 1)
 
