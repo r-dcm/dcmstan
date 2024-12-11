@@ -85,6 +85,18 @@ Thus, the HDCM estimates the same intercept, main effect, and interaction
 parameters as the LCDM, except the HDCM has fewer possible attribute
 mastery profiles than the LCDM.
 }
+\examples{
+lcdm()
+
+lcdm(max_interaction = 2)
+
+dina()
+
+hdcm(max_interaction = 2,
+     hierarchy = ggdag::tidy_dagitty(" dag { x -> y -> z} "),
+     att_labels = tibble::tibble(att = c("att1", "att2", "att3"),
+                                 att_labels = c("x", "y", "z")))
+}
 \references{
 de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
 trait models for cognitive diagnosis. \emph{Psychometrika, 69}(3), 333-353.
