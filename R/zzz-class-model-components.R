@@ -102,6 +102,24 @@ crum <- function() {
   CRUM(model = "crum")
 }
 
+#' @rdname measurement-model
+#' @export
+nida <- function() {
+  NIDA(model = "nida")
+}
+
+#' @rdname measurement-model
+#' @export
+nido <- function() {
+  NIDO(model = "nido")
+}
+
+#' @rdname measurement-model
+#' @export
+ncrum <- function(max_interaction = Inf) {
+  NCRUM(model = "ncrum", list(max_interaction = max_interaction))
+}
+
 
 #' Structural models for diagnostic classification
 #'
@@ -259,7 +277,12 @@ DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-
+NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
+                      properties = list(model = model_property))
+NIDO <- S7::new_class("NIDO", parent = measurement, package = "dcmstan",
+                      properties = list(model = model_property))
+NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
+                       properties = list(model = model_property))
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
