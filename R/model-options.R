@@ -4,10 +4,11 @@
 #' @rdname model-choices
 #' @noRd
 meas_choices <- function() {
-  c("loglinear cognitive diagnostic model (LCDM)" = "lcdm",
-    "deterministic input, noisy \"and\" gate (DINA)" = "dina",
-    "deterministic input, noisy \"or\" gate (DINO)" = "dino",
-    "compensatory reparameterized unified model (C-RUM)" = "crum")
+  c("Loglinear cognitive diagnostic model (LCDM)" = "lcdm",
+    "Deterministic input, noisy \"and\" gate (DINA)" = "dina",
+    "Deterministic input, noisy \"or\" gate (DINO)" = "dino",
+    "Compensatory reparameterized unified model (C-RUM)" = "crum",
+    "Hierarchical diagnostic classification model" = "hdcm")
 }
 
 #' @rdname model-choices

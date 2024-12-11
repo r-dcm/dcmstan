@@ -66,7 +66,10 @@ default_dcm_priors <- function(measurement_model = NULL,
       ),
       dina = dina_priors(),
       dino = dino_priors(),
-      crum = crum_priors()
+      crum = crum_priors(),
+      hdcm = hdcm_priors(
+        max_interaction = measurement_model@model_args$max_interaction
+      )
     )
   }
 
@@ -94,6 +97,8 @@ lcdm_priors <- function(max_interaction) {
   return(prior)
 }
 
+hdcm_priors <- lcdm_priors
+
 dina_priors <- function() {
   c(prior("beta(5, 25)", type = "slip"),
     prior("beta(5, 25)", type = "guess"))
@@ -114,7 +119,6 @@ unconstrained_priors <- function() {
 independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
 }
-
 
 # dcmprior class ---------------------------------------------------------------
 dcmprior <- S7::new_class("dcmprior", package = "dcmstan",

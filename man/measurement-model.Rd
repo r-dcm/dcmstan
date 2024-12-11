@@ -6,6 +6,7 @@
 \alias{dina}
 \alias{dino}
 \alias{crum}
+\alias{hdcm}
 \title{Measurement models for diagnostic classification}
 \usage{
 lcdm(max_interaction = Inf)
@@ -15,10 +16,19 @@ dina()
 dino()
 
 crum()
+
+hdcm(max_interaction = Inf, hierarchy = NULL, att_labels = NULL)
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
 include in the model.}
+
+\item{hierarchy}{A tibble specifying the attribute hierarchy (via
+\code{\link[ggdag:tidy_dagitty]{ggdag::tidy_dagitty()}}).}
+
+\item{att_labels}{A tibble specifying the mapping between the generic
+attribute labels and the attribute names specified in the user-specified
+Q-matrix.}
 }
 \value{
 A measurement model object.
@@ -26,7 +36,7 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); and compensatory, reparameterized unified model (C-RUM).
+Loglinear cognitive diagnostic model (LCDM); Deterministic input, noisy "and", gate (DINA); Deterministic input, noisy "or" gate (DINO); Compensatory, reparameterized unified model (C-RUM); and Hierarchical diagnostic, classification model.
 See details for additional information on each model.
 }
 \details{
@@ -66,6 +76,14 @@ using the DINO model, the presence of any of the required attributes results
 in an increased probability of a correct response, and there is no additional
 increase in probability for the presence of more than one of the required
 attributes.
+
+The HDCM (Templin & Bradshaw, 2014) is an adaptation of the LCDM, where the
+LCDM measurement model is applied with an attribute hierarchy. The HDCM
+restricts which attribute mastery profiles are possible since not all
+attribute mastery profiles are possible under a given attribute hierarchy.
+Thus, the HDCM estimates the same intercept, main effect, and interaction
+parameters as the LCDM, except the HDCM has fewer possible attribute
+mastery profiles than the LCDM.
 }
 \examples{
 lcdm()
@@ -73,6 +91,11 @@ lcdm()
 lcdm(max_interaction = 2)
 
 dina()
+
+hdcm(max_interaction = 2,
+     hierarchy = ggdag::tidy_dagitty(" dag { x -> y -> z} "),
+     att_labels = tibble::tibble(att = c("att1", "att2", "att3"),
+                                 att_labels = c("x", "y", "z")))
 }
 \references{
 de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
@@ -101,6 +124,11 @@ theory. \emph{Applied Psychological Measurement, 25}(3), 258-272.
 Templin, J. L., & Henson, R. A. (2006). Measurement of
 psychological disorders using cognitive diagnosis models. \emph{Psychological
 Methods, 11}(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
+
+Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
+classification models: A family of models for estimating and testing
+attribute hierarchies. \emph{Psychometrika, 79}(2), 317-339
+\doi{10.1007/s11336-013-9362-0}
 }
 \seealso{
 \link[=structural-model]{Structural models}
