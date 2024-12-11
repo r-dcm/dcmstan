@@ -102,16 +102,3 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
                  attributes = att_names,
                  coefficient = paste0("eta[", seq_along(att_names), "]"))
 }
-
-S7::method(get_parameters, HIERARCHICAL) <- function(x, qmatrix,
-                                                     identifier = NULL) {
-  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
-  att_names <- if (is.null(identifier)) {
-    colnames(qmatrix)
-  } else {
-    colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
-  }
-  tibble::tibble(type = "structural",
-                 attributes = att_names,
-                 coefficient = paste0("eta[", seq_along(att_names), "]"))
-}

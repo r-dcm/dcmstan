@@ -15,8 +15,7 @@ meas_choices <- function() {
 #' @noRd
 strc_choices <- function() {
   c("unconstrained" = "unconstrained",
-    "independent attributes" = "independent",
-    "hierarchical" = "hierarchical")
+    "independent attributes" = "independent")
 }
 
 

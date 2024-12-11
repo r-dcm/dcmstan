@@ -181,12 +181,6 @@ independent <- function() {
   INDEPENDENT(model = "independent")
 }
 
-#' @rdname structural-model
-#' @export
-hierarchical <- function() {
-  HIERARCHICAL(model = "hierarchical")
-}
-
 
 # Define component classes -----------------------------------------------------
 #' S7 class for measurement models
@@ -306,6 +300,3 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
-HIERARCHICAL <- S7::new_class("HIERARCHICAL", parent = structural,
-                              package = "dcmstan",
-                              properties = list(model = model_property))

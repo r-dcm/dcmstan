@@ -79,8 +79,7 @@ default_dcm_priors <- function(measurement_model = NULL,
     S7::check_is_S7(structural_model, class = structural)
     switch(structural_model@model,
            unconstrained = unconstrained_priors(),
-           independent = independent_priors(),
-           hierarchical = hierarchical_priors())
+           independent = independent_priors())
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -116,8 +115,6 @@ crum_priors <- function() {
 unconstrained_priors <- function() {
   prior("dirichlet(rep_vector(1, C))", type = "structural", coefficient = "Vc")
 }
-
-hierarchical_priors <- unconstrained_priors
 
 independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
