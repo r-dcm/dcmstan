@@ -30,10 +30,12 @@ test_that("hdcm script works with unconstrained structural model", {
     tibble::rowid_to_column(var = "att") |>
     dplyr::mutate(att = stringr::str_c("att", as.character(.data$att)))
 
-  dtmr_spec <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+  dtmr_spec <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix %>%
+                             dplyr::filter(!(item %in% c("10b", "10c", "13",
+                                                         "14", "15a", "17",
+                                                         "18", "22"))),
                            identifier = "item",
                            measurement_model = hdcm(hierarchy = hierarchy,
-                                                    att_labels = att_labels),
-                           structural_model = unconstrained())
+                                                    att_labels = att_labels))
   expect_snapshot(generate_stan(dtmr_spec))
 })
