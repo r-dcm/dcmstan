@@ -251,6 +251,120 @@ test_that("dino parameters work", {
   )
 })
 
+test_that("nida parameters work", {
+  test_qmatrix <- tibble::tibble(
+    att1 = sample(0:1, size = 5, replace = TRUE),
+    att2 = sample(0:1, size = 5, replace = TRUE),
+    att3 = sample(0:1, size = 5, replace = TRUE),
+    att4 = sample(0:1, size = 5, replace = TRUE)
+  )
+
+  params <- get_parameters(nida(), qmatrix = test_qmatrix)
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("att_id", "type", "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tibble(
+      att_id = rep(1:4, each = 2),
+      type = rep(c("guess", "slip"), 4)
+    ) |>
+      dplyr::mutate(coefficient = paste0(.data$type, "[", .data$att_id, "]")),
+    ignore_attr = TRUE
+  )
+})
+
+test_that("nido parameters work", {
+  test_qmatrix <- tibble::tibble(
+    question = c("Q1", "Q2", "Q3", "Q4"),
+    skill1 = c(1, 0, 1, 1),
+    skill2 = c(0, 1, 0, 1),
+    skill3 = c(0, 1, 1, 1),
+    skill4 = c(0, 0, 1, 1)
+  )
+
+  params <- get_parameters(nido(), qmatrix = test_qmatrix,
+                           identifier = "question")
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("att_id", "type", "attributes",
+                                   "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~att_id,         ~type,              ~attributes, ~coefficient,
+        1L,   "intercept",                       NA,       "l1_0",
+        1L,  "maineffect",                      "1",       "l1_1",
+        2L,   "intercept",                       NA,       "l2_0",
+        2L,  "maineffect",                      "2",       "l2_1",
+        3L,   "intercept",                       NA,       "l3_0",
+        3L,  "maineffect",                      "3",       "l3_1",
+        4L,  "intercept",                        NA,       "l4_0",
+        4L,  "maineffect",                      "4",       "l4_1"
+    )
+  )
+})
+
+test_that("ncrum parameters work", {
+  test_qmatrix <- tibble::tibble(
+    att1 = c(1, 0, 1, 1),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1),
+    att4 = c(0, 0, 1, 1)
+  )
+
+  params <- get_parameters(ncrum(), qmatrix = test_qmatrix)
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("item_id", "type", "attributes",
+                                   "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~att_id,         ~type,              ~attributes, ~coefficient,
+      1L,   "intercept",                       NA,       "l1_0",
+      1L,  "maineffect",                      "1",       "l1_1",
+      2L,   "intercept",                       NA,       "l2_0",
+      2L,  "maineffect",                      "2",       "l2_1",
+      3L,   "intercept",                       NA,       "l3_0",
+      3L,  "maineffect",                      "3",       "l3_1",
+      4L,   "intercept",                       NA,       "l4_0",
+      4L,  "maineffect",                      "4",       "l4_1",
+      1L, "interaction",                   "1__3",      "l1_23",
+      1L, "interaction",                   "1__4",      "l1_24",
+      2L, "interaction",                   "2__3",      "l2_23",
+      2L, "interaction",                   "2__4",      "l2_24",
+      3L, "interaction",                   "3__4",      "l3_24",
+      1L, "interaction",                "1__3__4",     "l1_334",
+      1L, "interaction",                "1__2__3",     "l1_323",
+      2L, "interaction",                "2__3__4",     "l2_334"
+    )
+  )
+
+  expect_equal(
+    lcdm_parameters(test_qmatrix, max_interaction = 2),
+    tibble::tribble(
+      ~att_id,         ~type,              ~attributes, ~coefficient,
+      1L,   "intercept",                       NA,       "l1_0",
+      1L,  "maineffect",                      "1",       "l1_1",
+      2L,   "intercept",                       NA,       "l2_0",
+      2L,  "maineffect",                      "2",       "l2_1",
+      3L,   "intercept",                       NA,       "l3_0",
+      3L,  "maineffect",                      "3",       "l3_1",
+      4L,   "intercept",                       NA,       "l4_0",
+      4L,  "maineffect",                      "4",       "l4_1",
+      1L, "interaction",                   "1__3",      "l1_23",
+      1L, "interaction",                   "1__4",      "l1_24",
+      2L, "interaction",                   "2__3",      "l2_23",
+      2L, "interaction",                   "2__4",      "l2_24",
+      3L, "interaction",                   "3__4",      "l3_24"
+    )
+  )
+})
+
 # structural model parameters --------------------------------------------------
 test_that("unconstrained parameters work", {
   test_qmatrix <- tibble::tibble(
