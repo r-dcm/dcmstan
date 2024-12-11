@@ -6,6 +6,9 @@
 \alias{dina}
 \alias{dino}
 \alias{crum}
+\alias{nida}
+\alias{nido}
+\alias{ncrum}
 \title{Measurement models for diagnostic classification}
 \usage{
 lcdm(max_interaction = Inf)
@@ -15,6 +18,12 @@ dina()
 dino()
 
 crum()
+
+nida()
+
+nido()
+
+ncrum()
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
@@ -26,7 +35,7 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); and compensatory, reparameterized unified model (C-RUM).
+loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); compensatory, reparameterized unified model (C-RUM); noisy-input, deterministic "and" gate, (NIDA); noisy-input, deterministic "or" gate (NIDO); and noncompensatory, reparameterized unified model (NC-RUM).
 See details for additional information on each model.
 }
 \details{
