@@ -101,7 +101,7 @@
 #' hdcm(max_interaction = 2,
 #'      hierarchy = ggdag::tidy_dagitty(" dag { x -> y -> z} "),
 #'      att_labels = tibble::tibble(att = c("att1", "att2", "att3"),
-#'                                  att_labels = c("x", "y", "z)))
+#'                                  att_labels = c("x", "y", "z")))
 lcdm <- function(max_interaction = Inf) {
   LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
