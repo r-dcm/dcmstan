@@ -41,7 +41,7 @@ test_that("specify only measurement or structural", {
   expect_equal(default_dcm_priors(measurement_model = nido()),
                nido_priors())
   expect_equal(default_dcm_priors(measurement_model = ncrum()),
-               ncrum_priors())
+               ncrum_priors(max_interaction = Inf))
 
   expect_equal(default_dcm_priors(structural_model = unconstrained()),
                unconstrained_priors())
