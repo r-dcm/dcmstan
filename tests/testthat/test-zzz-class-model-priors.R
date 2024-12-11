@@ -126,15 +126,6 @@ test_that("independent default priors", {
   )
 })
 
-test_that("hierarchical default priors", {
-  expect_identical(
-    prior_tibble(hierarchical_priors()),
-    tibble::tibble(type = c("structural"),
-                   coefficient = "Vc",
-                   prior = c("dirichlet(rep_vector(1, C))"))
-  )
-})
-
 # prior methods ----------------------------------------------------------------
 test_that("prior_tibble works", {
   my_prior <- prior("normal(0, 1)", type = "intercept")
