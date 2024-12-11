@@ -142,6 +142,69 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 }
 
 
+#' Determine the possible parameters for a NIDA model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+nida_parameters <- function(qmatrix, identifier = NULL) {
+  if (!is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      dplyr::select(-{{ identifier }})
+  }
+
+  att_id <- seq_len(ncol(qmatrix))
+
+  all_params <- expand.grid(att_id = att_id,
+                            type = c("slip", "guess"),
+                            stringsAsFactors = FALSE) |>
+    tibble::as_tibble() |>
+    dplyr::mutate(coefficient = glue::glue("{.data$type}[{.data$att_id}]")) |>
+    dplyr::arrange(.data$att_id, .data$type) |>
+    dplyr::mutate(coefficient = as.character(.data$coefficient))
+
+  return(all_params)
+}
+
+
+#' Determine the possible parameters for a NIDO model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+nido_parameters <- function(qmatrix, identifier = NULL) {
+  if (!is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      dplyr::select(-{{ identifier }})
+  }
+
+  att_id <- seq_len(ncol(qmatrix))
+
+  all_params <- tidyr::crossing(att_id = att_id,
+                                type = c("intercept", "maineffect")) |>
+    dplyr::mutate(attributes = dplyr::case_when(.data$type == "intercept" ~
+                                                  NA_character_,
+                                                .data$type == "maineffect" ~
+                                                  as.character(att_id)),
+                  coefficient = dplyr::case_when(.data$type == "intercept" ~
+                                                   glue::glue("l{att_id}_0"),
+                                                 .data$type == "maineffect" ~
+                                                   glue::glue("l{att_id}_1")))
+
+  return(all_params)
+}
+
+
 # Other utilities --------------------------------------------------------------
 #' Consistent naming for model matrix output
 #'
