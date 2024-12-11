@@ -106,6 +106,21 @@ crum_priors <- function() {
     prior("lognormal(0, 1)", type = "maineffect"))
 }
 
+nida_priors <- dina_priors
+
+nido_priors <- crum_priors
+
+ncrum_priors <- function(max_interaction) {
+  prior <- c(prior("normal(0, 2)", type = "intercept"),
+             prior("lognormal(0, 1)", type = "maineffect"))
+  if (max_interaction > 1) {
+    prior <- c(prior,
+               prior("lognormal(0, 1)", type = "interaction"))
+  }
+
+  return(prior)
+}
+
 ## structural model defaults -----
 unconstrained_priors <- function() {
   prior("dirichlet(rep_vector(1, C))", type = "structural", coefficient = "Vc")
