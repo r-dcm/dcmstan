@@ -17,6 +17,13 @@ test_that("lcdm script works", {
                             measurement_model = lcdm(),
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
+  dtmr_spec2 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix %>%
+                              dplyr::filter(!(item %in% c("10b", "10c", "13",
+                                                          "14", "15a", "17",
+                                                          "18", "22"))),
+                            identifier = "item",
+                            measurement_model = lcdm())
+  expect_snapshot(generate_stan(dtmr_spec2))
 })
 
 test_that("crum script works", {
