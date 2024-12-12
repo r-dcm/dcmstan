@@ -111,8 +111,6 @@ crum_priors <- function() {
     prior("lognormal(0, 1)", type = "maineffect"))
 }
 
-nida_priors <- dina_priors
-
 nido_priors <- crum_priors
 
 ncrum_priors <- function(max_interaction) {
@@ -125,6 +123,8 @@ ncrum_priors <- function(max_interaction) {
 
   return(prior)
 }
+
+nida_priors <- ncrum_priors
 
 ## structural model defaults -----
 unconstrained_priors <- function() {
