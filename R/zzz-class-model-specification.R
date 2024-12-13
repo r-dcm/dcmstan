@@ -46,14 +46,8 @@ dcm_specify <- function(qmatrix, identifier = NULL,
   S7::check_is_S7(structural_model, structural)
   if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {
     measurement_model@model_args$max_interaction <- 1L
-  }
-  multi_att_items <- qmatrix$clean_qmatrix |>
-    tibble::as_tibble() |>
-    dplyr::mutate(total_atts = rowSums(qmatrix$clean_qmatrix)) |>
-    dplyr::filter(total_atts > 1) |>
-    nrow()
-  if (measurement_model@model %in% c("lcdm", "hdcm") &&
-      multi_att_items == 0) {
+  } else if (measurement_model@model == "lcdm" &&
+               all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
   }
   if (is.null(priors)) {
