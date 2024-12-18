@@ -82,7 +82,8 @@
 #' @examples
 #' lcdm()
 #'
-#' lcdm(max_interaction = 3, hierarchy = "lexical -> cohesive -> morphosyntactic")
+#' lcdm(max_interaction = 3,
+#'      hierarchy = "lexical -> cohesive -> morphosyntactic")
 #'
 #' dina()
 lcdm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
