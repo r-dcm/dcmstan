@@ -7,11 +7,11 @@
 #'
 #' @param max_interaction For the LCDM, the highest item-level interaction to
 #'   include in the model.
-#' @param hierarchy A tibble specifying the attribute hierarchy (via
-#'   [ggdag::tidy_dagitty()]).
-#' @param att_labels A tibble specifying the mapping between the generic
-#'   attribute labels and the attribute names specified in the user-specified
-#'   Q-matrix.
+#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
+#'   the `dagitty` [vignette](https://cran.r-project.org/web/packages/dagitty/vignettes/dagitty4semusers.html)
+#'   for a tutorial on how to draw the attribute hierarchy.
+#' @param att_labels Optional. If present, a tibble containing a dictionary with
+#'   the attribute names from the Q-matrix and generic attribute names.
 #'
 #' @returns A measurement model object.
 #'
@@ -53,14 +53,6 @@
 #' increase in probability for the presence of more than one of the required
 #' attributes.
 #'
-#' The HDCM (Templin & Bradshaw, 2014) is an adaptation of the LCDM, where the
-#' LCDM measurement model is applied with an attribute hierarchy. The HDCM
-#' restricts which attribute mastery profiles are possible since not all
-#' attribute mastery profiles are possible under a given attribute hierarchy.
-#' Thus, the HDCM estimates the same intercept, main effect, and interaction
-#' parameters as the LCDM, except the HDCM has fewer possible attribute
-#' mastery profiles than the LCDM.
-#'
 #' @name measurement-model
 #' @seealso [Structural models][structural-model]
 #' @export
@@ -86,24 +78,17 @@
 #' @references Templin, J. L., & Henson, R. A. (2006). Measurement of
 #'   psychological disorders using cognitive diagnosis models. *Psychological
 #'   Methods, 11*(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
-#' @references Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
-#'   classification models: A family of models for estimating and testing
-#'   attribute hierarchies. *Psychometrika, 79*(2), 317-339
-#'   \doi{10.1007/s11336-013-9362-0}
 #'
 #' @examples
 #' lcdm()
 #'
-#' lcdm(max_interaction = 2)
+#' lcdm(max_interaction = 3, hierarchy = "lexical -> cohesive -> morphosyntactic")
 #'
 #' dina()
-#'
-#' hdcm(max_interaction = 2,
-#'      hierarchy = ggdag::tidy_dagitty(" dag { x -> y -> z} "),
-#'      att_labels = tibble::tibble(att = c("att1", "att2", "att3"),
-#'                                  att_labels = c("x", "y", "z")))
-lcdm <- function(max_interaction = Inf) {
-  LCDM(model = "lcdm", list(max_interaction = max_interaction))
+lcdm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
+  LCDM(model = "lcdm", list(max_interaction = max_interaction,
+                            hierarchy = hierarchy,
+                            att_labels = att_labels))
 }
 
 #' @rdname measurement-model
@@ -124,15 +109,6 @@ crum <- function() {
   CRUM(model = "crum")
 }
 
-#' @rdname measurement-model
-#' @export
-hdcm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
-  HDCM(model = "hdcm",
-       list(max_interaction = max_interaction,
-            hierarchy = hierarchy,
-            att_labels = att_labels))
-}
-
 
 #' Structural models for diagnostic classification
 #'
@@ -140,6 +116,12 @@ hdcm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
 #' The currently supported options for structural models are:
 #' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
 #' See details for additional information on each model.
+#'
+#' @param hierarchy A tibble specifying the attribute hierarchy (via
+#'   [ggdag::tidy_dagitty()]).
+#' @param att_labels A tibble specifying the mapping between the generic
+#'   attribute labels and the attribute names specified in the user-specified
+#'   Q-matrix.
 #'
 #' @returns A structural model object.
 #'
@@ -152,6 +134,10 @@ hdcm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
 #' are unrelated to each other. That is, there is no relationship between the
 #' presence of one attribute and the presence of any other. For an example of
 #' independent attributes model, see Lee (2016).
+#'
+#' The hierarchical attributes model assumes some attributes must be mastered
+#' before other attributes can be mastered. For an example of the hierarchical
+#' attributes model, see Leighton et al. (2004) and Templin & Bradshaw (2014).
 #'
 #' @name structural-model
 #' @seealso [Measurement models][measurement-model]
@@ -166,11 +152,22 @@ hdcm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
 #'   https://mc-stan.org/documentation/case-studies/dina_independent.html
 #' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
 #'   measurement: Theory, methods, and applications*. Guilford Press.
+#' @references Leighton, J. P., Gierl, M. J., & Hunka, S. M. (2004). The
+#'   attribute hierarchy method for cognitive assessment: A variation on
+#'   Tatsuoka's rule-space approach.
+#'   *Journal of Educational Measurement, 41*(3), 205-237.
+#'   \doi{10.1111/j.1745-3984.2004.tb01163.x}
+#' @references Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
+#'   classification models: A family of models for estimating and testing
+#'   attribute hierarchies. *Psychometrika, 79*(2), 317-339
+#'   \doi{10.1007/s11336-013-9362-0}
 #'
 #' @examples
 #' unconstrained()
 #'
 #' independent()
+#'
+#' hierarchical()
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
@@ -179,6 +176,12 @@ unconstrained <- function() {
 #' @export
 independent <- function() {
   INDEPENDENT(model = "independent")
+}
+
+#' @rdname structural-model
+#' @export
+hierarchical <- function(hierarchy = NULL, att_labels = NULL) {
+  HIERARCHICAL(model = "hierarchical")
 }
 
 
@@ -290,8 +293,6 @@ DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-HDCM <- S7::new_class("HDCM", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
@@ -300,3 +301,6 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
+HIERARCHICAL <- S7::new_class("HIERARCHICAL", parent = structural,
+                              package = "dcmstan",
+                              properties = list(model = model_property))
