@@ -11,6 +11,9 @@ exclusions: list(
     "R/zzz-class-model-components.R" = list(
       object_name_linter = Inf
     ),
+    "R/zzz-class-model-components.R" = list(
+      line_length_linter = Inf
+    ),
     "R/zzz-methods-get-parameters.R" = list(
       object_name_linter = Inf
     ),
