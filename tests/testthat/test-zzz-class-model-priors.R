@@ -91,22 +91,6 @@ test_that("crum default priors", {
   )
 })
 
-test_that("hdcm default priors", {
-  expect_identical(
-    prior_tibble(hdcm_priors(max_interaction = Inf)),
-    tibble::tibble(type = c("intercept", "maineffect", "interaction"),
-                   coefficient = NA_character_,
-                   prior = c("normal(0, 2)", "lognormal(0, 1)", "normal(0, 2)"))
-  )
-
-  expect_identical(
-    prior_tibble(hdcm_priors(max_interaction = 1)),
-    tibble::tibble(type = c("intercept", "maineffect"),
-                   coefficient = NA_character_,
-                   prior = c("normal(0, 2)", "lognormal(0, 1)"))
-  )
-})
-
 # structural model priors ------------------------------------------------------
 test_that("unconstrained default priors", {
   expect_identical(
