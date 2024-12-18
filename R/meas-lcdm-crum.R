@@ -13,12 +13,82 @@
 #'   and `priors`.
 #' @rdname lcdm-crum
 #' @noRd
-meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
+meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
+                      hierarchy = NULL, att_labels) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
                                 rename_attributes = TRUE,
                                 rename_items = TRUE)
+
+  if (!is.null(hierarchy)) {
+    g <- glue::glue(" graph { <hierarchy> } ", .open = "<", .close = ">")
+    g <- dagitty::dagitty(g)
+
+    hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
+    hierarchy <- ggdag::tidy_dagitty(hierarchy)
+
+    ancestors <- tibble::tibble()
+
+    for (jj in hierarchy |> tibble::as_tibble() |> dplyr::pull(.data$name)) {
+      tmp_jj <- att_labels |>
+        dplyr::filter(.data$att_label == jj) |>
+        dplyr::pull(.data$att)
+
+      tmp <- dagitty::ancestors(g, jj) |>
+        tibble::as_tibble() |>
+        dplyr::filter(.data$value != jj) |>
+        dplyr::mutate(param = tmp_jj) |>
+        dplyr::rename(ancestors = "value") |>
+        dplyr::select("param", "ancestors") |>
+        dplyr::left_join(att_labels, by = c("ancestors" = "att_label")) |>
+        dplyr::select("param", ancestors = "att")
+
+      ancestors <- dplyr::bind_rows(ancestors, tmp)
+    }
+
+    nested_params <- ancestors |>
+      dplyr::group_by(.data$param) |>
+      dplyr::mutate(base_param = stringr::str_remove(.data$param, "att"),
+                    param_num = dplyr::row_number(),
+                    int_level = dplyr::row_number(),
+                    int_level = max(.data$int_level) + 1,
+                    ancestors = stringr::str_remove(.data$ancestors, "att")) |>
+      dplyr::ungroup() |>
+      tidyr::pivot_wider(names_from = "param_num", values_from = "ancestors") |>
+      dplyr::select("param", "int_level", "base_param", dplyr::everything()) |>
+      tidyr::unite(col = "param_spec", -c("param"), sep = "", na.rm = TRUE)
+
+    int_labels <- ancestors |>
+      dplyr::group_by(.data$param) |>
+      dplyr::mutate(param_num = dplyr::row_number()) |>
+      dplyr::ungroup() |>
+      tidyr::pivot_wider(names_from = "param_num", values_from = "ancestors") |>
+      tidyr::unite(col = "int_label", dplyr::everything(), sep = "__",
+                   na.rm = TRUE, remove = FALSE) |>
+      dplyr::select("param", "int_label")
+
+    all_params <- all_params |>
+      dplyr::filter(.data$type != "interaction") |>
+      dplyr::left_join(nested_params, by = c("attributes" = "param")) |>
+      dplyr::mutate(param_spec = stringr::str_c("l", .data$item_id, "_",
+                                                .data$param_spec),
+                    coefficient = dplyr::case_when(is.na(.data$param_spec) ~
+                                                     .data$coefficient,
+                                                   !is.na(.data$param_spec) ~
+                                                     .data$param_spec),
+                    type = dplyr::case_when(is.na(.data$param_spec) ~
+                                              .data$type,
+                                            !is.na(.data$param_spec) ~
+                                              "interaction")) |>
+      dplyr::select(-"param_spec") |>
+      dplyr::left_join(int_labels, by = c("attributes" = "param")) |>
+      dplyr::mutate(attributes = dplyr::case_when(.data$type == "interaction" &
+                                                    !is.na(.data$int_label) ~
+                                                    .data$int_label,
+                                                  TRUE ~ .data$attributes)) |>
+      dplyr::select(-"int_label")
+  }
 
   meas_params <- all_params |>
     dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
