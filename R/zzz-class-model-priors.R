@@ -66,10 +66,7 @@ default_dcm_priors <- function(measurement_model = NULL,
       ),
       dina = dina_priors(),
       dino = dino_priors(),
-      crum = crum_priors(),
-      hdcm = hdcm_priors(
-        max_interaction = measurement_model@model_args$max_interaction
-      )
+      crum = crum_priors()
     )
   }
 
@@ -77,9 +74,12 @@ default_dcm_priors <- function(measurement_model = NULL,
     NULL
   } else {
     S7::check_is_S7(structural_model, class = structural)
-    switch(structural_model@model,
-           unconstrained = unconstrained_priors(),
-           independent = independent_priors())
+    switch(
+      structural_model@model,
+      unconstrained = unconstrained_priors(),
+      independent = independent_priors(),
+      hierarchical = hierarchical_priors()
+    )
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -96,8 +96,6 @@ lcdm_priors <- function(max_interaction) {
 
   return(prior)
 }
-
-hdcm_priors <- lcdm_priors
 
 dina_priors <- function() {
   c(prior("beta(5, 25)", type = "slip"),
@@ -119,6 +117,8 @@ unconstrained_priors <- function() {
 independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
 }
+
+hierarchical_priors <- unconstrained_priors
 
 # dcmprior class ---------------------------------------------------------------
 dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
