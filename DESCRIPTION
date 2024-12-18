@@ -27,7 +27,9 @@ Depends:
     R (>= 4.3.0)
 Imports: 
     cli,
+    dagitty,
     dplyr,
+    ggdag,
     glue,
     lifecycle,
     rdcmchecks (>= 0.0.0.9000),
@@ -37,7 +39,6 @@ Imports:
     tidyr
 Suggests: 
     dcmdata (>= 0.0.0.9000),
-    ggdag,
     spelling,
     stringr,
     testthat (>= 3.0.0)
