@@ -50,16 +50,12 @@ test_that("crum script works", {
 })
 
 test_that("lcdm with hierarchy works", {
-  att_labels <- get_att_labels(qmatrix = dcmdata::ecpe_qmatrix,
-                               identifier = "item_id")
-
   ecpe_spec <-
     dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
                 identifier = "item_id",
                 measurement_model = lcdm(max_interaction = Inf,
                                          hierarchy =
                                            paste0("lexical -> cohesive -> ",
-                                                  "morphosyntactic"),
-                                         att_labels = att_labels))
+                                                  "morphosyntactic")))
   expect_snapshot(generate_stan(ecpe_spec))
 })

@@ -86,10 +86,13 @@
 #'      hierarchy = "lexical -> cohesive -> morphosyntactic")
 #'
 #' dina()
-lcdm <- function(max_interaction = Inf, hierarchy = NULL, att_labels = NULL) {
+lcdm <- function(max_interaction = Inf, hierarchy = NULL) {
+  if (!is.null(hierarchy)) {
+    hierarchy <- check_hierarchy(hierarchy)
+  }
+
   LCDM(model = "lcdm", list(max_interaction = max_interaction,
-                            hierarchy = hierarchy,
-                            att_labels = att_labels))
+                            hierarchy = hierarchy))
 }
 
 #' @rdname measurement-model
@@ -117,12 +120,6 @@ crum <- function() {
 #' The currently supported options for structural models are:
 #' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
 #' See details for additional information on each model.
-#'
-#' @param hierarchy A tibble specifying the attribute hierarchy (via
-#'   [ggdag::tidy_dagitty()]).
-#' @param att_labels A tibble specifying the mapping between the generic
-#'   attribute labels and the attribute names specified in the user-specified
-#'   Q-matrix.
 #'
 #' @returns A structural model object.
 #'
@@ -181,7 +178,7 @@ independent <- function() {
 
 #' @rdname structural-model
 #' @export
-hierarchical <- function(hierarchy = NULL, att_labels = NULL) {
+hierarchical <- function() {
   HIERARCHICAL(model = "hierarchical")
 }
 

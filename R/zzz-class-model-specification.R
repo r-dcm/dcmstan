@@ -41,6 +41,7 @@ dcm_specify <- function(qmatrix, identifier = NULL,
                         structural_model = unconstrained(),
                         priors = NULL) {
   check_string(identifier, allow_null = TRUE)
+  att_labels <- get_att_labels(qmatrix = qmatrix, identifier = identifier)
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
@@ -49,6 +50,10 @@ dcm_specify <- function(qmatrix, identifier = NULL,
   } else if (measurement_model@model == "lcdm" &&
                all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
+  }
+  if (measurement_model@model == "lcdm" &&
+      !is.null(measurement_model@model_args$hierarchy)) {
+    measurement_model@model_args$att_labels <- att_labels
   }
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
