@@ -3584,8 +3584,8 @@
         real<lower=0> l28_13;
       
         ////////////////////////////////// item interactions
-        real<lower=-1 * min([l1_11+l1_212+l1_213,l1_12+l1_212+l1_223,l1_13+l1_213+l1_223])> l1_3123;
         real<lower=-1 * min([l1_12,l1_13])> l1_223;
+        real<lower=-1 * min([l1_11+l1_212+l1_213,l1_12+l1_212+l1_223,l1_13+l1_213+l1_223])> l1_3123;
         real<lower=-1 * min([l2_12,l2_13])> l2_223;
         real<lower=-1 * min([l3_11+l3_212+l3_213,l3_12+l3_212+l3_223,l3_13+l3_213+l3_223])> l3_3123;
         real<lower=-1 * min([l7_11+l7_212+l7_213,l7_12+l7_212+l7_223,l7_13+l7_213+l7_223])> l7_3123;
@@ -3616,7 +3616,7 @@
         pi[1,5] = inv_logit(l1_0);
         pi[1,6] = inv_logit(l1_0);
         pi[1,7] = inv_logit(l1_0+l1_223);
-        pi[1,8] = inv_logit(l1_0+l1_3123+l1_223);
+        pi[1,8] = inv_logit(l1_0+l1_223+l1_3123);
         pi[2,1] = inv_logit(l2_0);
         pi[2,2] = inv_logit(l2_0);
         pi[2,3] = inv_logit(l2_0);
@@ -3632,7 +3632,7 @@
         pi[3,5] = inv_logit(l3_0);
         pi[3,6] = inv_logit(l3_0+l3_13);
         pi[3,7] = inv_logit(l3_0+l3_13);
-        pi[3,8] = inv_logit(l3_0+l3_3123+l3_13);
+        pi[3,8] = inv_logit(l3_0+l3_13+l3_3123);
         pi[4,1] = inv_logit(l4_0);
         pi[4,2] = inv_logit(l4_0);
         pi[4,3] = inv_logit(l4_0);
@@ -3664,7 +3664,7 @@
         pi[7,5] = inv_logit(l7_0);
         pi[7,6] = inv_logit(l7_0+l7_13);
         pi[7,7] = inv_logit(l7_0+l7_13);
-        pi[7,8] = inv_logit(l7_0+l7_3123+l7_13);
+        pi[7,8] = inv_logit(l7_0+l7_13+l7_3123);
         pi[8,1] = inv_logit(l8_0);
         pi[8,2] = inv_logit(l8_0);
         pi[8,3] = inv_logit(l8_0);
@@ -3696,7 +3696,7 @@
         pi[11,5] = inv_logit(l11_0);
         pi[11,6] = inv_logit(l11_0+l11_13);
         pi[11,7] = inv_logit(l11_0+l11_13);
-        pi[11,8] = inv_logit(l11_0+l11_3123+l11_13);
+        pi[11,8] = inv_logit(l11_0+l11_13+l11_3123);
         pi[12,1] = inv_logit(l12_0);
         pi[12,2] = inv_logit(l12_0);
         pi[12,3] = inv_logit(l12_0);
@@ -3704,7 +3704,7 @@
         pi[12,5] = inv_logit(l12_0);
         pi[12,6] = inv_logit(l12_0+l12_13);
         pi[12,7] = inv_logit(l12_0+l12_13);
-        pi[12,8] = inv_logit(l12_0+l12_3123+l12_13);
+        pi[12,8] = inv_logit(l12_0+l12_13+l12_3123);
         pi[13,1] = inv_logit(l13_0);
         pi[13,2] = inv_logit(l13_0);
         pi[13,3] = inv_logit(l13_0);
@@ -3736,15 +3736,15 @@
         pi[16,5] = inv_logit(l16_0);
         pi[16,6] = inv_logit(l16_0+l16_13);
         pi[16,7] = inv_logit(l16_0+l16_13);
-        pi[16,8] = inv_logit(l16_0+l16_3123+l16_13);
+        pi[16,8] = inv_logit(l16_0+l16_13+l16_3123);
         pi[17,1] = inv_logit(l17_0);
         pi[17,2] = inv_logit(l17_0);
         pi[17,3] = inv_logit(l17_0);
         pi[17,4] = inv_logit(l17_0+l17_13);
         pi[17,5] = inv_logit(l17_0);
         pi[17,6] = inv_logit(l17_0+l17_13);
-        pi[17,7] = inv_logit(l17_0+l17_223+l17_13);
-        pi[17,8] = inv_logit(l17_0+l17_223+l17_13);
+        pi[17,7] = inv_logit(l17_0+l17_13+l17_223);
+        pi[17,8] = inv_logit(l17_0+l17_13+l17_223);
         pi[18,1] = inv_logit(l18_0);
         pi[18,2] = inv_logit(l18_0);
         pi[18,3] = inv_logit(l18_0);
@@ -3768,7 +3768,7 @@
         pi[20,5] = inv_logit(l20_0);
         pi[20,6] = inv_logit(l20_0+l20_13);
         pi[20,7] = inv_logit(l20_0+l20_13);
-        pi[20,8] = inv_logit(l20_0+l20_3123+l20_13);
+        pi[20,8] = inv_logit(l20_0+l20_13+l20_3123);
         pi[21,1] = inv_logit(l21_0);
         pi[21,2] = inv_logit(l21_0);
         pi[21,3] = inv_logit(l21_0);
@@ -3776,7 +3776,7 @@
         pi[21,5] = inv_logit(l21_0);
         pi[21,6] = inv_logit(l21_0+l21_13);
         pi[21,7] = inv_logit(l21_0+l21_13);
-        pi[21,8] = inv_logit(l21_0+l21_3123+l21_13);
+        pi[21,8] = inv_logit(l21_0+l21_13+l21_3123);
         pi[22,1] = inv_logit(l22_0);
         pi[22,2] = inv_logit(l22_0);
         pi[22,3] = inv_logit(l22_0);
@@ -3839,13 +3839,13 @@
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
-        l1_3123 ~ normal(0, 2);
         l1_223 ~ normal(0, 2);
+        l1_3123 ~ normal(0, 2);
         l2_0 ~ normal(0, 2);
         l2_223 ~ normal(0, 2);
         l3_0 ~ normal(0, 2);
-        l3_3123 ~ normal(0, 2);
         l3_13 ~ lognormal(0, 1);
+        l3_3123 ~ normal(0, 2);
         l4_0 ~ normal(0, 2);
         l4_13 ~ lognormal(0, 1);
         l5_0 ~ normal(0, 2);
@@ -3853,8 +3853,8 @@
         l6_0 ~ normal(0, 2);
         l6_13 ~ lognormal(0, 1);
         l7_0 ~ normal(0, 2);
-        l7_3123 ~ normal(0, 2);
         l7_13 ~ lognormal(0, 1);
+        l7_3123 ~ normal(0, 2);
         l8_0 ~ normal(0, 2);
         l8_223 ~ normal(0, 2);
         l9_0 ~ normal(0, 2);
@@ -3862,11 +3862,11 @@
         l10_0 ~ normal(0, 2);
         l10_3123 ~ normal(0, 2);
         l11_0 ~ normal(0, 2);
-        l11_3123 ~ normal(0, 2);
         l11_13 ~ lognormal(0, 1);
+        l11_3123 ~ normal(0, 2);
         l12_0 ~ normal(0, 2);
-        l12_3123 ~ normal(0, 2);
         l12_13 ~ lognormal(0, 1);
+        l12_3123 ~ normal(0, 2);
         l13_0 ~ normal(0, 2);
         l13_3123 ~ normal(0, 2);
         l14_0 ~ normal(0, 2);
@@ -3874,21 +3874,21 @@
         l15_0 ~ normal(0, 2);
         l15_13 ~ lognormal(0, 1);
         l16_0 ~ normal(0, 2);
-        l16_3123 ~ normal(0, 2);
         l16_13 ~ lognormal(0, 1);
+        l16_3123 ~ normal(0, 2);
         l17_0 ~ normal(0, 2);
-        l17_223 ~ normal(0, 2);
         l17_13 ~ lognormal(0, 1);
+        l17_223 ~ normal(0, 2);
         l18_0 ~ normal(0, 2);
         l18_13 ~ lognormal(0, 1);
         l19_0 ~ normal(0, 2);
         l19_13 ~ lognormal(0, 1);
         l20_0 ~ normal(0, 2);
-        l20_3123 ~ normal(0, 2);
         l20_13 ~ lognormal(0, 1);
+        l20_3123 ~ normal(0, 2);
         l21_0 ~ normal(0, 2);
-        l21_3123 ~ normal(0, 2);
         l21_13 ~ lognormal(0, 1);
+        l21_3123 ~ normal(0, 2);
         l22_0 ~ normal(0, 2);
         l22_13 ~ lognormal(0, 1);
         l23_0 ~ normal(0, 2);
