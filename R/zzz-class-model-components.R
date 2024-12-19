@@ -10,8 +10,6 @@
 #' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
 #'   the `dagitty` [vignette](https://cran.r-project.org/web/packages/dagitty/vignettes/dagitty4semusers.html)
 #'   for a tutorial on how to draw the attribute hierarchy.
-#' @param att_labels Optional. If present, a tibble containing a dictionary with
-#'   the attribute names from the Q-matrix and generic attribute names.
 #'
 #' @returns A measurement model object.
 #'
