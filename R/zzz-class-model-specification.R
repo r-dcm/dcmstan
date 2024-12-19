@@ -54,7 +54,7 @@ dcm_specify <- function(qmatrix, identifier = NULL,
     measurement_model@model_args$max_interaction <- 1L
   }
   if (measurement_model@model == "lcdm" &&
-      !is.null(measurement_model@model_args$hierarchy)) {
+        !is.null(measurement_model@model_args$hierarchy)) {
     measurement_model@model_args$att_labels <- att_labels
   }
   if (is.null(priors)) {

@@ -51,9 +51,9 @@ check_hierarchy <- function(x, arg = rlang::caller_arg(x),
   ancestors <- tibble::tibble()
 
   for (jj in hierarchy |>
-       tibble::as_tibble() |>
-       dplyr::distinct(.data$name) |>
-       dplyr::pull(.data$name)) {
+         tibble::as_tibble() |>
+         dplyr::distinct(.data$name) |>
+         dplyr::pull(.data$name)) {
     tmp <- dagitty::ancestors(g, jj) |>
       tibble::as_tibble() |>
       dplyr::filter(.data$value != jj) |>

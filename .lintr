@@ -20,6 +20,9 @@ exclusions: list(
     "R/zzz-methods-get-parameters.R" = list(
       object_name_linter = Inf
     ),
+    "tests/testthat/test-utils-hierarchy.R" = list(
+      line_length_linter = Inf
+    ),
     "tests/testthat/test-zzz-methods-get-parameters.R" = list(
       indentation_linter = Inf
     )
