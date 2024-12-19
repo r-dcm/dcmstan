@@ -8,6 +8,9 @@ exclusions: list(
     "R/meas-lcdm-crum.R" = list(
       object_usage_linter = Inf
     ),
+    "R/utils-hierarchy.R" = list(
+      line_length_linter = Inf
+    ),
     "R/zzz-class-model-components.R" = list(
       object_name_linter = Inf
     ),
