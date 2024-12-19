@@ -52,7 +52,7 @@ check_hierarchy <- function(x, arg = rlang::caller_arg(x),
     tibble::as_tibble() |>
     dplyr::filter(.data$direction == "<->")
 
-  if (nrow(bidirectional_flag) > 0 | cycle_flag) {
+  if (nrow(bidirectional_flag) > 0 || cycle_flag) {
     rdcmchecks::abort_bad_argument(arg = arg,
                                    must = "not be cyclical",
                                    call = call)
