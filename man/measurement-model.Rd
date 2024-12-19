@@ -8,7 +8,7 @@
 \alias{crum}
 \title{Measurement models for diagnostic classification}
 \usage{
-lcdm(max_interaction = Inf)
+lcdm(max_interaction = Inf, hierarchy = NULL)
 
 dina()
 
@@ -19,6 +19,10 @@ crum()
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
 include in the model.}
+
+\item{hierarchy}{Optional. If present, the quoted attribute hierarchy. See
+the \code{dagitty} \href{https://cran.r-project.org/web/packages/dagitty/vignettes/dagitty4semusers.html}{vignette}
+for a tutorial on how to draw the attribute hierarchy.}
 }
 \value{
 A measurement model object.
@@ -26,7 +30,7 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); and compensatory, reparameterized unified model (C-RUM).
+Loglinear cognitive diagnostic model (LCDM); Deterministic input, noisy "and", gate (DINA); Deterministic input, noisy "or" gate (DINO); and Compensatory, reparameterized unified model (C-RUM).
 See details for additional information on each model.
 }
 \details{
@@ -70,7 +74,8 @@ attributes.
 \examples{
 lcdm()
 
-lcdm(max_interaction = 2)
+lcdm(max_interaction = 3,
+     hierarchy = "lexical -> cohesive -> morphosyntactic")
 
 dina()
 }
