@@ -23,9 +23,6 @@ include in the model.}
 \item{hierarchy}{Optional. If present, the quoted attribute hierarchy. See
 the \code{dagitty} \href{https://cran.r-project.org/web/packages/dagitty/vignettes/dagitty4semusers.html}{vignette}
 for a tutorial on how to draw the attribute hierarchy.}
-
-\item{att_labels}{Optional. If present, a tibble containing a dictionary with
-the attribute names from the Q-matrix and generic attribute names.}
 }
 \value{
 A measurement model object.
