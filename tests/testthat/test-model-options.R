@@ -3,11 +3,7 @@ test_that("measurement models have functions", {
   for (i in seq_along(m_choice)) {
     expect_true(inherits(eval(rlang::sym(m_choice[i])), "function"))
     if (m_choice[i] == "lcdm") {
-      mod_args <- list(hierarchy = "x -> y",
-                       att_labels = tibble::tibble(att = c("att1",
-                                                           "att2"),
-                                                   att_labels = c("Test 1",
-                                                                  "Test 2")))
+      mod_args <- list(hierarchy = "x -> y")
     } else {
       mod_args <- list()
     }
