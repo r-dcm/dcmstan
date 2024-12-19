@@ -126,6 +126,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
     dplyr::pull(.data$param_def)
   interactions <- meas_params |>
     dplyr::filter(.data$param_level >= 2) |>
+    dplyr::arrange(.data$item_id, .data$param_name) |>
     dplyr::pull(.data$param_def)
 
   interaction_stan <- if (length(interactions) > 0) {
@@ -172,6 +173,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
                      relationship = "many-to-one") |>
     dplyr::filter(.data$valid_for_profile == 1) |>
     dplyr::group_by(.data$item_id, .data$profile_id) |>
+    dplyr::arrange(.data$item_id, .data$profile_id, .data$param_name) |>
     dplyr::summarize(meas_params = paste(unique(.data$param_name),
                                          collapse = "+"),
                      .groups = "drop") |>
@@ -192,6 +194,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
                               .data$param_level == 1 ~ "maineffect",
                               .data$param_level > 1 ~ "interaction")
     ) |>
+    dplyr::arrange(.data$item_id, .data$param_name) |>
     dplyr::left_join(prior_tibble(priors),
                      by = c("type", "param_name" = "coefficient"),
                      relationship = "one-to-one") |>
