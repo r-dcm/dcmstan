@@ -56,6 +56,7 @@ test_that("lcdm with hierarchy works", {
                 measurement_model = lcdm(max_interaction = Inf,
                                          hierarchy =
                                            paste0("lexical -> cohesive -> ",
-                                                  "morphosyntactic")))
+                                                  "morphosyntactic")),
+                structural_model = hierarchical())
   expect_snapshot(generate_stan(ecpe_spec))
 })
