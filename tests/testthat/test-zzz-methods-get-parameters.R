@@ -333,6 +333,33 @@ test_that("independent parameters work", {
   expect_equal(params, params2)
 })
 
+test_that("hierarchical parameters work", {
+  test_qmatrix <- tibble::tibble(
+    test_item = paste0("B", 1:5),
+    att1 = sample(0:1, size = 5, replace = TRUE),
+    att2 = sample(0:1, size = 5, replace = TRUE),
+    att3 = sample(0:1, size = 5, replace = TRUE),
+    att4 = sample(0:1, size = 5, replace = TRUE)
+  )
+
+  params <- get_parameters(hierarchical(), qmatrix = test_qmatrix,
+                           identifier = "test_item")
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("type", "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tibble(type = "structural",
+                   coefficient = "Vc")
+  )
+
+  params2 <- get_parameters(hierarchical(), qmatrix = test_qmatrix[, -1])
+  expect_true(tibble::is_tibble(params2))
+  expect_equal(colnames(params2), c("type", "coefficient"))
+
+  expect_equal(params, params2)
+})
+
 # dcm specification parameters -------------------------------------------------
 test_that("warnings are produced for unnecessary arguments", {
   test_qmatrix <- tibble::tibble(
