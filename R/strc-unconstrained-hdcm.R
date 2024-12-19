@@ -46,6 +46,6 @@ strc_unconstrained <- function(qmatrix, priors) {
 
 #' @rdname lcdm-crum
 #' @noRd
-strc_hierarchical <- function(qmatrix, priors) {
+strc_hdcm <- function(qmatrix, priors) {
   strc_unconstrained(qmatrix, priors = priors)
 }

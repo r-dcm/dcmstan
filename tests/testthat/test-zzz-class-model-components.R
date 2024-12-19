@@ -19,9 +19,9 @@ test_that("structural class works", {
   expect_true(S7::S7_inherits(structural(), structural))
   expect_true(S7::S7_inherits(unconstrained(), structural))
   expect_true(S7::S7_inherits(independent(), structural))
-  expect_true(S7::S7_inherits(hierarchical(), structural))
+  expect_true(S7::S7_inherits(hdcm(), structural))
 
   expect_true(S7::S7_inherits(unconstrained(), UNCONSTRAINED))
   expect_true(S7::S7_inherits(independent(), INDEPENDENT))
-  expect_true(S7::S7_inherits(hierarchical(), HIERARCHICAL))
+  expect_true(S7::S7_inherits(hdcm(), HDCM))
 })

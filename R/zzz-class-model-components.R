@@ -163,7 +163,7 @@ crum <- function() {
 #'
 #' independent()
 #'
-#' hierarchical()
+#' hdcm()
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
@@ -176,8 +176,8 @@ independent <- function() {
 
 #' @rdname structural-model
 #' @export
-hierarchical <- function() {
-  HIERARCHICAL(model = "hierarchical")
+hdcm <- function() {
+  HDCM(model = "hdcm")
 }
 
 
@@ -297,6 +297,5 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
-HIERARCHICAL <- S7::new_class("HIERARCHICAL", parent = structural,
-                              package = "dcmstan",
-                              properties = list(model = model_property))
+HDCM <- S7::new_class("HDCM", parent = structural, package = "dcmstan",
+                      properties = list(model = model_property))

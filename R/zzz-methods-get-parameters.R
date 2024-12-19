@@ -94,7 +94,6 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
                  coefficient = paste0("eta[", seq_along(att_names), "]"))
 }
 
-S7::method(get_parameters, HIERARCHICAL) <- function(x, qmatrix,
-                                                     identifier = NULL) {
+S7::method(get_parameters, HDCM) <- function(x, qmatrix, identifier = NULL) {
   tibble::tibble(type = "structural", coefficient = "Vc")
 }

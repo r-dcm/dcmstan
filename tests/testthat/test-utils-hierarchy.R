@@ -27,9 +27,9 @@ test_that("check_hierarchy", {
 
   err <- rlang::catch_cnd(check_hierarchy("x <-> y -> z"))
   expect_s3_class(err, "rlang_error")
-  expect_match(err$message, "be a hierarchical structure with a clear starting attribute")
+  expect_match(err$message, "not be cyclical")
 
-  err <- rlang::catch_cnd(check_hierarchy("x -> y <-> z"))
+  err <- rlang::catch_cnd(check_hierarchy("a -> b -> c -> d -> b  d -> e"))
   expect_s3_class(err, "rlang_error")
-  expect_match(err$message, "be a hierarchical structure with a clear ending attribute")
+  expect_match(err$message, "not be cyclical")
 })

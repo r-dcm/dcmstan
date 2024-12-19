@@ -78,7 +78,7 @@ default_dcm_priors <- function(measurement_model = NULL,
       structural_model@model,
       unconstrained = unconstrained_priors(),
       independent = independent_priors(),
-      hierarchical = hierarchical_priors()
+      hdcm = hdcm_priors()
     )
   }
 
@@ -118,7 +118,7 @@ independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
 }
 
-hierarchical_priors <- unconstrained_priors
+hdcm_priors <- unconstrained_priors
 
 # dcmprior class ---------------------------------------------------------------
 dcmprior <- S7::new_class("dcmprior", package = "dcmstan",

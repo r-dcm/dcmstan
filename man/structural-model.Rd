@@ -4,14 +4,14 @@
 \alias{structural-model}
 \alias{unconstrained}
 \alias{independent}
-\alias{hierarchical}
+\alias{hdcm}
 \title{Structural models for diagnostic classification}
 \usage{
 unconstrained()
 
 independent()
 
-hierarchical()
+hdcm()
 }
 \value{
 A structural model object.
@@ -19,7 +19,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained; independent attributes; and hierarchical attributes.
+unconstrained; independent attributes; and HDCM.
 See details for additional information on each model.
 }
 \details{
@@ -41,7 +41,7 @@ unconstrained()
 
 independent()
 
-hierarchical()
+hdcm()
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification
