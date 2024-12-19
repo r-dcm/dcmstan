@@ -11,15 +11,7 @@ unconstrained()
 
 independent()
 
-hierarchical(hierarchy = NULL, att_labels = NULL)
-}
-\arguments{
-\item{hierarchy}{A tibble specifying the attribute hierarchy (via
-\code{\link[ggdag:tidy_dagitty]{ggdag::tidy_dagitty()}}).}
-
-\item{att_labels}{A tibble specifying the mapping between the generic
-attribute labels and the attribute names specified in the user-specified
-Q-matrix.}
+hierarchical()
 }
 \value{
 A structural model object.

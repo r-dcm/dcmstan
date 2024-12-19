@@ -8,7 +8,7 @@
 \alias{crum}
 \title{Measurement models for diagnostic classification}
 \usage{
-lcdm(max_interaction = Inf, hierarchy = NULL, att_labels = NULL)
+lcdm(max_interaction = Inf, hierarchy = NULL)
 
 dina()
 
@@ -77,7 +77,8 @@ attributes.
 \examples{
 lcdm()
 
-lcdm(max_interaction = 3, hierarchy = "lexical -> cohesive -> morphosyntactic")
+lcdm(max_interaction = 3,
+     hierarchy = "lexical -> cohesive -> morphosyntactic")
 
 dina()
 }
