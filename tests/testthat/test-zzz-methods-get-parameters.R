@@ -252,6 +252,7 @@ test_that("dino parameters work", {
 })
 
 test_that("nida parameters work", {
+  set.seed(123)
   test_qmatrix <- tibble::tibble(
     att1 = sample(0:1, size = 5, replace = TRUE),
     att2 = sample(0:1, size = 5, replace = TRUE),
@@ -262,15 +263,20 @@ test_that("nida parameters work", {
   params <- get_parameters(nida(), qmatrix = test_qmatrix)
 
   expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("att_id", "type", "coefficient"))
+  expect_equal(colnames(params), c("type", "attributes", "coefficient"))
 
   expect_equal(
     params,
     tibble::tibble(
-      att_id = rep(1:4, each = 2),
-      type = rep(c("guess", "slip"), 4)
-    ) |>
-      dplyr::mutate(coefficient = paste0(.data$type, "[", .data$att_id, "]")),
+      type = c("intercept", "intercept", "intercept", "intercept",
+               "maineffect", "maineffect", "interaction", "maineffect",
+               "interaction", "interaction", "interaction", "maineffect"),
+      attributes = c("att1", "att2", "att3", "att4", "att2", "att3",
+                     "att2__att3", "att4", "att2__att4", "att3__att4",
+                     "att2__att3__att4", "att1"),
+      coefficient = c("l_01", "l_02", "l_03", "l_04", "l_12", "l_13", "l_223",
+                      "l_14", "l_224", "l_234", "l_3234", "l_11")
+    ),
     ignore_attr = TRUE
   )
 })
