@@ -64,16 +64,17 @@ meas_nido <- function(qmatrix, priors) {
 
   pi_def <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
                                profile_id = seq_len(nrow(all_profiles))) |>
-    left_join(qmatrix |>
-                setNames(glue::glue("att{1:ncol(qmatrix)}")) |>
-                tibble::rowid_to_column("item_id") |>
-                tidyr::pivot_longer(cols = -c("item_id"),
-                                    names_to = "att_id", values_to = "valid") |>
-                dplyr::filter(.data$valid == 1L) |>
-                dplyr::select(-"valid"),
-              by = "item_id", relationship = "many-to-many") |>
+    dplyr::left_join(qmatrix |>
+                       stats::setNames(glue::glue("att{1:ncol(qmatrix)}")) |>
+                       tibble::rowid_to_column("item_id") |>
+                       tidyr::pivot_longer(cols = -c("item_id"),
+                                           names_to = "att_id",
+                                           values_to = "valid") |>
+                       dplyr::filter(.data$valid == 1L) |>
+                       dplyr::select(-"valid"),
+                     by = "item_id", relationship = "many-to-many") |>
     dplyr::left_join(dplyr::select(meas_params |>
-                                     mutate(att_id = stringr::str_c(
+                                     dplyr::mutate(att_id = stringr::str_c(
                                        "att", as.character(.data$att_id)
                                      )),
                                    "att_id", "parameter", "param_name"),

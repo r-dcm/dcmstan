@@ -152,7 +152,8 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-nida_parameters <- function(qmatrix, identifier = NULL) {
+nida_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
+                            rename_attributes = FALSE, rename_items = FALSE) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
@@ -169,7 +170,7 @@ nida_parameters <- function(qmatrix, identifier = NULL) {
                                 attributes = c(glue::glue(
                                   "att{seq_len(ncol(qmatrix))}")))
 
-  all_params <- bind_rows(intercepts, all_params) |>
+  all_params <- dplyr::bind_rows(intercepts, all_params) |>
     dplyr::mutate(int_term = dplyr::case_when(.data$type != "interaction" ~
                                                 NA_character_,
                                               TRUE ~ stringr::str_remove_all(
@@ -177,9 +178,14 @@ nida_parameters <- function(qmatrix, identifier = NULL) {
                                               ),
                   int_term = dplyr::case_when(.data$type != "interaction" ~
                                                 NA_character_,
-                                              TRUE ~ stringr::str_remove(
+                                              TRUE ~ stringr::str_remove_all(
                                                 .data$int_term, "\\_\\_")
                   ),
+                  int_level = dplyr::case_when(.data$type != "interaction" ~
+                                                 NA_integer_,
+                                               TRUE ~
+                                                 stringr::str_length(
+                                                   .data$int_term)),
                   coefficient = dplyr::case_when(
       .data$type == "intercept" ~ stringr::str_c(
         "l_0", stringr::str_remove(.data$attributes, "att")
@@ -188,9 +194,9 @@ nida_parameters <- function(qmatrix, identifier = NULL) {
         "l_1", stringr::str_remove(.data$attributes, "att")
       ),
       .data$type == "interaction" ~ stringr::str_c(
-        "l_2", int_term
+        "l_", .data$int_level, .data$int_term
       ))) |>
-    dplyr::select(-"int_term")
+    dplyr::select(-"int_term", -"int_level")
 
   return(all_params)
 }
