@@ -5,6 +5,18 @@ exclusions: list(
     "R/meas-lcdm-crum.R" = list(
       object_usage_linter = Inf
     ),
+    "R/meas-ncrum.R" = list(
+      object_usage_linter = Inf,
+      indentation_linter = Inf
+    ),
+    "R/meas-nida.R" = list(
+      object_usage_linter = Inf,
+      indentation_linter = Inf
+    ),
+    "R/meas-nido.R" = list(
+      object_usage_linter = Inf,
+      indentation_linter = Inf
+    ),
     "R/zzz-class-model-components.R" = list(
       object_name_linter = Inf
     ),
