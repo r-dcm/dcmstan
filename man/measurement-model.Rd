@@ -19,11 +19,11 @@ dino()
 
 crum()
 
-nida()
+nida(max_interaction = Inf)
 
 nido()
 
-ncrum()
+ncrum(max_interaction = Inf)
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
