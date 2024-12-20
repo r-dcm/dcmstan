@@ -119,4 +119,3 @@ meas_nido <- function(qmatrix, priors) {
               transformed_parameters = transformed_parameters_block,
               priors = item_priors))
 }
-

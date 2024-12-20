@@ -217,4 +217,3 @@ meas_nida <- function(qmatrix, max_interaction = Inf, priors) {
               transformed_parameters = transformed_parameters_block,
               priors = item_priors))
 }
-
