@@ -48,6 +48,32 @@
 #' increase in probability for the presence of more than one of the required
 #' attributes.
 #'
+#' The NIDA model (Junker & Sigtsma, 2001) is a non-compensatory model that is
+#' less restrictive than the DINA model. Where the DINA model takes an
+#' "all-or-nothing" approach, the NIDA model defines the probability of
+#' responding correctly based on each attribute that has been mastered. In doing
+#' this, the NIDA model estimates parameters for each attribute and holds these
+#' parameters constant across items. Thus, respondents have increased
+#' probability of responding correctly based on the specific attributes that
+#' have been mastered.
+#'
+#' The NIDO model (Templin, 2006) is a compensatory model that defines the
+#' probability of responding correctly based on each attribute that has been
+#' mastered. Like the NIDA model, the NIDO model holds these parameters constant
+#' across items. The NIDO model does not estimate interaction parameters,
+#' meaning the probability of responding correctly increases with each mastered
+#' attribute without assuming a cumulative effect of mastering multiple
+#' attributes.
+#'
+#' The NC-RUM (DiBello et al., 1995; Hartz, 2002) is a non-compensatory model.
+#' There are two versions of the NC-RUM, the full NC-RUM and the reduced NC-RUM.
+#' The reduced NC-RUM is used in practice because the full NC-RUM includes a
+#' parameter to account for Q-matrix incompleteness that is difficult to
+#' estimate reliably. The reduced NC-RUM is  less restrictive than the NIDA
+#' model, since it does not constrain parameters across items. Thus, the reduced
+#' NC-RUM is similar to the LDCM; however, the reduced NC-RUM constrains
+#' interaction parameters to be positive, which differs from the LCDM.
+#'
 #' @name measurement-model
 #' @seealso [Structural models][structural-model]
 #' @export
@@ -73,6 +99,12 @@
 #' @references Templin, J. L., & Henson, R. A. (2006). Measurement of
 #'   psychological disorders using cognitive diagnosis models. *Psychological
 #'   Methods, 11*(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
+#' @references Templin, J. L. (2006). *CDM user's guide*. Unpublished
+#' manuscript.
+#' @references DiBello, L. V., Stout, W. F., & Roussos, L. (1995). Unified
+#' cognitive psychometric assessment likelihood-based classification techniques.
+#' In P. D. Nichols, S. F. Chipman, & R. L. Brennan (Eds.), *Cognitively
+#' diagnostic assessment* (pp. 361-390). Erlbaum.
 #'
 #' @examples
 #' lcdm()
@@ -80,6 +112,12 @@
 #' lcdm(max_interaction = 2)
 #'
 #' dina()
+#'
+#' nida()
+#'
+#' nido()
+#'
+#' ncrum()
 lcdm <- function(max_interaction = Inf) {
   LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
