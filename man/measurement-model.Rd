@@ -8,10 +8,9 @@
 \alias{crum}
 \alias{nida}
 \alias{nido}
-\alias{ncrum}
 \title{Measurement models for diagnostic classification}
 \usage{
-lcdm(max_interaction = Inf)
+lcdm(max_interaction = Inf, ncrum = FALSE)
 
 dina()
 
@@ -22,12 +21,15 @@ crum()
 nida(max_interaction = Inf)
 
 nido()
-
-ncrum(max_interaction = Inf)
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
 include in the model.}
+
+\item{ncrum}{Logical. For the LCDM, should the NC-RUM be estimated (\code{TRUE})
+or should the LCDM be estimated (\code{FALSE}). When the NC-RUM is estimated,
+the interaction parameters are constrained to be positive and the priors
+for the interaction parameters reflect that constraint.}
 }
 \value{
 A measurement model object.
@@ -35,7 +37,7 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); compensatory, reparameterized unified model (C-RUM); noisy-input, deterministic "and" gate, (NIDA); noisy-input, deterministic "or" gate (NIDO); and noncompensatory, reparameterized unified model (NC-RUM).
+loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); compensatory, reparameterized unified model (C-RUM); noisy-input, deterministic "and" gate, (NIDA); and noisy-input, deterministic "or" gate (NIDO).
 See details for additional information on each model.
 }
 \details{
@@ -75,6 +77,32 @@ using the DINO model, the presence of any of the required attributes results
 in an increased probability of a correct response, and there is no additional
 increase in probability for the presence of more than one of the required
 attributes.
+
+The NIDA model (Junker & Sigtsma, 2001) is a non-compensatory model that is
+less restrictive than the DINA model. Where the DINA model takes an
+"all-or-nothing" approach, the NIDA model defines the probability of
+responding correctly based on each attribute that has been mastered. In doing
+this, the NIDA model estimates parameters for each attribute and holds these
+parameters constant across items. Thus, respondents have increased
+probability of responding correctly based on the specific attributes that
+have been mastered.
+
+The NIDO model (Templin, 2006) is a compensatory model that defines the
+probability of responding correctly based on each attribute that has been
+mastered. Like the NIDA model, the NIDO model holds these parameters constant
+across items. The NIDO model does not estimate interaction parameters,
+meaning the probability of responding correctly increases with each mastered
+attribute without assuming a cumulative effect of mastering multiple
+attributes.
+
+The NC-RUM (DiBello et al., 1995; Hartz, 2002) is a non-compensatory model.
+There are two versions of the NC-RUM, the full NC-RUM and the reduced NC-RUM.
+The reduced NC-RUM is used in practice because the full NC-RUM includes a
+parameter to account for Q-matrix incompleteness that is difficult to
+estimate reliably. The reduced NC-RUM is  less restrictive than the NIDA
+model, since it does not constrain parameters across items. Thus, the reduced
+NC-RUM is similar to the LDCM; however, the reduced NC-RUM constrains
+interaction parameters to be positive, which differs from the LCDM.
 }
 \examples{
 lcdm()
@@ -82,6 +110,10 @@ lcdm()
 lcdm(max_interaction = 2)
 
 dina()
+
+nida()
+
+nido()
 }
 \references{
 de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
@@ -110,6 +142,14 @@ theory. \emph{Applied Psychological Measurement, 25}(3), 258-272.
 Templin, J. L., & Henson, R. A. (2006). Measurement of
 psychological disorders using cognitive diagnosis models. \emph{Psychological
 Methods, 11}(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
+
+Templin, J. L. (2006). \emph{CDM user's guide}. Unpublished
+manuscript.
+
+DiBello, L. V., Stout, W. F., & Roussos, L. (1995). Unified
+cognitive psychometric assessment likelihood-based classification techniques.
+In P. D. Nichols, S. F. Chipman, & R. L. Brennan (Eds.), \emph{Cognitively
+diagnostic assessment} (pp. 361-390). Erlbaum.
 }
 \seealso{
 \link[=structural-model]{Structural models}
