@@ -7,6 +7,10 @@
 #'
 #' @param max_interaction For the LCDM, the highest item-level interaction to
 #'   include in the model.
+#' @param ncrum Logical. For the LCDM, should the NC-RUM be estimated (`TRUE`)
+#'   or should the LCDM be estimated (`FALSE`). When the NC-RUM is estimated,
+#'   the interaction parameters are constrained to be positive and the priors
+#'   for the interaction parameters reflect that constraint.
 #'
 #' @returns A measurement model object.
 #'
@@ -116,10 +120,9 @@
 #' nida()
 #'
 #' nido()
-#'
-#' ncrum()
-lcdm <- function(max_interaction = Inf) {
-  LCDM(model = "lcdm", list(max_interaction = max_interaction))
+lcdm <- function(max_interaction = Inf, ncrum = FALSE) {
+  LCDM(model = "lcdm", list(max_interaction = max_interaction,
+                            ncrum = ncrum))
 }
 
 #' @rdname measurement-model
@@ -150,12 +153,6 @@ nida <- function(max_interaction = Inf) {
 #' @export
 nido <- function() {
   NIDO(model = "nido")
-}
-
-#' @rdname measurement-model
-#' @export
-ncrum <- function(max_interaction = Inf) {
-  NCRUM(model = "ncrum", list(max_interaction = max_interaction))
 }
 
 
@@ -319,8 +316,6 @@ NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 NIDO <- S7::new_class("NIDO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
-                       properties = list(model = model_property))
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
