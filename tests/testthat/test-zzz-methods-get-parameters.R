@@ -254,13 +254,15 @@ test_that("dino parameters work", {
 test_that("nida parameters work", {
   set.seed(123)
   test_qmatrix <- tibble::tibble(
-    att1 = sample(0:1, size = 5, replace = TRUE),
-    att2 = sample(0:1, size = 5, replace = TRUE),
-    att3 = sample(0:1, size = 5, replace = TRUE),
-    att4 = sample(0:1, size = 5, replace = TRUE)
+    question = c("Q1", "Q2", "Q3", "Q4"),
+    att1 = c(1, 0, 1, 0),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1),
+    att4 = c(0, 0, 1, 1)
   )
 
-  params <- get_parameters(nida(), qmatrix = test_qmatrix)
+  params <- get_parameters(nida(), qmatrix = test_qmatrix,
+                           identifier = "question")
 
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("type", "attributes", "coefficient"))
@@ -269,13 +271,16 @@ test_that("nida parameters work", {
     params,
     tibble::tibble(
       type = c("intercept", "intercept", "intercept", "intercept",
-               "maineffect", "maineffect", "interaction", "maineffect",
-               "interaction", "interaction", "interaction", "maineffect"),
-      attributes = c("att1", "att2", "att3", "att4", "att2", "att3",
-                     "att2__att3", "att4", "att2__att4", "att3__att4",
-                     "att2__att3__att4", "att1"),
-      coefficient = c("l_01", "l_02", "l_03", "l_04", "l_12", "l_13", "l_223",
-                      "l_14", "l_224", "l_234", "l_3234", "l_11")
+               "maineffect", "maineffect", "maineffect", "interaction",
+               "maineffect", "interaction", "interaction", "interaction",
+               "interaction", "interaction", "interaction"),
+      attributes = c("att1", "att2", "att3", "att4", "att1", "att2", "att3",
+                     "att2__att3", "att4", "att1__att3", "att1__att4",
+                     "att3__att4", "att1__att3__att4", "att2__att4",
+                     "att2__att3__att4"),
+      coefficient = c("l_01", "l_02", "l_03", "l_04", "l_11", "l_12", "l_13",
+                      "l_223", "l_14", "l_213", "l_214", "l_234", "l_3134",
+                      "l_224", "l_3234")
     ),
     ignore_attr = TRUE
   )
@@ -309,89 +314,6 @@ test_that("nido parameters work", {
         3L,  "maineffect",                      "3",       "l3_1",
         4L,  "intercept",                        NA,       "l4_0",
         4L,  "maineffect",                      "4",       "l4_1"
-    )
-  )
-})
-
-test_that("ncrum parameters work", {
-  test_qmatrix <- tibble::tibble(
-    att1 = c(1, 0, 1, 1),
-    att2 = c(0, 1, 0, 1),
-    att3 = c(0, 1, 1, 1),
-    att4 = c(0, 0, 1, 1)
-  )
-
-  params <- get_parameters(ncrum(), qmatrix = test_qmatrix)
-
-  expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("item_id", "type", "attributes",
-                                   "coefficient"))
-
-  expect_equal(
-    params,
-    tibble::tribble(
-      ~item_id,         ~type,              ~attributes, ~coefficient,
-      1L,   "intercept",                       NA,       "l1_0",
-      1L,  "maineffect",                   "att1",      "l1_11",
-      2L,   "intercept",                       NA,       "l2_0",
-      2L,  "maineffect",                   "att2",      "l2_12",
-      2L,  "maineffect",                   "att3",      "l2_13",
-      2L, "interaction",             "att2__att3",     "l2_223",
-      3L,   "intercept",                       NA,       "l3_0",
-      3L,  "maineffect",                   "att1",      "l3_11",
-      3L,  "maineffect",                   "att3",      "l3_13",
-      3L,  "maineffect",                   "att4",      "l3_14",
-      3L, "interaction",             "att1__att3",     "l3_213",
-      3L, "interaction",             "att1__att4",     "l3_214",
-      3L, "interaction",             "att3__att4",     "l3_234",
-      3L, "interaction",       "att1__att3__att4",    "l3_3134",
-      4L,   "intercept",                       NA,       "l4_0",
-      4L,  "maineffect",                   "att1",      "l4_11",
-      4L,  "maineffect",                   "att2",      "l4_12",
-      4L,  "maineffect",                   "att3",      "l4_13",
-      4L,  "maineffect",                   "att4",      "l4_14",
-      4L, "interaction",             "att1__att2",     "l4_212",
-      4L, "interaction",             "att1__att3",     "l4_213",
-      4L, "interaction",             "att1__att4",     "l4_214",
-      4L, "interaction",             "att2__att3",     "l4_223",
-      4L, "interaction",             "att2__att4",     "l4_224",
-      4L, "interaction",             "att3__att4",     "l4_234",
-      4L, "interaction",       "att1__att2__att3",    "l4_3123",
-      4L, "interaction",       "att1__att2__att4",    "l4_3124",
-      4L, "interaction",       "att1__att3__att4",    "l4_3134",
-      4L, "interaction",       "att2__att3__att4",    "l4_3234",
-      4L, "interaction", "att1__att2__att3__att4",   "l4_41234"
-    )
-  )
-
-  expect_equal(
-    lcdm_parameters(test_qmatrix, max_interaction = 2),
-    tibble::tribble(
-      ~item_id,         ~type,              ~attributes, ~coefficient,
-      1L,   "intercept",                       NA,       "l1_0",
-      1L,  "maineffect",                   "att1",      "l1_11",
-      2L,   "intercept",                       NA,       "l2_0",
-      2L,  "maineffect",                   "att2",      "l2_12",
-      2L,  "maineffect",                   "att3",      "l2_13",
-      2L, "interaction",             "att2__att3",     "l2_223",
-      3L,   "intercept",                       NA,       "l3_0",
-      3L,  "maineffect",                   "att1",      "l3_11",
-      3L,  "maineffect",                   "att3",      "l3_13",
-      3L,  "maineffect",                   "att4",      "l3_14",
-      3L, "interaction",             "att1__att3",     "l3_213",
-      3L, "interaction",             "att1__att4",     "l3_214",
-      3L, "interaction",             "att3__att4",     "l3_234",
-      4L,   "intercept",                       NA,       "l4_0",
-      4L,  "maineffect",                   "att1",      "l4_11",
-      4L,  "maineffect",                   "att2",      "l4_12",
-      4L,  "maineffect",                   "att3",      "l4_13",
-      4L,  "maineffect",                   "att4",      "l4_14",
-      4L, "interaction",             "att1__att2",     "l4_212",
-      4L, "interaction",             "att1__att3",     "l4_213",
-      4L, "interaction",             "att1__att4",     "l4_214",
-      4L, "interaction",             "att2__att3",     "l4_223",
-      4L, "interaction",             "att2__att4",     "l4_224",
-      4L, "interaction",             "att3__att4",     "l4_234"
     )
   )
 })
