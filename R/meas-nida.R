@@ -84,8 +84,12 @@ meas_nida <- function(qmatrix, max_interaction = Inf, priors) {
     tidyr::pivot_longer(-"profile_id", names_to = "parameter",
                         values_to = "valid_for_profile")
 
-  meas_att <- stats::model.matrix(stats::as.formula(
-    paste0("~ .^", max(ncol(all_profiles), 2L))), all_profiles) |>
+  meas_att <- stats::model.matrix(
+    stats::as.formula(
+      paste0("~ .^", max(ncol(all_profiles), 2L))
+    ),
+    all_profiles
+  ) |>
     tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
     tibble::rowid_to_column(var = "profile_id") |>
     tidyr::pivot_longer(-"profile_id", names_to = "parameter",
@@ -119,18 +123,16 @@ meas_nida <- function(qmatrix, max_interaction = Inf, priors) {
                        dplyr::filter(.data$valid == 1L) |>
                        dplyr::select(-"valid"),
                      by = "item_id", relationship = "many-to-many") |>
-    dplyr::left_join(dplyr::select(meas_params, "parameter", "param_name") |>
-                       dplyr::mutate(att_id = dplyr::case_when(
-                         .data$parameter == "intercept" ~
-                           stringr::str_c(
-                             "att",
-                             stringr::str_remove(.data$param_name, "l_0")),
-                         stringr::str_detect(.data$param_name, "l_1") ~
-                           .data$parameter,
-                         TRUE ~ NA_character_
-                       )),
-                     by = "att_id",
-                     multiple = "all", relationship = "many-to-many") |>
+    dplyr::left_join(
+      dplyr::select(meas_params, "parameter", "param_name") |>
+        dplyr::mutate(att_id = dplyr::case_when(
+          .data$parameter == "intercept" ~
+            stringr::str_c("att", stringr::str_remove(.data$param_name, "l_0")),
+          stringr::str_detect(.data$param_name, "l_1") ~ .data$parameter,
+          TRUE ~ NA_character_
+        )),
+      by = "att_id", multiple = "all", relationship = "many-to-many"
+    ) |>
     dplyr::select(-"parameter") |>
     dplyr::full_join(profile_params |>
                        dplyr::filter(.data$valid_for_profile == 1),
@@ -150,26 +152,25 @@ meas_nida <- function(qmatrix, max_interaction = Inf, priors) {
                      by = c("profile_id", "parameter")) |>
     dplyr::distinct() |>
     dplyr::select("item_id", "profile_id", "parameter", "att_id") |>
-    dplyr::mutate(int_term = dplyr::case_when(
-                    stringr::str_detect(.data$parameter, "\\_\\_") ~
-                      stringr::str_remove_all(.data$parameter, "att"),
-                    TRUE ~ NA_character_
-                  ),
-                  int_term = dplyr::case_when(
-                    stringr::str_detect(.data$parameter, "\\_\\_") ~
-                      stringr::str_remove(.data$int_term, "\\_\\_"),
-                    TRUE ~ .data$int_term
-                  ),
-                  param_name = dplyr::case_when(
-                    .data$parameter == "intercept" ~
-                      stringr::str_c("l_0",
-                                     stringr::str_remove(.data$att_id, "att")),
-                    stringr::str_detect(.data$parameter, "\\_\\_") ~
-                      stringr::str_c("l_2", .data$int_term),
-                    TRUE ~ stringr::str_c("l_1",
-                                          stringr::str_remove(.data$parameter,
-                                                              "att"))
-                  )
+    dplyr::mutate(
+      int_term = dplyr::case_when(
+        stringr::str_detect(.data$parameter, "\\_\\_") ~
+          stringr::str_remove_all(.data$parameter, "att"),
+        TRUE ~ NA_character_
+      ),
+      int_term = dplyr::case_when(
+        stringr::str_detect(.data$parameter, "\\_\\_") ~
+          stringr::str_remove(.data$int_term, "\\_\\_"),
+        TRUE ~ .data$int_term
+      ),
+      param_name = dplyr::case_when(
+        .data$parameter == "intercept" ~
+          stringr::str_c("l_0", stringr::str_remove(.data$att_id, "att")),
+        stringr::str_detect(.data$parameter, "\\_\\_") ~
+          stringr::str_c("l_2", .data$int_term),
+        TRUE ~ stringr::str_c("l_1", stringr::str_remove(.data$parameter,
+                                                         "att"))
+      )
     ) |>
     dplyr::distinct(.data$item_id, .data$profile_id, .data$param_name) |>
     dplyr::group_by(.data$item_id, .data$profile_id) |>

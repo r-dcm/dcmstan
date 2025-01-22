@@ -168,34 +168,31 @@ nida_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
 
   intercepts <- tidyr::crossing(type = c("intercept"),
                                 attributes = c(glue::glue(
-                                  "att{seq_len(ncol(qmatrix))}")))
+                                  "att{seq_len(ncol(qmatrix))}"
+                                )))
 
   all_params <- dplyr::bind_rows(intercepts, all_params) |>
-    dplyr::mutate(int_term = dplyr::case_when(.data$type != "interaction" ~
-                                                NA_character_,
-                                              TRUE ~ stringr::str_remove_all(
-                                                .data$attributes, "att")
-                                              ),
-                  int_term = dplyr::case_when(.data$type != "interaction" ~
-                                                NA_character_,
-                                              TRUE ~ stringr::str_remove_all(
-                                                .data$int_term, "\\_\\_")
-                  ),
-                  int_level = dplyr::case_when(.data$type != "interaction" ~
-                                                 NA_integer_,
-                                               TRUE ~
-                                                 stringr::str_length(
-                                                   .data$int_term)),
-                  coefficient = dplyr::case_when(
+    dplyr::mutate(int_term = dplyr::case_when(
+      .data$type != "interaction" ~ NA_character_,
+      TRUE ~ stringr::str_remove_all(.data$attributes, "att")
+    ),
+    int_term = dplyr::case_when(
+      .data$type != "interaction" ~ NA_character_,
+      TRUE ~ stringr::str_remove_all(.data$int_term, "\\_\\_")
+    ),
+    int_level = dplyr::case_when(.data$type != "interaction" ~ NA_integer_,
+                                 TRUE ~ stringr::str_length(.data$int_term)),
+    coefficient = dplyr::case_when(
       .data$type == "intercept" ~ stringr::str_c(
         "l_0", stringr::str_remove(.data$attributes, "att")
-        ),
+      ),
       .data$type == "maineffect" ~ stringr::str_c(
         "l_1", stringr::str_remove(.data$attributes, "att")
       ),
       .data$type == "interaction" ~ stringr::str_c(
         "l_", .data$int_level, .data$int_term
-      ))) |>
+      )
+    )) |>
     dplyr::select(-"int_term", -"int_level")
 
   return(all_params)

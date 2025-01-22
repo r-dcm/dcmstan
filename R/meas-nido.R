@@ -20,17 +20,16 @@ meas_nido <- function(qmatrix, priors) {
     dplyr::mutate(parameter = .data$type) |>
     dplyr::select("att_id", "parameter", param_name = "coefficient") |>
     dplyr::mutate(
-      param_level = dplyr::case_when(
-        .data$parameter == "intercept" ~ 0,
-        .data$parameter == "maineffect" ~ 1),
-      constraint = dplyr::case_when(
-        .data$param_level == 0 ~ glue::glue(""),
-        .data$param_level == 1 ~ glue::glue("<lower=0>")
-      ),
-      param_def = dplyr::case_when(
-        .data$param_level == 0 ~ glue::glue("real {param_name};"),
-        .data$param_level >= 1 ~ glue::glue("real{constraint} {param_name};")
-      )
+      param_level = dplyr::case_when(.data$parameter == "intercept" ~ 0,
+                                     .data$parameter == "maineffect" ~ 1),
+      constraint = dplyr::case_when(.data$param_level == 0 ~ glue::glue(""),
+                                    .data$param_level == 1 ~
+                                      glue::glue("<lower=0>")),
+      param_def =
+        dplyr::case_when(.data$param_level == 0 ~
+                           glue::glue("real {param_name};"),
+                         .data$param_level >= 1 ~
+                           glue::glue("real{constraint} {param_name};"))
     )
 
   intercepts <- meas_params |>
@@ -73,13 +72,13 @@ meas_nido <- function(qmatrix, priors) {
                        dplyr::filter(.data$valid == 1L) |>
                        dplyr::select(-"valid"),
                      by = "item_id", relationship = "many-to-many") |>
-    dplyr::left_join(dplyr::select(meas_params |>
-                                     dplyr::mutate(att_id = stringr::str_c(
-                                       "att", as.character(.data$att_id)
-                                     )),
-                                   "att_id", "parameter", "param_name"),
-                     by = "att_id",
-                     multiple = "all", relationship = "many-to-many") |>
+    dplyr::left_join(
+      meas_params |>
+        dplyr::mutate(att_id = stringr::str_c("att",
+                                              as.character(.data$att_id))) |>
+        dplyr::select("att_id", "parameter", "param_name"),
+      by = "att_id",  multiple = "all", relationship = "many-to-many"
+    ) |>
     dplyr::mutate(parameter = dplyr::case_when(.data$parameter == "maineffect" ~
                                                  .data$att_id,
                                                TRUE ~ .data$parameter)) |>

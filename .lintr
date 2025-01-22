@@ -6,19 +6,13 @@ exclusions: list(
       object_usage_linter = Inf
     ),
     "R/meas-ncrum.R" = list(
-      object_usage_linter = Inf,
-      indentation_linter = Inf
+      object_usage_linter = Inf
     ),
     "R/meas-nida.R" = list(
-      object_usage_linter = Inf,
-      indentation_linter = Inf
+      object_usage_linter = Inf
     ),
     "R/meas-nido.R" = list(
-      object_usage_linter = Inf,
-      indentation_linter = Inf
-    ),
-    "R/utils-get-parameters.R" = list(
-      indentation_linter = Inf
+      object_usage_linter = Inf
     ),
     "R/zzz-class-model-components.R" = list(
       object_name_linter = Inf
