@@ -7,6 +7,11 @@
 #'
 #' @param max_interaction For the LCDM, the highest item-level interaction to
 #'   include in the model.
+#' @param positive_interactions Logical. For the LCDM, should the parameters be
+#'   estimated where the interactions are constrained to be positive (`TRUE`)
+#'   or should the LCDM be estimated where the interactions can be negative
+#'   (`FALSE`). When the interactions are constrained to be positive, the priors
+#'   for the interaction parameters reflect that constraint.
 #'
 #' @returns A measurement model object.
 #'
@@ -48,6 +53,32 @@
 #' increase in probability for the presence of more than one of the required
 #' attributes.
 #'
+#' The NIDA model (Junker & Sijtsma, 2001) is a non-compensatory model that is
+#' less restrictive than the DINA model. Where the DINA model takes an
+#' "all-or-nothing" approach, the NIDA model defines the probability of
+#' responding correctly based on each attribute that has been mastered. In doing
+#' this, the NIDA model estimates parameters for each attribute and holds these
+#' parameters constant across items. Thus, respondents have increased
+#' probability of responding correctly based on the specific attributes that
+#' have been mastered.
+#'
+#' The NIDO model (Templin, 2006) is a compensatory model that defines the
+#' probability of responding correctly based on each attribute that has been
+#' mastered. Like the NIDA model, the NIDO model holds these parameters constant
+#' across items. The NIDO model does not estimate interaction parameters,
+#' meaning the probability of responding correctly increases with each mastered
+#' attribute without assuming a cumulative effect of mastering multiple
+#' attributes.
+#'
+#' The NC-RUM (DiBello et al., 1995; Hartz, 2002) is a non-compensatory model.
+#' There are two versions of the NC-RUM, the full NC-RUM and the reduced NC-RUM.
+#' The reduced NC-RUM is used in practice because the full NC-RUM includes a
+#' parameter to account for Q-matrix incompleteness that is difficult to
+#' estimate reliably. The reduced NC-RUM is  less restrictive than the NIDA
+#' model, since it does not constrain parameters across items. Thus, the reduced
+#' NC-RUM is similar to the LDCM; however, the reduced NC-RUM constrains
+#' interaction parameters to be positive, which differs from the LCDM.
+#'
 #' @name measurement-model
 #' @seealso [Structural models][structural-model]
 #' @export
@@ -73,6 +104,12 @@
 #' @references Templin, J. L., & Henson, R. A. (2006). Measurement of
 #'   psychological disorders using cognitive diagnosis models. *Psychological
 #'   Methods, 11*(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
+#' @references Templin, J. L. (2006). *CDM user's guide*. Unpublished
+#' manuscript.
+#' @references DiBello, L. V., Stout, W. F., & Roussos, L. (1995). Unified
+#' cognitive psychometric assessment likelihood-based classification techniques.
+#' In P. D. Nichols, S. F. Chipman, & R. L. Brennan (Eds.), *Cognitively
+#' diagnostic assessment* (pp. 361-390). Erlbaum.
 #'
 #' @examples
 #' lcdm()
@@ -80,8 +117,15 @@
 #' lcdm(max_interaction = 2)
 #'
 #' dina()
-lcdm <- function(max_interaction = Inf) {
-  LCDM(model = "lcdm", list(max_interaction = max_interaction))
+#'
+#' nida()
+#'
+#' nido()
+#'
+#' ncrum()
+lcdm <- function(max_interaction = Inf, positive_interactions = FALSE) {
+  LCDM(model = "lcdm", list(max_interaction = max_interaction,
+                            positive_interactions = positive_interactions))
 }
 
 #' @rdname measurement-model
@@ -100,6 +144,24 @@ dino <- function() {
 #' @export
 crum <- function() {
   CRUM(model = "crum")
+}
+
+#' @rdname measurement-model
+#' @export
+nida <- function(max_interaction = Inf) {
+  NIDA(model = "nida", list(max_interaction = max_interaction))
+}
+
+#' @rdname measurement-model
+#' @export
+nido <- function() {
+  NIDO(model = "nido")
+}
+
+#' @rdname measurement-model
+#' @export
+ncrum <- function(max_interaction = Inf) {
+  NCRUM(model = "ncrum", list(max_interaction = max_interaction))
 }
 
 
@@ -259,7 +321,12 @@ DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-
+NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
+                      properties = list(model = model_property))
+NIDO <- S7::new_class("NIDO", parent = measurement, package = "dcmstan",
+                      properties = list(model = model_property))
+NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
+                       properties = list(model = model_property))
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
