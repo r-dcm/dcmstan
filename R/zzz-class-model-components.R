@@ -150,6 +150,12 @@ independent <- function() {
   INDEPENDENT(model = "independent")
 }
 
+#' @rdname structural-model
+#' @export
+loglinear <- function() {
+  LOGLINEAR(model = "loglinear")
+}
+
 
 # Define component classes -----------------------------------------------------
 #' S7 class for measurement models
@@ -266,5 +272,8 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
                                package = "dcmstan",
                                properties = list(model = model_property))
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
+                             package = "dcmstan",
+                             properties = list(model = model_property))
+LOGLINEAR <- S7::new_class("LOGLINEAR", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
