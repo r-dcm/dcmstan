@@ -53,7 +53,7 @@
 #' increase in probability for the presence of more than one of the required
 #' attributes.
 #'
-#' The NIDA model (Junker & Sigtsma, 2001) is a non-compensatory model that is
+#' The NIDA model (Junker & Sijtsma, 2001) is a non-compensatory model that is
 #' less restrictive than the DINA model. Where the DINA model takes an
 #' "all-or-nothing" approach, the NIDA model defines the probability of
 #' responding correctly based on each attribute that has been mastered. In doing
