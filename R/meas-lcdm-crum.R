@@ -13,7 +13,8 @@
 #'   and `priors`.
 #' @rdname lcdm-crum
 #' @noRd
-meas_lcdm <- function(qmatrix, max_interaction = Inf, priors, ncrum = FALSE) {
+meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
+                      positive_interactions = FALSE) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
@@ -39,9 +40,9 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors, ncrum = FALSE) {
       constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
-        .data$param_level >= 2 & !ncrum ~
+        .data$param_level >= 2 & !positive_interactions ~
           glue::glue("<lower=-1 * min([{comp_atts}])>"),
-        .data$param_level >= 2 & ncrum ~ glue::glue("<lower=0>")
+        .data$param_level >= 2 & positive_interactions ~ glue::glue("<lower=0>")
       ),
       param_def = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue("real {param_name};"),
@@ -150,4 +151,11 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors, ncrum = FALSE) {
 #' @noRd
 meas_crum <- function(qmatrix, priors) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
+}
+
+#' @rdname lcdm-crum
+#' @noRd
+meas_ncrum <- function(qmatrix, max_interaction = Inf, priors) {
+  meas_lcdm(qmatrix, max_interaction = max_interaction, priors = priors,
+            positive_interactions = TRUE)
 }

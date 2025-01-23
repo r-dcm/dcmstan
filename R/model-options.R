@@ -9,7 +9,9 @@ meas_choices <- function() {
     "deterministic input, noisy \"or\" gate (DINO)" = "dino",
     "compensatory reparameterized unified model (C-RUM)" = "crum",
     "noisy-input, deterministic \"and\" gate (NIDA)" = "nida",
-    "noisy-input, deterministic \"or\" gate (NIDO)" = "nido")
+    "noisy-input, deterministic \"or\" gate (NIDO)" = "nido",
+    "noncompensatory reparameterized unified model (NC-RUM)" = "ncrum"
+    )
 }
 
 #' @rdname model-choices

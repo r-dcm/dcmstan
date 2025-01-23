@@ -30,8 +30,9 @@ test_that("define priors", {
 test_that("specify only measurement or structural", {
   expect_equal(default_dcm_priors(measurement_model = lcdm()),
                lcdm_priors(max_interaction = Inf))
-  expect_equal(default_dcm_priors(measurement_model = lcdm(ncrum = TRUE)),
-               lcdm_priors(max_interaction = Inf, ncrum = TRUE))
+  expect_equal(default_dcm_priors(measurement_model =
+                                    lcdm(positive_interactions = TRUE)),
+               ncrum_priors(max_interaction = Inf))
   expect_equal(default_dcm_priors(measurement_model = dina()),
                dina_priors())
   expect_equal(default_dcm_priors(measurement_model = dino()),
@@ -70,9 +71,9 @@ test_that("lcdm default priors", {
   )
 })
 
-test_that("lcdm default priors - ncrum", {
+test_that("ncrum default priors", {
   expect_identical(
-    prior_tibble(lcdm_priors(max_interaction = Inf, ncrum = TRUE)),
+    prior_tibble(ncrum_priors(max_interaction = Inf)),
     tibble::tibble(type = c("intercept", "maineffect", "interaction"),
                    coefficient = NA_character_,
                    prior = c("normal(0, 2)", "lognormal(0, 1)",
@@ -80,7 +81,7 @@ test_that("lcdm default priors - ncrum", {
   )
 
   expect_identical(
-    prior_tibble(lcdm_priors(max_interaction = 1, ncrum = TRUE)),
+    prior_tibble(ncrum_priors(max_interaction = 1)),
     tibble::tibble(type = c("intercept", "maineffect"),
                    coefficient = NA_character_,
                    prior = c("normal(0, 2)", "lognormal(0, 1)"))

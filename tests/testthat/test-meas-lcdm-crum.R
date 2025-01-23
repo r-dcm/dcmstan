@@ -52,20 +52,20 @@ test_that("crum script works", {
 test_that("ncrum script works", {
   ecpe_spec <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
                            identifier = "item_id",
-                           measurement_model = lcdm(ncrum = TRUE))
+                           measurement_model = ncrum())
   mdm_spec <- dcm_specify(qmatrix = dcmdata::mdm_qmatrix,
                           identifier = "item",
-                          measurement_model = lcdm(ncrum = TRUE))
+                          measurement_model = ncrum())
   dtmr_spec <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
                            identifier = "item",
-                           measurement_model = lcdm(ncrum = TRUE))
+                           measurement_model = ncrum())
   expect_snapshot(generate_stan(ecpe_spec))
   expect_snapshot(generate_stan(mdm_spec))
   expect_snapshot(generate_stan(dtmr_spec))
 
   ecpe_spec2 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
                             identifier = "item_id",
-                            measurement_model = lcdm(ncrum = TRUE),
+                            measurement_model = ncrum(),
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
 
@@ -75,6 +75,6 @@ test_that("ncrum script works", {
                                                           "14", "15a", "17",
                                                           "18", "22"))),
                             identifier = "item",
-                            measurement_model = lcdm(ncrum = TRUE))
+                            measurement_model = ncrum())
   expect_snapshot(generate_stan(dtmr_spec2))
 })
