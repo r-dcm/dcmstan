@@ -8,9 +8,10 @@
 \alias{crum}
 \alias{nida}
 \alias{nido}
+\alias{ncrum}
 \title{Measurement models for diagnostic classification}
 \usage{
-lcdm(max_interaction = Inf, ncrum = FALSE)
+lcdm(max_interaction = Inf, positive_interactions = FALSE)
 
 dina()
 
@@ -21,14 +22,17 @@ crum()
 nida(max_interaction = Inf)
 
 nido()
+
+ncrum(max_interaction = Inf)
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
 include in the model.}
 
-\item{ncrum}{Logical. For the LCDM, should the NC-RUM be estimated (\code{TRUE})
-or should the LCDM be estimated (\code{FALSE}). When the NC-RUM is estimated,
-the interaction parameters are constrained to be positive and the priors
+\item{positive_interactions}{Logical. For the LCDM, should the parameters be
+estimated where the interactions are constrained to be positive (\code{TRUE})
+or should the LCDM be estimated where the interactions can be negative
+(\code{FALSE}). When the interactions are constrained to be positive, the priors
 for the interaction parameters reflect that constraint.}
 }
 \value{
@@ -37,7 +41,7 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); compensatory, reparameterized unified model (C-RUM); noisy-input, deterministic "and" gate, (NIDA); and noisy-input, deterministic "or" gate (NIDO).
+loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); compensatory, reparameterized unified model (C-RUM); noisy-input, deterministic "and" gate, (NIDA); noisy-input, deterministic "or" gate (NIDO); and noncompensatory, reparameterized unified model (NC-RUM).
 See details for additional information on each model.
 }
 \details{
@@ -114,6 +118,8 @@ dina()
 nida()
 
 nido()
+
+ncrum()
 }
 \references{
 de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
