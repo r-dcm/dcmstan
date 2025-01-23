@@ -326,7 +326,7 @@ NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
 NIDO <- S7::new_class("NIDO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
-                        properties = list(model = model_property))
+                       properties = list(model = model_property))
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,

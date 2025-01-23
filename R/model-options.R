@@ -11,7 +11,7 @@ meas_choices <- function() {
     "noisy-input, deterministic \"and\" gate (NIDA)" = "nida",
     "noisy-input, deterministic \"or\" gate (NIDO)" = "nido",
     "noncompensatory reparameterized unified model (NC-RUM)" = "ncrum"
-    )
+  )
 }
 
 #' @rdname model-choices
