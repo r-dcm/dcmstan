@@ -1,0 +1,3 @@
+strc_loglinear <- function() {
+
+}
