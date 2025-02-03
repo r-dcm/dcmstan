@@ -154,7 +154,7 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 #'   predict latent class membership probabilities.
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-loglinear_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf) {
+loglinear_parameters <- function(qmatrix, identifier = NULL, loglinear_interaction = Inf) {
   if (is.null(identifier)) {
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id")
