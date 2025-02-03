@@ -193,11 +193,11 @@ loglinear_parameters <- function(qmatrix, identifier = NULL, loglinear_interacti
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue("g_{param_level}",
                                "{gsub(\"__\", \"\", atts)}"),
-      class = "structural",
+      type = "structural",
       attributes = .data$parameter
     ) |>
     dplyr::filter(.data$param_level <= loglinear_interaction) |>
-    dplyr::select("profile_id", "class", "attributes", "coefficient") |>
+    dplyr::select("profile_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
 
   return(all_params)
