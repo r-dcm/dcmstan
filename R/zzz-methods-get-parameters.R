@@ -95,40 +95,12 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
 }
 
 S7::method(get_parameters, LOGLINEAR) <- function(x, qmatrix,
-                                                    identifier = NULL) {
+                                                  identifier = NULL) {
+  check_number_whole(x@model_args$loglinear_interaction, min = 1,
+                     allow_infinite = TRUE)
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
-  design_mat <- if (is.null(identifier)) {
-    stats::model.matrix(
-      stats::as.formula(paste0("~ .^",max(ncol(qmatrix), 2L))),
-      create_profiles(ncol(qmatrix))
-      )
-  } else {
-    stats::model.matrix(
-      stats::as.formula(paste0("~ .^", max(
-        ncol(qmatrix[, -which(colnames(qmatrix) == identifier)]), 2L
-        ))),
-      create_profiles(ncol(qmatrix[, -which(colnames(qmatrix) == identifier)]))
-      )
-  }
-  design_mat %>%
-    tibble::as_tibble(.name_repair = model_matrix_name_repair) %>%
-    tibble::rowid_to_column(var = "profile_id") %>%
-    tidyr::pivot_longer(cols = -"profile_id", names_to = "parameter",
-                        values_to = "value") %>%
-    dplyr::filter(!.data$parameter %in% c("intercept")) %>%
-    dplyr::filter(.data$value == 1) %>%
-    dplyr::mutate(
-      param_level = dplyr::case_when(
-        !grepl("__", .data$parameter) ~ 1,
-        TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
-                      function(.x) length(attr(.x, "match.length"))) + 1
-      ),
-      atts = gsub("[^0-9|_]", "", .data$parameter),
-      coef = glue::glue("g_{param_level}",
-                        "{gsub(\"__\", \"\", atts)}"),
-      class = "structural",
-      attributes = .data$parameter
-    ) %>%
-    dplyr::select("profile_id", "class", "attributes", "coef")
-}
 
+  loglinear_parameters(qmatrix = qmatrix, identifier = identifier,
+                       loglinear_interaction = x@model_args$loglinear_interaction)
+
+}

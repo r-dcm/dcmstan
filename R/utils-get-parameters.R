@@ -142,6 +142,68 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 }
 
 
+#' Determine the possible parameters for a Log-linear structural model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param loglinear_interaction For the Log-linear structural model, the highest
+#'   level interaction that should be included in the kernel expression used to
+#'   predict latent class membership probabilities.
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+loglinear_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf) {
+  if (is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      tibble::rowid_to_column(var = "item_id")
+    identifier <- "item_id"
+
+    item_ids <- qmatrix |>
+      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "item_number")
+  } else {
+    item_ids <- qmatrix |>
+      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "item_number")
+  }
+
+  att_names <- colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
+  qmatrix <- qmatrix |>
+    dplyr::select(-{{ identifier }}) |>
+    dplyr::rename_with(~glue::glue("att{1:(ncol(qmatrix) - 1)}"),
+                       .cols = dplyr::everything())
+
+  all_params <- stats::model.matrix(stats::as.formula(paste0("~ .^",
+                                                              max(ncol(qmatrix), 2L))),
+                                     create_profiles(ncol(qmatrix))) |>
+    tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
+    tibble::rowid_to_column(var = "profile_id") |>
+    tidyr::pivot_longer(cols = -"profile_id", names_to = "parameter",
+                        values_to = "value") |>
+    dplyr::filter(!.data$parameter %in% c("intercept")) |>
+    dplyr::filter(.data$value == 1) |>
+    dplyr::mutate(
+      param_level = dplyr::case_when(
+        !grepl("__", .data$parameter) ~ 1,
+        TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
+                      function(.x) length(attr(.x, "match.length"))) + 1
+      ),
+      atts = gsub("[^0-9|_]", "", .data$parameter),
+      coefficient = glue::glue("g_{param_level}",
+                               "{gsub(\"__\", \"\", atts)}"),
+      class = "structural",
+      attributes = .data$parameter
+    ) |>
+    dplyr::filter(.data$param_level <= loglinear_interaction) |>
+    dplyr::select("profile_id", "class", "attributes", "coefficient") |>
+    dplyr::mutate(coefficient = as.character(.data$coefficient))
+
+  return(all_params)
+}
+
+
 # Other utilities --------------------------------------------------------------
 #' Consistent naming for model matrix output
 #'
