@@ -158,6 +158,8 @@ crum <- function() {
 #' independent()
 #'
 #' loglinear()
+#'
+#' loglinear(loglinear_interaction = 2)
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
