@@ -97,7 +97,7 @@ strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
     dplyr::select(-"profile_id") |>
     dplyr::distinct() |>
     dplyr::left_join(prior_tibble(priors),
-                     by = c("type", "coefficient"),
+                     by = c("type", "param_name" = "coefficient"),
                      relationship = "one-to-one") |>
     dplyr::rename(coef_def = "prior") |>
     dplyr::left_join(prior_tibble(priors) |>
