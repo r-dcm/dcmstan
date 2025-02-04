@@ -90,6 +90,9 @@ strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
       "  ////////////////////////////////// probability of class membership",
       "  mu[1] = 0;",
       "  {glue::glue_collapse(pi_def, sep = \"\n  \")}",
+      "",
+      "  log_Vc = mu - log_sum_exp(mu);",
+      "  Vc = exp(log_Vc);",
       .sep = "\n", .trim = FALSE
     )
 
