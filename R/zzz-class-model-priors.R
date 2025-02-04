@@ -78,9 +78,7 @@ default_dcm_priors <- function(measurement_model = NULL,
     switch(structural_model@model,
            unconstrained = unconstrained_priors(),
            independent = independent_priors(),
-           loglinear = loglinear_priors(
-             loglinear_interaction = structural_model@model_args$log_interaction
-           ))
+           loglinear = loglinear_priors())
   }
 
   c(dcmprior(), meas_priors, strc_priors)
