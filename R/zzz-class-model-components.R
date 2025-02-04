@@ -171,7 +171,8 @@ independent <- function() {
 #' @rdname structural-model
 #' @export
 loglinear <- function() {
-  LOGLINEAR(model = "loglinear")
+  LOGLINEAR(model = "loglinear",
+            list(loglinear_interaction))
 }
 
 
