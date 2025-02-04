@@ -44,13 +44,13 @@ strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
 
   main_effects <- strc_params |>
     dplyr::filter(.data$param_level == 1) |>
-    select("param_def") |>
-    distinct() |>
+    dplyr::select("param_def") |>
+    dplyr::distinct() |>
     dplyr::pull(.data$param_def)
   interactions <- strc_params |>
     dplyr::filter(.data$param_level >= 2) |>
-    select("param_def") |>
-    distinct() |>
+    dplyr::select("param_def") |>
+    dplyr::distinct() |>
     dplyr::pull(.data$param_def)
 
   interaction_stan <- if (length(interactions) > 0) {
