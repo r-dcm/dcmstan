@@ -1,6 +1,7 @@
-strc_loglinear <- function(qmatrix, priors) {
+strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
 
-  all_params <- get_parameters(loglinear(), qmatrix = qmatrix)
+  all_params <- get_parameters(loglinear(), qmatrix = qmatrix,
+                               loglinear_interaction = loglinear_interaction)
 
   #format parameter labels
   strc_params <- all_params |>
