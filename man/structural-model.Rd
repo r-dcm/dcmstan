@@ -11,7 +11,7 @@ unconstrained()
 
 independent()
 
-loglinear()
+loglinear(loglinear_interaction = Inf)
 }
 \value{
 A structural model object.
@@ -51,6 +51,8 @@ unconstrained()
 independent()
 
 loglinear()
+
+loglinear(loglinear_interaction = 2)
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification
