@@ -1,3 +1,20 @@
+#' 'Stan' code for a log-linear structural model
+#'
+#' Create the `parameters` and `transformed parameters` blocks that are needed
+#' for a log-linear structural model. The function also returns the code that
+#' defines the prior distributions for each parameter, which is used in the
+#' `model` block.
+#'
+#' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param loglinear_interaction Positive integer. The maximum level of the
+#' interaction effect included the kernel expression of the log-linear
+#' structural model.
+#' @param priors Priors for the model, specified through a combination of
+#'   [default_dcm_priors()] and [prior()].
+#'
+#' @returns A list with three element: `parameters`, `transformed_parameters`,
+#'   and `priors`.
+#' @noRd
 strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
 
   all_params <- get_parameters(loglinear(), qmatrix = qmatrix,
