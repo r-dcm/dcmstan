@@ -167,6 +167,7 @@ independent <- function() {
 #' @return An [S7 object constructor][S7::new_class()].
 #'
 #' @rdname model-components
+#' @aliases model-components
 #' @export
 measurement <- S7::new_class("measurement", package = "dcmstan",
   properties = list(

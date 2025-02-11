@@ -2,6 +2,7 @@
 % Please edit documentation in R/zzz-class-model-components.R
 \name{measurement}
 \alias{measurement}
+\alias{model-components}
 \alias{structural}
 \alias{LCDM}
 \alias{DINA}
