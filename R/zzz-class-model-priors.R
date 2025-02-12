@@ -91,7 +91,7 @@ lcdm_priors <- function(max_interaction) {
                prior("normal(0, 2)", type = "interaction"))
   }
 
-  return(prior)
+  prior
 }
 
 dina_priors <- function() {
@@ -146,11 +146,8 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
           function(lb, ub, dist) {
             if (is.na(lb) && is.na(ub)) {
               return(dist)
-            } else {
-              as.character(
-                glue::glue("{dist}T[{lb},{ub}]", .na = "")
-              )
             }
+            as.character(glue::glue("{dist}T[{lb},{ub}]", .na = ""))
           },
           self@lower_bound, self@upper_bound, self@distribution,
           USE.NAMES = FALSE

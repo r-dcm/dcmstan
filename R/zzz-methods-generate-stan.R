@@ -115,5 +115,5 @@ S7::method(generate_stan, dcm_specification) <- function(x) {
     .sep = "\n"
   )
 
-  return(full_script)
+  full_script
 }
