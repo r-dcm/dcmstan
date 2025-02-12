@@ -17,8 +17,6 @@
 #' @noRd
 strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
 
-  # all_params <- get_parameters(loglinear(), qmatrix = qmatrix,
-  #                              loglinear_interaction = loglinear_interaction)
   all_params <- loglinear_parameters(qmatrix = qmatrix,
                                      loglinear_interaction = loglinear_interaction)
 
