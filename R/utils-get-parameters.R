@@ -149,9 +149,8 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
-#' @param loglinear_interaction Positive integer. The maximum level of the
-#' interaction effect included the kernel expression of the log-linear
-#' structural model.
+#' @param loglinear_interaction Positive integer. For the Log-linear structural
+#' model, the highest structural-level interaction to include in the model.
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
 loglinear_parameters <- function(qmatrix, identifier = NULL, loglinear_interaction = Inf) {

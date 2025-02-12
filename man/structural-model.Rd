@@ -13,13 +13,17 @@ independent()
 
 loglinear(loglinear_interaction = Inf)
 }
+\arguments{
+\item{loglinear_interaction}{For the Log-linear structural model, the highest
+structural-level interaction to include in the model.}
+}
 \value{
 A structural model object.
 }
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained; independent attributes; and loglinear attribute space.
+unconstrained; independent attributes; and loglinear.
 See details for additional information on each model.
 }
 \details{

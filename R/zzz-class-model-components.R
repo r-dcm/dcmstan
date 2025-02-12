@@ -110,6 +110,9 @@ crum <- function() {
 #' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
 #' See details for additional information on each model.
 #'
+#' @param loglinear_interaction For the Log-linear structural model, the highest
+#' structural-level interaction to include in the model.
+#'
 #' @returns A structural model object.
 #'
 #' @details

@@ -6,9 +6,8 @@
 #' `model` block.
 #'
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
-#' @param loglinear_interaction Positive integer. The maximum level of the
-#' interaction effect included the kernel expression of the log-linear
-#' structural model.
+#' @param loglinear_interaction Positive integer. For the Log-linear structural
+#' model, the highest structural-level interaction to include in the model.
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #'
