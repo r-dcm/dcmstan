@@ -31,12 +31,10 @@ create_profiles <- function(attributes) {
 }
 
 
-
-
 #' Identify the lower level components of an LCDM parameter
 #'
 #' @param x A character string indicating the attributes measured by an item,
-#'   seperated by a double underscore (`__`).
+#'   separated by a double underscore (`__`).
 #' @param item The item number.
 #'
 #' @returns A character string with the component parameters.
