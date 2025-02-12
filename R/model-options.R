@@ -15,7 +15,7 @@ meas_choices <- function() {
 strc_choices <- function() {
   c("unconstrained" = "unconstrained",
     "independent attributes" = "independent",
-    "loglinear attribute space" = "loglinear")
+    "loglinear" = "loglinear")
 }
 
 
