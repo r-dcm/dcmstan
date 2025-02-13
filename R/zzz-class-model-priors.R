@@ -118,7 +118,7 @@ independent_priors <- function() {
 }
 
 loglinear_priors <- function() {
-  prior("normal(0, 2)", type = "structural")
+  prior("normal(0, 5)", type = "structural")
 }
 
 
