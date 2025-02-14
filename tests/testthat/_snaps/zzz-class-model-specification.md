@@ -54,5 +54,5 @@
         intercept ~ normal(0, 2)
         maineffect ~ lognormal(0, 1)
         interaction ~ normal(0, 2)
-        structural ~ normal(0, 5)
+        structural ~ normal(0, 10)
 
