@@ -36,18 +36,14 @@ are unrelated to each other. That is, there is no relationship between the
 presence of one attribute and the presence of any other. For an example of
 independent attributes model, see Lee (2016).
 
-The loglinear structural model parameterization predicts the membership
-probabilities for each latent class using a loglinear model that includes
-main and interaction effects. The loglinear structural model uses a kernel
-expression to smooth the latent attribute distribution, making it possible to
-reduce the number of parameters defined in the structural model (see Xu & von
-Davier, 2008). The saturated loglinear structural model includes all possible
-main and interaction effects, and is mathematically equivalent to the
-unconstrained structural model and the saturated model described by Hu &
-Templin (2020) and in Chapter 8 of Rupp et al. (2010). A loglinear structural
-model containing only main effects is mathematically equivalent to an
-uncorrelated attribute model specification (i.e. independent attributes
-model; see Lee (2016)).
+The loglinear structural model assumes that class membership proportions can
+be predicted using a loglinear model that includes main and interaction
+effects (see Xu & von Davier, 2008). A saturated loglinear structural model
+includes interaction effects for all attributes measured in the model, and is
+equivalent to the unconstrained structural model and the saturated model
+described by Hu & Templin (2020) and in Chapter 8 of Rupp et al. (2010). A
+reduced form of the loglinear structural model containing only main effects
+is equivalent to an independent attributes model (e.g. Lee, 2016).
 }
 \examples{
 unconstrained()
