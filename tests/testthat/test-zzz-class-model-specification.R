@@ -31,6 +31,11 @@ test_that("dcm_specification class errors when expected", {
                            priors = prior("beta(1, 1)", type = "intercept",
                                           coefficient = "l12_0")),
                "coefficients not included")
+  expect_error(dcm_specify(qmatrix = test_qmatrix, identifier = "item",
+                           measurement_model = lcdm(),
+                           structural_model = loglinear(),
+                           priors = prior("beta(1, 1)", type = "slip")),
+               "types not included")
 })
 
 test_that("dcm_specification works", {
@@ -87,8 +92,20 @@ test_that("printing works", {
                        measurement_model = dina(),
                        structural_model = independent())
 
+  test_qmatrix3 <- tibble::tibble(
+    item = paste0("item_", 1:10),
+    node1 = c(0L, 1L, 0L, 0L, 0L, 1L, 1L, 1L, 0L, 0L),
+    node2 = c(0L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 1L, 1L),
+    node3 = c(1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 1L, 1L)
+  )
+
+  spec3 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
+                       measurement_model = lcdm(),
+                       structural_model = loglinear(loglinear_interaction = 1))
+
   expect_snapshot({
     spec
     spec2
+    spec3
   })
 })
