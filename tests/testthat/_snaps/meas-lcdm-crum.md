@@ -1926,13 +1926,13 @@
       model {
       
         ////////////////////////////////// priors
-        g_11 ~ normal(0, 2);
-        g_12 ~ normal(0, 2);
-        g_13 ~ normal(0, 2);
-        g_212 ~ normal(0, 2);
-        g_213 ~ normal(0, 2);
-        g_223 ~ normal(0, 2);
-        g_3123 ~ normal(0, 2);
+        g_11 ~ normal(0, 10);
+        g_12 ~ normal(0, 10);
+        g_13 ~ normal(0, 10);
+        g_212 ~ normal(0, 10);
+        g_213 ~ normal(0, 10);
+        g_223 ~ normal(0, 10);
+        g_3123 ~ normal(0, 10);
         l1_0 ~ normal(0, 2);
         l1_11 ~ lognormal(0, 1);
         l1_12 ~ lognormal(0, 1);
@@ -4316,13 +4316,13 @@
       model {
       
         ////////////////////////////////// priors
-        g_11 ~ normal(0, 2);
-        g_12 ~ normal(0, 2);
-        g_13 ~ normal(0, 2);
-        g_212 ~ normal(0, 2);
-        g_213 ~ normal(0, 2);
-        g_223 ~ normal(0, 2);
-        g_3123 ~ normal(0, 2);
+        g_11 ~ normal(0, 10);
+        g_12 ~ normal(0, 10);
+        g_13 ~ normal(0, 10);
+        g_212 ~ normal(0, 10);
+        g_213 ~ normal(0, 10);
+        g_223 ~ normal(0, 10);
+        g_3123 ~ normal(0, 10);
         l1_0 ~ normal(0, 2);
         l1_11 ~ lognormal(0, 1);
         l1_12 ~ lognormal(0, 1);

@@ -474,13 +474,13 @@
       model {
       
         ////////////////////////////////// priors
-        g_11 ~ normal(0, 2);
-        g_12 ~ normal(0, 2);
-        g_13 ~ normal(0, 2);
-        g_212 ~ normal(0, 2);
-        g_213 ~ normal(0, 2);
-        g_223 ~ normal(0, 2);
-        g_3123 ~ normal(0, 2);
+        g_11 ~ normal(0, 10);
+        g_12 ~ normal(0, 10);
+        g_13 ~ normal(0, 10);
+        g_212 ~ normal(0, 10);
+        g_213 ~ normal(0, 10);
+        g_223 ~ normal(0, 10);
+        g_3123 ~ normal(0, 10);
         guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
         guess[2] ~ beta(5, 25);
@@ -1030,13 +1030,13 @@
       model {
       
         ////////////////////////////////// priors
-        g_11 ~ normal(0, 2);
-        g_12 ~ normal(0, 2);
-        g_13 ~ normal(0, 2);
-        g_212 ~ normal(0, 2);
-        g_213 ~ normal(0, 2);
-        g_223 ~ normal(0, 2);
-        g_3123 ~ normal(0, 2);
+        g_11 ~ normal(0, 10);
+        g_12 ~ normal(0, 10);
+        g_13 ~ normal(0, 10);
+        g_212 ~ normal(0, 10);
+        g_213 ~ normal(0, 10);
+        g_223 ~ normal(0, 10);
+        g_3123 ~ normal(0, 10);
         guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
         guess[2] ~ beta(5, 25);
