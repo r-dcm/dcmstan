@@ -117,7 +117,7 @@ test_that("loglinear default priors", {
     prior_tibble(loglinear_priors()),
     tibble::tibble(type = c("structural"),
                    coefficient = NA_character_,
-                   prior = c("normal(0, 5)"))
+                   prior = c("normal(0, 10)"))
   )
 })
 
