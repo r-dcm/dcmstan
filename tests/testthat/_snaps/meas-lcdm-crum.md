@@ -15,7 +15,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -442,7 +441,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -519,7 +517,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -1146,7 +1143,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         array[A] real<lower=0,upper=1> eta;
@@ -1584,7 +1580,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -2017,7 +2012,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -2424,7 +2418,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -2501,7 +2494,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -3110,7 +3102,6 @@
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number of items for respondent R
         matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
         array[A] real<lower=0,upper=1> eta;

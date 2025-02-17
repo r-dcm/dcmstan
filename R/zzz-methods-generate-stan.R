@@ -48,22 +48,7 @@ S7::method(generate_stan, dcm_specification) <- function(x) {
   strc_code <- do.call(paste0("strc_", x@structural_model@model), strc_args)
 
   # data block -----
-  data_block <- glue::glue(
-    "data {{
-      int<lower=1> I;                      // number of items
-      int<lower=1> R;                      // number of respondents
-      int<lower=1> N;                      // number of observations
-      int<lower=1> C;                      // number of classes
-      int<lower=1> A;                      // number of attributes
-      array[N] int<lower=1,upper=I> ii;    // item for observation n
-      array[N] int<lower=1,upper=R> rr;    // respondent for observation n
-      array[N] int<lower=0,upper=1> y;     // score for observation n
-      array[R] int<lower=1,upper=N> start; // starting row for respondent R
-      array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-      matrix[C,A] Alpha;                   // attribute pattern for each class
-      matrix[I,C] Xi;                      // class attribute mastery indicator
-    }}"
-  )
+  data_block <- stan_data_code(x@measurement_model, x@structural_model)
 
   # parameters block -----
   parameters_block <- glue::glue(
