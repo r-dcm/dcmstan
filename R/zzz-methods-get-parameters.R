@@ -93,3 +93,9 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
                  attributes = att_names,
                  coefficient = paste0("eta[", seq_along(att_names), "]"))
 }
+
+S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
+                                                  identifier = NULL) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+}
