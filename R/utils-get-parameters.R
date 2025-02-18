@@ -142,6 +142,36 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 }
 
 
+#' Determine the possible parameters for a Log-linear structural model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param loglinear_interaction Positive integer. For the Log-linear structural
+#' model, the highest structural-level interaction to include in the model.
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+bayesnet_parameters <- function(qmatrix, identifier = NULL, strc_dag, att_labels) {
+  if (is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      tibble::rowid_to_column(var = "item_id")
+    identifier <- "item_id"
+
+    item_ids <- qmatrix |>
+      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "item_number")
+  } else {
+    item_ids <- qmatrix |>
+      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "item_number")
+  }
+
+
+}
+
+
 # Other utilities --------------------------------------------------------------
 #' Consistent naming for model matrix output
 #'
