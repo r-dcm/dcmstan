@@ -13,14 +13,7 @@ defines attribute relationships (e.g., a
 \link[=structural-model]{structural model} or
 \link[=dcm_specify]{model specification}).}
 
-\item{...}{Additional arguments passed to methods.}
-
-\item{keep_names}{When \code{x} is a \link[=dcm_specify]{model specification}, should
-the real attribute names be used (\code{TRUE}; the default), or replaced with
-generic names (\code{FALSE}; e.g., \code{"att1"}, \code{"att2"}, \code{"att3"}).}
-
-\item{attributes}{When \code{x} is a \link[=structural-model]{structural model}, the
-number of attributes that should be used to generate the profiles.}
+\item{...}{Additional arguments passed to methods. See details.}
 }
 \value{
 A \link[tibble:tibble-package]{tibble} with all possible attribute
@@ -30,6 +23,16 @@ the attribute in that column was present (1) or not (0).
 \description{
 Given the number of attributes or model specification, generate all possible
 attribute patterns.
+}
+\details{
+Additional arguments passed to methods:
+
+\code{keep_names}: When \code{x} is a \link[=dcm_specify]{model specification}, should
+the real attribute names be used (\code{TRUE}; the default), or replaced with
+generic names (\code{FALSE}; e.g., \code{"att1"}, \code{"att2"}, \code{"att3"}).
+
+\code{attributes}: When \code{x} is a \link[=structural-model]{structural model}, the
+number of attributes that should be used to generate the profiles.
 }
 \examples{
 create_profiles(3L)
