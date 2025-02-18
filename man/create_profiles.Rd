@@ -36,6 +36,8 @@ number of attributes that should be used to generate the profiles.
 }
 \examples{
 create_profiles(3L)
+
 create_profiles(5)
+
 create_profiles(unconstrained(), attributes = 2)
 }
