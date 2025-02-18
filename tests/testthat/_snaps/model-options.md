@@ -7,7 +7,7 @@
     Code
       print_choices(strc_choices(), format = TRUE)
     Output
-      [1] "\"unconstrained\" and \"independent\""
+      [1] "\"unconstrained\" or \"independent\""
     Code
       print_choices(meas_choices(), last = ", and ", format = TRUE)
     Output
@@ -22,7 +22,7 @@
     Code
       print_choices(strc_choices())
     Output
-      [1] "unconstrained and independent"
+      [1] "unconstrained or independent"
     Code
       print_choices(meas_choices(), last = ", and ")
     Output

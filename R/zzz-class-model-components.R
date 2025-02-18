@@ -152,23 +152,14 @@ independent <- function() {
 
 
 # Define component classes -----------------------------------------------------
-#' Class constructors for model components
-#'
-#' The class constructors for model components are exported to facilitate the
-#' defining of methods in other packages. We do not expect or recommend calling
-#' these functions directly. To define and create measurement and structural
-#' models, see [`measurement-model`] and [`structural-model`].
+#' S7 class for measurement models
 #'
 #' @param model The type of measurement model to be used. Must be one of
 #'   `r print_choices(meas_choices())`.
 #' @param model_args A named list of arguments to be passed on to the
 #'   corresponding `meas_*()` function.
 #'
-#' @return An [S7 object constructor][S7::new_class()].
-#'
-#' @rdname model-components
-#' @aliases model-components
-#' @export
+#' @noRd
 measurement <- S7::new_class("measurement", package = "dcmstan",
   properties = list(
     model = S7::new_property(
@@ -204,8 +195,14 @@ measurement <- S7::new_class("measurement", package = "dcmstan",
   }
 )
 
-#' @rdname model-components
-#' @export
+#' S7 class for structural models
+#'
+#' @param model The type of structural model to be used. Must be one of
+#'   `r print_choices(strc_choices())`.
+#' @param model_args A named list of arguments to be passed on to the
+#'   corresponding `strc_*()` function.
+#'
+#' @noRd
 structural <- S7::new_class("structural", package = "dcmstan",
   properties = list(
     model = S7::new_property(
@@ -254,36 +251,24 @@ model_property <- S7::new_property(
 )
 
 ## Measurement models -----
-#' @rdname model-components
-#' @export
 LCDM <- S7::new_class("LCDM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 
-#' @rdname model-components
-#' @export
 DINA <- S7::new_class("DINA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 
-#' @rdname model-components
-#' @export
 DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 
-#' @rdname model-components
-#' @export
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 
 
 ## Structural models -----
-#' @rdname model-components
-#' @export
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
                                package = "dcmstan",
                                properties = list(model = model_property))
 
-#' @rdname model-components
-#' @export
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
