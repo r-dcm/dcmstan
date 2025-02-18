@@ -23,4 +23,4 @@ reference:
 
 - title: Generate 'Stan' code
   contents:
-  - generate_stan
+  - stan_code
