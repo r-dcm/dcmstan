@@ -131,12 +131,16 @@ S7::method(stan_data_code, DINA) <- function(x) {
   data_block <- glue::glue(
     "  matrix[I,C] Xi;                      // class attribute indicator"
   )
+
+  data_block
 }
 
 S7::method(stan_data_code, DINO) <- function(x) {
   data_block <- glue::glue(
     "  matrix[I,C] Xi;                      // class attribute indicator"
   )
+
+  data_block
 }
 
 S7::method(stan_data_code, INDEPENDENT) <- function(x) {
@@ -145,4 +149,6 @@ S7::method(stan_data_code, INDEPENDENT) <- function(x) {
     "  matrix[C,A] Alpha;                   // attribute pattern for class",
     .sep = "\n", .trim = FALSE
   )
+
+  data_block
 }

@@ -50,7 +50,7 @@ test_that("stuctural method works", {
   expect_s3_class(err, "rlang_error")
   expect_match(err$message, "be a whole number")
 
-  expect_identical(create_profiles(unconstrained(), attributes = 3),true_3)
+  expect_identical(create_profiles(unconstrained(), attributes = 3), true_3)
   expect_identical(create_profiles(independent(), attributes = 4), true_4)
 })
 

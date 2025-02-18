@@ -47,8 +47,8 @@ S7::method(create_profiles, dcm_specification) <-
   function(x, keep_names = TRUE) {
     profs <- create_profiles(
       x@structural_model,
-      attributes = length(x@qmatrix_meta$attribute_names
-    ))
+      attributes = length(x@qmatrix_meta$attribute_names)
+    )
 
     if (keep_names) {
       colnames(profs) <- names(x@qmatrix_meta$attribute_names)
