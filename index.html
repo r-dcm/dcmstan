@@ -61,7 +61,7 @@
 <ul>
 <li>Mix and match different <a href="https://dcmstan.r-dcm.org/reference/measurement-model">measurement</a> and <a href="https://dcmstan.r-dcm.org/reference/structural-model">structural</a> models to specify a diagnostic model with <code><a href="reference/dcm_specify.html">dcm_specify()</a></code>,</li>
 <li>Define <code><a href="reference/prior.html">prior()</a></code> distributions, and</li>
-<li>Generate Stan code for the model, given the specifications and priors with <code><a href="reference/generate_stan.html">generate_stan()</a></code>
+<li>Generate Stan code for the model, given the specifications and priors with <code><a href="reference/stan_code.html">stan_code()</a></code>
 </li>
 </ul>
 <p>dcmstan is used as a backend for generating the Stan code needed to estimate and evaluate with the <a href="https://measr.info" class="external-link">measr</a> package. If you use measr to estimate your models, you will not need to use dcmstan to generate Stan code yourself.</p>
@@ -84,20 +84,17 @@
 <span>                         measurement_model <span class="op">=</span> <span class="fu"><a href="reference/measurement-model.html">lcdm</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>                         structural_model <span class="op">=</span> <span class="fu"><a href="reference/structural-model.html">unconstrained</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/generate_stan.html">generate_stan</a></span><span class="op">(</span><span class="va">new_model</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/stan_code.html">stan_code</a></span><span class="op">(</span><span class="va">new_model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; data {</span></span>
 <span><span class="co">#&gt;   int&lt;lower=1&gt; I;                      // number of items</span></span>
 <span><span class="co">#&gt;   int&lt;lower=1&gt; R;                      // number of respondents</span></span>
 <span><span class="co">#&gt;   int&lt;lower=1&gt; N;                      // number of observations</span></span>
 <span><span class="co">#&gt;   int&lt;lower=1&gt; C;                      // number of classes</span></span>
-<span><span class="co">#&gt;   int&lt;lower=1&gt; A;                      // number of attributes</span></span>
 <span><span class="co">#&gt;   array[N] int&lt;lower=1,upper=I&gt; ii;    // item for observation n</span></span>
 <span><span class="co">#&gt;   array[N] int&lt;lower=1,upper=R&gt; rr;    // respondent for observation n</span></span>
 <span><span class="co">#&gt;   array[N] int&lt;lower=0,upper=1&gt; y;     // score for observation n</span></span>
 <span><span class="co">#&gt;   array[R] int&lt;lower=1,upper=N&gt; start; // starting row for respondent R</span></span>
-<span><span class="co">#&gt;   array[R] int&lt;lower=1,upper=I&gt; num;   // number of items for respondent R</span></span>
-<span><span class="co">#&gt;   matrix[C,A] Alpha;                   // attribute pattern for each class</span></span>
-<span><span class="co">#&gt;   matrix[I,C] Xi;                      // class attribute mastery indicator</span></span>
+<span><span class="co">#&gt;   array[R] int&lt;lower=1,upper=I&gt; num;   // number items for respondent R</span></span>
 <span><span class="co">#&gt; }</span></span>
 <span><span class="co">#&gt; parameters {</span></span>
 <span><span class="co">#&gt;   simplex[C] Vc;                  // base rates of class membership</span></span>
@@ -161,7 +158,7 @@
 <div class="section level2">
 <h2 id="contributions-and-code-of-conduct">Contributions and Code of Conduct<a class="anchor" aria-label="anchor" href="#contributions-and-code-of-conduct"></a>
 </h2>
-<p>Contributions are welcome. To ensure a smooth process, please review the <a href="https://dcmstan.r-dcm.org/CONTRIBUTING.html">Contributing Guide</a>. Please note that the dcmdata project is released with a <a href="https://dcmstan.r-dcm.org/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>Contributions are welcome. To ensure a smooth process, please review the <a href="https://dcmstan.r-dcm.org/CONTRIBUTING.html">Contributing Guide</a>. Please note that the dcmstan project is released with a <a href="https://dcmstan.r-dcm.org/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
 
