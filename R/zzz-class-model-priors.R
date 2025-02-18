@@ -76,7 +76,8 @@ default_dcm_priors <- function(measurement_model = NULL,
     S7::check_is_S7(structural_model, class = structural)
     switch(structural_model@model,
            unconstrained = unconstrained_priors(),
-           independent = independent_priors())
+           independent = independent_priors(),
+           bayesnet = bayesnet_priors())
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -112,6 +113,10 @@ unconstrained_priors <- function() {
 }
 
 independent_priors <- function() {
+  prior("beta(1, 1)", type = "structural")
+}
+
+bayesnet_priors <- function() {
   prior("beta(1, 1)", type = "structural")
 }
 
