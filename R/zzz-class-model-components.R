@@ -150,6 +150,13 @@ independent <- function() {
   INDEPENDENT(model = "independent")
 }
 
+#' @rdname structural-model
+#' @export
+bayesnet <- function(strc_dag = NULL, att_labels) {
+  BAYESNET(model = "bayesnet",
+           list(strc_dag = strc_dag, att_labels = att_labels))
+}
+
 
 # Define component classes -----------------------------------------------------
 #' Class constructors for model components
@@ -285,5 +292,11 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
 #' @rdname model-components
 #' @export
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
+                             package = "dcmstan",
+                             properties = list(model = model_property))
+
+#' @rdname model-components
+#' @export
+BAYESNET <- S7::new_class("BAYESNET", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
