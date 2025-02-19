@@ -142,6 +142,96 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 }
 
 
+#' Determine the possible parameters for a NIDA model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+nida_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
+                            rename_attributes = FALSE, rename_items = FALSE) {
+  if (!is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      dplyr::select(-{{ identifier }})
+  }
+
+  all_params <- lcdm_parameters(qmatrix = qmatrix,
+                                max_interaction = max_interaction,
+                                rename_attributes = TRUE,
+                                rename_items = TRUE) |>
+    dplyr::distinct(.data$type, .data$attributes) |>
+    dplyr::filter(.data$type != "intercept")
+
+  intercepts <- tidyr::crossing(type = c("intercept"),
+                                attributes = c(glue::glue(
+                                  "att{seq_len(ncol(qmatrix))}"
+                                )))
+
+  all_params <- dplyr::bind_rows(intercepts, all_params) |>
+    dplyr::mutate(int_term = dplyr::case_when(
+      .data$type != "interaction" ~ NA_character_,
+      TRUE ~ stringr::str_remove_all(.data$attributes, "att")
+    ),
+    int_term = dplyr::case_when(
+      .data$type != "interaction" ~ NA_character_,
+      TRUE ~ stringr::str_remove_all(.data$int_term, "\\_\\_")
+    ),
+    int_level = dplyr::case_when(.data$type != "interaction" ~ NA_integer_,
+                                 TRUE ~ stringr::str_length(.data$int_term)),
+    coefficient = dplyr::case_when(
+      .data$type == "intercept" ~ stringr::str_c(
+        "l_0", stringr::str_remove(.data$attributes, "att")
+      ),
+      .data$type == "maineffect" ~ stringr::str_c(
+        "l_1", stringr::str_remove(.data$attributes, "att")
+      ),
+      .data$type == "interaction" ~ stringr::str_c(
+        "l_", .data$int_level, .data$int_term
+      )
+    )) |>
+    dplyr::select(-"int_term", -"int_level")
+
+  return(all_params)
+}
+
+
+#' Determine the possible parameters for a NIDO model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+nido_parameters <- function(qmatrix, identifier = NULL) {
+  if (!is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      dplyr::select(-{{ identifier }})
+  }
+
+  att_id <- seq_len(ncol(qmatrix))
+
+  all_params <- tidyr::crossing(att_id = att_id,
+                                type = c("intercept", "maineffect")) |>
+    dplyr::mutate(attributes = dplyr::case_when(.data$type == "intercept" ~
+                                                  NA_character_,
+                                                .data$type == "maineffect" ~
+                                                  as.character(att_id)),
+                  coefficient = dplyr::case_when(.data$type == "intercept" ~
+                                                   glue::glue("l{att_id}_0"),
+                                                 .data$type == "maineffect" ~
+                                                   glue::glue("l{att_id}_1")))
+
+  return(all_params)
+}
+
+
 # Other utilities --------------------------------------------------------------
 #' Consistent naming for model matrix output
 #'

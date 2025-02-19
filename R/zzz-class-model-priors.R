@@ -62,11 +62,20 @@ default_dcm_priors <- function(measurement_model = NULL,
     switch(
       measurement_model@model,
       lcdm = lcdm_priors(
-        max_interaction = measurement_model@model_args$max_interaction
+        max_interaction = measurement_model@model_args$max_interaction,
+        positive_interactions =
+          measurement_model@model_args$positive_interactions
       ),
       dina = dina_priors(),
       dino = dino_priors(),
-      crum = crum_priors()
+      crum = crum_priors(),
+      nida = nida_priors(
+        max_interaction = measurement_model@model_args$max_interaction
+      ),
+      nido = nido_priors(),
+      ncrum = ncrum_priors(
+        max_interaction = measurement_model@model_args$max_interaction
+      )
     )
   }
 
@@ -83,12 +92,17 @@ default_dcm_priors <- function(measurement_model = NULL,
 }
 
 ## measurement model defaults -----
-lcdm_priors <- function(max_interaction) {
+lcdm_priors <- function(max_interaction, positive_interactions = FALSE) {
   prior <- c(prior("normal(0, 2)", type = "intercept"),
              prior("lognormal(0, 1)", type = "maineffect"))
   if (max_interaction > 1) {
-    prior <- c(prior,
-               prior("normal(0, 2)", type = "interaction"))
+    if (!positive_interactions) {
+      prior <- c(prior,
+                 prior("normal(0, 2)", type = "interaction"))
+    } else {
+      prior <- c(prior,
+                 prior("lognormal(0, 1)", type = "interaction"))
+    }
   }
 
   prior
@@ -105,6 +119,21 @@ crum_priors <- function() {
   c(prior("normal(0, 2)", type = "intercept"),
     prior("lognormal(0, 1)", type = "maineffect"))
 }
+
+nido_priors <- crum_priors
+
+nida_priors <- function(max_interaction) {
+  prior <- c(prior("normal(0, 2)", type = "intercept"),
+             prior("lognormal(0, 1)", type = "maineffect"))
+  if (max_interaction > 1) {
+    prior <- c(prior,
+               prior("lognormal(0, 1)", type = "interaction"))
+  }
+
+  prior
+}
+
+ncrum_priors <- nida_priors
 
 ## structural model defaults -----
 unconstrained_priors <- function() {

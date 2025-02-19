@@ -6,14 +6,22 @@
 #' `model` block.
 #'
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param max_interaction The highest level interaction to include in the model.
+#'   For example, `1` = main effects only, `2` = main effects and two-way
+#'   interactions, `3` = main effects and two- and three-way interactions, etc.
+#' @param positive_interactions Logical. Should interaction terms be constrained
+#'   to be positive. The default is `FALSE`.
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
-#' @rdname lcdm-crum
+#' @rdname lcdm-crum-ncrum
 #' @noRd
-meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
+meas_lcdm <- function(qmatrix,
+                      max_interaction = Inf,
+                      positive_interactions = FALSE,
+                      priors) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
@@ -39,7 +47,9 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
       constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
-        .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
+        .data$param_level >= 2 & !positive_interactions ~
+          glue::glue("<lower=-1 * min([{comp_atts}])>"),
+        .data$param_level >= 2 & positive_interactions ~ glue::glue("<lower=0>")
       ),
       param_def = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue("real {param_name};"),
@@ -144,8 +154,15 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
               priors = item_priors))
 }
 
-#' @rdname lcdm-crum
+#' @rdname lcdm-crum-ncrum
 #' @noRd
 meas_crum <- function(qmatrix, priors) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
+}
+
+#' @rdname lcdm-crum-ncrum
+#' @noRd
+meas_ncrum <- function(qmatrix, max_interaction = Inf, priors) {
+  meas_lcdm(qmatrix, max_interaction = max_interaction,
+            positive_interactions = TRUE, priors = priors)
 }
