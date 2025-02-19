@@ -49,7 +49,7 @@ meas_nido <- function(qmatrix, priors) {
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(attributes = ncol(qmatrix))
+  all_profiles <- create_profiles(ncol(qmatrix))
 
   profile_params <-
     stats::model.matrix(stats::as.formula(paste0("~ .^",
