@@ -130,7 +130,7 @@ nida_priors <- function(max_interaction) {
                prior("lognormal(0, 1)", type = "interaction"))
   }
 
-  return(prior)
+  prior
 }
 
 ncrum_priors <- nida_priors

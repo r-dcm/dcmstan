@@ -114,7 +114,7 @@ meas_nido <- function(qmatrix, priors) {
     dplyr::pull("prior_def")
 
   # return -----
-  return(list(parameters = parameters_block,
-              transformed_parameters = transformed_parameters_block,
-              priors = item_priors))
+  list(parameters = parameters_block,
+       transformed_parameters = transformed_parameters_block,
+       priors = item_priors)
 }
