@@ -2,7 +2,7 @@ linters: linters_with_defaults() # see vignette("lintr")
 exclusions: list(
     "R/import-standalone-obj-type.R",
     "R/import-standalone-types-check.R",
-    "R/meas-lcdm-crum.R" = list(
+    "R/meas-lcdm-crum-ncrum.R" = list(
       object_usage_linter = Inf
     ),
     "R/meas-ncrum.R" = list(
