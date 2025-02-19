@@ -315,10 +315,13 @@ model_property <- S7::new_property(
 ## Measurement models -----
 LCDM <- S7::new_class("LCDM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 DINA <- S7::new_class("DINA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
@@ -332,6 +335,7 @@ NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
                                package = "dcmstan",
                                properties = list(model = model_property))
+
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))

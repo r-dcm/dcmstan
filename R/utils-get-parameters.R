@@ -244,5 +244,5 @@ model_matrix_name_repair <- function(x) {
   x <- gsub(":", "__", x)
   x <- tolower(x)
 
-  return(x)
+  x
 }
