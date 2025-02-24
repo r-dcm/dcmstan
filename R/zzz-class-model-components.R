@@ -152,7 +152,7 @@ independent <- function() {
 
 #' @rdname structural-model
 #' @export
-bayesnet <- function(strc_dag = NULL, att_labels) {
+bayesnet <- function(strc_dag = NULL, att_labels = NULL) {
   BAYESNET(model = "bayesnet",
            list(strc_dag = strc_dag, att_labels = att_labels))
 }
