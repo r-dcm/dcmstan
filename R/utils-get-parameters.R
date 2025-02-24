@@ -153,7 +153,8 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 #' model, the highest structural-level interaction to include in the model.
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-bayesnet_parameters <- function(qmatrix, identifier = NULL, strc_dag, att_labels) {
+bayesnet_parameters <- function(qmatrix, identifier = NULL,
+                                strc_dag = NULL, att_labels = NULL) {
   if (is.null(identifier)) {
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id")
@@ -168,6 +169,42 @@ bayesnet_parameters <- function(qmatrix, identifier = NULL, strc_dag, att_labels
       tibble::rowid_to_column(var = "item_number")
   }
 
+  att_names <- colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
+  qmatrix <- qmatrix |>
+    dplyr::select(-{{ identifier }}) |>
+    dplyr::rename_with(~glue::glue("att{1:(ncol(qmatrix) - 1)}"),
+                       .cols = dplyr::everything())
+
+  incidence <- create_incidence_matrix(qmatrix = qmatrix, dag = strc_dag)
+  incidence <- clean_incidence(incidence, identifier = "child_id")
+
+  all_params <- stats::model.matrix(
+    stats::as.formula(paste0("~ .^",
+                             max(ncol(incidence$clean_incidence) - 1, 2L))),
+    incidence$clean_incidence) |>
+    tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
+    dplyr::mutate(child_id = incidence$child_names) |>
+    dplyr::select("child_id", everything()) |>
+    tidyr::pivot_longer(cols = -"child_id", names_to = "parameter",
+                        values_to = "value") |>
+    dplyr::filter(.data$value == 1) |>
+    dplyr::mutate(
+      param_level = dplyr::case_when(
+        .data$parameter == "intercept" ~ 0,
+        !grepl("__", .data$parameter) ~ 1,
+        TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
+                      function(.x) length(attr(.x, "match.length"))) + 1
+      ),
+      atts = gsub("[^0-9|_]", "", .data$parameter),
+      coefficient = glue::glue("g{child_id}_{param_level}",
+                               "{gsub(\"__\", \"\", atts)}"),
+      type = "structural",
+      attributes = .data$parameter
+    ) |>
+    dplyr::select("child_id", "type", "attributes", "coefficient") |>
+    dplyr::mutate(coefficient = as.character(.data$coefficient))
+
+  return(all_params)
 
 }
 
