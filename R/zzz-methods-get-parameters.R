@@ -98,4 +98,8 @@ S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
                                                   identifier = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
+  bayesnet_parameters(qmatrix = qmatrix, identifier = identifier,
+                      strc_dag = x@model_args$strc_dag,
+                      att_labels = x@model_args$att_labels)
+
 }
