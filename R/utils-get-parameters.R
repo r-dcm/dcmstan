@@ -177,7 +177,7 @@ bayesnet_parameters <- function(imatrix, identifier = NULL) {
     imatrix) |>
     tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
     tibble::rowid_to_column(var = "param_id") |>
-    dplyr::select("param_id", everything()) |>
+    dplyr::select("param_id", dplyr::everything()) |>
     tidyr::pivot_longer(cols = -"param_id", names_to = "parameter",
                         values_to = "value") |>
     dplyr::filter(.data$value == 1) |>

@@ -216,7 +216,7 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
         dplyr::mutate(param_id = as.integer(param_id))
     } else {
       parent_profiles <- create_profiles(attributes = nrow(parents_jj)) |>
-        setNames(parents_jj |> dplyr::pull(.data$parent))
+        stats::setNames(parents_jj |> dplyr::pull(.data$parent))
 
       parents_jj_params <-
         stats::model.matrix(stats::as.formula(paste0("~ .^",
@@ -246,7 +246,7 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
         dplyr::arrange(profile_id) |>
         dplyr::mutate(param_id = stringr::str_remove(jj, "att")) |>
         dplyr::mutate(param_id = as.integer(param_id)) |>
-        dplyr::select("param_id", "profile_id", everything())
+        dplyr::select("param_id", "profile_id", dplyr::everything())
     }
 
     tmp <- parents_jj_attributes |>
