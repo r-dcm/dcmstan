@@ -54,6 +54,9 @@ dcm_specify <- function(qmatrix, identifier = NULL,
                all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
   }
+  if (structural_model@model == "bayesnet" && ncol(qmatrix$clean_qmatrix) == 1) {
+    structural_model = unconstrained()
+  }
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
                                  structural_model = structural_model)
