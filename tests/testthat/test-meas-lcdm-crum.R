@@ -18,6 +18,12 @@ test_that("lcdm script works", {
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
 
+  ecpe_spec4 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                            identifier = "item_id",
+                            measurement_model = lcdm(),
+                            structural_model = bayesnet())
+  expect_snapshot(generate_stan(ecpe_spec4))
+
   # edge case where all items are simple structure
   dtmr_spec2 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix %>%
                               dplyr::filter(!(item %in% c("10b", "10c", "13",
@@ -47,4 +53,10 @@ test_that("crum script works", {
                             measurement_model = crum(),
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
+
+  ecpe_spec4 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                            identifier = "item_id",
+                            measurement_model = crum(),
+                            structural_model = bayesnet())
+  expect_snapshot(generate_stan(ecpe_spec4))
 })
