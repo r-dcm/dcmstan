@@ -36,4 +36,23 @@
         slip ~ beta(5, 25)
         guess ~ beta(5, 25)
         structural ~ beta(1, 1)
+    Code
+      spec4
+    Message
+      A loglinear cognitive diagnostic model (LCDM) measuring 3 attributes with 10
+      items.
+      
+      i Attributes:
+      * "att1" (4 items)
+      * "att2" (6 items)
+      * "att3" (7 items)
+      
+      i Attribute structure:
+        Bayesian network
+      
+      i Prior distributions:
+        intercept ~ normal(0, 2)
+        maineffect ~ lognormal(0, 1)
+        interaction ~ normal(0, 2)
+        structural ~ normal(0, 2)
 

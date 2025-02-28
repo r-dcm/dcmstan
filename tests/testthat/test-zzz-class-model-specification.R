@@ -87,8 +87,20 @@ test_that("printing works", {
                        measurement_model = dina(),
                        structural_model = independent())
 
+  test_qmatrix4 <- tibble::tibble(
+    item = paste0("item_", 1:10),
+    att1 = c(0L, 1L, 0L, 0L, 0L, 1L, 1L, 1L, 0L, 0L),
+    att2 = c(0L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 1L, 1L),
+    att3 = c(1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 1L, 1L)
+  )
+
+  spec4 <- dcm_specify(qmatrix = test_qmatrix4, identifier = "item",
+                       measurement_model = lcdm(),
+                       structural_model = bayesnet())
+
   expect_snapshot({
     spec
     spec2
+    spec4
   })
 })
