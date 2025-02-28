@@ -122,6 +122,16 @@ crum <- function() {
 #' presence of one attribute and the presence of any other. For an example of
 #' independent attributes model, see Lee (2016).
 #'
+#' The bayesian network model defines the statistical relationships between the
+#' attributes using a directed acyclic graph and a joint probability
+#' distribution. Attribute hierarchies are explicitly defined by decomposing the
+#' joint distribution for the latent attribute space into a series of marginal
+#' and conditional probability distributions. The unconstrained structural model
+#' described in Chapter 8 of Rupp et al. (2010) can be parameterized as a
+#' saturated Bayesian network (Hu & Templin, 2020). Further, structural models
+#' implying an attribute hierarchy are viewed as nested models within a
+#' saturated Bayesian network (Martinez & Templin, 2023).
+#'
 #' @name structural-model
 #' @seealso [Measurement models][measurement-model]
 #' @export
@@ -133,6 +143,10 @@ crum <- function() {
 #' @references Lee, S. Y. (2016). *Cognitive diagnosis model: DINA model with
 #'   independent attributes*.
 #'   https://mc-stan.org/documentation/case-studies/dina_independent.html
+#' @references Martinez, A. J., & Templin, J. (2023). Approximate Invariance
+#'   Testing in Diagnostic Classification Models in the Presence of Attribute
+#'   Hierarchies: A Bayesian Network Approach. *Psych, 5*(3), 688-714.
+#'   https://doi.org/10.3390/psych5030045
 #' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
 #'   measurement: Theory, methods, and applications*. Guilford Press.
 #'
@@ -152,9 +166,12 @@ independent <- function() {
 
 #' @rdname structural-model
 #' @export
-bayesnet <- function(strc_dag = NULL, att_labels = NULL) {
-  BAYESNET(model = "bayesnet",
-           list(strc_dag = strc_dag, att_labels = att_labels))
+bayesnet <- function(hierarchy = NULL) {
+  if (!is.null(hierarchy)) {
+    hierarchy <- check_hierarchy(hierarchy)
+  }
+
+  BAYESNET(model = "bayesnet", list(hierarchy = hierarchy))
 }
 
 
@@ -298,5 +315,5 @@ INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
 #' @rdname model-components
 #' @export
 BAYESNET <- S7::new_class("BAYESNET", parent = structural,
-                             package = "dcmstan",
-                             properties = list(model = model_property))
+                          package = "dcmstan",
+                          properties = list(model = model_property))
