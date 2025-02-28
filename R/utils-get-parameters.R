@@ -142,50 +142,43 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 }
 
 
-#' Determine the possible parameters for a Log-linear structural model
+#' Determine the possible parameters for a Bayesian network structural model
 #'
-#' @param qmatrix A Q-matrix specifying which attributes are measured by which
-#'   items.
+#' @param imatrix An incidence matrix (structural version of a Q-matrix) that
+#'  details the conditional dependence relationships between the attributes in
+#'  structural model. Rows of the incidence matrix denote the child attributes
+#'  and the columns denote the parent attributes.
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
-#' @param loglinear_interaction Positive integer. For the Log-linear structural
-#' model, the highest structural-level interaction to include in the model.
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-bayesnet_parameters <- function(qmatrix, identifier = NULL,
-                                strc_dag = NULL, att_labels = NULL) {
+bayesnet_parameters <- function(imatrix, identifier = NULL) {
   if (is.null(identifier)) {
-    qmatrix <- qmatrix |>
-      tibble::rowid_to_column(var = "item_id")
-    identifier <- "item_id"
+    imatrix <- imatrix |>
+      tibble::rowid_to_column(var = "param_id")
+    identifier <- "param_id"
 
-    item_ids <- qmatrix |>
-      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
-      tibble::rowid_to_column(var = "item_number")
+    child_ids <- imatrix |>
+      dplyr::select(dcmstan_real_param_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "param_number")
   } else {
-    item_ids <- qmatrix |>
-      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
-      tibble::rowid_to_column(var = "item_number")
+    child_ids <- imatrix |>
+      dplyr::select(dcmstan_real_child_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "param_number")
   }
 
-  att_names <- colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
-  qmatrix <- qmatrix |>
-    dplyr::select(-{{ identifier }}) |>
-    dplyr::rename_with(~glue::glue("att{1:(ncol(qmatrix) - 1)}"),
-                       .cols = dplyr::everything())
-
-  incidence <- create_incidence_matrix(qmatrix = qmatrix, dag = strc_dag)
-  incidence <- clean_incidence(incidence, identifier = "child_id")
+  imatrix <- imatrix |>
+    dplyr::select(-{{ identifier }})
 
   all_params <- stats::model.matrix(
     stats::as.formula(paste0("~ .^",
-                             max(ncol(incidence$clean_incidence) - 1, 2L))),
-    incidence$clean_incidence) |>
+                             max(ncol(imatrix), 2L))),
+    imatrix) |>
     tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
-    dplyr::mutate(child_id = incidence$child_names) |>
-    dplyr::select("child_id", everything()) |>
-    tidyr::pivot_longer(cols = -"child_id", names_to = "parameter",
+    tibble::rowid_to_column(var = "param_id") |>
+    dplyr::select("param_id", everything()) |>
+    tidyr::pivot_longer(cols = -"param_id", names_to = "parameter",
                         values_to = "value") |>
     dplyr::filter(.data$value == 1) |>
     dplyr::mutate(
@@ -196,12 +189,12 @@ bayesnet_parameters <- function(qmatrix, identifier = NULL,
                       function(.x) length(attr(.x, "match.length"))) + 1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
-      coefficient = glue::glue("g{child_id}_{param_level}",
+      coefficient = glue::glue("g{param_id}_{param_level}",
                                "{gsub(\"__\", \"\", atts)}"),
       type = "structural",
       attributes = .data$parameter
     ) |>
-    dplyr::select("child_id", "type", "attributes", "coefficient") |>
+    dplyr::select("param_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
 
   return(all_params)
