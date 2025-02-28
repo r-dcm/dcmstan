@@ -129,7 +129,10 @@ S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
   hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
   hierarchy <- ggdag::tidy_dagitty(hierarchy)
 
+  parents <- tibble::tibble()
   ancestors <- tibble::tibble()
+  roots <- dagitty::exogenousVariables(g)
+
   for (jj in hierarchy |> tibble::as_tibble() |> dplyr::pull(.data$name)) {
     tmp_jj <- att_labels |>
       dplyr::filter(.data$att_label == jj) |>
@@ -145,6 +148,30 @@ S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
 
     ancestors <- dplyr::bind_rows(ancestors, tmp) |>
       dplyr::distinct()
+
+    tmp2 <- dagitty::parents(g, jj) |>
+      tibble::as_tibble() |>
+      dplyr::mutate(param = tmp_jj) |>
+      dplyr::rename(parent = "value") |>
+      dplyr::select("param", "parent") |>
+      dplyr::left_join(att_labels, by = c("parent" = "att_label")) |>
+      dplyr::select("param", parent = "att")
+
+    parents <- dplyr::bind_rows(parents, tmp2) |>
+      dplyr::distinct()
+
+    if(jj %in% roots) {
+      parents <- dplyr::bind_rows(
+        parents,
+        jj |>
+          tibble::as_tibble() |>
+          dplyr::left_join(att_labels, by = c("value" = "att_label")) |>
+          dplyr::rename(param = att) |>
+          dplyr::select("param") |>
+          dplyr::mutate(parent = NA_character_)
+      ) |>
+        dplyr::arrange(param)
+    }
   }
 
   imatrix <- ancestors |>
