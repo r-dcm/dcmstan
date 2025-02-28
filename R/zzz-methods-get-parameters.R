@@ -100,9 +100,8 @@ S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
   hierarchy = x@model_args$hierarchy
   att_labels = x@model_args$att_labels
   if(is.null(hierarchy)) {
-    temp_hierarchy <- expand.grid(param = att_labels$att,
-                                  parent = att_labels$att,
-                                  stringsAsFactors = FALSE) |>
+    temp_hierarchy <- tidyr::expand_grid(param = att_labels$att,
+                                         parent = att_labels$att) |>
       tibble::as_tibble() |>
       dplyr::mutate(param_id = stringr::str_remove(.data$param, "att"),
                     param_id = as.integer(param_id),
@@ -110,10 +109,10 @@ S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
                     parent_id = as.integer(parent_id)) |>
       dplyr::filter(parent_id > param_id) |>
       dplyr::select("param", "parent") |>
-      left_join(att_labels, by = c("parent" = "att")) |>
+      dplyr::left_join(att_labels, by = c("parent" = "att")) |>
       dplyr::select(-"parent") |>
       dplyr::rename(parent = att_label) |>
-      left_join(att_labels, by = c("param" = "att")) |>
+      dplyr::left_join(att_labels, by = c("param" = "att")) |>
       dplyr::select(-"param") |>
       dplyr::rename(param = att_label) |>
       dplyr::select("param", "parent")
@@ -153,7 +152,8 @@ S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
                                           TRUE ~ 1L)) |>
     dplyr::arrange(param) |>
     tidyr::pivot_wider(names_from = "ancestor", values_from = "meas") |>
-    dplyr::mutate(dplyr::across(dplyr::starts_with("att"), ~replace_na(., 0L)))
+    dplyr::mutate(dplyr::across(dplyr::starts_with("att"),
+                                ~tidyr::replace_na(., 0L)))
 
   bayesnet_parameters(imatrix = imatrix, identifier = "param")
 

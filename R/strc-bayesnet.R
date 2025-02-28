@@ -20,9 +20,8 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
   if(is.null(hierarchy)) {
 
     ## saturated hierarchy
-    temp_hierarchy <- expand.grid(param = att_labels$att,
-                                  parent = att_labels$att,
-                                  stringsAsFactors = FALSE) |>
+    temp_hierarchy <- tidyr::expand_grid(param = att_labels$att,
+                                         parent = att_labels$att) |>
       tibble::as_tibble() |>
       dplyr::mutate(param_id = stringr::str_remove(.data$param, "att"),
                     param_id = as.integer(param_id),
@@ -30,10 +29,10 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
                     parent_id = as.integer(parent_id)) |>
       dplyr::filter(parent_id > param_id) |>
       dplyr::select("param", "parent") |>
-      left_join(att_labels, by = c("parent" = "att")) |>
+      dplyr::left_join(att_labels, by = c("parent" = "att")) |>
       dplyr::select(-"parent") |>
       dplyr::rename(parent = att_label) |>
-      left_join(att_labels, by = c("param" = "att")) |>
+      dplyr::left_join(att_labels, by = c("param" = "att")) |>
       dplyr::select(-"param") |>
       dplyr::rename(param = att_label) |>
       dplyr::select("param", "parent")
@@ -90,7 +89,7 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
         parents,
         jj |>
           tibble::as_tibble() |>
-          left_join(att_labels, by = c("value" = "att_label")) |>
+          dplyr::left_join(att_labels, by = c("value" = "att_label")) |>
           dplyr::rename(param = att) |>
           dplyr::select("param") |>
           dplyr::mutate(parent = NA_character_)
@@ -104,7 +103,8 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
                                           TRUE ~ 1L)) |>
     dplyr::arrange(param) |>
     tidyr::pivot_wider(names_from = "ancestor", values_from = "meas") |>
-    dplyr::mutate(dplyr::across(dplyr::starts_with("att"), ~replace_na(., 0L)))
+    dplyr::mutate(dplyr::across(dplyr::starts_with("att"),
+                                ~tidyr::replace_na(., 0L)))
 
 
   # parameters block -----
@@ -169,17 +169,17 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
   # transformed parameters block -----
   all_profiles <- create_profiles(attributes = ncol(imatrix) - 1)
 
-  all_profile_attributes <- tibble(profile_id = 1:nrow(all_profiles)) |>
-    left_join(all_profiles |>
-                tibble::rowid_to_column("profile_id") |>
-                tidyr::pivot_longer(cols = -c("profile_id"),
-                                    names_to = "param", values_to = "valid_for_profile") |>
-                dplyr::filter(valid_for_profile == 1) |>
-                dplyr::mutate(param_id = stringr::str_remove(param, "att")) |>
-                dplyr::summarize(profile_atts = paste(param_id, collapse = "__"),
-                                 profile_attributes = paste(param, collapse = "__"),
-                                 .by = "profile_id"),
-              by = c("profile_id")) |>
+  all_profile_attributes <- tibble::tibble(profile_id = 1:nrow(all_profiles)) |>
+    dplyr::left_join(all_profiles |>
+                       tibble::rowid_to_column("profile_id") |>
+                       tidyr::pivot_longer(cols = -c("profile_id"),
+                                           names_to = "param", values_to = "valid_for_profile") |>
+                       dplyr::filter(valid_for_profile == 1) |>
+                       dplyr::mutate(param_id = stringr::str_remove(param, "att")) |>
+                       dplyr::summarize(profile_atts = paste(param_id, collapse = "__"),
+                                        profile_attributes = paste(param, collapse = "__"),
+                                        .by = "profile_id"),
+                     by = c("profile_id")) |>
     dplyr::mutate(profile_atts = dplyr::case_when(profile_id == 1L ~ "",
                                                   TRUE ~ profile_atts),
                   profile_attributes = dplyr::case_when(profile_id == 1L ~ "",
@@ -193,7 +193,7 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
       dplyr::filter(.data$param == jj) |>
       dplyr::arrange(parent) |>
       dplyr::select("parent") |>
-      distinct()
+      dplyr::distinct()
 
     strc_params_jj <- strc_params |>
       dplyr::filter(.data$param == jj) |>
@@ -248,25 +248,27 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
     }
 
     tmp <- parents_jj_attributes |>
-      left_join(parents_jj_params |>
-                  dplyr::left_join(strc_params_jj, by = c("parameter"),
-                                   relationship = "many-to-many") |>
-                  dplyr::filter(valid_for_profile == 1) |>
-                  dplyr::select("param_id", "profile_id" = "profile_id", "param_name") |>
-                  dplyr::distinct() |>
-                  dplyr::mutate(strc_params = paste(param_name, collapse = "+"),
-                                .by = c("param_id", "profile_id")) |>
-                  dplyr::select(-"param_name") |>
-                  dplyr::rename(parent_profile_id = profile_id) |>
-                  dplyr::distinct(),
-                by = c("param_id", "parent_profile_id"))
+      dplyr::left_join(parents_jj_params |>
+                         dplyr::left_join(strc_params_jj, by = c("parameter"),
+                                          relationship = "many-to-many") |>
+                         dplyr::filter(valid_for_profile == 1) |>
+                         dplyr::select("param_id", "profile_id" = "profile_id",
+                                       "param_name") |>
+                         dplyr::distinct() |>
+                         dplyr::mutate(strc_params = paste(param_name,
+                                                           collapse = "+"),
+                                       .by = c("param_id", "profile_id")) |>
+                         dplyr::select(-"param_name") |>
+                         dplyr::rename(parent_profile_id = profile_id) |>
+                         dplyr::distinct(),
+                       by = c("param_id", "parent_profile_id"))
 
     tmp_rho_def <- dplyr::bind_rows(tmp_rho_def, tmp)
 
   }
 
   rho_def <- tmp_rho_def |>
-    arrange(param_id) |>
+    dplyr::arrange(param_id) |>
     glue::glue_data("rho[{param_id},{profile_id}] = inv_logit({strc_params});")
 
   profile_params <- all_profiles |>
@@ -290,7 +292,7 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
     dplyr::mutate(att = dplyr::case_when(master == 0L ~ "",
                                          TRUE ~ parent)) |>
     dplyr::distinct(Vc_profile_id, param, param_master, att) |>
-    dplyr::mutate(n_atts = n(), .by = c(Vc_profile_id, param)) |>
+    dplyr::mutate(n_atts = dplyr::n(), .by = c(Vc_profile_id, param)) |>
     dplyr::mutate(remove = (n_atts > 1) & (att == "")) |>
     dplyr::filter(!remove) |>
     dplyr::select(-"n_atts", -"remove") |>
@@ -301,10 +303,10 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
     dplyr::select("Vc_profile_id", "param_id",
                   "param_master", "parent_attributes") |>
     dplyr::distinct() |>
-    left_join(tmp_rho_def |>
-                dplyr::rename(rho_profile_id = profile_id) |>
-                dplyr::select(param_id, rho_profile_id, parent_attributes),
-              by = c("param_id", "parent_attributes")) |>
+    dplyr::left_join(tmp_rho_def |>
+                       dplyr::rename(rho_profile_id = profile_id) |>
+                       dplyr::select(param_id, rho_profile_id, parent_attributes),
+                     by = c("param_id", "parent_attributes")) |>
     dplyr::select(-"parent_attributes") |>
     dplyr::mutate(
       rhs = glue::glue("rho[{param_id},{rho_profile_id}]"),

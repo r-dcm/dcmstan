@@ -41,18 +41,18 @@ dcm_specify <- function(qmatrix, identifier = NULL,
                         structural_model = unconstrained(),
                         priors = NULL) {
   check_string(identifier, allow_null = TRUE)
-  qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
+  if (structural_model@model == "bayesnet") {
+    att_labels <- get_att_labels(qmatrix = qmatrix, identifier = identifier)
+    structural_model@model_args$att_labels <- att_labels
+  }
+  qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {
     measurement_model@model_args$max_interaction <- 1L
   } else if (measurement_model@model == "lcdm" &&
                all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
-  }
-  if (structural_model@model == "bayesnet") {
-    att_labels <- get_att_labels(qmatrix = qmatrix, identifier = identifier)
-    structural_model@model_args$att_labels <- att_labels
   }
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
