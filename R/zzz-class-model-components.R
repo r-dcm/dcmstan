@@ -110,6 +110,9 @@ crum <- function() {
 #' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
 #' See details for additional information on each model.
 #'
+#' @param hierarchy For the Bayesian network structural model, a character
+#' string containing the quoted attribute hierarchy.
+#'
 #' @returns A structural model object.
 #'
 #' @details

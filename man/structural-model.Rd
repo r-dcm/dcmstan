@@ -13,6 +13,10 @@ independent()
 
 bayesnet(hierarchy = NULL)
 }
+\arguments{
+\item{hierarchy}{For the Bayesian network structural model, a character
+string containing the quoted attribute hierarchy.}
+}
 \value{
 A structural model object.
 }
