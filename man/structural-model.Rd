@@ -4,11 +4,14 @@
 \alias{structural-model}
 \alias{unconstrained}
 \alias{independent}
+\alias{bayesnet}
 \title{Structural models for diagnostic classification}
 \usage{
 unconstrained()
 
 independent()
+
+bayesnet(hierarchy = NULL)
 }
 \value{
 A structural model object.
@@ -16,7 +19,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained and independent attributes.
+unconstrained; independent attributes; and bayesian network.
 See details for additional information on each model.
 }
 \details{
@@ -28,6 +31,16 @@ The independent attributes model assumes that the presence of the attributes
 are unrelated to each other. That is, there is no relationship between the
 presence of one attribute and the presence of any other. For an example of
 independent attributes model, see Lee (2016).
+
+The bayesian network model defines the statistical relationships between the
+attributes using a directed acyclic graph and a joint probability
+distribution. Attribute hierarchies are explicitly defined by decomposing the
+joint distribution for the latent attribute space into a series of marginal
+and conditional probability distributions. The unconstrained structural model
+described in Chapter 8 of Rupp et al. (2010) can be parameterized as a
+saturated Bayesian network (Hu & Templin, 2020). Further, structural models
+implying an attribute hierarchy are viewed as nested models within a
+saturated Bayesian network (Martinez & Templin, 2023).
 }
 \examples{
 unconstrained()
@@ -43,6 +56,11 @@ Networks. \emph{Multivariate Behavioral Research, 55}(2), 300-311.
 Lee, S. Y. (2016). \emph{Cognitive diagnosis model: DINA model with
 independent attributes}.
 https://mc-stan.org/documentation/case-studies/dina_independent.html
+
+Martinez, A. J., & Templin, J. (2023). Approximate Invariance
+Testing in Diagnostic Classification Models in the Presence of Attribute
+Hierarchies: A Bayesian Network Approach. \emph{Psych, 5}(3), 688-714.
+https://doi.org/10.3390/psych5030045
 
 Rupp, A. A., Templin, J., & Henson, R. A. (2010). \emph{Diagnostic
 measurement: Theory, methods, and applications}. Guilford Press.

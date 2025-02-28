@@ -10,6 +10,7 @@
 \alias{CRUM}
 \alias{UNCONSTRAINED}
 \alias{INDEPENDENT}
+\alias{BAYESNET}
 \title{Class constructors for model components}
 \usage{
 measurement(model = "lcdm", model_args = list())
@@ -27,6 +28,8 @@ CRUM(model = "lcdm", model_args = list())
 UNCONSTRAINED(model = "unconstrained", model_args = list())
 
 INDEPENDENT(model = "unconstrained", model_args = list())
+
+BAYESNET(model = "unconstrained", model_args = list())
 }
 \arguments{
 \item{model}{The type of measurement model to be used. Must be one of
