@@ -50,6 +50,10 @@ dcm_specify <- function(qmatrix, identifier = NULL,
                all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
   }
+  if (structural_model@model == "bayesnet") {
+    att_labels <- get_att_labels(qmatrix = qmatrix, identifier = identifier)
+    structural_model@model_args$att_labels <- att_labels
+  }
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
                                  structural_model = structural_model)
