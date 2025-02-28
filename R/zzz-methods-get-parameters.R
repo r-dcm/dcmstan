@@ -97,9 +97,64 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
 S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
                                                   identifier = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+  hierarchy = x@model_args$hierarchy
+  att_labels = x@model_args$att_labels
+  if(is.null(hierarchy)) {
+    temp_hierarchy <- expand.grid(param = att_labels$att,
+                                  parent = att_labels$att,
+                                  stringsAsFactors = FALSE) |>
+      tibble::as_tibble() |>
+      dplyr::mutate(param_id = stringr::str_remove(.data$param, "att"),
+                    param_id = as.integer(param_id),
+                    parent_id = stringr::str_remove(.data$parent, "att"),
+                    parent_id = as.integer(parent_id)) |>
+      dplyr::filter(parent_id > param_id) |>
+      dplyr::select("param", "parent") |>
+      left_join(att_labels, by = c("parent" = "att")) |>
+      dplyr::select(-"parent") |>
+      dplyr::rename(parent = att_label) |>
+      left_join(att_labels, by = c("param" = "att")) |>
+      dplyr::select(-"param") |>
+      dplyr::rename(param = att_label) |>
+      dplyr::select("param", "parent")
 
-  bayesnet_parameters(qmatrix = qmatrix, identifier = identifier,
-                      strc_dag = x@model_args$strc_dag,
-                      att_labels = x@model_args$att_labels)
+    hierarchy <- temp_hierarchy |>
+      dplyr::mutate(edge = paste(param, "->", parent)) |>
+      dplyr::select(edge) |>
+      dplyr::summarize(hierarchy = paste(edge, collapse = "  ")) |>
+      dplyr::pull(.data$hierarchy)
+  }
+
+  g <- glue::glue(" graph { <hierarchy> } ", .open = "<", .close = ">")
+  g <- dagitty::dagitty(g)
+  hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
+  hierarchy <- ggdag::tidy_dagitty(hierarchy)
+
+  ancestors <- tibble::tibble()
+  for (jj in hierarchy |> tibble::as_tibble() |> dplyr::pull(.data$name)) {
+    tmp_jj <- att_labels |>
+      dplyr::filter(.data$att_label == jj) |>
+      dplyr::pull(.data$att)
+
+    tmp <- dagitty::ancestors(g, jj) |>
+      tibble::as_tibble() |>
+      dplyr::mutate(param = tmp_jj) |>
+      dplyr::rename(ancestor = "value") |>
+      dplyr::select("param", "ancestor") |>
+      dplyr::left_join(att_labels, by = c("ancestor" = "att_label")) |>
+      dplyr::select("param", ancestor = "att")
+
+    ancestors <- dplyr::bind_rows(ancestors, tmp) |>
+      dplyr::distinct()
+  }
+
+  imatrix <- ancestors |>
+    dplyr::mutate(meas = dplyr::case_when(param == ancestor ~ 0L,
+                                          TRUE ~ 1L)) |>
+    dplyr::arrange(param) |>
+    tidyr::pivot_wider(names_from = "ancestor", values_from = "meas") |>
+    dplyr::mutate(dplyr::across(dplyr::starts_with("att"), ~replace_na(., 0L)))
+
+  bayesnet_parameters(imatrix = imatrix, identifier = "param")
 
 }
