@@ -148,12 +148,14 @@ S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
   }
 
   imatrix <- ancestors |>
-    dplyr::mutate(meas = dplyr::case_when(param == ancestor ~ 0L,
-                                          TRUE ~ 1L)) |>
+    dplyr::rename(parent = ancestor) |>
+    dplyr::left_join(parents |>
+                       dplyr::filter(!is.na(parent)) |>
+                       dplyr::mutate(meas = 1L),
+                     by = c("param", "parent")) |>
     dplyr::arrange(param) |>
-    tidyr::pivot_wider(names_from = "ancestor", values_from = "meas") |>
-    dplyr::mutate(dplyr::across(dplyr::starts_with("att"),
-                                ~tidyr::replace_na(., 0L)))
+    tidyr::pivot_wider(names_from = "parent", values_from = "meas") |>
+    dplyr::mutate(dplyr::across(dplyr::starts_with("att"), ~tidyr::replace_na(., 0L)))
 
   bayesnet_parameters(imatrix = imatrix, identifier = "param")
 

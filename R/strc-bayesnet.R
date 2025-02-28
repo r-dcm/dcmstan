@@ -99,12 +99,14 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
   }
 
   imatrix <- ancestors |>
-    dplyr::mutate(meas = dplyr::case_when(param == ancestor ~ 0L,
-                                          TRUE ~ 1L)) |>
+    dplyr::rename(parent = ancestor) |>
+    dplyr::left_join(parents |>
+                       dplyr::filter(!is.na(parent)) |>
+                       dplyr::mutate(meas = 1L),
+                     by = c("param", "parent")) |>
     dplyr::arrange(param) |>
-    tidyr::pivot_wider(names_from = "ancestor", values_from = "meas") |>
-    dplyr::mutate(dplyr::across(dplyr::starts_with("att"),
-                                ~tidyr::replace_na(., 0L)))
+    tidyr::pivot_wider(names_from = "parent", values_from = "meas") |>
+    dplyr::mutate(dplyr::across(dplyr::starts_with("att"), ~tidyr::replace_na(., 0L)))
 
 
   # parameters block -----
