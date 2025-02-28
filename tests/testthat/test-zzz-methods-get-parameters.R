@@ -333,6 +333,114 @@ test_that("independent parameters work", {
   expect_equal(params, params2)
 })
 
+test_that("bayesian network parameters work", {
+  test_qmatrix <- tibble::tibble(
+    att1 = c(1, 0, 1, 1),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1)
+  )
+
+  structural = bayesnet()
+  att_labels <- get_att_labels(qmatrix = test_qmatrix, identifier = NULL)
+  structural@model_args$att_labels <- att_labels
+  params <- get_parameters(structural, qmatrix = test_qmatrix)
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("param_id", "type", "attributes",
+                                   "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~param_id,         ~type,              ~attributes, ~coefficient,
+      1L,   "structural",                  "intercept",  "g1_0",
+      2L,   "structural",                  "intercept",  "g2_0",
+      2L,   "structural",                  "att1",       "g2_11",
+      3L,   "structural",                  "intercept",  "g3_0",
+      3L,   "structural",                  "att1",       "g3_11",
+      3L,   "structural",                  "att2",       "g3_12",
+      3L,   "structural",                  "att1__att2",  "g3_212"
+    )
+  )
+
+  structural = bayesnet()
+  structural@model_args$att_labels <- att_labels
+  hierarchy <- "att3 -> att2 -> att1"
+  structural@model_args$hierarchy <- hierarchy
+  g <- glue::glue(" graph { <hierarchy> } ", .open = "<", .close = ">")
+  g <- dagitty::dagitty(g)
+  hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
+  hierarchy <- ggdag::tidy_dagitty(hierarchy)
+
+  parents <- tibble::tibble()
+  ancestors <- tibble::tibble()
+  roots <- dagitty::exogenousVariables(g)
+
+  for (jj in hierarchy |> tibble::as_tibble() |> dplyr::pull(.data$name)) {
+    tmp_jj <- att_labels |>
+      dplyr::filter(.data$att_label == jj) |>
+      dplyr::pull(.data$att)
+
+    tmp <- dagitty::ancestors(g, jj) |>
+      tibble::as_tibble() |>
+      dplyr::mutate(param = tmp_jj) |>
+      dplyr::rename(ancestor = "value") |>
+      dplyr::select("param", "ancestor") |>
+      dplyr::left_join(att_labels, by = c("ancestor" = "att_label")) |>
+      dplyr::select("param", ancestor = "att")
+
+    ancestors <- dplyr::bind_rows(ancestors, tmp) |>
+      dplyr::distinct()
+
+    tmp2 <- dagitty::parents(g, jj) |>
+      tibble::as_tibble() |>
+      dplyr::mutate(param = tmp_jj) |>
+      dplyr::rename(parent = "value") |>
+      dplyr::select("param", "parent") |>
+      dplyr::left_join(att_labels, by = c("parent" = "att_label")) |>
+      dplyr::select("param", parent = "att")
+
+    parents <- dplyr::bind_rows(parents, tmp2) |>
+      dplyr::distinct()
+
+    if(jj %in% roots) {
+      parents <- dplyr::bind_rows(
+        parents,
+        jj |>
+          tibble::as_tibble() |>
+          dplyr::left_join(att_labels, by = c("value" = "att_label")) |>
+          dplyr::rename(param = att) |>
+          dplyr::select("param") |>
+          dplyr::mutate(parent = NA_character_)
+      ) |>
+        dplyr::arrange(param)
+    }
+  }
+
+  test_imatrix <- ancestors |>
+    dplyr::rename(parent = ancestor) |>
+    dplyr::left_join(parents |>
+                       dplyr::filter(!is.na(parent)) |>
+                       dplyr::mutate(meas = 1L),
+                     by = c("param", "parent")) |>
+    dplyr::arrange(param) |>
+    tidyr::pivot_wider(names_from = "parent", values_from = "meas") |>
+    dplyr::mutate(dplyr::across(dplyr::starts_with("att"),
+                                ~tidyr::replace_na(., 0L)))
+  expect_equal(
+    bayesnet_parameters(test_imatrix, identifier = "param"),
+    tibble::tribble(
+      ~param_id,         ~type,              ~attributes, ~coefficient,
+      1L,   "structural",                  "intercept",  "g1_0",
+      1L,   "structural",                  "att2",       "g1_12",
+      2L,   "structural",                  "intercept",  "g2_0",
+      2L,   "structural",                  "att3",       "g2_13",
+      3L,   "structural",                  "intercept",  "g3_0"
+    )
+  )
+})
+
+
 # dcm specification parameters -------------------------------------------------
 test_that("warnings are produced for unnecessary arguments", {
   test_qmatrix <- tibble::tibble(
