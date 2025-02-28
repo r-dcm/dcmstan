@@ -46,6 +46,8 @@ saturated Bayesian network (Martinez & Templin, 2023).
 unconstrained()
 
 independent()
+
+bayesnet()
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification

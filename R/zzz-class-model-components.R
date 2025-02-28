@@ -154,6 +154,8 @@ crum <- function() {
 #' unconstrained()
 #'
 #' independent()
+#'
+#' bayesnet()
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
