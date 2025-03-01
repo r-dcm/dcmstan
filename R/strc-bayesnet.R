@@ -126,9 +126,19 @@ strc_bayesnet <- function(qmatrix, priors, hierarchy = NULL, att_labels) {
                       function(.x) length(attr(.x, "match.length"))) + 1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
+      comp_atts = one_down_params(.data$atts, item = .data$param_id),
+      comp_atts = stringr::str_replace_all(comp_atts, "l", "g"),
       param_name = glue::glue("g{param_id}_{param_level}",
                               "{gsub(\"__\", \"\", atts)}"),
-      param_def = glue::glue("real {param_name};")
+      constraint = dplyr::case_when(
+        .data$param_level == 0 ~ glue::glue(""),
+        .data$param_level == 1 ~ glue::glue("<lower=0>"),
+        .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
+      ),
+      param_def = dplyr::case_when(
+        .data$param_level == 0 ~ glue::glue("real {param_name};"),
+        .data$param_level >= 1 ~ glue::glue("real{constraint} {param_name};")
+    )
     )
 
   intercepts <- strc_params |>

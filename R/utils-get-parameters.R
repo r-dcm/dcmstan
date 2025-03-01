@@ -191,7 +191,9 @@ bayesnet_parameters <- function(imatrix, identifier = NULL) {
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue("g{param_id}_{param_level}",
                                "{gsub(\"__\", \"\", atts)}"),
-      type = "structural",
+      type = dplyr::case_when(.data$param_level == 0 ~ "structural_intercept",
+                              .data$param_level == 1 ~ "structural_maineffect",
+                              .data$param_level >= 2 ~ "structural_interaction"),
       attributes = .data$parameter
     ) |>
     dplyr::select("param_id", "type", "attributes", "coefficient") |>
