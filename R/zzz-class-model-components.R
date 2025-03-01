@@ -149,7 +149,7 @@ crum <- function() {
 #' @references Martinez, A. J., & Templin, J. (2023). Approximate Invariance
 #'   Testing in Diagnostic Classification Models in the Presence of Attribute
 #'   Hierarchies: A Bayesian Network Approach. *Psych, 5*(3), 688-714.
-#'   https://doi.org/10.3390/psych5030045
+#'   \doi{10.3390/psych5030045}
 #' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
 #'   measurement: Theory, methods, and applications*. Guilford Press.
 #'

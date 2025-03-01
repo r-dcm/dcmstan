@@ -66,7 +66,7 @@ https://mc-stan.org/documentation/case-studies/dina_independent.html
 Martinez, A. J., & Templin, J. (2023). Approximate Invariance
 Testing in Diagnostic Classification Models in the Presence of Attribute
 Hierarchies: A Bayesian Network Approach. \emph{Psych, 5}(3), 688-714.
-https://doi.org/10.3390/psych5030045
+\doi{10.3390/psych5030045}
 
 Rupp, A. A., Templin, J., & Henson, R. A. (2010). \emph{Diagnostic
 measurement: Theory, methods, and applications}. Guilford Press.
