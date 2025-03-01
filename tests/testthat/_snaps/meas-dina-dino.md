@@ -436,12 +436,12 @@
         real g2_0;
         real g3_0;
         ////////////////////////////////// strc main effects
-        real g2_11;
-        real g3_11;
-        real g3_12;
+        real<lower=0> g2_11;
+        real<lower=0> g3_11;
+        real<lower=0> g3_12;
       
         ////////////////////////////////// strc interactions
-        real g3_212;
+        real<lower=-1 * min([g3_11,g3_12])> g3_212;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -485,10 +485,10 @@
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
-        g2_11 ~ normal(0, 2);
+        g2_11 ~ lognormal(0, 1);
         g3_0 ~ normal(0, 2);
-        g3_11 ~ normal(0, 2);
-        g3_12 ~ normal(0, 2);
+        g3_11 ~ lognormal(0, 1);
+        g3_12 ~ lognormal(0, 1);
         g3_212 ~ normal(0, 2);
         guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
@@ -1001,12 +1001,12 @@
         real g2_0;
         real g3_0;
         ////////////////////////////////// strc main effects
-        real g2_11;
-        real g3_11;
-        real g3_12;
+        real<lower=0> g2_11;
+        real<lower=0> g3_11;
+        real<lower=0> g3_12;
       
         ////////////////////////////////// strc interactions
-        real g3_212;
+        real<lower=-1 * min([g3_11,g3_12])> g3_212;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -1050,10 +1050,10 @@
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
-        g2_11 ~ normal(0, 2);
+        g2_11 ~ lognormal(0, 1);
         g3_0 ~ normal(0, 2);
-        g3_11 ~ normal(0, 2);
-        g3_12 ~ normal(0, 2);
+        g3_11 ~ lognormal(0, 1);
+        g3_12 ~ lognormal(0, 1);
         g3_212 ~ normal(0, 2);
         guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);

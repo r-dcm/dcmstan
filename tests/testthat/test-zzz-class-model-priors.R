@@ -115,9 +115,10 @@ test_that("independent default priors", {
 test_that("bayesnet default priors", {
   expect_identical(
     prior_tibble(bayesnet_priors()),
-    tibble::tibble(type = c("structural"),
+    tibble::tibble(type = c("structural_intercept", "structural_maineffect",
+                            "structural_interaction"),
                    coefficient = NA_character_,
-                   prior = c("normal(0, 2)"))
+                   prior = c("normal(0, 2)", "lognormal(0, 1)", "normal(0, 2)"))
   )
 })
 

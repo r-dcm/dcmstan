@@ -353,13 +353,13 @@ test_that("bayesian network parameters work", {
     params,
     tibble::tribble(
       ~param_id,         ~type,              ~attributes, ~coefficient,
-      1L,   "structural",                  "intercept",  "g1_0",
-      2L,   "structural",                  "intercept",  "g2_0",
-      2L,   "structural",                  "att1",       "g2_11",
-      3L,   "structural",                  "intercept",  "g3_0",
-      3L,   "structural",                  "att1",       "g3_11",
-      3L,   "structural",                  "att2",       "g3_12",
-      3L,   "structural",                  "att1__att2",  "g3_212"
+      1L,   "structural_intercept",        "intercept",  "g1_0",
+      2L,   "structural_intercept",        "intercept",  "g2_0",
+      2L,   "structural_maineffect",       "att1",       "g2_11",
+      3L,   "structural_intercept",        "intercept",  "g3_0",
+      3L,   "structural_maineffect",       "att1",       "g3_11",
+      3L,   "structural_maineffect",       "att2",       "g3_12",
+      3L,   "structural_interaction",      "att1__att2",  "g3_212"
     )
   )
 
@@ -431,11 +431,11 @@ test_that("bayesian network parameters work", {
     bayesnet_parameters(test_imatrix, identifier = "param"),
     tibble::tribble(
       ~param_id,         ~type,              ~attributes, ~coefficient,
-      1L,   "structural",                  "intercept",  "g1_0",
-      1L,   "structural",                  "att2",       "g1_12",
-      2L,   "structural",                  "intercept",  "g2_0",
-      2L,   "structural",                  "att3",       "g2_13",
-      3L,   "structural",                  "intercept",  "g3_0"
+      1L,   "structural_intercept",        "intercept",  "g1_0",
+      1L,   "structural_maineffect",       "att2",       "g1_12",
+      2L,   "structural_intercept",        "intercept",  "g2_0",
+      2L,   "structural_maineffect",       "att3",       "g2_13",
+      3L,   "structural_intercept",        "intercept",  "g3_0"
     )
   )
 })
