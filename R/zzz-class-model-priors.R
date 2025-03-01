@@ -117,7 +117,9 @@ independent_priors <- function() {
 }
 
 bayesnet_priors <- function() {
-  prior("normal(0, 2)", type = "structural")
+  c(prior("normal(0, 2)", type = "structural_intercept"),
+    prior("lognormal(0, 1)", type = "structural_maineffect"),
+    prior("normal(0, 2)", type = "structural_interaction"))
 }
 
 
