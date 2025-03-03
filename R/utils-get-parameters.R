@@ -152,48 +152,31 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-nida_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
-                            rename_attributes = FALSE, rename_items = FALSE) {
+nida_parameters <- function(qmatrix, identifier = NULL,
+                            rename_attributes = FALSE) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
   }
 
-  all_params <- lcdm_parameters(qmatrix = qmatrix,
-                                max_interaction = max_interaction,
-                                rename_attributes = TRUE,
-                                rename_items = TRUE) |>
-    dplyr::distinct(.data$type, .data$attributes) |>
-    dplyr::filter(.data$type != "intercept")
+  attribute_ids <- tibble::tibble(dcmstan_real_att_id = colnames(qmatrix)) |>
+    tibble::rowid_to_column(var = "att_number")
 
-  intercepts <- tidyr::crossing(type = c("intercept"),
-                                attributes = c(glue::glue(
-                                  "att{seq_len(ncol(qmatrix))}"
-                                )))
+  all_params <- expand.grid(att_id = seq_len(ncol(qmatrix)),
+                            type = c("slip", "guess"),
+                            stringsAsFactors = FALSE) |>
+    tibble::as_tibble() |>
+    dplyr::mutate(coefficient = glue::glue("{.data$type}[{.data$att_id}]")) |>
+    dplyr::arrange(.data$att_id, .data$type) |>
+    dplyr::mutate(coefficient = as.character(.data$coefficient))
 
-  all_params <- dplyr::bind_rows(intercepts, all_params) |>
-    dplyr::mutate(int_term = dplyr::case_when(
-      .data$type != "interaction" ~ NA_character_,
-      TRUE ~ stringr::str_remove_all(.data$attributes, "att")
-    ),
-    int_term = dplyr::case_when(
-      .data$type != "interaction" ~ NA_character_,
-      TRUE ~ stringr::str_remove_all(.data$int_term, "\\_\\_")
-    ),
-    int_level = dplyr::case_when(.data$type != "interaction" ~ NA_integer_,
-                                 TRUE ~ stringr::str_length(.data$int_term)),
-    coefficient = dplyr::case_when(
-      .data$type == "intercept" ~ stringr::str_c(
-        "l_0", stringr::str_remove(.data$attributes, "att")
-      ),
-      .data$type == "maineffect" ~ stringr::str_c(
-        "l_1", stringr::str_remove(.data$attributes, "att")
-      ),
-      .data$type == "interaction" ~ stringr::str_c(
-        "l_", .data$int_level, .data$int_term
-      )
-    )) |>
-    dplyr::select(-"int_term", -"int_level")
+  if (!rename_attributes) {
+    all_params <- all_params |>
+      dplyr::left_join(attribute_ids,
+                       by = dplyr::join_by("att_id" == "att_number")) |>
+      dplyr::mutate(att_id = dcmstan_real_att_id) |>
+      dplyr::select( -"dcmstan_real_att_id")
+  }
 
   return(all_params)
 }
