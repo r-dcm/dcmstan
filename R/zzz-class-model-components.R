@@ -148,8 +148,8 @@ crum <- function() {
 
 #' @rdname measurement-model
 #' @export
-nida <- function(max_interaction = Inf) {
-  NIDA(model = "nida", list(max_interaction = max_interaction))
+nida <- function() {
+  NIDA(model = "nida")
 }
 
 #' @rdname measurement-model

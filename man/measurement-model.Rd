@@ -19,7 +19,7 @@ dino()
 
 crum()
 
-nida(max_interaction = Inf)
+nida()
 
 nido()
 

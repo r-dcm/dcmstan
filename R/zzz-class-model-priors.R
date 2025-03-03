@@ -69,9 +69,7 @@ default_dcm_priors <- function(measurement_model = NULL,
       dina = dina_priors(),
       dino = dino_priors(),
       crum = crum_priors(),
-      nida = nida_priors(
-        max_interaction = measurement_model@model_args$max_interaction
-      ),
+      nida = nida_priors(),
       nido = nido_priors(),
       ncrum = ncrum_priors(
         max_interaction = measurement_model@model_args$max_interaction
@@ -122,7 +120,9 @@ crum_priors <- function() {
 
 nido_priors <- crum_priors
 
-nida_priors <- function(max_interaction) {
+nida_priors <- dina_priors
+
+ncrum_priors <- function(max_interaction) {
   prior <- c(prior("normal(0, 2)", type = "intercept"),
              prior("lognormal(0, 1)", type = "maineffect"))
   if (max_interaction > 1) {
@@ -132,8 +132,6 @@ nida_priors <- function(max_interaction) {
 
   return(prior)
 }
-
-ncrum_priors <- nida_priors
 
 ## structural model defaults -----
 unconstrained_priors <- function() {
