@@ -265,22 +265,15 @@ test_that("nida parameters work", {
                            identifier = "question")
 
   expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("type", "attributes", "coefficient"))
+  expect_equal(colnames(params), c("att_id", "type", "coefficient"))
 
   expect_equal(
     params,
     tibble::tibble(
-      type = c("intercept", "intercept", "intercept", "intercept",
-               "maineffect", "maineffect", "maineffect", "interaction",
-               "maineffect", "interaction", "interaction", "interaction",
-               "interaction", "interaction", "interaction"),
-      attributes = c("att1", "att2", "att3", "att4", "att1", "att2", "att3",
-                     "att2__att3", "att4", "att1__att3", "att1__att4",
-                     "att3__att4", "att1__att3__att4", "att2__att4",
-                     "att2__att3__att4"),
-      coefficient = c("l_01", "l_02", "l_03", "l_04", "l_11", "l_12", "l_13",
-                      "l_223", "l_14", "l_213", "l_214", "l_234", "l_3134",
-                      "l_224", "l_3234")
+      att_id = rep(c("att1", "att2", "att3", "att4"), each = 2),
+      type = rep(c("guess", "slip"), 4),
+      coefficient = c("guess[1]", "slip[1]", "guess[2]", "slip[2]", "guess[3]",
+                      "slip[3]", "guess[4]", "slip[4]")
     ),
     ignore_attr = TRUE
   )

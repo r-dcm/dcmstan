@@ -40,7 +40,7 @@ test_that("specify only measurement or structural", {
   expect_equal(default_dcm_priors(measurement_model = crum()),
                crum_priors())
   expect_equal(default_dcm_priors(measurement_model = nida()),
-               nida_priors(max_interaction = Inf))
+               nida_priors())
   expect_equal(default_dcm_priors(measurement_model = nido()),
                nido_priors())
 
@@ -117,11 +117,10 @@ test_that("crum default priors", {
 
 test_that("nida default priors", {
   expect_identical(
-    prior_tibble(nida_priors(max_interaction = Inf)),
-    tibble::tibble(type = c("intercept", "maineffect", "interaction"),
+    prior_tibble(nida_priors()),
+    tibble::tibble(type = c("slip", "guess"),
                    coefficient = NA_character_,
-                   prior = c("normal(0, 2)", "lognormal(0, 1)",
-                             "lognormal(0, 1)"))
+                   prior = c("beta(5, 25)", "beta(5, 25)"))
   )
 })
 
