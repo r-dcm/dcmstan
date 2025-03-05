@@ -118,7 +118,10 @@ crum_priors <- function() {
     prior("lognormal(0, 1)", type = "maineffect"))
 }
 
-nido_priors <- crum_priors
+nido_priors <- function() {
+  c(prior("normal(0, 2)", type = "beta"),
+    prior("lognormal(0, 1)", type = "gamma"))
+}
 
 nida_priors <- dina_priors
 

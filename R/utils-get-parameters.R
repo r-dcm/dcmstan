@@ -205,11 +205,11 @@ nido_parameters <- function(qmatrix, identifier = NULL,
     tibble::rowid_to_column(var = "att_number")
 
   all_params <- tidyr::crossing(att_id = att_id,
-                                type = c("intercept", "maineffect")) |>
-    dplyr::mutate(coefficient = dplyr::case_when(.data$type == "intercept" ~
-                                                   glue::glue("l{att_id}_0"),
-                                                 .data$type == "maineffect" ~
-                                                   glue::glue("l{att_id}_1")))
+                                type = c("beta", "gamma")) |>
+    dplyr::mutate(coefficient = dplyr::case_when(.data$type == "beta" ~
+                                                   glue::glue("beta{att_id}"),
+                                                 .data$type == "gamma" ~
+                                                   glue::glue("gamma{att_id}")))
 
   if (!rename_attributes) {
     all_params <- all_params |>

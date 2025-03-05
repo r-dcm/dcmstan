@@ -20,8 +20,8 @@ meas_nido <- function(qmatrix, priors) {
     dplyr::mutate(parameter = .data$type) |>
     dplyr::select("att_id", "parameter", param_name = "coefficient") |>
     dplyr::mutate(
-      param_level = dplyr::case_when(.data$parameter == "intercept" ~ 0,
-                                     .data$parameter == "maineffect" ~ 1),
+      param_level = dplyr::case_when(.data$parameter == "beta" ~ 0,
+                                     .data$parameter == "gamma" ~ 1),
       constraint = dplyr::case_when(.data$param_level == 0 ~ glue::glue(""),
                                     .data$param_level == 1 ~
                                       glue::glue("<lower=0>")),
@@ -40,10 +40,10 @@ meas_nido <- function(qmatrix, priors) {
     dplyr::pull(.data$param_def)
 
   parameters_block <- glue::glue(
-    "  ////////////////////////////////// item intercepts",
+    "  ////////////////////////////////// attribute intercepts",
     "  {glue::glue_collapse(intercepts, sep = \"\n  \")}",
     "",
-    "  ////////////////////////////////// item main effects",
+    "  ////////////////////////////////// attribute main effects",
     "  {glue::glue_collapse(main_effects, sep = \"\n  \")}",
     .sep = "\n", .trim = FALSE
   )
@@ -59,7 +59,13 @@ meas_nido <- function(qmatrix, priors) {
     tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
     tibble::rowid_to_column(var = "profile_id") |>
     tidyr::pivot_longer(-"profile_id", names_to = "parameter",
-                        values_to = "valid_for_profile")
+                        values_to = "valid_for_profile") |>
+    dplyr::mutate(parameter = gsub("intercept", "beta", parameter),
+                  parameter = dplyr::case_when(
+                    grepl("__", parameter) ~ parameter,
+                    grepl("beta", parameter) ~ parameter,
+                    TRUE ~ gsub("att", "gamma", parameter)
+                    ))
 
   pi_def <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
                                profile_id = seq_len(nrow(all_profiles))) |>
@@ -74,13 +80,11 @@ meas_nido <- function(qmatrix, priors) {
                      by = "item_id", relationship = "many-to-many") |>
     dplyr::left_join(
       meas_params |>
-        dplyr::mutate(att_id = stringr::str_c("att",
-                                              as.character(.data$att_id))) |>
         dplyr::select("att_id", "parameter", "param_name"),
       by = "att_id",  multiple = "all", relationship = "many-to-many"
     ) |>
-    dplyr::mutate(parameter = dplyr::case_when(.data$parameter == "maineffect" ~
-                                                 .data$att_id,
+    dplyr::mutate(parameter = dplyr::case_when(.data$parameter == "gamma" ~
+                                                 .data$param_name,
                                                TRUE ~ .data$parameter)) |>
     dplyr::left_join(profile_params, by = c("profile_id", "parameter"),
                      relationship = "many-to-one") |>
@@ -102,8 +106,8 @@ meas_nido <- function(qmatrix, priors) {
   # priors -----
   item_priors <- meas_params |>
     dplyr::mutate(
-      type = dplyr::case_when(.data$param_level == 0 ~ "intercept",
-                              .data$param_level == 1 ~ "maineffect")
+      type = dplyr::case_when(.data$param_level == 0 ~ "beta",
+                              .data$param_level == 1 ~ "gamma")
     ) |>
     dplyr::left_join(prior_tibble(priors),
                      by = c("type"),

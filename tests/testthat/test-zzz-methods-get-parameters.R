@@ -292,21 +292,20 @@ test_that("nido parameters work", {
                            identifier = "question")
 
   expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("att_id", "type", "attributes",
-                                   "coefficient"))
+  expect_equal(colnames(params), c("att_id", "type", "coefficient"))
 
   expect_equal(
     params,
     tibble::tribble(
-      ~att_id,         ~type,              ~attributes, ~coefficient,
-        1L,   "intercept",                       NA,       "l1_0",
-        1L,  "maineffect",                      "1",       "l1_1",
-        2L,   "intercept",                       NA,       "l2_0",
-        2L,  "maineffect",                      "2",       "l2_1",
-        3L,   "intercept",                       NA,       "l3_0",
-        3L,  "maineffect",                      "3",       "l3_1",
-        4L,  "intercept",                        NA,       "l4_0",
-        4L,  "maineffect",                      "4",       "l4_1"
+      ~att_id,         ~type,              ~coefficient,
+        "skill1",       "beta",             "beta1",
+        "skill1",       "gamma",            "gamma1",
+        "skill2",       "beta",             "beta2",
+        "skill2",       "gamma",            "gamma2",
+        "skill3",       "beta",             "beta3",
+        "skill3",       "gamma",            "gamma3",
+        "skill4",       "beta",             "beta4",
+        "skill4",       "gamma",            "gamma4"
     )
   )
 })
