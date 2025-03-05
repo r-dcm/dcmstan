@@ -192,7 +192,8 @@ nida_parameters <- function(qmatrix, identifier = NULL,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-nido_parameters <- function(qmatrix, identifier = NULL) {
+nido_parameters <- function(qmatrix, identifier = NULL,
+                            rename_attributes = FALSE) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
@@ -200,16 +201,23 @@ nido_parameters <- function(qmatrix, identifier = NULL) {
 
   att_id <- seq_len(ncol(qmatrix))
 
+  attribute_ids <- tibble::tibble(dcmstan_real_att_id = colnames(qmatrix)) |>
+    tibble::rowid_to_column(var = "att_number")
+
   all_params <- tidyr::crossing(att_id = att_id,
                                 type = c("intercept", "maineffect")) |>
-    dplyr::mutate(attributes = dplyr::case_when(.data$type == "intercept" ~
-                                                  NA_character_,
-                                                .data$type == "maineffect" ~
-                                                  as.character(att_id)),
-                  coefficient = dplyr::case_when(.data$type == "intercept" ~
+    dplyr::mutate(coefficient = dplyr::case_when(.data$type == "intercept" ~
                                                    glue::glue("l{att_id}_0"),
                                                  .data$type == "maineffect" ~
                                                    glue::glue("l{att_id}_1")))
+
+  if (!rename_attributes) {
+    all_params <- all_params |>
+      dplyr::left_join(attribute_ids,
+                       by = dplyr::join_by("att_id" == "att_number")) |>
+      dplyr::mutate(att_id = dcmstan_real_att_id) |>
+      dplyr::select( -"dcmstan_real_att_id")
+  }
 
   return(all_params)
 }
