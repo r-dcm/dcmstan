@@ -11,7 +11,7 @@
 \alias{ncrum}
 \title{Measurement models for diagnostic classification}
 \usage{
-lcdm(max_interaction = Inf, positive_interactions = FALSE)
+lcdm(max_interaction = Inf)
 
 dina()
 
@@ -23,17 +23,11 @@ nida()
 
 nido()
 
-ncrum(max_interaction = Inf)
+ncrum()
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
 include in the model.}
-
-\item{positive_interactions}{Logical. For the LCDM, should the parameters be
-estimated where the interactions are constrained to be positive (\code{TRUE})
-or should the LCDM be estimated where the interactions can be negative
-(\code{FALSE}). When the interactions are constrained to be positive, the priors
-for the interaction parameters reflect that constraint.}
 }
 \value{
 A measurement model object.
