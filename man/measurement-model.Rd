@@ -94,10 +94,9 @@ have been mastered.
 The NIDO model (Templin, 2006) is a compensatory model that defines the
 probability of responding correctly based on each attribute that has been
 mastered. Like the NIDA model, the NIDO model holds these parameters constant
-across items. The NIDO model does not estimate interaction parameters,
-meaning the probability of responding correctly increases with each mastered
-attribute without assuming a cumulative effect of mastering multiple
-attributes.
+across items. In the NIDO model, the probability of responding correctly
+increases with each mastered attribute without assuming a cumulative effect
+of mastering multiple attributes.
 
 The NC-RUM (DiBello et al., 1995; Hartz, 2002) is a non-compensatory model.
 There are two versions of the NC-RUM, the full NC-RUM and the reduced NC-RUM.
