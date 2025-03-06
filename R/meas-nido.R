@@ -60,11 +60,11 @@ meas_nido <- function(qmatrix, priors) {
     tibble::rowid_to_column(var = "profile_id") |>
     tidyr::pivot_longer(-"profile_id", names_to = "parameter",
                         values_to = "valid_for_profile") |>
-    dplyr::mutate(parameter = gsub("intercept", "beta", parameter),
+    dplyr::mutate(parameter = gsub("intercept", "beta", .data$parameter),
                   parameter = dplyr::case_when(
-                    grepl("__", parameter) ~ parameter,
-                    grepl("beta", parameter) ~ parameter,
-                    TRUE ~ gsub("att", "gamma", parameter)
+                    grepl("__", .data$parameter) ~ .data$parameter,
+                    grepl("beta", .data$parameter) ~ .data$parameter,
+                    TRUE ~ gsub("att", "gamma", .data$parameter)
                     ))
 
   pi_def <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),

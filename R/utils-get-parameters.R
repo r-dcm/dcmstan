@@ -174,7 +174,7 @@ nida_parameters <- function(qmatrix, identifier = NULL,
     all_params <- all_params |>
       dplyr::left_join(attribute_ids,
                        by = dplyr::join_by("att_id" == "att_number")) |>
-      dplyr::mutate(att_id = dcmstan_real_att_id) |>
+      dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
       dplyr::select( -"dcmstan_real_att_id")
   }
 
@@ -215,7 +215,7 @@ nido_parameters <- function(qmatrix, identifier = NULL,
     all_params <- all_params |>
       dplyr::left_join(attribute_ids,
                        by = dplyr::join_by("att_id" == "att_number")) |>
-      dplyr::mutate(att_id = dcmstan_real_att_id) |>
+      dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
       dplyr::select( -"dcmstan_real_att_id")
   }
 
