@@ -8,6 +8,7 @@ test_that("measurement class works", {
   expect_true(S7::S7_inherits(crum(), measurement))
   expect_true(S7::S7_inherits(nida(), measurement))
   expect_true(S7::S7_inherits(nido(), measurement))
+  expect_true(S7::S7_inherits(ncrum(), measurement))
 
   expect_true(S7::S7_inherits(lcdm(), LCDM))
   expect_true(S7::S7_inherits(dina(), DINA))
@@ -15,6 +16,7 @@ test_that("measurement class works", {
   expect_true(S7::S7_inherits(crum(), CRUM))
   expect_true(S7::S7_inherits(nida(), NIDA))
   expect_true(S7::S7_inherits(nido(), NIDO))
+  expect_true(S7::S7_inherits(ncrum(), NCRUM))
 })
 
 test_that("structural class works", {

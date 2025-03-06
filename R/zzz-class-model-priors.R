@@ -62,18 +62,14 @@ default_dcm_priors <- function(measurement_model = NULL,
     switch(
       measurement_model@model,
       lcdm = lcdm_priors(
-        max_interaction = measurement_model@model_args$max_interaction,
-        positive_interactions =
-          measurement_model@model_args$positive_interactions
+        max_interaction = measurement_model@model_args$max_interaction
       ),
       dina = dina_priors(),
       dino = dino_priors(),
       crum = crum_priors(),
       nida = nida_priors(),
       nido = nido_priors(),
-      ncrum = ncrum_priors(
-        max_interaction = measurement_model@model_args$max_interaction
-      )
+      ncrum = ncrum_priors()
     )
   }
 
@@ -90,17 +86,12 @@ default_dcm_priors <- function(measurement_model = NULL,
 }
 
 ## measurement model defaults -----
-lcdm_priors <- function(max_interaction, positive_interactions = FALSE) {
+lcdm_priors <- function(max_interaction) {
   prior <- c(prior("normal(0, 2)", type = "intercept"),
              prior("lognormal(0, 1)", type = "maineffect"))
   if (max_interaction > 1) {
-    if (!positive_interactions) {
-      prior <- c(prior,
-                 prior("normal(0, 2)", type = "interaction"))
-    } else {
-      prior <- c(prior,
-                 prior("lognormal(0, 1)", type = "interaction"))
-    }
+    prior <- c(prior,
+               prior("normal(0, 2)", type = "interaction"))
   }
 
   return(prior)
@@ -125,13 +116,9 @@ nido_priors <- function() {
 
 nida_priors <- dina_priors
 
-ncrum_priors <- function(max_interaction) {
-  prior <- c(prior("normal(0, 2)", type = "intercept"),
-             prior("lognormal(0, 1)", type = "maineffect"))
-  if (max_interaction > 1) {
-    prior <- c(prior,
-               prior("lognormal(0, 1)", type = "interaction"))
-  }
+ncrum_priors <- function() {
+  prior <- c(prior("beta(5, 25)", type = "slip"),
+             prior("beta(5, 25)", type = "penalty"))
 
   return(prior)
 }

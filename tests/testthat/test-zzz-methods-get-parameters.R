@@ -310,6 +310,41 @@ test_that("nido parameters work", {
   )
 })
 
+test_that("ncrum parameters work", {
+  set.seed(123)
+  test_qmatrix <- tibble::tibble(
+    question = c("Q1", "Q2", "Q3", "Q4"),
+    att1 = c(1, 0, 1, 0),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1),
+    att4 = c(0, 0, 1, 1)
+  )
+
+  params <- get_parameters(ncrum(), qmatrix = test_qmatrix,
+                           identifier = "question")
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("question", "att_id", "type", "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tibble(
+      question = c("Q1", "Q1", "Q2", "Q2", "Q2", "Q2", "Q3", "Q3", "Q3", "Q3",
+                   "Q3", "Q3", "Q4", "Q4", "Q4", "Q4", "Q4", "Q4"),
+      att_id = c(rep("att1", 2), rep("att2", 2), rep("att3", 2),
+                 rep("att1", 2), rep("att3", 2), rep("att4", 2),
+                 rep("att2", 2), rep("att3", 2), rep("att4", 2)),
+      type = rep(c("penalty", "slip"), 9),
+      coefficient = c("penalty_1_1", "slip_1_1", "penalty_2_2", "slip_2_2",
+                      "penalty_2_3", "slip_2_3", "penalty_3_1", "slip_3_1",
+                      "penalty_3_3", "slip_3_3", "penalty_3_4", "slip_3_4",
+                      "penalty_4_2", "slip_4_2", "penalty_4_3", "slip_4_3",
+                      "penalty_4_4", "slip_4_4")
+    ),
+    ignore_attr = TRUE
+  )
+})
+
 # structural model parameters --------------------------------------------------
 test_that("unconstrained parameters work", {
   test_qmatrix <- tibble::tibble(

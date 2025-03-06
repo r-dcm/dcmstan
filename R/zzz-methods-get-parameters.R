@@ -88,12 +88,9 @@ S7::method(get_parameters, NIDO) <- function(x, qmatrix, identifier = NULL) {
 }
 
 S7::method(get_parameters, NCRUM) <- function(x, qmatrix, identifier = NULL) {
-  check_number_whole(x@model_args$max_interaction, min = 1,
-                     allow_infinite = TRUE)
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
-                  max_interaction = x@model_args$max_interaction)
+  ncrum_parameters(qmatrix = qmatrix, identifier = identifier)
 }
 
 # Methods for structural models ------------------------------------------------

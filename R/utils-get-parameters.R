@@ -149,6 +149,9 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
@@ -189,6 +192,9 @@ nida_parameters <- function(qmatrix, identifier = NULL,
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
@@ -217,6 +223,91 @@ nido_parameters <- function(qmatrix, identifier = NULL,
                        by = dplyr::join_by("att_id" == "att_number")) |>
       dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
       dplyr::select( -"dcmstan_real_att_id")
+  }
+
+  return(all_params)
+}
+
+#' Determine the possible parameters for a NC-RUM model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
+#' @param rename_items Logical. Should the output rename and number the items to
+#'   have consistent and generic names (e.g., `1`, `2`; `TRUE`) or keep the
+#'   original item names in the Q-matrix (`FALSE`, the default). If there are no
+#'   identifiers in the Q-matrix, generic names are always used.
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+ncrum_parameters <- function(qmatrix, identifier = NULL,
+                             rename_attributes = FALSE, rename_items = FALSE) {
+  if (is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      tibble::rowid_to_column(var = "item_id")
+    identifier <- "item_id"
+
+    item_ids <- qmatrix |>
+      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "item_number")
+  } else {
+    item_ids <- qmatrix |>
+      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+      tibble::rowid_to_column(var = "item_number")
+  }
+
+  qmatrix <- qmatrix |>
+    dplyr::select(-{{ identifier }})
+
+  attribute_ids <- tibble::tibble(dcmstan_real_att_id = colnames(qmatrix)) |>
+    tibble::rowid_to_column(var = "att_number") |>
+    dplyr::mutate(att_name = paste0("att", .data$att_number))
+
+  colnames(qmatrix) <- attribute_ids$att_name
+
+  attribute_ids <- attribute_ids |>
+    dplyr::select(-"att_name")
+
+  measured_att <- qmatrix |>
+    tibble::rowid_to_column("item_id") |>
+    tidyr::pivot_longer(cols = -c("item_id"), names_to = "att_id",
+                        values_to = "meas") |>
+    dplyr::mutate(att_id = as.numeric(sub("att", "", .data$att_id)))
+
+  all_params <- expand.grid(item_id = seq_len(nrow(qmatrix)),
+                            att_id = seq_len(ncol(qmatrix)),
+                            type = c("slip", "penalty"),
+                            stringsAsFactors = FALSE) |>
+    tibble::as_tibble() |>
+    dplyr::mutate(coefficient = glue::glue(
+      "{.data$type}_{.data$item_id}_{.data$att_id}"
+    )) |>
+    dplyr::arrange(.data$item_id, .data$att_id, .data$type) |>
+    dplyr::mutate(coefficient = as.character(.data$coefficient)) |>
+    dplyr::left_join(measured_att, by = c("item_id", "att_id")) |>
+    dplyr::filter(.data$meas == 1) |>
+    dplyr::select(-"meas")
+
+  if (!rename_attributes) {
+    all_params <- all_params |>
+      dplyr::left_join(attribute_ids,
+                       by = dplyr::join_by("att_id" == "att_number")) |>
+      dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
+      dplyr::select( -"dcmstan_real_att_id")
+  }
+
+  if (!rename_items) {
+    all_params <- all_params |>
+      dplyr::left_join(item_ids,
+                       by = dplyr::join_by("item_id" == "item_number")) |>
+      dplyr::select({{ identifier }} := "dcmstan_real_item_id",
+                    dplyr::everything(),
+                    -"item_id")
   }
 
   return(all_params)
