@@ -7,11 +7,6 @@
 #'
 #' @param max_interaction For the LCDM, the highest item-level interaction to
 #'   include in the model.
-#' @param positive_interactions Logical. For the LCDM, should the parameters be
-#'   estimated where the interactions are constrained to be positive (`TRUE`)
-#'   or should the LCDM be estimated where the interactions can be negative
-#'   (`FALSE`). When the interactions are constrained to be positive, the priors
-#'   for the interaction parameters reflect that constraint.
 #'
 #' @returns A measurement model object.
 #'
@@ -122,9 +117,8 @@
 #' nido()
 #'
 #' ncrum()
-lcdm <- function(max_interaction = Inf, positive_interactions = FALSE) {
-  LCDM(model = "lcdm", list(max_interaction = max_interaction,
-                            positive_interactions = positive_interactions))
+lcdm <- function(max_interaction = Inf) {
+  LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
 
 #' @rdname measurement-model
@@ -159,8 +153,8 @@ nido <- function() {
 
 #' @rdname measurement-model
 #' @export
-ncrum <- function(max_interaction = Inf) {
-  NCRUM(model = "ncrum", list(max_interaction = max_interaction))
+ncrum <- function() {
+  NCRUM(model = "ncrum")
 }
 
 
