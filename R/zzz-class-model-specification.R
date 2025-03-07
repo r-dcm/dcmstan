@@ -149,7 +149,7 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
     ),
     priors = S7::new_property(
       class = dcmprior,
-      default = default_dcm_priors(lcdm(),)
+      default = default_dcm_priors(lcdm(), unconstrained())
     )
   ),
   validator = function(self) {
