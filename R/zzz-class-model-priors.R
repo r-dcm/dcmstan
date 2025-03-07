@@ -117,6 +117,24 @@ independent_priors <- function() {
 
 
 # dcmprior class ---------------------------------------------------------------
+#' S7 prior class
+#'
+#' The `dcmprior` constructor is exported to facilitate the defining
+#' of methods in other packages. We do not expect or recommend calling this
+#' function directly. Rather, to create a model specification, one should use
+#' [prior()] or [default_dcm_priors()].
+#'
+#' @inheritParams prior
+#'
+#' @returns A `dcmprior` object.
+#' @seealso [prior()], [default_dcm_priors()]
+#' @export
+#'
+#' @examples
+#' dcmprior(
+#'   distribution = "normal(0, 1)",
+#'   type = "intercept"
+#' )
 dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
   properties = list(
     distribution = S7::new_property(

@@ -107,7 +107,7 @@ crum <- function() {
 #'
 #' Structural models define how the attributes are related to one another.
 #' The currently supported options for structural models are:
-#' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
+#' `r print_choices(names(strc_choices()), last = " and ")`.
 #' See details for additional information on each model.
 #'
 #' @returns A structural model object.

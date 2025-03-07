@@ -2,7 +2,9 @@
 
 export(create_profiles)
 export(crum)
+export(dcm_specification)
 export(dcm_specify)
+export(dcmprior)
 export(default_dcm_priors)
 export(dina)
 export(dino)

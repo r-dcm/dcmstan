@@ -25,3 +25,8 @@ reference:
   contents:
   - stan_code
   - stan_data
+
+- title: internal
+  contents:
+  - dcm_specification
+  - dcmprior

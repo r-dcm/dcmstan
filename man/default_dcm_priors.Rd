@@ -7,11 +7,9 @@
 default_dcm_priors(measurement_model = NULL, structural_model = NULL)
 }
 \arguments{
-\item{measurement_model}{A measurement model object (e.g., \code{\link[=lcdm]{lcdm()}},
-\code{\link[=dina]{dina()}}).}
+\item{measurement_model}{A \link[=measurement-model]{measurement model} object.}
 
-\item{structural_model}{A structural model object (e.g., \code{\link[=unconstrained]{unconstrained()}},
-\code{\link[=independent]{independent()}}).}
+\item{structural_model}{A \link[=structural-model]{structural model} object.}
 }
 \value{
 A \code{dcmprior} object.
