@@ -30,3 +30,4 @@ reference:
   contents:
   - dcm_specification
   - dcmprior
+  - prior_tibble

@@ -192,8 +192,35 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
 
 
 # dcmprior methods -------------------------------------------------------------
+#' Coerce a dcmprior object to a tibble
+#'
+#' When specifying prior distributions, it is often useful to see which
+#' parameters are included in a given model. Using the Q-matrix and type of
+#' diagnostic model to estimated, we can create a list of all included
+#' parameters for which a prior can be specified.
+#'
+#' @param x A model specification (e.g., [dcm_specify()], measurement model
+#'   (e.g., [lcdm()]), or structural model (e.g., [unconstrained()]) object.
+#' @param ... Additional arguments passed to methods. See details.
+#'
+#' @details
+#' Additional arguments passed to methods:
+#'
+#' @return A [tibble][tibble::tibble-package] showing the specified priors.
+#' @export
+#'
+#' @examples
+#' prior_tibble(default_dcm_priors(lcdm()))
+#'
+#' prior_tibble(default_dcm_priors(dina(), independent()))
 prior_tibble <- S7::new_generic("prior_tibble", "x")
 
+#' @details
+#' `.keep_all`: Logical indicating if all components should be returned. When
+#'   `FALSE` (the default), only the `@type`, `@coefficient`, and `@prior`
+#'   elements of the [dcmprior][prior()] object is return. When `TRUE`, the
+#'   `@distribtuion`, `@lower_bound`, and `@upper_bound` are also returned.
+#' @name prior_tibble
 S7::method(prior_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
   tib <- tibble::tibble(
     distribution = x@distribution,
