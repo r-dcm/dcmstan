@@ -16,6 +16,7 @@
 <url><loc>https://dcmstan.r-dcm.org/reference/index.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/measurement-model.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/prior.html</loc></url>
+<url><loc>https://dcmstan.r-dcm.org/reference/prior_tibble.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/stan_code.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/stan_data.html</loc></url>
 <url><loc>https://dcmstan.r-dcm.org/reference/structural-model.html</loc></url>
