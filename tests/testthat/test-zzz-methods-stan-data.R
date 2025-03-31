@@ -15,7 +15,7 @@ test_that("correct data objects are returned", {
       structural_model = do.call(combos$strc[i], args = list())
     )
 
-    test_data <- stan_data(model_spec, dcmdata::mdm_data,
+    test_data <- stan_data(model_spec, data = dcmdata::mdm_data,
                            identifier = "respondent")
     exp_names <- c(default_data_names,
                    extra_data_names[[combos$meas[i]]],
