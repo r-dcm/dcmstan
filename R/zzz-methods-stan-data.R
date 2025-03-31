@@ -116,10 +116,10 @@ S7::method(stan_data, quantities) <- function(x, ..., dcm_spec, data,
   clean_data <- rdcmchecks::clean_data(
     data, identifier = identifier, missing = missing,
     cleaned_qmatrix = list(
-      clean_qmatrix = x@qmatrix,
-      attribute_names = x@qmatrix_meta$attribute_names,
-      item_identifier = x@qmatrix_meta$item_identifier,
-      item_names = x@qmatrix_meta$item_names
+      clean_qmatrix = dcm_spec@qmatrix,
+      attribute_names = dcm_spec@qmatrix_meta$attribute_names,
+      item_identifier = dcm_spec@qmatrix_meta$item_identifier,
+      item_names = dcm_spec@qmatrix_meta$item_names
     ),
     arg_qmatrix = "x"
   )
@@ -140,11 +140,13 @@ S7::method(stan_data, quantities) <- function(x, ..., dcm_spec, data,
     R = length(clean_data$respondent_names),
     N = nrow(clean_data$clean_data),
     C = nrow(profiles),
+    A = ncol(dcm_spec@qmatrix),
     ii = as.numeric(clean_data$clean_data$item_id),
     rr = as.numeric(clean_data$clean_data$resp_id),
     y = clean_data$clean_data$score,
     start = ragged_array$start,
-    num = ragged_array$num
+    num = ragged_array$num,
+    Alpha = as.matrix(profiles)
   )
 
   # return data ----------------------------------------------------------------
