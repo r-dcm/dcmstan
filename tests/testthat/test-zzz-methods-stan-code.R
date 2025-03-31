@@ -37,3 +37,25 @@ test_that("stan code is syntactically correct", {
     expect_true(dtmr_model$check_syntax(quiet = TRUE))
   }
 })
+
+test_that("generated quantities are syntactically correct", {
+  stan_dir <- withr::local_tempdir()
+
+  combos <- expand.grid(loglik = c(TRUE, FALSE),
+                        probabilities = c(TRUE, FALSE),
+                        ppmc = c(TRUE, FALSE))
+
+  for (i in seq_len(nrow(combos))) {
+    gqs_file <- cmdstanr::write_stan_file(
+      stan_code(
+        generated_quantities(loglik = combos$loglik[i],
+                             probabilities = combos$probabilities[i],
+                             ppmc = combos$ppmc[i])
+      )
+    )
+
+    gqs_model <- cmdstanr::cmdstan_model(gqs_file, compile = FALSE)
+
+    expect_true(gqs_model$check_syntax(quiet = TRUE))
+  }
+})

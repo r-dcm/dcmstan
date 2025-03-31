@@ -24,6 +24,45 @@ test_that("correct data objects are returned", {
   }
 })
 
+test_that("correct gqs objects are returned", {
+  # dtmr -----------------------------------------------------------------------
+  spec <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix, identifier = "item")
+  dtmr_dat <- stan_data(generated_quantities(), dcm_spec = spec,
+                        data = dcmdata::dtmr_data, identifier = "id")
+
+  expect_equal(names(dtmr_dat),
+               c("I", "R", "N", "C", "A", "ii", "rr", "y", "start", "num",
+                 "Alpha"))
+  expect_equal(dtmr_dat$I, 27)
+  expect_equal(dtmr_dat$R, 990)
+  expect_equal(dtmr_dat$N, 27 * 990)
+  expect_equal(dtmr_dat$C, 16)
+  expect_equal(dtmr_dat$A, 4)
+  expect_equal(dtmr_dat$ii, rep(1:27, 990))
+  expect_equal(dtmr_dat$rr, rep(1:990, each = 27))
+  expect_true(all(dtmr_dat$y %in% c(0, 1)))
+  expect_equal(dtmr_dat$start, seq(1, 27 * 990, by = 27))
+  expect_equal(dtmr_dat$num, rep(27, 990))
+  expect_equal(dtmr_dat$Alpha, as.matrix(create_profiles(4)))
+
+  # ecpe -----------------------------------------------------------------------
+  spec <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix, identifier = "item_id")
+  ecpe_dat <- stan_data(generated_quantities(), dcm_spec = spec,
+                        data = dcmdata::ecpe_data, identifier = "resp_id")
+
+  expect_equal(ecpe_dat$I, 28)
+  expect_equal(ecpe_dat$R, 2922)
+  expect_equal(ecpe_dat$N, 28 * 2922)
+  expect_equal(ecpe_dat$C, 8)
+  expect_equal(ecpe_dat$A, 3)
+  expect_equal(ecpe_dat$ii, rep(1:28, 2922))
+  expect_equal(ecpe_dat$rr, rep(1:2922, each = 28))
+  expect_true(all(ecpe_dat$y %in% c(0, 1)))
+  expect_equal(ecpe_dat$start, seq(1, 28 * 2922, by = 28))
+  expect_equal(ecpe_dat$num, rep(28, 2922))
+  expect_equal(ecpe_dat$Alpha, as.matrix(create_profiles(3)))
+})
+
 test_that("independent data objects are correct", {
   model_spec <- dcm_specify(dcmdata::dtmr_qmatrix, identifier = "item",
                             structural_model = independent())
