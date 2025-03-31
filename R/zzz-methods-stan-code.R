@@ -1,11 +1,13 @@
 #' Generate 'Stan' code for a diagnostic classification models
 #'
-#' Given a specification for a diagnostic classification model, automatically
-#' generate the 'Stan' code necessary to estimate the model. For details on how
-#' the code blocks relate to diagnostic models, see da Silva et al. (2017),
-#' Jiang and Carter (2019), and Thompson (2019).
+#' Given a specification for a diagnostic classification model or a generated
+#' quantities definition, automatically generate the 'Stan' code necessary to
+#' estimate the model. For details on how the code blocks relate to diagnostic
+#' models, see da Silva et al. (2017), Jiang and Carter (2019),
+#' and Thompson (2019).
 #'
-#' @param x A model specification (e.g., [dcm_specify()]) object.
+#' @param x A [model specification][dcm_specify()] or
+#'   [generated quantities][generated_quantities()] object.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A [glue][glue::as_glue] object containing the 'Stan' code for the
@@ -120,8 +122,7 @@ S7::method(stan_code, dcm_specification) <- function(x) {
   full_script
 }
 
-
-# DCM data block ---------------------------------------------------------------
+## DCM data block --------------------------------------------------------------
 stan_data_code <- S7::new_generic("stan_data_code", "x")
 
 S7::method(stan_data_code, measurement) <- function(x) NULL
@@ -151,4 +152,41 @@ S7::method(stan_data_code, INDEPENDENT) <- function(x) {
   )
 
   data_block
+}
+
+# Method for generated quantities ----------------------------------------------
+S7::method(stan_code, quantities) <- function(x) {
+  gqs_block <- do.call("gqs_default", x@model_args)
+
+  # data block -----
+  data_block <- glue::glue(
+    "data {{",
+    "  int<lower=1> I;                      // number of items",
+    "  int<lower=1> R;                      // number of respondents",
+    "  int<lower=1> N;                      // number of observations",
+    "  int<lower=1> C;                      // number of classes",
+    "  array[N] int<lower=1,upper=I> ii;    // item for observation n",
+    "  array[N] int<lower=1,upper=R> rr;    // respondent for observation n",
+    "  array[N] int<lower=0,upper=1> y;     // score for observation n",
+    "  array[R] int<lower=1,upper=N> start; // starting row for respondent R",
+    "  array[R] int<lower=1,upper=I> num;   // number items for respondent R",
+    "}}", .sep = "\n", .null = NULL
+  )
+
+  # parameters block -----
+  parameters_block <- glue::glue(
+    "parameters {{
+      vector[C] log_Vc;
+      matrix[I,C] pi;
+    }}"
+  )
+
+  full_script <- glue::glue(
+    "{data_block}",
+    "{parameters_block}",
+    "{gqs_block}",
+    .sep = "\n"
+  )
+
+  full_script
 }

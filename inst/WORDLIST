@@ -1,8 +1,12 @@
 Bazán
 Biometrical
 CMD
+CRC
 Champaign
 Davier
+Dunson
+Gabry
+Gelman
 Guilford
 Hartz
 Hu
@@ -10,6 +14,7 @@ Jiang
 LCDM
 ORCID
 Oliveira
+PPMCs
 ProQuest
 Psychometrika
 Rupp
@@ -18,10 +23,14 @@ Springer
 Templin
 Torre
 Urbana
+Vehtari
+WAIC
+Watanabe
 Willse
 al
 codecov
 da
+dcmprior
 de
 dina
 doi
@@ -33,4 +42,5 @@ mc
 measr
 psychometrics
 stan
+tibble
 von

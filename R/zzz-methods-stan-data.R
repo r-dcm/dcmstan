@@ -94,6 +94,62 @@ S7::method(stan_data, dcm_specification) <- function(x, ..., data,
   c(stan_data, extra_meas, extra_strc)
 }
 
+# generated quantities method --------------------------------------------------
+#' @details
+#' Arguments for [generated quantities][generated_quantities()] method:
+#' * `dcm_spec`: A cleaned data object, as returned by
+#'   [rdcmchecks::clean_data()].
+#' * `data`: The response data. A data frame with 1 row per respondent and 1
+#'   column per item. May optionally include an additional column of item
+#'   identifiers. If an identifier is included, this should be specified with
+#'   `identifier`. All cells for the remaining item columns should be either 0
+#'   (incorrect response) or 1 (correct response).
+#' * `missing`: An expression specifying how missing values in `data` are
+#'   encoded (e.g., `NA`, `"."`, `-99`). The default is `NA`.
+#' * `identifier`: Optional. If present, the quoted name of the column in
+#'   `data` that contains respondent identifiers.
+#' @name stan_data
+S7::method(stan_data, quantities) <- function(x, ..., dcm_spec, data,
+                                              missing = NA, identifier = NULL) {
+  # check function inputs ------------------------------------------------------
+  check_string(identifier, allow_null = TRUE)
+  clean_data <- rdcmchecks::clean_data(
+    data, identifier = identifier, missing = missing,
+    cleaned_qmatrix = list(
+      clean_qmatrix = x@qmatrix,
+      attribute_names = x@qmatrix_meta$attribute_names,
+      item_identifier = x@qmatrix_meta$item_identifier,
+      item_names = x@qmatrix_meta$item_names
+    ),
+    arg_qmatrix = "x"
+  )
+
+  # default data list ----------------------------------------------------------
+  ragged_array <- clean_data$clean_data |>
+    tibble::rowid_to_column() |>
+    dplyr::group_by(.data$resp_id) |>
+    dplyr::summarize(start = min(.data$rowid),
+                     num = dplyr::n()) |>
+    dplyr::arrange(.data$resp_id)
+
+  profiles <- create_profiles(dcm_spec@structural_model,
+                              attributes = ncol(dcm_spec@qmatrix))
+
+  stan_data <- list(
+    I = nrow(dcm_spec@qmatrix),
+    R = length(clean_data$respondent_names),
+    N = nrow(clean_data$clean_data),
+    C = nrow(profiles),
+    ii = as.numeric(clean_data$clean_data$item_id),
+    rr = as.numeric(clean_data$clean_data$resp_id),
+    y = clean_data$clean_data$score,
+    start = ragged_array$start,
+    num = ragged_array$num
+  )
+
+  # return data ----------------------------------------------------------------
+  stan_data
+}
 
 # Extra data elements ----------------------------------------------------------
 extra_data <- S7::new_generic("extra_data", "x", function(x, dcm_spec, ...) {

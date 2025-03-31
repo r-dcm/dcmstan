@@ -7,7 +7,8 @@
 stan_code(x, ...)
 }
 \arguments{
-\item{x}{A model specification (e.g., \code{\link[=dcm_specify]{dcm_specify()}}) object.}
+\item{x}{A \link[=dcm_specify]{model specification} or
+\link[=generated_quantities]{generated quantities} object.}
 
 \item{...}{Additional arguments passed to methods.}
 }
@@ -16,10 +17,11 @@ A \link[glue:as_glue]{glue} object containing the 'Stan' code for the
 specified model.
 }
 \description{
-Given a specification for a diagnostic classification model, automatically
-generate the 'Stan' code necessary to estimate the model. For details on how
-the code blocks relate to diagnostic models, see da Silva et al. (2017),
-Jiang and Carter (2019), and Thompson (2019).
+Given a specification for a diagnostic classification model or a generated
+quantities definition, automatically generate the 'Stan' code necessary to
+estimate the model. For details on how the code blocks relate to diagnostic
+models, see da Silva et al. (2017), Jiang and Carter (2019),
+and Thompson (2019).
 }
 \examples{
 qmatrix <- data.frame(
