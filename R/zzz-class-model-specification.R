@@ -14,10 +14,8 @@
 #'   attribute).
 #' @param identifier Optional. If present, the quoted name of the column in the
 #'   `qmatrix` that contains item identifiers.
-#' @param measurement_model A measurement model object (e.g., [lcdm()],
-#'   [dina()]).
-#' @param structural_model A structural model object (e.g., [unconstrained()],
-#'   [independent()]).
+#' @param measurement_model A [measurement model][measurement-model] object.
+#' @param structural_model A [structural model][structural-model] object.
 #' @param priors A prior object created by [prior()]. If `NULL` (the default),
 #'   default prior distributions defined by [default_dcm_priors()] are used.
 #'
@@ -83,10 +81,45 @@ dcm_specify <- function(qmatrix, identifier = NULL,
 
 
 # Model specification class ----------------------------------------------------
+#' S7 model specification class
+#'
+#' The `dcm_specification` constructor is exported to facilitate the defining
+#' of methods in other packages. We do not expect or recommend calling this
+#' function directly. Rather, to create a model specification, one should use
+#' [dcm_specify()].
+#'
+#' @param qmatrix A cleaned Q-matrix, as returned by
+#'   [rdcmchecks::clean_qmatrix()].
+#' @param qmatrix_meta A list of Q-matrix metadata consisting of the other
+#'   (not Q-matrix) elements returned by [rdcmchecks::clean_qmatrix()].
+#' @param measurement_model A [measurement model][measurement-model] object.
+#' @param structural_model A [structural model][structural-model] object.
+#' @param priors A [prior][prior()] object.
+#'
+#' @returns A `dcm_specification` object.
+#' @seealso [dcm_specify()]
+#' @export
+#'
+#' @examples
+#' qmatrix <- tibble::tibble(
+#'   att1 = sample(0:1, size = 15, replace = TRUE),
+#'   att2 = sample(0:1, size = 15, replace = TRUE),
+#'   att3 = sample(0:1, size = 15, replace = TRUE),
+#'   att4 = sample(0:1, size = 15, replace = TRUE)
+#' )
+#'
+#' dcm_specification(qmatrix = qmatrix,
+#'                   qmatrix_meta = list(attribute_names = paste0("att", 1:4),
+#'                                       item_identifier = NULL,
+#'                                       item_names = 1:15),
+#'                   measurement_model = lcdm(),
+#'                   structural_model = unconstrained(),
+#'                   priors = default_dcm_priors(lcdm(), unconstrained()))
 dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
   properties = list(
     qmatrix = S7::new_property(
       class = S7::class_data.frame,
+      default = data.frame(),
       setter = function(self, value) {
         if (!is.null(self@qmatrix)) {
           stop("@qmatrix is read-only", call. = FALSE)
@@ -121,7 +154,10 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
       class = structural,
       default = unconstrained()
     ),
-    priors = dcmprior
+    priors = S7::new_property(
+      class = dcmprior,
+      default = default_dcm_priors(lcdm(), unconstrained())
+    )
   ),
   validator = function(self) {
     all_params <- dplyr::bind_rows(

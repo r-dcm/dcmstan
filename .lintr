@@ -5,6 +5,9 @@ exclusions: list(
     "R/meas-hdcm.R" = list(
       object_usage_linter = Inf
     ),
+    "R/gqs-default.R" = list(
+      object_usage_linter = Inf
+    ),
     "R/meas-lcdm-crum.R" = list(
       object_usage_linter = Inf
     ),
@@ -23,7 +26,16 @@ exclusions: list(
     "tests/testthat/test-utils-hierarchy.R" = list(
       line_length_linter = Inf
     ),
+    "R/zzz-methods-stan-code.R" = list(
+      object_name_linter = Inf
+    ),
+    "R/zzz-methods-stan-data.R" = list(
+      object_name_linter = Inf
+    ),
     "tests/testthat/test-zzz-methods-get-parameters.R" = list(
+      indentation_linter = Inf
+    ),
+    "tests/testthat/test-zzz-methods-create-profiles.R" = list(
       indentation_linter = Inf
     )
   )

@@ -30,7 +30,6 @@ create_profiles <- function(attributes) {
     tibble::as_tibble()
 }
 
-
 #' Identify the lower level components of an LCDM parameter
 #'
 #' @param x A character string indicating the attributes measured by an item,

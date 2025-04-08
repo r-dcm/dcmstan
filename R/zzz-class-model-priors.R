@@ -94,7 +94,7 @@ lcdm_priors <- function(max_interaction) {
                prior("normal(0, 2)", type = "interaction"))
   }
 
-  return(prior)
+  prior
 }
 
 dina_priors <- function() {
@@ -121,6 +121,24 @@ independent_priors <- function() {
 hdcm_priors <- unconstrained_priors
 
 # dcmprior class ---------------------------------------------------------------
+#' S7 prior class
+#'
+#' The `dcmprior` constructor is exported to facilitate the defining
+#' of methods in other packages. We do not expect or recommend calling this
+#' function directly. Rather, to create a model specification, one should use
+#' [prior()] or [default_dcm_priors()].
+#'
+#' @inheritParams prior
+#'
+#' @returns A `dcmprior` object.
+#' @seealso [prior()], [default_dcm_priors()]
+#' @export
+#'
+#' @examples
+#' dcmprior(
+#'   distribution = "normal(0, 1)",
+#'   type = "intercept"
+#' )
 dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
   properties = list(
     distribution = S7::new_property(
@@ -150,11 +168,8 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
           function(lb, ub, dist) {
             if (is.na(lb) && is.na(ub)) {
               return(dist)
-            } else {
-              as.character(
-                glue::glue("{dist}T[{lb},{ub}]", .na = "")
-              )
             }
+            as.character(glue::glue("{dist}T[{lb},{ub}]", .na = ""))
           },
           self@lower_bound, self@upper_bound, self@distribution,
           USE.NAMES = FALSE
@@ -181,8 +196,35 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
 
 
 # dcmprior methods -------------------------------------------------------------
+#' Coerce a dcmprior object to a tibble
+#'
+#' When specifying prior distributions, it is often useful to see which
+#' parameters are included in a given model. Using the Q-matrix and type of
+#' diagnostic model to estimated, we can create a list of all included
+#' parameters for which a prior can be specified.
+#'
+#' @param x A model specification (e.g., [dcm_specify()], measurement model
+#'   (e.g., [lcdm()]), or structural model (e.g., [unconstrained()]) object.
+#' @param ... Additional arguments passed to methods. See details.
+#'
+#' @details
+#' Additional arguments passed to methods:
+#'
+#' @return A [tibble][tibble::tibble-package] showing the specified priors.
+#' @export
+#'
+#' @examples
+#' prior_tibble(default_dcm_priors(lcdm()))
+#'
+#' prior_tibble(default_dcm_priors(dina(), independent()))
 prior_tibble <- S7::new_generic("prior_tibble", "x")
 
+#' @details
+#' `.keep_all`: Logical indicating if all components should be returned. When
+#'   `FALSE` (the default), only the `@type`, `@coefficient`, and `@prior`
+#'   elements of the [dcmprior][prior()] object is return. When `TRUE`, the
+#'   `@distribtuion`, `@lower_bound`, and `@upper_bound` are also returned.
+#' @name prior_tibble
 S7::method(prior_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
   tib <- tibble::tibble(
     distribution = x@distribution,

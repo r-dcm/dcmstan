@@ -1,8 +1,8 @@
-#' 'Stan' code for an independent structural model
+#' 'Stan' code for an unconstrained structural model
 #'
 #' Create the `parameters` and `transformed parameters` blocks that are needed
-#' for an independent structural model. The function also returns the code that
-#' defines the prior distributions for each parameter, which is used in the
+#' for an unconstrained structural model. The function also returns the code
+#' that defines the prior distributions for each parameter, which is used in the
 #' `model` block.
 #'
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
@@ -12,25 +12,17 @@
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @noRd
-strc_independent <- function(qmatrix, priors) {
+strc_unconstrained <- function(qmatrix, priors) {
   parameters_block <-
-    glue::glue("  array[A] real<lower=0,upper=1> eta;", .trim = FALSE)
-
-  transformed_parameters_block <-
     glue::glue(
-      "  simplex[C] Vc;",
-      "  vector[C] log_Vc;",
-      "  for (c in 1:C) {{",
-      "    Vc[c] = 1;",
-      "    for (a in 1:A) {{",
-      "      Vc[c] = Vc[c] * eta[a]^Alpha[c,a] * ",
-      "              (1 - eta[a]) ^ (1 - Alpha[c,a]);",
-      "    }}",
-      "  }}",
-      "  log_Vc = log(Vc);", .sep = "\n", .trim = FALSE
+      "  simplex[C] Vc;                  // base rates of class membership",
+      .trim = FALSE
     )
 
-  strc_priors <- get_parameters(independent(), qmatrix = qmatrix) |>
+  transformed_parameters_block <-
+    glue::glue("  vector[C] log_Vc = log(Vc);", .trim = FALSE)
+
+  strc_priors <- get_parameters(unconstrained(), qmatrix = qmatrix) |>
     dplyr::left_join(prior_tibble(priors),
                      by = c("type", "coefficient"),
                      relationship = "one-to-one") |>
