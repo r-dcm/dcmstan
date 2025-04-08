@@ -6,14 +6,22 @@
 #' `model` block.
 #'
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param max_interaction The highest level interaction to include in the model.
+#'   For example, `1` = main effects only, `2` = main effects and two-way
+#'   interactions, `3` = main effects and two- and three-way interactions, etc.
+#' @param positive_interactions Logical. Should interaction terms be constrained
+#'   to be positive. The default is `FALSE`.
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
-#' @rdname lcdm-crum
+#' @rdname lcdm-crum-ncrum
 #' @noRd
-meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
+meas_lcdm <- function(qmatrix,
+                      max_interaction = Inf,
+                      positive_interactions = FALSE,
+                      priors) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
@@ -80,7 +88,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(attributes = ncol(qmatrix))
+  all_profiles <- create_profiles(ncol(qmatrix))
 
   profile_params <-
     stats::model.matrix(stats::as.formula(paste0("~ .^",
@@ -144,8 +152,18 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
               priors = item_priors))
 }
 
-#' @rdname lcdm-crum
+#' @rdname lcdm-crum-ncrum
 #' @noRd
 meas_crum <- function(qmatrix, priors) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
 }
+<<<<<<< HEAD:R/meas-lcdm-crum.R
+=======
+
+#' @rdname lcdm-crum-ncrum
+#' @noRd
+meas_ncrum <- function(qmatrix, max_interaction = Inf, priors) {
+  meas_lcdm(qmatrix, max_interaction = max_interaction,
+            positive_interactions = TRUE, priors = priors)
+}
+>>>>>>> 6d32554aa0d2f5cef0d27f68119464f0110e4936:R/meas-lcdm-crum-ncrum.R

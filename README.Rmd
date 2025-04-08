@@ -34,7 +34,7 @@ Using dcmstan, you can:
 
 * Mix and match different [measurement](https://dcmstan.r-dcm.org/reference/measurement-model) and [structural](https://dcmstan.r-dcm.org/reference/structural-model) models to specify a diagnostic model with `dcm_specify()`,
 * Define `prior()` distributions, and
-* Generate Stan code for the model, given the specifications and priors with `generate_stan()`
+* Generate Stan code for the model, given the specifications and priors with `stan_code()`
 
 dcmstan is used as a backend for generating the Stan code needed to estimate and evaluate with the [measr](https://measr.info) package.
 If you use measr to estimate your models, you will not need to use dcmstan to generate Stan code yourself.
@@ -58,7 +58,7 @@ new_model <- dcm_specify(qmatrix = mdm_qmatrix, identifier = "item",
                          measurement_model = lcdm(),
                          structural_model = unconstrained())
 
-generate_stan(new_model)
+stan_code(new_model)
 ```
 
 ---
@@ -67,5 +67,5 @@ generate_stan(new_model)
 
 Contributions are welcome.
 To ensure a smooth process, please review the [Contributing Guide](https://dcmstan.r-dcm.org/CONTRIBUTING.html).
-Please note that the dcmdata project is released with a [Contributor Code of Conduct](https://dcmstan.r-dcm.org/CODE_OF_CONDUCT.html).
+Please note that the dcmstan project is released with a [Contributor Code of Conduct](https://dcmstan.r-dcm.org/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.

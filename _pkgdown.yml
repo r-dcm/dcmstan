@@ -21,6 +21,7 @@ reference:
   - prior
   - get_parameters
 
-- title: Generate 'Stan' code
+- title: Interface with 'Stan'
   contents:
-  - generate_stan
+  - stan_code
+  - stan_data

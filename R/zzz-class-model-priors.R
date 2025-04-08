@@ -94,7 +94,7 @@ lcdm_priors <- function(max_interaction) {
                prior("normal(0, 2)", type = "interaction"))
   }
 
-  return(prior)
+  prior
 }
 
 dina_priors <- function() {
@@ -120,7 +120,7 @@ ncrum_priors <- function() {
   prior <- c(prior("beta(5, 25)", type = "slip"),
              prior("beta(5, 25)", type = "penalty"))
 
-  return(prior)
+  prior
 }
 
 ## structural model defaults -----
@@ -163,11 +163,8 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
           function(lb, ub, dist) {
             if (is.na(lb) && is.na(ub)) {
               return(dist)
-            } else {
-              as.character(
-                glue::glue("{dist}T[{lb},{ub}]", .na = "")
-              )
             }
+            as.character(glue::glue("{dist}T[{lb},{ub}]", .na = ""))
           },
           self@lower_bound, self@upper_bound, self@distribution,
           USE.NAMES = FALSE

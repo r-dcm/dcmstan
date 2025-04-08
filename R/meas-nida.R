@@ -22,70 +22,7 @@ meas_nida <- function(qmatrix, priors) {
   )
 
   # transformed parameters block -----
-  all_params <- nida_parameters(qmatrix = qmatrix)
-
-
-  # meas_params <- all_params |>
-  #   dplyr::mutate(parameter = dplyr::case_when(.data$type == "intercept" ~
-  #                                                "intercept",
-  #                                              TRUE ~ .data$attributes)) |>
-  #   dplyr::select("parameter", param_name = "coefficient") |>
-  #   dplyr::mutate(
-  #     param_level = dplyr::case_when(
-  #       .data$parameter == "intercept" ~ 0,
-  #       !grepl("__", .data$parameter) ~ 1,
-  #       TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
-  #                     function(.x) length(attr(.x, "match.length"))) + 1
-  #     ),
-  #     atts = gsub("[^0-9|_]", "", .data$parameter),
-  #     constraint = dplyr::case_when(
-  #       .data$param_level == 0 ~ glue::glue(""),
-  #       .data$param_level >= 1 ~ glue::glue("<lower=0>")
-  #     ),
-  #     param_def = dplyr::case_when(
-  #       .data$param_level == 0 ~ glue::glue("real {param_name};"),
-  #       .data$param_level >= 1 ~ glue::glue("real{constraint} {param_name};")
-  #     )
-  #   ) |>
-  #   dplyr::filter(.data$param_level <= max_interaction)
-  #
-  # intercepts <- meas_params |>
-  #   dplyr::filter(.data$param_level == 0) |>
-  #   dplyr::pull(.data$param_def)
-  # main_effects <- meas_params |>
-  #   dplyr::filter(.data$param_level == 1) |>
-  #   dplyr::pull(.data$param_def)
-  # interactions <- meas_params |>
-  #   dplyr::filter(.data$param_level >= 2) |>
-  #   dplyr::pull(.data$param_def)
-  #
-  # interaction_stan <- if (length(interactions) > 0) {
-  #   glue::glue(
-  #     "",
-  #     "",
-  #     "  ////////////////////////////////// item interactions",
-  #     "  {glue::glue_collapse(interactions, sep = \"\n  \")}",
-  #     .sep = "\n", .trim = FALSE
-  #   )
-  # } else {
-  #   ""
-  # }
-  #
-  # parameters_block <- glue::glue(
-  #   "  ////////////////////////////////// attribute parameters",
-  #   "  {glue::glue_collapse(meas_params, sep = \"\n  \")}",
-  #   .sep = "\n", .trim = FALSE
-  # )
-  #
-  # parameters_block <- glue::glue(
-  #   "  ////////////////////////////////// item parameters",
-  #   "  array[I] real<lower=0,upper=1> slip;",
-  #   "  array[I] real<lower=0,upper=1> guess;",
-  #   .sep = "\n", .trim = FALSE
-  # )
-
-  # transformed parameters block -----
-  all_profiles <- create_profiles(attributes = ncol(qmatrix))
+  all_profiles <- create_profiles(ncol(qmatrix))
 
   profiles <- all_profiles |>
     tibble::rowid_to_column("profile_id") |>

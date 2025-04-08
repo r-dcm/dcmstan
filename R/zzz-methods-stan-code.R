@@ -34,11 +34,12 @@
 #'                           measurement_model = lcdm(),
 #'                           structural_model = unconstrained())
 #'
-#' generate_stan(model_spec)
-generate_stan <- S7::new_generic("generate_stan", "x")
+#' stan_code(model_spec)
+stan_code <- S7::new_generic("stan_code", "x")
+
 
 # Method for dcm_specification -------------------------------------------------
-S7::method(generate_stan, dcm_specification) <- function(x) {
+S7::method(stan_code, dcm_specification) <- function(x) {
   meas_args <- c(list(qmatrix = x@qmatrix, priors = x@priors),
                  x@measurement_model@model_args)
   meas_code <- do.call(paste0("meas_", x@measurement_model@model), meas_args)
@@ -48,21 +49,22 @@ S7::method(generate_stan, dcm_specification) <- function(x) {
   strc_code <- do.call(paste0("strc_", x@structural_model@model), strc_args)
 
   # data block -----
+  meas_data <- stan_data_code(x@measurement_model)
+  strc_data <- stan_data_code(x@structural_model)
   data_block <- glue::glue(
-    "data {{
-      int<lower=1> I;                      // number of items
-      int<lower=1> R;                      // number of respondents
-      int<lower=1> N;                      // number of observations
-      int<lower=1> C;                      // number of classes
-      int<lower=1> A;                      // number of attributes
-      array[N] int<lower=1,upper=I> ii;    // item for observation n
-      array[N] int<lower=1,upper=R> rr;    // respondent for observation n
-      array[N] int<lower=0,upper=1> y;     // score for observation n
-      array[R] int<lower=1,upper=N> start; // starting row for respondent R
-      array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-      matrix[C,A] Alpha;                   // attribute pattern for each class
-      matrix[I,C] Xi;                      // class attribute mastery indicator
-    }}"
+    "data {{",
+    "  int<lower=1> I;                      // number of items",
+    "  int<lower=1> R;                      // number of respondents",
+    "  int<lower=1> N;                      // number of observations",
+    "  int<lower=1> C;                      // number of classes",
+    "  array[N] int<lower=1,upper=I> ii;    // item for observation n",
+    "  array[N] int<lower=1,upper=R> rr;    // respondent for observation n",
+    "  array[N] int<lower=0,upper=1> y;     // score for observation n",
+    "  array[R] int<lower=1,upper=N> start; // starting row for respondent R",
+    "  array[R] int<lower=1,upper=I> num;   // number items for respondent R",
+    if (!is.null(meas_data)) glue::glue("{meas_data}"),
+    if (!is.null(strc_data)) glue::glue("{strc_data}"),
+    "}}", .sep = "\n", .null = NULL
   )
 
   # parameters block -----
@@ -115,5 +117,38 @@ S7::method(generate_stan, dcm_specification) <- function(x) {
     .sep = "\n"
   )
 
-  return(full_script)
+  full_script
+}
+
+
+# DCM data block ---------------------------------------------------------------
+stan_data_code <- S7::new_generic("stan_data_code", "x")
+
+S7::method(stan_data_code, measurement) <- function(x) NULL
+S7::method(stan_data_code, structural) <- function(x) NULL
+
+S7::method(stan_data_code, DINA) <- function(x) {
+  data_block <- glue::glue(
+    "  matrix[I,C] Xi;                      // class attribute indicator"
+  )
+
+  data_block
+}
+
+S7::method(stan_data_code, DINO) <- function(x) {
+  data_block <- glue::glue(
+    "  matrix[I,C] Xi;                      // class attribute indicator"
+  )
+
+  data_block
+}
+
+S7::method(stan_data_code, INDEPENDENT) <- function(x) {
+  data_block <- glue::glue(
+    "  int<lower=1> A;                      // number of attributes",
+    "  matrix[C,A] Alpha;                   // attribute pattern for class",
+    .sep = "\n", .trim = FALSE
+  )
+
+  data_block
 }

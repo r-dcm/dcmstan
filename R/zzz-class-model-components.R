@@ -80,6 +80,10 @@
 #' @references de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
 #'   trait models for cognitive diagnosis. *Psychometrika, 69*(3), 333-353.
 #'   \doi{10.1007/BF02295640}
+#' @references DiBello, L. V., Stout, W. F., & Roussos, L. (1995). Unified
+#'   cognitive psychometric assessment likelihood-based classification
+#'   techniques. In P. D. Nichols, S. F. Chipman, & R. L. Brennan (Eds.),
+#'   *Cognitively diagnostic assessment* (pp. 361-390). Erlbaum.
 #' @references Hartz, S. M. (2002). *A Bayesian framework for the unified model
 #'   for assessing cognitive abilities: Blending theory with practicality*
 #'   (Publication No. 3044108) \[Doctoral dissertation, University of Illinois
@@ -95,15 +99,11 @@
 #'   with few assumptions, and connections with nonparametric item response
 #'   theory. *Applied Psychological Measurement, 25*(3), 258-272.
 #'   \doi{10.1177/01466210122032064}
+#' @references Templin, J. L. (2006). *CDM user's guide*. Unpublished
+#'   manuscript.
 #' @references Templin, J. L., & Henson, R. A. (2006). Measurement of
 #'   psychological disorders using cognitive diagnosis models. *Psychological
 #'   Methods, 11*(3), 287-305. \doi{10.1037/1082-989X.11.3.287}
-#' @references Templin, J. L. (2006). *CDM user's guide*. Unpublished
-#' manuscript.
-#' @references DiBello, L. V., Stout, W. F., & Roussos, L. (1995). Unified
-#' cognitive psychometric assessment likelihood-based classification techniques.
-#' In P. D. Nichols, S. F. Chipman, & R. L. Brennan (Eds.), *Cognitively
-#' diagnostic assessment* (pp. 361-390). Erlbaum.
 #'
 #' @examples
 #' lcdm()
@@ -162,7 +162,7 @@ ncrum <- function() {
 #'
 #' Structural models define how the attributes are related to one another.
 #' The currently supported options for structural models are:
-#' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
+#' `r print_choices(names(strc_choices()), sep = ", ", last = ", and ")`.
 #' See details for additional information on each model.
 #'
 #' @returns A structural model object.
@@ -308,10 +308,13 @@ model_property <- S7::new_property(
 ## Measurement models -----
 LCDM <- S7::new_class("LCDM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 DINA <- S7::new_class("DINA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
@@ -325,6 +328,7 @@ NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
                                package = "dcmstan",
                                properties = list(model = model_property))
+
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
