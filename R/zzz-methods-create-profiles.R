@@ -53,7 +53,9 @@ S7::method(create_profiles, dcm_specification) <-
   function(x, keep_names = TRUE) {
     profs <- create_profiles(
       x@structural_model,
-      attributes = length(x@qmatrix_meta$attribute_names)
+      attributes = length(x@qmatrix_meta$attribute_names),
+      att_names = names(x@qmatrix_meta$attribute_names),
+      hierarchy = x@measurement_model@model_args$hierarchy
     )
 
     if (keep_names) {
@@ -73,3 +75,49 @@ S7::method(create_profiles, structural) <- function(x, attributes) {
 
 
 # specific structural models ---------------------------------------------------
+#' @details
+#' `attributes`: When `x` is an [hdcm][structural-model], the number of
+#'   attributes that should be used to generate the profiles.
+#' `att_names`: When `x` is an [hdcm][structural-model], the names of the
+#'   attributes.
+#' `hierarchy`: When `x` is an [hdcm][structural-model], the attribute
+#'   structure defining which attributes must be mastered before other
+#'   attributes can be mastered.
+#' @name create_profiles
+S7::method(create_profiles, structural) <-
+  function(x, attributes, att_names, hierarchy) {
+    print("For structural model")
+    # hierarchy <- x@structural_model@model_args$hierarchy
+
+    hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
+    hierarchy <- ggdag::tidy_dagitty(hierarchy)
+
+    filtered_hierarchy <- hierarchy |>
+      tibble::as_tibble() |>
+      dplyr::filter(!is.na(.data$direction)) |>
+      dplyr::select("name", "direction", "to")
+
+    possible_profiles <- create_profiles(attributes)
+    colnames(possible_profiles) <- att_names
+
+    possible_profiles <- possible_profiles |>
+      dplyr::mutate(allowed = NA)
+
+    for (jj in seq_len(nrow(filtered_hierarchy))) {
+      from <- filtered_hierarchy$name[jj]
+      to <- filtered_hierarchy$to[jj]
+
+      possible_profiles <- possible_profiles |>
+        dplyr::mutate(allowed = dplyr::case_when(!!sym(to) > !!sym(from) ~
+                                                   FALSE,
+                                                 TRUE ~ .data$allowed))
+    }
+
+    possible_profiles <- possible_profiles |>
+      dplyr::mutate(allowed = dplyr::case_when(is.na(.data$allowed) ~ TRUE,
+                                               TRUE ~ .data$allowed)) |>
+      dplyr::filter(.data$allowed) |>
+      dplyr::select(-"allowed")
+
+    return(possible_profiles)
+}
