@@ -114,7 +114,7 @@ S7::method(create_profiles, HDCM) <-
       dplyr::filter(.data$allowed) |>
       dplyr::select(-"allowed")
 
-    return(possible_profiles)
+    possible_profiles
   }
 
 #' @details
