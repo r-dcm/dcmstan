@@ -10,11 +10,11 @@
 \usage{
 lcdm(max_interaction = Inf, hierarchy = NULL)
 
-dina()
+dina(hierarchy = NULL)
 
-dino()
+dino(hierarchy = NULL)
 
-crum()
+crum(hierarchy = NULL)
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
