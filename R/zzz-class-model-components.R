@@ -95,20 +95,32 @@ lcdm <- function(max_interaction = Inf, hierarchy = NULL) {
 
 #' @rdname measurement-model
 #' @export
-dina <- function() {
-  DINA(model = "dina")
+dina <- function(hierarchy = NULL) {
+  if (!is.null(hierarchy)) {
+    hierarchy <- check_hierarchy(hierarchy)
+  }
+
+  DINA(model = "dina", list(hierarchy = hierarchy))
 }
 
 #' @rdname measurement-model
 #' @export
-dino <- function() {
-  DINO(model = "dino")
+dino <- function(hierarchy = NULL) {
+  if (!is.null(hierarchy)) {
+    hierarchy <- check_hierarchy(hierarchy)
+  }
+
+  DINO(model = "dino", list(hierarchy = hierarchy))
 }
 
 #' @rdname measurement-model
 #' @export
-crum <- function() {
-  CRUM(model = "crum")
+crum <- function(hierarchy = NULL) {
+  if (!is.null(hierarchy)) {
+    hierarchy <- check_hierarchy(hierarchy)
+  }
+
+  CRUM(model = "crum", list(hierarchy = hierarchy))
 }
 
 
