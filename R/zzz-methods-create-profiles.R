@@ -100,13 +100,12 @@ S7::method(create_profiles, HDCM) <-
       dplyr::mutate(allowed = NA)
 
     for (jj in seq_len(nrow(filtered_hierarchy))) {
-      from <- filtered_hierarchy$name[jj]
-      to <- filtered_hierarchy$to[jj]
-
       possible_profiles <- possible_profiles |>
-        dplyr::mutate(allowed = dplyr::case_when(!!sym(to) > !!sym(from) ~
-                                                   FALSE,
-                                                 TRUE ~ .data$allowed))
+        dplyr::mutate(allowed =
+                        dplyr::case_when(!!sym(filtered_hierarchy$to[jj]) >
+                                           !!sym(filtered_hierarchy$name[jj]) ~
+                                           FALSE,
+                                         TRUE ~ .data$allowed))
     }
 
     possible_profiles <- possible_profiles |>
