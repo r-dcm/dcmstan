@@ -9,14 +9,32 @@ test_that("correct data objects are returned", {
   combos <- expand.grid(meas = meas_choices(), strc = strc_choices(),
                         stringsAsFactors = FALSE)
   for (i in seq_len(nrow(combos))) {
-    model_spec <- dcm_specify(
-      dcmdata::mdm_qmatrix, identifier = "item",
-      measurement_model = do.call(combos$meas[i], args = list()),
-      structural_model = do.call(combos$strc[i], args = list())
-    )
+    if (combos$strc[i] != "hdcm") {
+      model_spec <- dcm_specify(
+        dcmdata::ecpe_qmatrix, identifier = "item_id",
+        measurement_model = do.call(combos$meas[i], args = list()),
+        structural_model = do.call(combos$strc[i], args = list())
+      )
+    } else if (combos$meas[i] == "lcdm") {
+      model_spec <- dcm_specify(
+        dcmdata::ecpe_qmatrix, identifier = "item_id",
+        measurement_model =
+          do.call(combos$meas[i],
+                  args = list(max_interaction = Inf,
+                              hierarchy =
+                                "lexical -> cohesive -> morphosyntactic")),
+        structural_model = do.call(combos$strc[i], args = list())
+      )
+    } else {
+      model_spec <- dcm_specify(
+        dcmdata::ecpe_qmatrix, identifier = "item_id",
+        measurement_model = do.call(combos$meas[i], args = list(hierarchy = "lexical -> cohesive -> morphosyntactic")),
+        structural_model = do.call(combos$strc[i], args = list())
+      )
+    }
 
-    test_data <- stan_data(model_spec, data = dcmdata::mdm_data,
-                           identifier = "respondent")
+    test_data <- stan_data(model_spec, data = dcmdata::ecpe_data,
+                           identifier = "resp_id")
     exp_names <- c(default_data_names,
                    extra_data_names[[combos$meas[i]]],
                    extra_data_names[[combos$strc[i]]])

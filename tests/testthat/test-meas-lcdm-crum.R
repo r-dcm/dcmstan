@@ -58,5 +58,5 @@ test_that("lcdm with hierarchy works", {
                                            paste0("lexical -> cohesive -> ",
                                                   "morphosyntactic")),
                 structural_model = hdcm())
-  expect_snapshot(generate_stan(ecpe_spec))
+  expect_snapshot(stan_code(ecpe_spec))
 })

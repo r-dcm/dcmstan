@@ -16,6 +16,14 @@ true_3 <- tibble::tribble(
      1L,    1L,    1L
 )
 
+true_3_hdcm <- tibble::tribble(
+  ~att1, ~att2, ~att3,
+  0L,    0L,    0L,
+  0L,    0L,    1L,
+  0L,    1L,    1L,
+  1L,    1L,    1L
+)
+
 true_4 <- tibble::tribble(
   ~att1, ~att2, ~att3, ~att4,
      0L,    0L,    0L,    0L,
@@ -52,6 +60,10 @@ test_that("stuctural method works", {
 
   expect_identical(create_profiles(unconstrained(), attributes = 3), true_3)
   expect_identical(create_profiles(independent(), attributes = 4), true_4)
+  expect_identical(create_profiles(hdcm(), attributes = 3,
+                                   att_names = c("att1", "att2", "att3"),
+                                   hierarchy = "att3 -> att2 -> att1"),
+                   true_3_hdcm)
 })
 
 test_that("dcm_specification method works", {
@@ -61,6 +73,12 @@ test_that("dcm_specification method works", {
                            structural_model = independent())
   dtmr_spec <- dcm_specify(dcmdata::dtmr_qmatrix, identifier = "item",
                            structural_model = unconstrained())
+  hdcm_spec <- dcm_specify(dcmdata::ecpe_qmatrix, identifier = "item_id",
+                           measurement_model =
+                             lcdm(max_interaction = Inf,
+                                  hierarchy = paste0("lexical -> cohesive -> ",
+                                                     "morphosyntactic")),
+                           structural_model = hdcm())
 
   expect_identical(create_profiles(mdm_spec),
                    dplyr::rename(true_1, multiplication = "att1"))
@@ -71,4 +89,9 @@ test_that("dcm_specification method works", {
                                  partitioning_iterating = "att2",
                                  appropriateness = "att3",
                                  multiplicative_comparison = "att4"))
+  expect_identical(create_profiles(hdcm_spec),
+                   dplyr::rename(true_3_hdcm,
+                                 morphosyntactic = "att1",
+                                 cohesive = "att2",
+                                 lexical = "att3"))
 })
