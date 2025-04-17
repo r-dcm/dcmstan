@@ -13,7 +13,7 @@
 #'   and `priors`.
 #' @rdname dina-dino
 #' @noRd
-meas_dina <- function(qmatrix, priors) {
+meas_dina <- function(qmatrix, priors, hierarchy = NULL) {
   # parameters block -----
   parameters_block <- glue::glue(
     "  ////////////////////////////////// item parameters",
