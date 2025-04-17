@@ -28,7 +28,10 @@ test_that("correct data objects are returned", {
     } else {
       model_spec <- dcm_specify(
         dcmdata::ecpe_qmatrix, identifier = "item_id",
-        measurement_model = do.call(combos$meas[i], args = list(hierarchy = "lexical -> cohesive -> morphosyntactic")),
+        measurement_model =
+          do.call(combos$meas[i],
+                  args = list(hierarchy =
+                                "lexical -> cohesive -> morphosyntactic")),
         structural_model = do.call(combos$strc[i], args = list())
       )
     }

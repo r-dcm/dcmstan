@@ -171,11 +171,12 @@ S7::method(extra_data, S7::class_any) <- function(x, dcm_spec) NULL
 S7::method(extra_data, DINA) <- function(x, dcm_spec) {
   if (dcm_spec@structural_model@model == "hdcm") {
     profiles <-
-      create_profiles(dcm_spec@structural_model,
-                      attributes = ncol(dcm_spec@qmatrix),
-                      att_names = names(dcm_spec@qmatrix_meta$attribute_names),
-                      hierarchy =
-                        dcm_spec@measurement_model@model_args$hierarchy)
+      create_profiles(
+        dcm_spec@structural_model,
+        attributes = ncol(dcm_spec@qmatrix),
+        att_names = names(dcm_spec@qmatrix_meta$attribute_names),
+        hierarchy = dcm_spec@measurement_model@model_args$hierarchy
+      )
   } else {
     profiles <- create_profiles(dcm_spec@structural_model,
                                 attributes = ncol(dcm_spec@qmatrix))
@@ -195,11 +196,12 @@ S7::method(extra_data, DINA) <- function(x, dcm_spec) {
 S7::method(extra_data, DINO) <- function(x, dcm_spec) {
   if (dcm_spec@structural_model@model == "hdcm") {
     profiles <-
-      create_profiles(dcm_spec@structural_model,
-                      attributes = ncol(dcm_spec@qmatrix),
-                      att_names = names(dcm_spec@qmatrix_meta$attribute_names),
-                      hierarchy =
-                        dcm_spec@measurement_model@model_args$hierarchy)
+      create_profiles(
+        dcm_spec@structural_model,
+        attributes = ncol(dcm_spec@qmatrix),
+        att_names = names(dcm_spec@qmatrix_meta$attribute_names),
+        hierarchy = dcm_spec@measurement_model@model_args$hierarchy
+      )
   } else {
     profiles <- create_profiles(dcm_spec@structural_model,
                                 attributes = ncol(dcm_spec@qmatrix))
@@ -218,11 +220,12 @@ S7::method(extra_data, DINO) <- function(x, dcm_spec) {
 S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
   if (dcm_spec@structural_model@model == "hdcm") {
     profiles <-
-      create_profiles(dcm_spec@structural_model,
-                      attributes = ncol(dcm_spec@qmatrix),
-                      att_names = names(dcm_spec@qmatrix_meta$attribute_names),
-                      hierarchy =
-                        dcm_spec@measurement_model@model_args$hierarchy)
+      create_profiles(
+        dcm_spec@structural_model,
+        attributes = ncol(dcm_spec@qmatrix),
+        att_names = names(dcm_spec@qmatrix_meta$attribute_names),
+        hierarchy = dcm_spec@measurement_model@model_args$hierarchy
+      )
   } else {
     profiles <- create_profiles(dcm_spec@structural_model,
                                 attributes = ncol(dcm_spec@qmatrix))

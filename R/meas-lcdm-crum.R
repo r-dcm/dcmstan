@@ -221,5 +221,5 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
 #' @noRd
 meas_crum <- function(qmatrix, priors, hierarchy = NULL) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors,
-            hierarchy = hierarchy,)
+            hierarchy = hierarchy)
 }
