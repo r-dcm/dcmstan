@@ -39,9 +39,9 @@ strc_unconstrained <- function(qmatrix, priors) {
     ) |>
     dplyr::pull("prior_def")
 
-  return(list(parameters = parameters_block,
-              transformed_parameters = transformed_parameters_block,
-              priors = strc_priors))
+  list(parameters = parameters_block,
+       transformed_parameters = transformed_parameters_block,
+       priors = strc_priors)
 }
 
 #' @rdname lcdm-crum
