@@ -23,7 +23,8 @@
 #'
 #' create_profiles(5)
 #'
-#' create_profiles(unconstrained(), attributes = 2)
+#' create_profiles(hdcm(), attributes = 2, att_names = c("a", "b"),
+#'                 hierarchy = "a -> b")
 create_profiles <- S7::new_generic("create_profiles", "x")
 
 
@@ -51,12 +52,19 @@ S7::method(create_profiles, S7::class_numeric) <- function(x) {
 #' @name create_profiles
 S7::method(create_profiles, dcm_specification) <-
   function(x, keep_names = TRUE) {
-    profs <- create_profiles(
-      x@structural_model,
-      attributes = length(x@qmatrix_meta$attribute_names),
-      att_names = names(x@qmatrix_meta$attribute_names),
-      hierarchy = x@measurement_model@model_args$hierarchy
-    )
+    if (!is.null(x@measurement_model@model_args$hierarchy)) {
+      profs <- create_profiles(
+        x = x@structural_model,
+        attributes = length(x@qmatrix_meta$attribute_names),
+        att_names = names(x@qmatrix_meta$attribute_names),
+        hierarchy = x@measurement_model@model_args$hierarchy
+      )
+    } else {
+      profs <- create_profiles(
+        x@structural_model,
+        attributes = length(x@qmatrix_meta$attribute_names)
+      )
+    }
 
     if (keep_names) {
       colnames(profs) <- names(x@qmatrix_meta$attribute_names)
@@ -64,15 +72,6 @@ S7::method(create_profiles, dcm_specification) <-
 
     profs
   }
-
-#' @details
-#' `attributes`: When `x` is a [structural model][structural-model], the
-#'   number of attributes that should be used to generate the profiles.
-#' @name create_profiles
-S7::method(create_profiles, structural) <- function(x, attributes) {
-  create_profiles(attributes)
-}
-
 
 # specific structural models ---------------------------------------------------
 #' @details
@@ -84,11 +83,8 @@ S7::method(create_profiles, structural) <- function(x, attributes) {
 #'   structure defining which attributes must be mastered before other
 #'   attributes can be mastered.
 #' @name create_profiles
-S7::method(create_profiles, structural) <-
+S7::method(create_profiles, HDCM) <-
   function(x, attributes, att_names, hierarchy) {
-    print("For structural model")
-    # hierarchy <- x@structural_model@model_args$hierarchy
-
     hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
     hierarchy <- ggdag::tidy_dagitty(hierarchy)
 
@@ -120,4 +116,20 @@ S7::method(create_profiles, structural) <-
       dplyr::select(-"allowed")
 
     return(possible_profiles)
+  }
+
+#' @details
+#' `attributes`: When `x` is an [unconstrained][structural-model], the number of
+#'   attributes that should be used to generate the profiles.
+#' @name create_profiles
+S7::method(create_profiles, UNCONSTRAINED) <- function(x, attributes) {
+  create_profiles(attributes)
+}
+
+#' @details
+#' `attributes`: When `x` is an [independent][structural-model], the number of
+#'   attributes that should be used to generate the profiles.
+#' @name create_profiles
+S7::method(create_profiles, INDEPENDENT) <- function(x, attributes) {
+  create_profiles(attributes)
 }
