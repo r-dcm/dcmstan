@@ -14,7 +14,7 @@
 #' @rdname lcdm-crum
 #' @noRd
 meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
-                      hierarchy = NULL, att_labels) {
+                      hierarchy = NULL) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
