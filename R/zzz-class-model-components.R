@@ -82,6 +82,7 @@
 #'
 #' dina()
 lcdm <- function(max_interaction = Inf) {
+  check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
   LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
 
@@ -173,6 +174,7 @@ independent <- function() {
 #' @rdname structural-model
 #' @export
 hdcm <- function(hierarchy = NULL) {
+  check_hierarchy(hierarchy)
   HDCM(model = "hdcm", list(hierarchy = hierarchy))
 }
 
