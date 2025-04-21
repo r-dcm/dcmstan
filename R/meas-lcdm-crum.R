@@ -49,11 +49,11 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
 
     nested_params <- ancestors |>
       dplyr::group_by(.data$param) |>
-      dplyr::mutate(base_param = stringr::str_remove(.data$param, "att"),
+      dplyr::mutate(base_param = gsub("att", "", .data$param),
                     param_num = dplyr::row_number(),
                     int_level = dplyr::row_number(),
                     int_level = max(.data$int_level) + 1,
-                    ancestors = stringr::str_remove(.data$ancestors, "att")) |>
+                    ancestors = gsub("att", "", .data$ancestors)) |>
       dplyr::ungroup() |>
       tidyr::pivot_wider(names_from = "param_num", values_from = "ancestors") |>
       dplyr::select("param", "int_level", "base_param", dplyr::everything()) |>
@@ -71,8 +71,8 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
     all_params <- all_params |>
       dplyr::filter(.data$type != "interaction") |>
       dplyr::left_join(nested_params, by = c("attributes" = "param")) |>
-      dplyr::mutate(param_spec = stringr::str_c("l", .data$item_id, "_",
-                                                .data$param_spec),
+      dplyr::mutate(param_spec = paste0("l", .data$item_id, "_",
+                                        .data$param_spec),
                     coefficient = dplyr::case_when(is.na(.data$param_spec) ~
                                                      .data$coefficient,
                                                    !is.na(.data$param_spec) ~

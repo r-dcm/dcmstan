@@ -42,7 +42,6 @@ Suggests:
     cmdstanr,
     dcmdata (>= 0.0.0.9000),
     spelling,
-    stringr,
     testthat (>= 3.0.0),
     withr
 Remotes: 

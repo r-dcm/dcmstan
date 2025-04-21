@@ -16,7 +16,7 @@ get_att_labels <- function(qmatrix, identifier = NULL) {
                           values_to = "meas") |>
       dplyr::distinct(.data$att_label) |>
       tibble::rowid_to_column("att") |>
-      dplyr::mutate(att = stringr::str_c("att", as.character(.data$att)))
+      dplyr::mutate(att = paste0("att", as.character(.data$att)))
   } else {
     att_labels <- qmatrix |>
       dplyr::select(-!!identifier) |>
@@ -24,7 +24,7 @@ get_att_labels <- function(qmatrix, identifier = NULL) {
                           values_to = "meas") |>
       dplyr::distinct(.data$att_label) |>
       tibble::rowid_to_column("att") |>
-      dplyr::mutate(att = stringr::str_c("att", as.character(.data$att)))
+      dplyr::mutate(att = paste0("att", as.character(.data$att)))
   }
 
   return(att_labels)
