@@ -7,9 +7,6 @@
 #'
 #' @param max_interaction For the LCDM, the highest item-level interaction to
 #'   include in the model.
-#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
-#'   the `dagitty` [vignette](https://cran.r-project.org/web/packages/dagitty/vignettes/dagitty4semusers.html)
-#'   for a tutorial on how to draw the attribute hierarchy.
 #'
 #' @returns A measurement model object.
 #'
@@ -84,43 +81,26 @@
 #'      hierarchy = "lexical -> cohesive -> morphosyntactic")
 #'
 #' dina()
-lcdm <- function(max_interaction = Inf, hierarchy = NULL) {
-  if (!is.null(hierarchy)) {
-    hierarchy <- check_hierarchy(hierarchy)
-  }
-
-  LCDM(model = "lcdm", list(max_interaction = max_interaction,
-                            hierarchy = hierarchy))
+lcdm <- function(max_interaction = Inf) {
+  LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
 
 #' @rdname measurement-model
 #' @export
-dina <- function(hierarchy = NULL) {
-  if (!is.null(hierarchy)) {
-    hierarchy <- check_hierarchy(hierarchy)
-  }
-
-  DINA(model = "dina", list(hierarchy = hierarchy))
+dina <- function() {
+  DINA(model = "dina")
 }
 
 #' @rdname measurement-model
 #' @export
-dino <- function(hierarchy = NULL) {
-  if (!is.null(hierarchy)) {
-    hierarchy <- check_hierarchy(hierarchy)
-  }
-
-  DINO(model = "dino", list(hierarchy = hierarchy))
+dino <- function() {
+  DINO(model = "dino")
 }
 
 #' @rdname measurement-model
 #' @export
-crum <- function(hierarchy = NULL) {
-  if (!is.null(hierarchy)) {
-    hierarchy <- check_hierarchy(hierarchy)
-  }
-
-  CRUM(model = "crum", list(hierarchy = hierarchy))
+crum <- function() {
+  CRUM(model = "crum")
 }
 
 
@@ -130,6 +110,10 @@ crum <- function(hierarchy = NULL) {
 #' The currently supported options for structural models are:
 #' `r print_choices(names(strc_choices()), last = " and ")`.
 #' See details for additional information on each model.
+#'
+#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
+#'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+#'   how to draw the attribute hierarchy.
 #'
 #' @returns A structural model object.
 #'
@@ -188,8 +172,8 @@ independent <- function() {
 
 #' @rdname structural-model
 #' @export
-hdcm <- function() {
-  HDCM(model = "hdcm")
+hdcm <- function(hierarchy = NULL) {
+  HDCM(model = "hdcm", list(hierarchy = hierarchy))
 }
 
 
