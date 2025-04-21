@@ -52,19 +52,10 @@ S7::method(create_profiles, S7::class_numeric) <- function(x) {
 #' @name create_profiles
 S7::method(create_profiles, dcm_specification) <-
   function(x, keep_names = TRUE) {
-    if (!is.null(x@measurement_model@model_args$hierarchy)) {
-      profs <- create_profiles(
-        x = x@structural_model,
-        attributes = length(x@qmatrix_meta$attribute_names),
-        att_names = names(x@qmatrix_meta$attribute_names),
-        hierarchy = x@measurement_model@model_args$hierarchy
-      )
-    } else {
-      profs <- create_profiles(
-        x@structural_model,
-        attributes = length(x@qmatrix_meta$attribute_names)
-      )
-    }
+    profs <- create_profiles(
+      x@structural_model,
+      attributes = x@qmatrix_meta$attribute_names
+    )
 
     if (keep_names) {
       colnames(profs) <- names(x@qmatrix_meta$attribute_names)
@@ -72,6 +63,15 @@ S7::method(create_profiles, dcm_specification) <-
 
     profs
   }
+
+#' @details
+#' `attributes`: When `x` is a [structural model][structural-model], the
+#'   number of attributes that should be used to generate the profiles.
+#' @name create_profiles
+S7::method(create_profiles, structural) <- function(x, attributes) {
+  create_profiles(length(attributes))
+}
+
 
 # specific structural models ---------------------------------------------------
 #' @details
@@ -84,51 +84,25 @@ S7::method(create_profiles, dcm_specification) <-
 #'   attributes can be mastered.
 #' @name create_profiles
 S7::method(create_profiles, HDCM) <-
-  function(x, attributes, att_names, hierarchy) {
-    hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
+  function(x, attributes) {
+    hierarchy <- glue::glue(" dag { <x@model_args$hierarchy> } ",
+                            .open = "<", .close = ">")
     hierarchy <- ggdag::tidy_dagitty(hierarchy)
 
     filtered_hierarchy <- hierarchy |>
       tibble::as_tibble() |>
       dplyr::filter(!is.na(.data$direction)) |>
-      dplyr::select("name", "direction", "to")
+      dplyr::select("name", "direction", "to") |>
+      dplyr::mutate(name = attributes[.data$name],
+                    to = attributes[.data$to])
 
-    possible_profiles <- create_profiles(attributes)
-    colnames(possible_profiles) <- att_names
-
-    possible_profiles <- possible_profiles |>
-      dplyr::mutate(allowed = NA)
+    possible_profiles <- create_profiles(length(attributes))
 
     for (jj in seq_len(nrow(filtered_hierarchy))) {
       possible_profiles <- possible_profiles |>
-        dplyr::mutate(allowed =
-                        dplyr::case_when(!!sym(filtered_hierarchy$to[jj]) >
-                                           !!sym(filtered_hierarchy$name[jj]) ~
-                                           FALSE,
-                                         TRUE ~ .data$allowed))
+        dplyr::filter(!(!!sym(filtered_hierarchy$to[jj]) >
+                          !!sym(filtered_hierarchy$name[jj])))
     }
-
-    possible_profiles <- possible_profiles |>
-      dplyr::mutate(allowed = dplyr::case_when(is.na(.data$allowed) ~ TRUE,
-                                               TRUE ~ .data$allowed)) |>
-      dplyr::filter(.data$allowed) |>
-      dplyr::select(-"allowed")
 
     possible_profiles
   }
-
-#' @details
-#' `attributes`: When `x` is an [unconstrained][structural-model], the number of
-#'   attributes that should be used to generate the profiles.
-#' @name create_profiles
-S7::method(create_profiles, UNCONSTRAINED) <- function(x, attributes) {
-  create_profiles(attributes)
-}
-
-#' @details
-#' `attributes`: When `x` is an [independent][structural-model], the number of
-#'   attributes that should be used to generate the profiles.
-#' @name create_profiles
-S7::method(create_profiles, INDEPENDENT) <- function(x, attributes) {
-  create_profiles(attributes)
-}
