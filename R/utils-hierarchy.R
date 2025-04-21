@@ -26,5 +26,5 @@ check_hierarchy <- function(x, arg = rlang::caller_arg(x),
                                    call = call)
   }
 
-  x
+  invisible(NULL)
 }
