@@ -158,7 +158,8 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
   ),
   validator = function(self) {
     all_params <- dplyr::bind_rows(
-      get_parameters(self@measurement_model, qmatrix = self@qmatrix),
+      get_parameters(self@measurement_model, qmatrix = self@qmatrix,
+                     attributes = self@qmatrix_meta$attribute_names),
       get_parameters(self@structural_model, qmatrix = self@qmatrix)
     )
 
