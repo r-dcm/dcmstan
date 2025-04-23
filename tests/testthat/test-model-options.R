@@ -2,12 +2,7 @@ test_that("measurement models have functions", {
   m_choice <- meas_choices()
   for (i in seq_along(m_choice)) {
     expect_true(inherits(eval(rlang::sym(m_choice[i])), "function"))
-    if (m_choice[i] == "lcdm") {
-      mod_args <- list(hierarchy = "x -> y")
-    } else {
-      mod_args <- list()
-    }
-    S7::check_is_S7(do.call(m_choice[i], args = mod_args), measurement)
+    S7::check_is_S7(do.call(m_choice[i], args = list()), measurement)
   }
 })
 
