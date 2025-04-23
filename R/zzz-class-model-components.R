@@ -77,8 +77,7 @@
 #' @examples
 #' lcdm()
 #'
-#' lcdm(max_interaction = 3,
-#'      hierarchy = "lexical -> cohesive -> morphosyntactic")
+#' lcdm(max_interaction = 3)
 #'
 #' dina()
 lcdm <- function(max_interaction = Inf) {
@@ -160,7 +159,7 @@ crum <- function() {
 #'
 #' independent()
 #'
-#' hdcm()
+#' hdcm(hierarchy = "att1 -> att2 -> att3")
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }

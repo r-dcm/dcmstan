@@ -11,7 +11,12 @@ unconstrained()
 
 independent()
 
-hdcm()
+hdcm(hierarchy = NULL)
+}
+\arguments{
+\item{hierarchy}{Optional. If present, the quoted attribute hierarchy. See
+\code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+how to draw the attribute hierarchy.}
 }
 \value{
 A structural model object.
@@ -19,7 +24,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained, independent attributes and HDCM.
+unconstrained, independent attributes and hierarchical diagnostic, classification model (HDCM).
 See details for additional information on each model.
 }
 \details{
@@ -41,7 +46,7 @@ unconstrained()
 
 independent()
 
-hdcm()
+hdcm(hierarchy = "att1 -> att2 -> att3")
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification

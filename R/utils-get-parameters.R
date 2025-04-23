@@ -38,7 +38,11 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
 
   if (is.null(att_names)) {
     att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
-      rlang::set_names(colnames(qmatrix[, -which(colnames(qmatrix) == identifier)]))
+      rlang::set_names(
+        colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
+      )
+  } else if (is.null(names(att_names))) {
+    att_names <- rlang::set_names(att_names, att_names)
   }
 
   qmatrix <- qmatrix |>
@@ -221,7 +225,7 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
             }
           }
 
-          return(x)
+          x
         },
         g = g
       )
