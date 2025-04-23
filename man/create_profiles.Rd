@@ -31,25 +31,17 @@ Additional arguments passed to methods:
 the real attribute names be used (\code{TRUE}; the default), or replaced with
 generic names (\code{FALSE}; e.g., \code{"att1"}, \code{"att2"}, \code{"att3"}).
 
-\code{attributes}: When \code{x} is an \link[=structural-model]{hdcm}, the number of
-attributes that should be used to generate the profiles.
-\code{att_names}: When \code{x} is an \link[=structural-model]{hdcm}, the names of the
-attributes.
-\code{hierarchy}: When \code{x} is an \link[=structural-model]{hdcm}, the attribute
-structure defining which attributes must be mastered before other
-attributes can be mastered.
-
-\code{attributes}: When \code{x} is an \link[=structural-model]{unconstrained}, the number of
-attributes that should be used to generate the profiles.
-
-\code{attributes}: When \code{x} is an \link[=structural-model]{independent}, the number of
-attributes that should be used to generate the profiles.
+\code{attributes}: When \code{x} is a \link[=structural-model]{structural model}, a vector of
+attribute names, as in the \code{qmatrix_meta$attribute_names} of a
+\link[=dcm_specify]{DCM specification}.
 }
 \examples{
 create_profiles(3L)
 
 create_profiles(5)
 
-create_profiles(hdcm(), attributes = 2, att_names = c("a", "b"),
-                hierarchy = "a -> b")
+create_profiles(unconstrained(), attributes = c("att1", "att2"))
+
+create_profiles(hdcm("att1 -> att2 -> att3"),
+                attributes = c("att1", "att2", "att3"))
 }

@@ -23,8 +23,10 @@
 #'
 #' create_profiles(5)
 #'
-#' create_profiles(hdcm(), attributes = 2, att_names = c("a", "b"),
-#'                 hierarchy = "a -> b")
+#' create_profiles(unconstrained(), attributes = c("att1", "att2"))
+#'
+#' create_profiles(hdcm("att1 -> att2 -> att3"),
+#'                 attributes = c("att1", "att2", "att3"))
 create_profiles <- S7::new_generic("create_profiles", "x")
 
 
@@ -65,8 +67,9 @@ S7::method(create_profiles, dcm_specification) <-
   }
 
 #' @details
-#' `attributes`: When `x` is a [structural model][structural-model], the
-#'   number of attributes that should be used to generate the profiles.
+#' `attributes`: When `x` is a [structural model][structural-model], a vector of
+#' attribute names, as in the `qmatrix_meta$attribute_names` of a
+#' [DCM specification][dcm_specify()].
 #' @name create_profiles
 S7::method(create_profiles, structural) <- function(x, attributes) {
   create_profiles(length(attributes))
@@ -74,17 +77,17 @@ S7::method(create_profiles, structural) <- function(x, attributes) {
 
 
 # specific structural models ---------------------------------------------------
-#' @details
-#' `attributes`: When `x` is an [hdcm][structural-model], the number of
-#'   attributes that should be used to generate the profiles.
-#' `att_names`: When `x` is an [hdcm][structural-model], the names of the
-#'   attributes.
-#' `hierarchy`: When `x` is an [hdcm][structural-model], the attribute
-#'   structure defining which attributes must be mastered before other
-#'   attributes can be mastered.
-#' @name create_profiles
 S7::method(create_profiles, HDCM) <-
   function(x, attributes) {
+    if (is.null(x@model_args$hierarchy)) {
+      return(create_profiles(S7::super(x, to = structural),
+                             attributes = attributes))
+    }
+
+    if (is.null(names(attributes))) {
+      attributes <- rlang::set_names(attributes, attributes)
+    }
+
     hierarchy <- glue::glue(" dag { <x@model_args$hierarchy> } ",
                             .open = "<", .close = ">")
     hierarchy <- ggdag::tidy_dagitty(hierarchy)

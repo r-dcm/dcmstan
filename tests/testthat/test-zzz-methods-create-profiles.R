@@ -54,44 +54,51 @@ test_that("numeric method works", {
 })
 
 test_that("stuctural method works", {
-  err <- rlang::catch_cnd(create_profiles(unconstrained(), attribute = 3.2))
-  expect_s3_class(err, "rlang_error")
-  expect_match(err$message, "be a whole number")
+  expect_identical(
+    create_profiles(unconstrained(), attributes = paste0("att", 1:3)),
+    true_3
+  )
+  expect_identical(
+    create_profiles(independent(), attributes = paste0("att", 1:4)),
+    true_4
+  )
+})
 
-  expect_identical(create_profiles(unconstrained(), attributes = 3), true_3)
-  expect_identical(create_profiles(independent(), attributes = 4), true_4)
-  expect_identical(create_profiles(hdcm(), attributes = 3,
-                                   att_names = c("att1", "att2", "att3"),
-                                   hierarchy = "att3 -> att2 -> att1"),
-                   true_3_hdcm)
+test_that("HDCM method works", {
+  expect_identical(
+    create_profiles(hdcm(hierarchy = "att3 -> att2 -> att1"),
+                    attributes = paste0("att", 1:3)),
+    true_3_hdcm
+  )
+
+  expect_identical(
+    create_profiles(hdcm(hierarchy = "red -> yellow -> blue"),
+                    attributes = rlang::set_names(paste0("att", 1:3),
+                                                  c("blue", "yellow", "red"))),
+    true_3_hdcm
+  )
 })
 
 test_that("dcm_specification method works", {
   mdm_spec <- dcm_specify(dcmdata::mdm_qmatrix, identifier = "item",
                           structural_model = unconstrained())
-  ecpe_spec <- dcm_specify(dcmdata::ecpe_qmatrix, identifier = "item_id",
-                           structural_model = independent())
+  ecpe_spec <- dcm_specify(
+    dcmdata::ecpe_qmatrix, identifier = "item_id",
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
   dtmr_spec <- dcm_specify(dcmdata::dtmr_qmatrix, identifier = "item",
-                           structural_model = unconstrained())
-  hdcm_spec <- dcm_specify(dcmdata::ecpe_qmatrix, identifier = "item_id",
-                           measurement_model =
-                             lcdm(max_interaction = Inf,
-                                  hierarchy = paste0("lexical -> cohesive -> ",
-                                                     "morphosyntactic")),
-                           structural_model = hdcm())
+                           structural_model = independent())
 
   expect_identical(create_profiles(mdm_spec),
                    dplyr::rename(true_1, multiplication = "att1"))
-  expect_identical(create_profiles(ecpe_spec, keep_names = FALSE), true_3)
+  expect_identical(create_profiles(ecpe_spec, keep_names = FALSE),
+                   true_3_hdcm)
   expect_identical(create_profiles(dtmr_spec),
                    dplyr::rename(true_4,
                                  referent_units = "att1",
                                  partitioning_iterating = "att2",
                                  appropriateness = "att3",
                                  multiplicative_comparison = "att4"))
-  expect_identical(create_profiles(hdcm_spec),
-                   dplyr::rename(true_3_hdcm,
-                                 morphosyntactic = "att1",
-                                 cohesive = "att2",
-                                 lexical = "att3"))
 })
