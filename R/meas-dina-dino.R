@@ -8,12 +8,14 @@
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @rdname dina-dino
 #' @noRd
-meas_dina <- function(qmatrix, priors) {
+meas_dina <- function(qmatrix, priors, att_names) {
   # parameters block -----
   parameters_block <- glue::glue(
     "  ////////////////////////////////// item parameters",

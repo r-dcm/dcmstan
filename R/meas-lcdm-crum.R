@@ -8,87 +8,27 @@
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#' @param max_interaction The highest item-level interaction to include in the
+#'   model.
+#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
+#'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+#'   how to draw the attribute hierarchy.
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @rdname lcdm-crum
 #' @noRd
-meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
+meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
                       hierarchy = NULL) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
+                                att_names = att_names,
+                                hierarchy = hierarchy,
                                 rename_attributes = TRUE,
                                 rename_items = TRUE)
-
-  if (!is.null(hierarchy)) {
-    g <- glue::glue(" graph { <hierarchy> } ", .open = "<", .close = ">")
-    g <- dagitty::dagitty(g)
-
-    hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
-    hierarchy <- ggdag::tidy_dagitty(hierarchy)
-
-    ancestors <- tibble::tibble()
-
-    for (jj in hierarchy |> tibble::as_tibble() |> dplyr::pull(.data$name)) {
-      tmp_jj <- att_labels |>
-        dplyr::filter(.data$att_label == jj) |>
-        dplyr::pull(.data$att)
-
-      tmp <- dagitty::ancestors(g, jj) |>
-        tibble::as_tibble() |>
-        dplyr::filter(.data$value != jj) |>
-        dplyr::mutate(param = tmp_jj) |>
-        dplyr::rename(ancestors = "value") |>
-        dplyr::select("param", "ancestors") |>
-        dplyr::left_join(att_labels, by = c("ancestors" = "att_label")) |>
-        dplyr::select("param", ancestors = "att")
-
-      ancestors <- dplyr::bind_rows(ancestors, tmp)
-    }
-
-    nested_params <- ancestors |>
-      dplyr::group_by(.data$param) |>
-      dplyr::mutate(base_param = gsub("att", "", .data$param),
-                    param_num = dplyr::row_number(),
-                    int_level = dplyr::row_number(),
-                    int_level = max(.data$int_level) + 1,
-                    ancestors = gsub("att", "", .data$ancestors)) |>
-      dplyr::ungroup() |>
-      tidyr::pivot_wider(names_from = "param_num", values_from = "ancestors") |>
-      dplyr::select("param", "int_level", "base_param", dplyr::everything()) |>
-      tidyr::unite(col = "param_spec", -c("param"), sep = "", na.rm = TRUE)
-
-    int_labels <- ancestors |>
-      dplyr::group_by(.data$param) |>
-      dplyr::mutate(param_num = dplyr::row_number()) |>
-      dplyr::ungroup() |>
-      tidyr::pivot_wider(names_from = "param_num", values_from = "ancestors") |>
-      tidyr::unite(col = "int_label", dplyr::everything(), sep = "__",
-                   na.rm = TRUE, remove = FALSE) |>
-      dplyr::select("param", "int_label")
-
-    all_params <- all_params |>
-      dplyr::filter(.data$type != "interaction") |>
-      dplyr::left_join(nested_params, by = c("attributes" = "param")) |>
-      dplyr::mutate(param_spec = paste0("l", .data$item_id, "_",
-                                        .data$param_spec),
-                    coefficient = dplyr::case_when(is.na(.data$param_spec) ~
-                                                     .data$coefficient,
-                                                   !is.na(.data$param_spec) ~
-                                                     .data$param_spec),
-                    type = dplyr::case_when(is.na(.data$param_spec) ~
-                                              .data$type,
-                                            !is.na(.data$param_spec) ~
-                                              "interaction")) |>
-      dplyr::select(-"param_spec") |>
-      dplyr::left_join(int_labels, by = c("attributes" = "param")) |>
-      dplyr::mutate(attributes = dplyr::case_when(.data$type == "interaction" &
-                                                    !is.na(.data$int_label) ~
-                                                    .data$int_label,
-                                                  TRUE ~ .data$attributes)) |>
-      dplyr::select(-"int_label")
-  }
 
   meas_params <- all_params |>
     dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
@@ -103,12 +43,16 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
                       function(.x) length(attr(.x, "match.length"))) + 1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
-      comp_atts = one_down_params(.data$atts, item = .data$item_id),
+      comp_atts = mapply(
+        one_down_params, .data$atts, .data$item_id,
+        MoreArgs = list(possible_params = all_params$coefficient)
+      ),
       param_name = glue::glue("l{item_id}_{param_level}",
                               "{gsub(\"__\", \"\", atts)}"),
       constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
+        .data$param_level >= 2 & !is.null(hierarchy) ~ glue::glue("<lower=0>"),
         .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
       ),
       param_def = dplyr::case_when(
@@ -219,7 +163,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors,
 
 #' @rdname lcdm-crum
 #' @noRd
-meas_crum <- function(qmatrix, priors, hierarchy = NULL) {
+meas_crum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors,
             hierarchy = hierarchy)
 }

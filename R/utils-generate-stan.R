@@ -10,7 +10,7 @@
 #' @examples
 #' one_down_params("1__2", item = 4)
 #' one_down_params("1__3__4", item = 11)
-one_down_params <- function(x, item) {
+one_down_params <- function(x, item, possible_params) {
   all_atts <- strsplit(x, split = "__")[[1]]
   if (length(all_atts) <= 1) return("")
 
@@ -24,14 +24,18 @@ one_down_params <- function(x, item) {
                                         any(.x == att)
                                       },
                                       logical(1), att = all_atts[att])]
+      comp_params <- intersect(
+        paste("l", item, "_", level,
+              sapply(att_combos, paste, collapse = ""),
+              sep = ""),
+        possible_params
+      )
 
-      att_comp[level] <- paste("l", item, "_", level,
-                               sapply(att_combos, paste, collapse = ""),
+      att_comp[level] <- paste(comp_params,
                                sep = "", collapse = "+")
     }
-    comps[[att]] <- paste(att_comp, collapse = "+")
+    comps[[att]] <- paste(att_comp[which(att_comp != "")], collapse = "+")
   }
 
-  paste(comps, collapse = ",")
+  paste(comps[vapply(comps, \(x) x != "", logical(1))], collapse = ",")
 }
-one_down_params <- Vectorize(one_down_params, USE.NAMES = FALSE)
