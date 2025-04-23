@@ -4,8 +4,11 @@
 #'
 #' @returns A string.
 #' @noRd
-check_hierarchy <- function(x, arg = rlang::caller_arg(x),
+check_hierarchy <- function(x, allow_null = TRUE,
+                            arg = rlang::caller_arg(x),
                             call = rlang::caller_env()) {
+  if (is.null(x) && allow_null) return(x)
+
   check_string(x)
 
   g <- glue::glue(" graph { <x> } ", .open = "<", .close = ">")

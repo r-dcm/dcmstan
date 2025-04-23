@@ -95,7 +95,12 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(ncol(qmatrix))
+  all_profiles <- if (is.null(hierarchy)) {
+    create_profiles(ncol(qmatrix))
+  } else {
+    create_profiles(hdcm(hierarchy = hierarchy),
+                    attributes = att_names)
+  }
 
   profile_params <-
     stats::model.matrix(stats::as.formula(paste0("~ .^",

@@ -22,11 +22,6 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
                             att_names = NULL, item_names = NULL,
                             hierarchy = NULL,
                             rename_attributes = FALSE, rename_items = FALSE) {
-  if (is.null(att_names)) {
-    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
-      rlang::set_names(colnames(qmatrix[, -which(colnames(qmatrix) == identifier)]))
-  }
-
   if (is.null(identifier)) {
     if (is.null(item_names)) {
       item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
@@ -40,6 +35,11 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
   item_ids <- qmatrix |>
     dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
     tibble::rowid_to_column(var = "item_number")
+
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
+      rlang::set_names(colnames(qmatrix[, -which(colnames(qmatrix) == identifier)]))
+  }
 
   qmatrix <- qmatrix |>
     dplyr::select(-{{ identifier }}) |>
