@@ -34,45 +34,54 @@ S7::method(get_parameters, dcm_specification) <- function(x, qmatrix,
     arg <- rlang::caller_arg(x)
     cli::cli_warn(
       glue::glue("{{.arg qmatrix}} and {{.arg identifier}} should not be
-                 specified for {{.cls dcm_specification}} objects. Using",
-                 "{{.code {arg}@qmatrix}} instead.",
+                 specified for {{.cls dcm_specification}} objects. Using
+                 {{.code {arg}@qmatrix}} instead.",
                  .sep = " ")
     )
   }
 
   dplyr::bind_rows(
-    get_parameters(x@measurement_model, qmatrix = x@qmatrix),
+    get_parameters(x@measurement_model, qmatrix = x@qmatrix,
+                   attributes = x@qmatrix_meta$attribute_names,
+                   items = x@qmatrix_meta$item_names),
     get_parameters(x@structural_model, qmatrix = x@qmatrix)
   )
 }
 
 # Methods for measurement models -----------------------------------------------
-S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL) {
-  check_number_whole(x@model_args$max_interaction, min = 1,
-                     allow_infinite = TRUE)
+S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
-                  max_interaction = x@model_args$max_interaction)
+                  max_interaction = x@model_args$max_interaction,
+                  att_names = attributes, item_names = items,
+                  hierarchy = x@model_args$hierarchy)
 }
 
-S7::method(get_parameters, DINA) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, DINA) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  dina_parameters(qmatrix = qmatrix, identifier = identifier)
+  dina_parameters(qmatrix = qmatrix, identifier = identifier,
+                  item_names = items)
 }
 
-S7::method(get_parameters, DINO) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, DINO) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  dina_parameters(qmatrix = qmatrix, identifier = identifier)
+  dina_parameters(qmatrix = qmatrix, identifier = identifier,
+                  item_names = items)
 }
 
-S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
-                  max_interaction = 1L)
+                  max_interaction = 1L,
+                  att_names = attributes, item_names = items)
 }
 
 # Methods for structural models ------------------------------------------------
@@ -92,4 +101,8 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
   tibble::tibble(type = "structural",
                  attributes = att_names,
                  coefficient = paste0("eta[", seq_along(att_names), "]"))
+}
+
+S7::method(get_parameters, HDCM) <- function(x, qmatrix, identifier = NULL) {
+  tibble::tibble(type = "structural", coefficient = "Vc")
 }

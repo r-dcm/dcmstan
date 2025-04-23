@@ -48,3 +48,15 @@ test_that("crum script works", {
                             structural_model = independent())
   expect_snapshot(stan_code(ecpe_spec2))
 })
+
+test_that("lcdm with hierarchy works", {
+  ecpe_spec <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = lcdm(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_snapshot(stan_code(ecpe_spec))
+})

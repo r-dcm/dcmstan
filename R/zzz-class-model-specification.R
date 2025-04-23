@@ -42,12 +42,26 @@ dcm_specify <- function(qmatrix, identifier = NULL,
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
+  if (!is.null(structural_model@model_args$hierarchy)) {
+    check_hierarchy_names(structural_model@model_args$hierarchy,
+                          attribute_names = names(qmatrix$attribute_names),
+                          arg = rlang::caller_arg(structural_model))
+  }
+
+  # tweak measurement model as needed ------------------------------------------
   if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {
     measurement_model@model_args$max_interaction <- 1L
   } else if (measurement_model@model == "lcdm" &&
                all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
   }
+  if (measurement_model@model == "lcdm" &&
+        S7::S7_inherits(structural_model, HDCM)) {
+    measurement_model@model_args$hierarchy <-
+      structural_model@model_args$hierarchy
+  }
+
+  # define priors --------------------------------------------------------------
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
                                  structural_model = structural_model)
@@ -59,6 +73,7 @@ dcm_specify <- function(qmatrix, identifier = NULL,
                 replace = TRUE)
   }
 
+  # create specification -------------------------------------------------------
   dcm_specification(
     qmatrix = qmatrix$clean_qmatrix,
     qmatrix_meta = list(
@@ -154,7 +169,8 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
   ),
   validator = function(self) {
     all_params <- dplyr::bind_rows(
-      get_parameters(self@measurement_model, qmatrix = self@qmatrix),
+      get_parameters(self@measurement_model, qmatrix = self@qmatrix,
+                     attributes = self@qmatrix_meta$attribute_names),
       get_parameters(self@structural_model, qmatrix = self@qmatrix)
     )
 

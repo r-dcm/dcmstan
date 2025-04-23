@@ -8,15 +8,25 @@
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#' @param max_interaction The highest item-level interaction to include in the
+#'   model.
+#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
+#'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+#'   how to draw the attribute hierarchy.
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @rdname lcdm-crum
 #' @noRd
-meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
+meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
+                      hierarchy = NULL) {
   # parameters block -----
   all_params <- lcdm_parameters(qmatrix = qmatrix,
                                 max_interaction = max_interaction,
+                                att_names = att_names,
+                                hierarchy = hierarchy,
                                 rename_attributes = TRUE,
                                 rename_items = TRUE)
 
@@ -33,12 +43,16 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
                       function(.x) length(attr(.x, "match.length"))) + 1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
-      comp_atts = one_down_params(.data$atts, item = .data$item_id),
+      comp_atts = mapply(
+        one_down_params, .data$atts, .data$item_id,
+        MoreArgs = list(possible_params = all_params$coefficient)
+      ),
       param_name = glue::glue("l{item_id}_{param_level}",
                               "{gsub(\"__\", \"\", atts)}"),
       constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
+        .data$param_level >= 2 & !is.null(hierarchy) ~ glue::glue("<lower=0>"),
         .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
       ),
       param_def = dplyr::case_when(
@@ -56,6 +70,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
     dplyr::pull(.data$param_def)
   interactions <- meas_params |>
     dplyr::filter(.data$param_level >= 2) |>
+    dplyr::arrange(.data$item_id, .data$param_name) |>
     dplyr::pull(.data$param_def)
 
   interaction_stan <- if (length(interactions) > 0) {
@@ -80,7 +95,12 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(ncol(qmatrix))
+  all_profiles <- if (is.null(hierarchy)) {
+    create_profiles(ncol(qmatrix))
+  } else {
+    create_profiles(hdcm(hierarchy = hierarchy),
+                    attributes = att_names)
+  }
 
   profile_params <-
     stats::model.matrix(stats::as.formula(paste0("~ .^",
@@ -102,6 +122,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
                      relationship = "many-to-one") |>
     dplyr::filter(.data$valid_for_profile == 1) |>
     dplyr::group_by(.data$item_id, .data$profile_id) |>
+    dplyr::arrange(.data$item_id, .data$profile_id, .data$param_name) |>
     dplyr::summarize(meas_params = paste(unique(.data$param_name),
                                          collapse = "+"),
                      .groups = "drop") |>
@@ -122,6 +143,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
                               .data$param_level == 1 ~ "maineffect",
                               .data$param_level > 1 ~ "interaction")
     ) |>
+    dplyr::arrange(.data$item_id, .data$param_name) |>
     dplyr::left_join(prior_tibble(priors),
                      by = c("type", "param_name" = "coefficient"),
                      relationship = "one-to-one") |>
@@ -146,6 +168,7 @@ meas_lcdm <- function(qmatrix, max_interaction = Inf, priors) {
 
 #' @rdname lcdm-crum
 #' @noRd
-meas_crum <- function(qmatrix, priors) {
-  meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
+meas_crum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
+  meas_lcdm(qmatrix, max_interaction = 1L, priors = priors,
+            hierarchy = hierarchy)
 }

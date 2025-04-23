@@ -1,18 +1,30 @@
-linters: linters_with_defaults() # see vignette("lintr")
+linters: linters_with_defaults(object_name_linter(styles = c("snake_case", "symbols", "UPPERCASE"))) # see vignette("lintr")
 exclusions: list(
     "R/import-standalone-obj-type.R",
     "R/import-standalone-types-check.R",
+    "R/meas-hdcm.R" = list(
+      object_usage_linter = Inf
+    ),
     "R/gqs-default.R" = list(
       object_usage_linter = Inf
     ),
     "R/meas-lcdm-crum.R" = list(
       object_usage_linter = Inf
     ),
+    "R/utils-hierarchy.R" = list(
+      line_length_linter = Inf
+    ),
     "R/zzz-class-model-components.R" = list(
       object_name_linter = Inf
     ),
+    "R/zzz-class-model-components.R" = list(
+      line_length_linter = Inf
+    ),
     "R/zzz-methods-get-parameters.R" = list(
       object_name_linter = Inf
+    ),
+    "tests/testthat/test-utils-hierarchy.R" = list(
+      line_length_linter = Inf
     ),
     "R/zzz-methods-stan-code.R" = list(
       object_name_linter = Inf

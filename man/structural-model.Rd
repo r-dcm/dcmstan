@@ -4,11 +4,19 @@
 \alias{structural-model}
 \alias{unconstrained}
 \alias{independent}
+\alias{hdcm}
 \title{Structural models for diagnostic classification}
 \usage{
 unconstrained()
 
 independent()
+
+hdcm(hierarchy = NULL)
+}
+\arguments{
+\item{hierarchy}{Optional. If present, the quoted attribute hierarchy. See
+\code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+how to draw the attribute hierarchy.}
 }
 \value{
 A structural model object.
@@ -16,7 +24,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained and independent attributes.
+unconstrained, independent attributes and hierarchical diagnostic, classification model (HDCM).
 See details for additional information on each model.
 }
 \details{
@@ -28,11 +36,17 @@ The independent attributes model assumes that the presence of the attributes
 are unrelated to each other. That is, there is no relationship between the
 presence of one attribute and the presence of any other. For an example of
 independent attributes model, see Lee (2016).
+
+The hierarchical attributes model assumes some attributes must be mastered
+before other attributes can be mastered. For an example of the hierarchical
+attributes model, see Leighton et al. (2004) and Templin & Bradshaw (2014).
 }
 \examples{
 unconstrained()
 
 independent()
+
+hdcm(hierarchy = "att1 -> att2 -> att3")
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification
@@ -46,6 +60,17 @@ https://mc-stan.org/documentation/case-studies/dina_independent.html
 
 Rupp, A. A., Templin, J., & Henson, R. A. (2010). \emph{Diagnostic
 measurement: Theory, methods, and applications}. Guilford Press.
+
+Leighton, J. P., Gierl, M. J., & Hunka, S. M. (2004). The
+attribute hierarchy method for cognitive assessment: A variation on
+Tatsuoka's rule-space approach.
+\emph{Journal of Educational Measurement, 41}(3), 205-237.
+\doi{10.1111/j.1745-3984.2004.tb01163.x}
+
+Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
+classification models: A family of models for estimating and testing
+attribute hierarchies. \emph{Psychometrika, 79}(2), 317-339
+\doi{10.1007/s11336-013-9362-0}
 }
 \seealso{
 \link[=measurement-model]{Measurement models}

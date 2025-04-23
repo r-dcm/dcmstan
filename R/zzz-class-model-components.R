@@ -77,10 +77,11 @@
 #' @examples
 #' lcdm()
 #'
-#' lcdm(max_interaction = 2)
+#' lcdm(max_interaction = 3)
 #'
 #' dina()
 lcdm <- function(max_interaction = Inf) {
+  check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
   LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
 
@@ -110,6 +111,10 @@ crum <- function() {
 #' `r print_choices(names(strc_choices()), last = " and ")`.
 #' See details for additional information on each model.
 #'
+#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
+#'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+#'   how to draw the attribute hierarchy.
+#'
 #' @returns A structural model object.
 #'
 #' @details
@@ -121,6 +126,10 @@ crum <- function() {
 #' are unrelated to each other. That is, there is no relationship between the
 #' presence of one attribute and the presence of any other. For an example of
 #' independent attributes model, see Lee (2016).
+#'
+#' The hierarchical attributes model assumes some attributes must be mastered
+#' before other attributes can be mastered. For an example of the hierarchical
+#' attributes model, see Leighton et al. (2004) and Templin & Bradshaw (2014).
 #'
 #' @name structural-model
 #' @seealso [Measurement models][measurement-model]
@@ -135,11 +144,22 @@ crum <- function() {
 #'   https://mc-stan.org/documentation/case-studies/dina_independent.html
 #' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
 #'   measurement: Theory, methods, and applications*. Guilford Press.
+#' @references Leighton, J. P., Gierl, M. J., & Hunka, S. M. (2004). The
+#'   attribute hierarchy method for cognitive assessment: A variation on
+#'   Tatsuoka's rule-space approach.
+#'   *Journal of Educational Measurement, 41*(3), 205-237.
+#'   \doi{10.1111/j.1745-3984.2004.tb01163.x}
+#' @references Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
+#'   classification models: A family of models for estimating and testing
+#'   attribute hierarchies. *Psychometrika, 79*(2), 317-339
+#'   \doi{10.1007/s11336-013-9362-0}
 #'
 #' @examples
 #' unconstrained()
 #'
 #' independent()
+#'
+#' hdcm(hierarchy = "att1 -> att2 -> att3")
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
@@ -148,6 +168,13 @@ unconstrained <- function() {
 #' @export
 independent <- function() {
   INDEPENDENT(model = "independent")
+}
+
+#' @rdname structural-model
+#' @export
+hdcm <- function(hierarchy = NULL) {
+  check_hierarchy(hierarchy)
+  HDCM(model = "hdcm", list(hierarchy = hierarchy))
 }
 
 
@@ -340,7 +367,6 @@ DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 
-
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
                                package = "dcmstan",
@@ -349,6 +375,9 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
+
+HDCM <- S7::new_class("HDCM", parent = structural, package = "dcmstan",
+                      properties = list(model = model_property))
 
 ## Generated quantities -----
 GQS <- S7::new_class("GQS", parent = quantities,

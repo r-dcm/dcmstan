@@ -42,7 +42,8 @@ stan_code <- S7::new_generic("stan_code", "x")
 
 # Method for dcm_specification -------------------------------------------------
 S7::method(stan_code, dcm_specification) <- function(x) {
-  meas_args <- c(list(qmatrix = x@qmatrix, priors = x@priors),
+  meas_args <- c(list(qmatrix = x@qmatrix, priors = x@priors,
+                      att_names = x@qmatrix_meta$attribute_names),
                  x@measurement_model@model_args)
   meas_code <- do.call(paste0("meas_", x@measurement_model@model), meas_args)
 

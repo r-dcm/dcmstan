@@ -139,3 +139,26 @@ test_that("dino data objects are correct", {
   expect_equal(dat$A, 3)
   expect_equal(dat$Alpha, as.matrix(profiles))
 })
+
+test_that("hdcm data objects are correct", {
+  model_spec <- dcm_specify(
+    dcmdata::ecpe_qmatrix, identifier = "item_id",
+    measurement_model = lcdm(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  dat <- stan_data(model_spec, data = dcmdata::ecpe_data,
+                   identifier = "resp_id")
+
+  expect_equal(names(dat), c(default_data_names))
+  expect_equal(dat$I, 28)
+  expect_equal(dat$R, 2922)
+  expect_equal(dat$N, 28 * 2922)
+  expect_equal(dat$C, 4)
+  expect_equal(dat$ii, rep(1:28, 2922))
+  expect_equal(dat$rr, rep(1:2922, each = 28))
+  expect_true(all(dat$y %in% c(0, 1)))
+  expect_equal(dat$start, seq(1, 28 * 2922, by = 28))
+  expect_equal(dat$num, rep(28, 2922))
+})

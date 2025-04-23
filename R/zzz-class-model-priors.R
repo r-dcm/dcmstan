@@ -74,9 +74,12 @@ default_dcm_priors <- function(measurement_model = NULL,
     NULL
   } else {
     S7::check_is_S7(structural_model, class = structural)
-    switch(structural_model@model,
-           unconstrained = unconstrained_priors(),
-           independent = independent_priors())
+    switch(
+      structural_model@model,
+      unconstrained = unconstrained_priors(),
+      independent = independent_priors(),
+      hdcm = hdcm_priors()
+    )
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -115,6 +118,7 @@ independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
 }
 
+hdcm_priors <- unconstrained_priors
 
 # dcmprior class ---------------------------------------------------------------
 #' S7 prior class

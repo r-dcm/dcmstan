@@ -10,10 +10,16 @@ test_that("stan code is syntactically correct", {
       measurement_model = do.call(combos$meas[i], args = list()),
       structural_model = do.call(combos$strc[i], args = list())
     )
+
+    strc_args <- if (combos$strc[i] == "hdcm") {
+      list(hierarchy = "lexical -> cohesive -> morphosyntactic")
+    } else {
+      list()
+    }
     ecpe_spec <- dcm_specify(
       qmatrix = dcmdata::ecpe_qmatrix, identifier = "item_id",
       measurement_model = do.call(combos$meas[i], args = list()),
-      structural_model = do.call(combos$strc[i], args = list())
+      structural_model = do.call(combos$strc[i], args = strc_args)
     )
     dtmr_spec <- dcm_specify(
       qmatrix = dcmdata::dtmr_qmatrix, identifier = "item",

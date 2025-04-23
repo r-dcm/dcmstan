@@ -72,7 +72,7 @@ S7::method(stan_data, dcm_specification) <- function(x, ..., data,
     dplyr::arrange(.data$resp_id)
 
   profiles <- create_profiles(x@structural_model,
-                              attributes = ncol(x@qmatrix))
+                              attributes = x@qmatrix_meta$attribute_names)
 
   stan_data <- list(
     I = nrow(x@qmatrix),
@@ -132,8 +132,10 @@ S7::method(stan_data, quantities) <- function(x, ..., dcm_spec, data,
                      num = dplyr::n()) |>
     dplyr::arrange(.data$resp_id)
 
-  profiles <- create_profiles(dcm_spec@structural_model,
-                              attributes = ncol(dcm_spec@qmatrix))
+  profiles <- create_profiles(
+    dcm_spec@structural_model,
+    attributes = dcm_spec@qmatrix_meta$attribute_names
+  )
 
   stan_data <- list(
     I = nrow(dcm_spec@qmatrix),
@@ -161,8 +163,10 @@ extra_data <- S7::new_generic("extra_data", "x", function(x, dcm_spec, ...) {
 S7::method(extra_data, S7::class_any) <- function(x, dcm_spec) NULL
 
 S7::method(extra_data, DINA) <- function(x, dcm_spec) {
-  profiles <- create_profiles(dcm_spec@structural_model,
-                              attributes = ncol(dcm_spec@qmatrix))
+  profiles <- create_profiles(
+    dcm_spec@structural_model,
+    attributes = dcm_spec@qmatrix_meta$attribute_names
+  )
 
   xi <- matrix(0, nrow = nrow(dcm_spec@qmatrix), ncol = nrow(profiles))
   for (i in seq_len(nrow(dcm_spec@qmatrix))) {
@@ -175,8 +179,10 @@ S7::method(extra_data, DINA) <- function(x, dcm_spec) {
 }
 
 S7::method(extra_data, DINO) <- function(x, dcm_spec) {
-  profiles <- create_profiles(dcm_spec@structural_model,
-                              attributes = ncol(dcm_spec@qmatrix))
+  profiles <- create_profiles(
+    dcm_spec@structural_model,
+    attributes = dcm_spec@qmatrix_meta$attribute_names
+  )
 
   xi <- matrix(0, nrow = nrow(dcm_spec@qmatrix), ncol = nrow(profiles))
   for (i in seq_len(nrow(dcm_spec@qmatrix))) {
@@ -189,8 +195,10 @@ S7::method(extra_data, DINO) <- function(x, dcm_spec) {
 }
 
 S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
-  profiles <- create_profiles(dcm_spec@structural_model,
-                              attributes = ncol(dcm_spec@qmatrix))
+  profiles <- create_profiles(
+    dcm_spec@structural_model,
+    attributes = dcm_spec@qmatrix_meta$attribute_names
+  )
 
   list(A = length(dcm_spec@qmatrix_meta$attribute_names),
        Alpha = as.matrix(profiles))

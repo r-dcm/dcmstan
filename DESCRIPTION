@@ -28,7 +28,9 @@ Depends:
     R (>= 4.3.0)
 Imports: 
     cli,
+    dagitty,
     dplyr,
+    ggdag,
     glue,
     lifecycle,
     rdcmchecks (>= 0.0.0.9000),
