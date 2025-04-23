@@ -10,7 +10,7 @@
 #' @examples
 #' one_down_params("1__2", item = 4)
 #' one_down_params("1__3__4", item = 11)
-one_down_params <- function(x, item, possible_params) {
+one_down_params <- function(x, item, possible_params = NULL) {
   all_atts <- strsplit(x, split = "__")[[1]]
   if (length(all_atts) <= 1) return("")
 
@@ -24,14 +24,21 @@ one_down_params <- function(x, item, possible_params) {
                                         any(.x == att)
                                       },
                                       logical(1), att = all_atts[att])]
-      comp_params <- intersect(
-        paste("l", item, "_", level,
-              sapply(att_combos, paste, collapse = ""),
-              sep = ""),
-        possible_params
-      )
 
-      att_comp[level] <- paste(comp_params,
+      if (!is.null(possible_params)) {
+        att_combos <- intersect(
+          paste("l", item, "_", level,
+                sapply(att_combos, paste, collapse = ""),
+                sep = ""),
+          possible_params
+        )
+      } else {
+        att_combos <- paste("l", item, "_", level,
+                            sapply(att_combos, paste, collapse = ""),
+                            sep = "")
+      }
+
+      att_comp[level] <- paste(att_combos,
                                sep = "", collapse = "+")
     }
     comps[[att]] <- paste(att_comp[which(att_comp != "")], collapse = "+")
