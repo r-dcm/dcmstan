@@ -121,7 +121,7 @@ test_that("crum parameters work", {
 
   expect_equal(
     lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
-                    rename_attributes = TRUE),
+                    att_names = paste0("att", 1:4), rename_attributes = TRUE),
     tibble::tribble(
      ~question,         ~type,              ~attributes, ~coefficient,
           "Q1",   "intercept",                       NA,       "l1_0",
