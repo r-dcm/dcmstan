@@ -9,35 +9,14 @@ test_that("correct data objects are returned", {
   combos <- expand.grid(meas = meas_choices(), strc = strc_choices(),
                         stringsAsFactors = FALSE)
   for (i in seq_len(nrow(combos))) {
-    if (combos$strc[i] != "hdcm") {
-      model_spec <- dcm_specify(
-        dcmdata::ecpe_qmatrix, identifier = "item_id",
-        measurement_model = do.call(combos$meas[i], args = list()),
-        structural_model = do.call(combos$strc[i], args = list())
-      )
-    } else if (combos$meas[i] == "lcdm") {
-      model_spec <- dcm_specify(
-        dcmdata::ecpe_qmatrix, identifier = "item_id",
-        measurement_model =
-          do.call(combos$meas[i],
-                  args = list(max_interaction = Inf,
-                              hierarchy =
-                                "lexical -> cohesive -> morphosyntactic")),
-        structural_model = do.call(combos$strc[i], args = list())
-      )
-    } else {
-      model_spec <- dcm_specify(
-        dcmdata::ecpe_qmatrix, identifier = "item_id",
-        measurement_model =
-          do.call(combos$meas[i],
-                  args = list(hierarchy =
-                                "lexical -> cohesive -> morphosyntactic")),
-        structural_model = do.call(combos$strc[i], args = list())
-      )
-    }
+    model_spec <- dcm_specify(
+      dcmdata::mdm_qmatrix, identifier = "item",
+      measurement_model = do.call(combos$meas[i], args = list()),
+      structural_model = do.call(combos$strc[i], args = list())
+    )
 
-    test_data <- stan_data(model_spec, data = dcmdata::ecpe_data,
-                           identifier = "resp_id")
+    test_data <- stan_data(model_spec, data = dcmdata::mdm_data,
+                           identifier = "respondent")
     exp_names <- c(default_data_names,
                    extra_data_names[[combos$meas[i]]],
                    extra_data_names[[combos$strc[i]]])
@@ -159,4 +138,27 @@ test_that("dino data objects are correct", {
 
   expect_equal(dat$A, 3)
   expect_equal(dat$Alpha, as.matrix(profiles))
+})
+
+test_that("hdcm data objects are correct", {
+  model_spec <- dcm_specify(
+    dcmdata::ecpe_qmatrix, identifier = "item_id",
+    measurement_model = lcdm(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  dat <- stan_data(model_spec, data = dcmdata::ecpe_data,
+                   identifier = "resp_id")
+
+  expect_equal(names(dat), c(default_data_names))
+  expect_equal(dat$I, 28)
+  expect_equal(dat$R, 2922)
+  expect_equal(dat$N, 28 * 2922)
+  expect_equal(dat$C, 4)
+  expect_equal(dat$ii, rep(1:28, 2922))
+  expect_equal(dat$rr, rep(1:2922, each = 28))
+  expect_true(all(dat$y %in% c(0, 1)))
+  expect_equal(dat$start, seq(1, 28 * 2922, by = 28))
+  expect_equal(dat$num, rep(28, 2922))
 })

@@ -3,7 +3,7 @@
     Code
       spec
     Message
-      A Loglinear cognitive diagnostic model (LCDM) measuring 3 attributes with 10
+      A loglinear cognitive diagnostic model (LCDM) measuring 3 attributes with 10
       items.
       
       i Attributes:
@@ -21,7 +21,7 @@
     Code
       spec2
     Message
-      A Deterministic input, noisy "and" gate (DINA) model measuring 3 attributes
+      A deterministic input, noisy "and" gate (DINA) model measuring 3 attributes
       with 10 items.
       
       i Attributes:
