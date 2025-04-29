@@ -87,8 +87,19 @@ test_that("printing works", {
                        measurement_model = dina(),
                        structural_model = independent())
 
+  spec3 <- dcm_specify(qmatrix = test_qmatrix, identifier = "item",
+                       measurement_model = lcdm(max_interaction = 1),
+                       structural_model = hdcm("node3 -> node2 -> node1"))
+
+  spec4 <- dcm_specify(qmatrix = test_qmatrix2, identifier = "question",
+                       measurement_model = dina(),
+                       structural_model = hdcm("skill_1 -> skill_2
+                                                skill_1 -> skill_3"))
+
   expect_snapshot({
     spec
     spec2
+    spec3
+    spec4
   })
 })

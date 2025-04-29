@@ -222,6 +222,11 @@ S7::method(print, dcm_specification) <- function(x, ...) {
     which(strc_choices() == x@structural_model@model)
   ]
   strc_mod_name <- gsub("^([a-z])", "\\U\\1", strc_mod_name, perl = TRUE)
+  if (!rlang::is_empty(x@structural_model@model_args$hierarchy)) {
+    strc_mod_name <- c(paste0(strc_mod_name, ","),
+                       "with structure:",
+                       gsub("\n", ";", x@structural_model@model_args$hierarchy))
+  }
 
   # prior distributions -----
   prior_statements <- x@priors |>
