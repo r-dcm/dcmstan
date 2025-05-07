@@ -80,7 +80,7 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
     dplyr::select("item_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
 
-  if (!is.null(hierarchy)) {
+  if (!is.null(hierarchy) && max_interaction > 1) {
     filtered_hierarchy <- glue::glue("dag {{ {hierarchy} }}") |>
       ggdag::tidy_dagitty() |>
       tibble::as_tibble() |>
