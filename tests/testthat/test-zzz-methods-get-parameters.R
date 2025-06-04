@@ -413,10 +413,10 @@ test_that("warnings are produced for unnecessary arguments", {
 
 test_that("combining parameters in a specification works", {
   test_qmatrix <- tibble::tibble(
-    att1 = c(1, 0, 1, 1),
-    att2 = c(0, 1, 0, 1),
-    att3 = c(0, 1, 1, 1),
-    att4 = c(0, 0, 1, 1)
+    skill1 = c(1, 0, 1, 1),
+    skill2 = c(0, 1, 0, 1),
+    skill3 = c(0, 1, 1, 1),
+    skill4 = c(0, 0, 1, 1)
   )
 
   spec1 <- dcm_specify(qmatrix = test_qmatrix)

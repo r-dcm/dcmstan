@@ -41,8 +41,16 @@ S7::method(get_parameters, dcm_specification) <- function(x, qmatrix,
   }
 
   dplyr::bind_rows(
-    get_parameters(x@measurement_model, qmatrix = x@qmatrix),
-    get_parameters(x@structural_model, qmatrix = x@qmatrix)
+    get_parameters(
+      x@measurement_model,
+      qmatrix = rlang::set_names(x@qmatrix,
+                                 names(x@qmatrix_meta$attribute_names))
+    ),
+    get_parameters(
+      x@structural_model,
+      qmatrix = rlang::set_names(x@qmatrix,
+                                 names(x@qmatrix_meta$attribute_names))
+    )
   )
 }
 
