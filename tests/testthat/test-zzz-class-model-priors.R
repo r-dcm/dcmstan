@@ -43,6 +43,7 @@ test_that("specify only measurement or structural", {
                independent_priors())
   expect_equal(default_dcm_priors(structural_model = loglinear()),
                loglinear_priors())
+  expect_equal(default_dcm_priors(structural_model = hdcm()), hdcm_priors())
 
   expect_equal(default_dcm_priors(measurement_model = crum(),
                                   structural_model = unconstrained()),
@@ -118,6 +119,15 @@ test_that("loglinear default priors", {
     tibble::tibble(type = c("structural"),
                    coefficient = NA_character_,
                    prior = c("normal(0, 10)"))
+  )
+})
+
+test_that("hdcm default priors", {
+  expect_identical(
+    prior_tibble(hdcm_priors()),
+    tibble::tibble(type = c("structural"),
+                   coefficient = "Vc",
+                   prior = c("dirichlet(rep_vector(1, C))"))
   )
 })
 

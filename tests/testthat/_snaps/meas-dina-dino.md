@@ -1,21 +1,19 @@
 # dina script works
 
     Code
-      generate_stan(ecpe_spec)
+      stan_code(ecpe_dina_unst)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -114,21 +112,19 @@
 ---
 
     Code
-      generate_stan(mdm_spec)
+      stan_code(mdm_dina_unst)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -179,21 +175,19 @@
 ---
 
     Code
-      generate_stan(dtmr_spec)
+      stan_code(dtmr_dina_unst)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -290,21 +284,21 @@
 ---
 
     Code
-      generate_stan(ecpe_spec2)
+      stan_code(ecpe_dina_indp)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
+        int<lower=1> A;                      // number of attributes
+        matrix[C,A] Alpha;                   // attribute pattern for class
       }
       parameters {
         array[A] real<lower=0,upper=1> eta;
@@ -414,21 +408,19 @@
 ---
 
     Code
-      generate_stan(ecpe_spec3)
+      stan_code(dtmr_dina_logl)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         ////////////////////////////////// structural parameters
@@ -577,21 +569,19 @@
 # dino script works
 
     Code
-      generate_stan(ecpe_spec)
+      stan_code(ecpe_dino_unst)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -690,21 +680,19 @@
 ---
 
     Code
-      generate_stan(mdm_spec)
+      stan_code(mdm_dino_unst)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -755,21 +743,19 @@
 ---
 
     Code
-      generate_stan(dtmr_spec)
+      stan_code(dtmr_dino_unst)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
@@ -866,21 +852,21 @@
 ---
 
     Code
-      generate_stan(ecpe_spec2)
+      stan_code(ecpe_dino_indp)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
+        int<lower=1> A;                      // number of attributes
+        matrix[C,A] Alpha;                   // attribute pattern for class
       }
       parameters {
         array[A] real<lower=0,upper=1> eta;
@@ -990,21 +976,19 @@
 ---
 
     Code
-      generate_stan(ecpe_spec3)
+      stan_code(dtmr_dino_logl)
     Output
       data {
         int<lower=1> I;                      // number of items
         int<lower=1> R;                      // number of respondents
         int<lower=1> N;                      // number of observations
         int<lower=1> C;                      // number of classes
-        int<lower=1> A;                      // number of attributes
         array[N] int<lower=1,upper=I> ii;    // item for observation n
         array[N] int<lower=1,upper=R> rr;    // respondent for observation n
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
-        array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-        matrix[C,A] Alpha;                   // attribute pattern for each class
-        matrix[I,C] Xi;                      // class attribute mastery indicator
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
         ////////////////////////////////// structural parameters

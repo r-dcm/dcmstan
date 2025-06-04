@@ -23,11 +23,9 @@ attribute).}
 \item{identifier}{Optional. If present, the quoted name of the column in the
 \code{qmatrix} that contains item identifiers.}
 
-\item{measurement_model}{A measurement model object (e.g., \code{\link[=lcdm]{lcdm()}},
-\code{\link[=dina]{dina()}}).}
+\item{measurement_model}{A \link[=measurement-model]{measurement model} object.}
 
-\item{structural_model}{A structural model object (e.g., \code{\link[=unconstrained]{unconstrained()}},
-\code{\link[=independent]{independent()}}).}
+\item{structural_model}{A \link[=structural-model]{structural model} object.}
 
 \item{priors}{A prior object created by \code{\link[=prior]{prior()}}. If \code{NULL} (the default),
 default prior distributions defined by \code{\link[=default_dcm_priors]{default_dcm_priors()}} are used.}

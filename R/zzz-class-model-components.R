@@ -77,10 +77,11 @@
 #' @examples
 #' lcdm()
 #'
-#' lcdm(max_interaction = 2)
+#' lcdm(max_interaction = 3)
 #'
 #' dina()
 lcdm <- function(max_interaction = Inf) {
+  check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
   LCDM(model = "lcdm", list(max_interaction = max_interaction))
 }
 
@@ -107,11 +108,14 @@ crum <- function() {
 #'
 #' Structural models define how the attributes are related to one another.
 #' The currently supported options for structural models are:
-#' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
+#' `r print_choices(names(strc_choices()), last = " and ")`.
 #' See details for additional information on each model.
 #'
 #' @param max_interaction For the log-linear structural model, the highest
 #' structural-level interaction to include in the model.
+#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
+#'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+#'   how to draw the attribute hierarchy.
 #'
 #' @returns A structural model object.
 #'
@@ -134,6 +138,10 @@ crum <- function() {
 #' reduced form of the loglinear structural model containing only main effects
 #' is equivalent to an independent attributes model (e.g. Lee, 2016).
 #'
+#' The hierarchical attributes model assumes some attributes must be mastered
+#' before other attributes can be mastered. For an example of the hierarchical
+#' attributes model, see Leighton et al. (2004) and Templin & Bradshaw (2014).
+#'
 #' @name structural-model
 #' @seealso [Measurement models][measurement-model]
 #' @export
@@ -145,8 +153,17 @@ crum <- function() {
 #' @references Lee, S. Y. (2016). *Cognitive diagnosis model: DINA model with
 #'   independent attributes*.
 #'   https://mc-stan.org/documentation/case-studies/dina_independent.html
+#' @references Leighton, J. P., Gierl, M. J., & Hunka, S. M. (2004). The
+#'   attribute hierarchy method for cognitive assessment: A variation on
+#'   Tatsuoka's rule-space approach.
+#'   *Journal of Educational Measurement, 41*(3), 205-237.
+#'   \doi{10.1111/j.1745-3984.2004.tb01163.x}
 #' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
 #'   measurement: Theory, methods, and applications*. Guilford Press.
+#' @references Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
+#'   classification models: A family of models for estimating and testing
+#'   attribute hierarchies. *Psychometrika, 79*(2), 317-339
+#'   \doi{10.1007/s11336-013-9362-0}
 #' @references Xu, X., & von Davier, M. (2008). *Fitting the structured general
 #'   diagnostic model to NAEP data* (RR-08-27). Princeton, NJ: Educational
 #'   Testing Service.
@@ -159,6 +176,8 @@ crum <- function() {
 #' loglinear()
 #'
 #' loglinear(max_interaction = 1)
+#'
+#' hdcm(hierarchy = "att1 -> att2 -> att3")
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
@@ -176,6 +195,65 @@ loglinear <- function(max_interaction = Inf) {
             list(max_interaction = max_interaction))
 }
 
+#' @rdname structural-model
+#' @export
+hdcm <- function(hierarchy = NULL) {
+  check_hierarchy(hierarchy)
+  HDCM(model = "hdcm", list(hierarchy = hierarchy))
+}
+
+
+#' Generated quantities for diagnostic classification
+#'
+#' Generated quantities are values that are calculated from model parameters,
+#' but are not directly involved in the model estimation. For example, generated
+#' quantities can be used to simulate data for posterior predictive model checks
+#' (PPMCs; e.g., Gelman et al., 2013).
+#' See details for additional information on each quantity that is available.
+#'
+#' @param loglik Logical indicating whether log-likelihood should be generated.
+#' @param probabilities Logical indicating whether class and attribute
+#'   proficiency probabilities should be generated.
+#' @param ppmc Logical indicating whether replicated data sets for PPMCs should
+#'   be generated.
+#'
+#' @returns A generated quantities object.
+#'
+#' @details
+#' The log-likelihood contains respondent-level log-likelihood values. This may
+#' be useful when calculating relative fit indices such as the CV-LOO
+#' (Vehtari et al., 2017) or WAIC (Watanabe, 2010).
+#'
+#' The probabilities are primary outputs of interest for respondent-level
+#' results. These quantities include the probability that each respondent
+#' belongs to each class, as well as attribute-level proficiency probabilities
+#' for each respondent.
+#'
+#' The PPMCs generate a vector of new item responses based on the parameter
+#' values. That is, the generated quantities are replicated data sets that could
+#' be used to calculate PPMCs.
+#'
+#' @name generated-quantities
+#' @export
+#'
+#' @references Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B.,
+#'   Vehtari, A., & Rubin, D. B. (2013). *Bayesian Data Analysis* (3rd ed.).
+#'   Chapman & Hall/CRC. <https://sites.stat.columbia.edu/gelman/book/>
+#' @references Vehtari, A., Gelman, A., & Gabry, J. (2017). Practical Bayesian
+#'   model evaluation using leave-one-out cross-validation and WAIC.
+#'   *Statistics and Computing, 27*(5), 1413–1432.
+#'   \doi{10.1007/s11222-016-9696-4}
+#' @references Watanabe, S. (2010). Asymptotic equivalence of Bayes cross
+#'   validation and widely applicable information criterion in singular learning
+#'   theory. *Journal of Machine Learning Research, 11*(116), 3571–3594.
+#'   <http://jmlr.org/papers/v11/watanabe10a.html>
+#'
+#' @examples
+#' generated_quantities(loglik = TRUE)
+generated_quantities <- function(loglik = FALSE, probabilities = FALSE,
+                                 ppmc = FALSE) {
+  GQS(list(loglik = loglik, probabilities = probabilities, ppmc = ppmc))
+}
 
 # Define component classes -----------------------------------------------------
 #' S7 class for measurement models
@@ -211,7 +289,7 @@ measurement <- S7::new_class("measurement", package = "dcmstan",
     diff <- setdiff(provided, opts)
     err <- cli::cli_fmt(
       cli::cli_text("@model_args contains unknown arguments for ",
-                    "{.fun {paste0('meas_', self@model)}}: ",
+                    "{.fun {self@model}}: ",
                     "{.var {diff}}")
     )
     if (!all(names(self@model_args) %in%
@@ -254,7 +332,7 @@ structural <- S7::new_class("structural", package = "dcmstan",
     diff <- setdiff(provided, opts)
     err <- cli::cli_fmt(
       cli::cli_text("@model_args contains unknown arguments for ",
-                    "{.fun {paste0('strc_', self@model)}}: ",
+                    "{.fun {self@model}}: ",
                     "{.var {diff}}")
     )
     if (!all(names(self@model_args) %in%
@@ -264,6 +342,31 @@ structural <- S7::new_class("structural", package = "dcmstan",
   }
 )
 
+#' S7 class for generated quantities
+#'
+#' @noRd
+quantities <- S7::new_class("quantities", package = "dcmstan",
+  properties = list(
+    model_args = S7::new_property(
+      class = S7::class_list,
+      default = list()
+    )
+  ),
+  validator = function(self) {
+    provided <- names(self@model_args)
+    opts <- names(formals("gqs_default"))
+    diff <- setdiff(provided, opts)
+    err <- cli::cli_fmt(
+      cli::cli_text("@model_args contains unknown arguments for ",
+                    "{.fun generated_quantities}: ",
+                    "{.var {diff}}")
+    )
+    if (!all(names(self@model_args) %in%
+               names(as.list(formals(gqs_default))))) {
+      err
+    }
+  }
+)
 
 # Define child classes for measurement and structural models -------------------
 model_property <- S7::new_property(
@@ -279,21 +382,30 @@ model_property <- S7::new_property(
 ## Measurement models -----
 LCDM <- S7::new_class("LCDM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 DINA <- S7::new_class("DINA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
                                package = "dcmstan",
                                properties = list(model = model_property))
+
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
 LOGLINEAR <- S7::new_class("LOGLINEAR", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
+HDCM <- S7::new_class("HDCM", parent = structural, package = "dcmstan",
+                      properties = list(model = model_property))
+
+## Generated quantities -----
+GQS <- S7::new_class("GQS", parent = quantities,
+                     package = "dcmstan")

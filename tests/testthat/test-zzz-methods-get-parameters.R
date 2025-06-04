@@ -17,36 +17,36 @@ test_that("lcdm parameters work", {
     params,
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
-            1L,   "intercept",                       NA,       "l1_0",
-            1L,  "maineffect",                   "att1",      "l1_11",
-            2L,   "intercept",                       NA,       "l2_0",
-            2L,  "maineffect",                   "att2",      "l2_12",
-            2L,  "maineffect",                   "att3",      "l2_13",
-            2L, "interaction",             "att2__att3",     "l2_223",
-            3L,   "intercept",                       NA,       "l3_0",
-            3L,  "maineffect",                   "att1",      "l3_11",
-            3L,  "maineffect",                   "att3",      "l3_13",
-            3L,  "maineffect",                   "att4",      "l3_14",
-            3L, "interaction",             "att1__att3",     "l3_213",
-            3L, "interaction",             "att1__att4",     "l3_214",
-            3L, "interaction",             "att3__att4",     "l3_234",
-            3L, "interaction",       "att1__att3__att4",    "l3_3134",
-            4L,   "intercept",                       NA,       "l4_0",
-            4L,  "maineffect",                   "att1",      "l4_11",
-            4L,  "maineffect",                   "att2",      "l4_12",
-            4L,  "maineffect",                   "att3",      "l4_13",
-            4L,  "maineffect",                   "att4",      "l4_14",
-            4L, "interaction",             "att1__att2",     "l4_212",
-            4L, "interaction",             "att1__att3",     "l4_213",
-            4L, "interaction",             "att1__att4",     "l4_214",
-            4L, "interaction",             "att2__att3",     "l4_223",
-            4L, "interaction",             "att2__att4",     "l4_224",
-            4L, "interaction",             "att3__att4",     "l4_234",
-            4L, "interaction",       "att1__att2__att3",    "l4_3123",
-            4L, "interaction",       "att1__att2__att4",    "l4_3124",
-            4L, "interaction",       "att1__att3__att4",    "l4_3134",
-            4L, "interaction",       "att2__att3__att4",    "l4_3234",
-            4L, "interaction", "att1__att2__att3__att4",   "l4_41234"
+           "1",   "intercept",                       NA,       "l1_0",
+           "1",  "maineffect",                   "att1",      "l1_11",
+           "2",   "intercept",                       NA,       "l2_0",
+           "2",  "maineffect",                   "att2",      "l2_12",
+           "2",  "maineffect",                   "att3",      "l2_13",
+           "2", "interaction",             "att2__att3",     "l2_223",
+           "3",   "intercept",                       NA,       "l3_0",
+           "3",  "maineffect",                   "att1",      "l3_11",
+           "3",  "maineffect",                   "att3",      "l3_13",
+           "3",  "maineffect",                   "att4",      "l3_14",
+           "3", "interaction",             "att1__att3",     "l3_213",
+           "3", "interaction",             "att1__att4",     "l3_214",
+           "3", "interaction",             "att3__att4",     "l3_234",
+           "3", "interaction",       "att1__att3__att4",    "l3_3134",
+           "4",   "intercept",                       NA,       "l4_0",
+           "4",  "maineffect",                   "att1",      "l4_11",
+           "4",  "maineffect",                   "att2",      "l4_12",
+           "4",  "maineffect",                   "att3",      "l4_13",
+           "4",  "maineffect",                   "att4",      "l4_14",
+           "4", "interaction",             "att1__att2",     "l4_212",
+           "4", "interaction",             "att1__att3",     "l4_213",
+           "4", "interaction",             "att1__att4",     "l4_214",
+           "4", "interaction",             "att2__att3",     "l4_223",
+           "4", "interaction",             "att2__att4",     "l4_224",
+           "4", "interaction",             "att3__att4",     "l4_234",
+           "4", "interaction",       "att1__att2__att3",    "l4_3123",
+           "4", "interaction",       "att1__att2__att4",    "l4_3124",
+           "4", "interaction",       "att1__att3__att4",    "l4_3134",
+           "4", "interaction",       "att2__att3__att4",    "l4_3234",
+           "4", "interaction", "att1__att2__att3__att4",   "l4_41234"
     )
   )
 
@@ -54,30 +54,30 @@ test_that("lcdm parameters work", {
     lcdm_parameters(test_qmatrix, max_interaction = 2),
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
-            1L,   "intercept",                       NA,       "l1_0",
-            1L,  "maineffect",                   "att1",      "l1_11",
-            2L,   "intercept",                       NA,       "l2_0",
-            2L,  "maineffect",                   "att2",      "l2_12",
-            2L,  "maineffect",                   "att3",      "l2_13",
-            2L, "interaction",             "att2__att3",     "l2_223",
-            3L,   "intercept",                       NA,       "l3_0",
-            3L,  "maineffect",                   "att1",      "l3_11",
-            3L,  "maineffect",                   "att3",      "l3_13",
-            3L,  "maineffect",                   "att4",      "l3_14",
-            3L, "interaction",             "att1__att3",     "l3_213",
-            3L, "interaction",             "att1__att4",     "l3_214",
-            3L, "interaction",             "att3__att4",     "l3_234",
-            4L,   "intercept",                       NA,       "l4_0",
-            4L,  "maineffect",                   "att1",      "l4_11",
-            4L,  "maineffect",                   "att2",      "l4_12",
-            4L,  "maineffect",                   "att3",      "l4_13",
-            4L,  "maineffect",                   "att4",      "l4_14",
-            4L, "interaction",             "att1__att2",     "l4_212",
-            4L, "interaction",             "att1__att3",     "l4_213",
-            4L, "interaction",             "att1__att4",     "l4_214",
-            4L, "interaction",             "att2__att3",     "l4_223",
-            4L, "interaction",             "att2__att4",     "l4_224",
-            4L, "interaction",             "att3__att4",     "l4_234"
+           "1",   "intercept",                       NA,       "l1_0",
+           "1",  "maineffect",                   "att1",      "l1_11",
+           "2",   "intercept",                       NA,       "l2_0",
+           "2",  "maineffect",                   "att2",      "l2_12",
+           "2",  "maineffect",                   "att3",      "l2_13",
+           "2", "interaction",             "att2__att3",     "l2_223",
+           "3",   "intercept",                       NA,       "l3_0",
+           "3",  "maineffect",                   "att1",      "l3_11",
+           "3",  "maineffect",                   "att3",      "l3_13",
+           "3",  "maineffect",                   "att4",      "l3_14",
+           "3", "interaction",             "att1__att3",     "l3_213",
+           "3", "interaction",             "att1__att4",     "l3_214",
+           "3", "interaction",             "att3__att4",     "l3_234",
+           "4",   "intercept",                       NA,       "l4_0",
+           "4",  "maineffect",                   "att1",      "l4_11",
+           "4",  "maineffect",                   "att2",      "l4_12",
+           "4",  "maineffect",                   "att3",      "l4_13",
+           "4",  "maineffect",                   "att4",      "l4_14",
+           "4", "interaction",             "att1__att2",     "l4_212",
+           "4", "interaction",             "att1__att3",     "l4_213",
+           "4", "interaction",             "att1__att4",     "l4_214",
+           "4", "interaction",             "att2__att3",     "l4_223",
+           "4", "interaction",             "att2__att4",     "l4_224",
+           "4", "interaction",             "att3__att4",     "l4_234"
     )
   )
 })
@@ -121,7 +121,7 @@ test_that("crum parameters work", {
 
   expect_equal(
     lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
-                    rename_attributes = TRUE),
+                    att_names = paste0("att", 1:4), rename_attributes = TRUE),
     tibble::tribble(
      ~question,         ~type,              ~attributes, ~coefficient,
           "Q1",   "intercept",                       NA,       "l1_0",
@@ -202,7 +202,7 @@ test_that("dina parameters work", {
   expect_equal(
     params,
     tibble::tibble(
-      item_id = rep(1:5, each = 2),
+      item_id = as.character(rep(1:5, each = 2)),
       type = rep(c("guess", "slip"), 5)
     ) |>
       dplyr::mutate(coefficient = paste0(.data$type, "[", .data$item_id, "]")),
@@ -390,6 +390,33 @@ test_that("loglinear parameters work", {
                8L,  "structural",                  "att3",       "g_13"
     )
   )
+})
+
+test_that("hdcm parameters work", {
+  test_qmatrix <- tibble::tibble(
+    test_item = paste0("B", 1:5),
+    att1 = sample(0:1, size = 5, replace = TRUE),
+    att2 = sample(0:1, size = 5, replace = TRUE),
+    att3 = sample(0:1, size = 5, replace = TRUE),
+    att4 = sample(0:1, size = 5, replace = TRUE)
+  )
+
+  params <- get_parameters(hdcm(), qmatrix = test_qmatrix,
+                           identifier = "test_item")
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("type", "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tibble(type = "structural",
+                   coefficient = "Vc")
+  )
+
+  params2 <- get_parameters(hdcm(), qmatrix = test_qmatrix[, -1])
+  expect_true(tibble::is_tibble(params2))
+  expect_equal(colnames(params2), c("type", "coefficient"))
+
+  expect_equal(params, params2)
 })
 
 # dcm specification parameters -------------------------------------------------

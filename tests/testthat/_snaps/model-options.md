@@ -7,7 +7,7 @@
     Code
       print_choices(strc_choices(), format = TRUE)
     Output
-      [1] "\"unconstrained\", \"independent\", or \"loglinear\""
+      [1] "\"unconstrained\", \"independent\", \"loglinear\", or \"hdcm\""
     Code
       print_choices(meas_choices(), last = ", and ", format = TRUE)
     Output
@@ -22,7 +22,7 @@
     Code
       print_choices(strc_choices())
     Output
-      [1] "unconstrained, independent, or loglinear"
+      [1] "unconstrained, independent, loglinear, or hdcm"
     Code
       print_choices(meas_choices(), last = ", and ")
     Output

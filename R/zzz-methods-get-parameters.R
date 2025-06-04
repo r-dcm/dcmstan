@@ -34,65 +34,71 @@ S7::method(get_parameters, dcm_specification) <- function(x, qmatrix,
     arg <- rlang::caller_arg(x)
     cli::cli_warn(
       glue::glue("{{.arg qmatrix}} and {{.arg identifier}} should not be
-                 specified for {{.cls dcm_specification}} objects. Using",
-                 "{{.code {arg}@qmatrix}} instead.",
+                 specified for {{.cls dcm_specification}} objects. Using
+                 {{.code {arg}@qmatrix}} instead.",
                  .sep = " ")
     )
   }
 
   dplyr::bind_rows(
-    get_parameters(
-      x@measurement_model,
-      qmatrix = rlang::set_names(x@qmatrix,
-                                 names(x@qmatrix_meta$attribute_names))
-    ),
-    get_parameters(
-      x@structural_model,
-      qmatrix = rlang::set_names(x@qmatrix,
-                                 names(x@qmatrix_meta$attribute_names))
-    )
+    get_parameters(x@measurement_model, qmatrix = x@qmatrix,
+                   attributes = x@qmatrix_meta$attribute_names,
+                   items = x@qmatrix_meta$item_names),
+    get_parameters(x@structural_model, qmatrix = x@qmatrix,
+                   attributes = x@qmatrix_meta$attribute_names)
   )
 }
 
 # Methods for measurement models -----------------------------------------------
-S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL) {
-  check_number_whole(x@model_args$max_interaction, min = 1,
-                     allow_infinite = TRUE)
+S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
-                  max_interaction = x@model_args$max_interaction)
+                  max_interaction = x@model_args$max_interaction,
+                  att_names = attributes, item_names = items,
+                  hierarchy = x@model_args$hierarchy)
 }
 
-S7::method(get_parameters, DINA) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, DINA) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  dina_parameters(qmatrix = qmatrix, identifier = identifier)
+  dina_parameters(qmatrix = qmatrix, identifier = identifier,
+                  item_names = items)
 }
 
-S7::method(get_parameters, DINO) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, DINO) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  dina_parameters(qmatrix = qmatrix, identifier = identifier)
+  dina_parameters(qmatrix = qmatrix, identifier = identifier,
+                  item_names = items)
 }
 
-S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
-                  max_interaction = 1L)
+                  max_interaction = 1L,
+                  att_names = attributes, item_names = items)
 }
 
 # Methods for structural models ------------------------------------------------
 S7::method(get_parameters, UNCONSTRAINED) <- function(x, qmatrix,
-                                                      identifier = NULL) {
+                                                      identifier = NULL,
+                                                      attributes = NULL) {
   tibble::tibble(type = "structural", coefficient = "Vc")
 }
 
 S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
-                                                    identifier = NULL) {
+                                                    identifier = NULL,
+                                                    attributes = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
-  att_names <- if (is.null(identifier)) {
+  att_names <- if (!is.null(attributes)) {
+    names(attributes)
+  } else if (is.null(identifier)) {
     colnames(qmatrix)
   } else {
     colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
@@ -103,12 +109,18 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
 }
 
 S7::method(get_parameters, LOGLINEAR) <- function(x, qmatrix,
-                                                  identifier = NULL) {
+                                                  identifier = NULL,
+                                                  attributes = NULL) {
   check_number_whole(x@model_args$max_interaction, min = 1,
                      allow_infinite = TRUE)
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   loglinear_parameters(qmatrix = qmatrix, identifier = identifier,
-                       max_interaction = x@model_args$max_interaction)
+                       max_interaction = x@model_args$max_interaction,
+                       att_names = attributes)
+}
 
+S7::method(get_parameters, HDCM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL) {
+  tibble::tibble(type = "structural", coefficient = "Vc")
 }

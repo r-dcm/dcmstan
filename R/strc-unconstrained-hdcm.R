@@ -39,7 +39,13 @@ strc_unconstrained <- function(qmatrix, priors) {
     ) |>
     dplyr::pull("prior_def")
 
-  return(list(parameters = parameters_block,
-              transformed_parameters = transformed_parameters_block,
-              priors = strc_priors))
+  list(parameters = parameters_block,
+       transformed_parameters = transformed_parameters_block,
+       priors = strc_priors)
+}
+
+#' @rdname lcdm-crum
+#' @noRd
+strc_hdcm <- function(qmatrix, priors, hierarchy) {
+  strc_unconstrained(qmatrix, priors = priors)
 }
