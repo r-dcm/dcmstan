@@ -11,10 +11,10 @@ unconstrained()
 
 independent()
 
-loglinear(loglinear_interaction = Inf)
+loglinear(max_interaction = Inf)
 }
 \arguments{
-\item{loglinear_interaction}{For the Log-linear structural model, the highest
+\item{max_interaction}{For the log-linear structural model, the highest
 structural-level interaction to include in the model.}
 }
 \value{
@@ -23,7 +23,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained; independent attributes; and loglinear.
+unconstrained; independent attributes; and log-linear.
 See details for additional information on each model.
 }
 \details{
@@ -37,7 +37,7 @@ presence of one attribute and the presence of any other. For an example of
 independent attributes model, see Lee (2016).
 
 The loglinear structural model assumes that class membership proportions can
-be predicted using a loglinear model that includes main and interaction
+be estimated using a loglinear model that includes main and interaction
 effects (see Xu & von Davier, 2008). A saturated loglinear structural model
 includes interaction effects for all attributes measured in the model, and is
 equivalent to the unconstrained structural model and the saturated model
@@ -52,7 +52,7 @@ independent()
 
 loglinear()
 
-loglinear(loglinear_interaction = 2)
+loglinear(max_interaction = 1)
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification
