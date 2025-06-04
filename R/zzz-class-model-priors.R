@@ -79,8 +79,7 @@ default_dcm_priors <- function(measurement_model = NULL,
            unconstrained = unconstrained_priors(),
            independent = independent_priors(),
            loglinear = loglinear_priors(),
-           hdcm = hdcm_priors()
-    )
+           hdcm = hdcm_priors())
   }
 
   c(dcmprior(), meas_priors, strc_priors)

@@ -227,7 +227,7 @@ S7::method(print, dcm_specification) <- function(x, ...) {
                        "with structure:",
                        gsub("\n", ";", x@structural_model@model_args$hierarchy))
   } else if (S7::S7_inherits(x@structural_model, LOGLINEAR) &&
-             !is.infinite(x@structural_model@model_args$max_interaction)) {
+               !is.infinite(x@structural_model@model_args$max_interaction)) {
     max_int <- x@structural_model@model_args$max_interaction
     label <- dplyr::if_else(max_int == 1, "only main effects",
                             paste0("up to ", max_int, "-way interactions"))

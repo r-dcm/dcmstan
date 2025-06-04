@@ -113,8 +113,6 @@ test_that("printing works", {
                        measurement_model = lcdm(),
                        structural_model = loglinear(max_interaction = 2))
 
-
-
   hdcm1 <- dcm_specify(qmatrix = test_qmatrix, identifier = "item",
                        measurement_model = lcdm(max_interaction = 1),
                        structural_model = hdcm("node3 -> node2 -> node1"))

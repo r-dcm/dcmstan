@@ -401,8 +401,8 @@ INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
 LOGLINEAR <- S7::new_class("LOGLINEAR", parent = structural,
-                             package = "dcmstan",
-                             properties = list(model = model_property))
+                           package = "dcmstan",
+                           properties = list(model = model_property))
 HDCM <- S7::new_class("HDCM", parent = structural, package = "dcmstan",
                       properties = list(model = model_property))
 

@@ -189,14 +189,6 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id")
     identifier <- "item_id"
-
-    item_ids <- qmatrix |>
-      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
-      tibble::rowid_to_column(var = "item_number")
-  } else {
-    item_ids <- qmatrix |>
-      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
-      tibble::rowid_to_column(var = "item_number")
   }
 
   if (is.null(att_names)) {
