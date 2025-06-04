@@ -6,76 +6,34 @@
 #' `model` block.
 #'
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
-#' @param loglinear_interaction Positive integer. For the Log-linear structural
-#' model, the highest structural-level interaction to include in the model.
+#' @param max_interaction The highest structural-level interaction to include in
+#'   the model.
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @noRd
-strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
-
+strc_loglinear <- function(qmatrix, max_interaction = Inf, priors) {
+  # parameters block -----
   all_params <- loglinear_parameters(qmatrix = qmatrix,
-                                     loglinear_interaction = loglinear_interaction)
-
-  #format parameter labels
-  strc_params <- all_params |>
-    dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
-                                                 "intercept",
-                                               TRUE ~ .data$attributes)) |>
-    dplyr::select("profile_id", "parameter", param_name = "coefficient", "type") |>
-    dplyr::mutate(
-      param_level = dplyr::case_when(
-        .data$parameter == "intercept" ~ 0,
-        !grepl("__", .data$parameter) ~ 1,
-        TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
-                      function(.x) length(attr(.x, "match.length"))) + 1
-      ),
-      atts = gsub("[^0-9|_]", "", .data$parameter),
-      param_name = glue::glue("g_{param_level}",
-                              "{gsub(\"__\", \"\", atts)}"),
-      param_def = glue::glue("real {param_name};")
-    ) |>
-    dplyr::filter(.data$param_level <= loglinear_interaction)
-
-  main_effects <- strc_params |>
-    dplyr::filter(.data$param_level == 1) |>
-    dplyr::select("param_def") |>
-    dplyr::distinct() |>
-    dplyr::pull(.data$param_def)
-  interactions <- strc_params |>
-    dplyr::filter(.data$param_level >= 2) |>
-    dplyr::select("param_def") |>
-    dplyr::distinct() |>
-    dplyr::pull(.data$param_def)
-
-  interaction_stan <- if (length(interactions) > 0) {
-    glue::glue(
-      "",
-      "  ////////////////////////////////// strc interactions",
-      "  {glue::glue_collapse(interactions, sep = \"\n  \")}",
-      .sep = "\n", .trim = FALSE
-    )
-  } else {
-    ""
-  }
+                                     max_interaction = max_interaction)
 
   parameters_block <- glue::glue(
-    "  ////////////////////////////////// strc main effects",
-    "  {glue::glue_collapse(main_effects, sep = \"\n  \")}",
-    "{interaction_stan}",
+    "  ////////////////////////////////// structural parameters",
+    "  {glue::glue_collapse(
+          glue::glue(\"real {unique(all_params$coefficient)};\"),
+          sep = \"\n  \"
+        )}",
     .sep = "\n", .trim = FALSE
   )
 
-
   # transformed parameters block -----
-  pi_def <- strc_params |>
-    dplyr::select("profile_id", "parameter", "param_name") |>
-    dplyr::group_by(.data$profile_id) |>
-    dplyr::summarize(strc_params = paste(unique(.data$param_name),
+  class_def <- all_params |>
+    dplyr::select("profile_id", "attributes", "coefficient") |>
+    dplyr::summarize(strc_params = paste(unique(.data$coefficient),
                                          collapse = "+"),
-                     .groups = "drop") |>
+                     .by = "profile_id") |>
     glue::glue_data("mu[{profile_id}] = {strc_params};")
 
   transformed_parameters_block <-
@@ -86,18 +44,19 @@ strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
       "",
       "  ////////////////////////////////// probability of class membership",
       "  mu[1] = 0;",
-      "  {glue::glue_collapse(pi_def, sep = \"\n  \")}",
+      "  {glue::glue_collapse(class_def, sep = \"\n  \")}",
       "",
       "  log_Vc = mu - log_sum_exp(mu);",
       "  Vc = exp(log_Vc);",
       .sep = "\n", .trim = FALSE
     )
 
-  strc_priors <- strc_params |>
+  # priors -----
+  strc_priors <- all_params |>
     dplyr::select(-"profile_id") |>
     dplyr::distinct() |>
     dplyr::left_join(prior_tibble(priors),
-                     by = c("type", "param_name" = "coefficient"),
+                     by = c("type", "coefficient"),
                      relationship = "one-to-one") |>
     dplyr::rename(coef_def = "prior") |>
     dplyr::left_join(prior_tibble(priors) |>
@@ -108,10 +67,11 @@ strc_loglinear <- function(qmatrix, loglinear_interaction = Inf, priors) {
     dplyr::mutate(
       prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
                                is.na(.data$coef_def) ~ .data$type_def),
-      prior_def = glue::glue("{param_name} ~ {prior};")
+      prior_def = glue::glue("{coefficient} ~ {prior};")
     ) |>
     dplyr::pull("prior_def")
 
+  # return -----
   return(list(parameters = parameters_block,
               transformed_parameters = transformed_parameters_block,
               priors = strc_priors))

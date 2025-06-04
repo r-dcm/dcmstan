@@ -96,11 +96,11 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
 
 S7::method(get_parameters, LOGLINEAR) <- function(x, qmatrix,
                                                   identifier = NULL) {
-  check_number_whole(x@model_args$loglinear_interaction, min = 1,
+  check_number_whole(x@model_args$max_interaction, min = 1,
                      allow_infinite = TRUE)
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   loglinear_parameters(qmatrix = qmatrix, identifier = identifier,
-                       loglinear_interaction = x@model_args$loglinear_interaction)
+                       max_interaction = x@model_args$max_interaction)
 
 }

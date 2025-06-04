@@ -110,7 +110,7 @@ crum <- function() {
 #' `r print_choices(names(strc_choices()), sep = "; ", last = "; and ")`.
 #' See details for additional information on each model.
 #'
-#' @param loglinear_interaction For the Log-linear structural model, the highest
+#' @param max_interaction For the log-linear structural model, the highest
 #' structural-level interaction to include in the model.
 #'
 #' @returns A structural model object.
@@ -126,7 +126,7 @@ crum <- function() {
 #' independent attributes model, see Lee (2016).
 #'
 #' The loglinear structural model assumes that class membership proportions can
-#' be predicted using a loglinear model that includes main and interaction
+#' be estimated using a loglinear model that includes main and interaction
 #' effects (see Xu & von Davier, 2008). A saturated loglinear structural model
 #' includes interaction effects for all attributes measured in the model, and is
 #' equivalent to the unconstrained structural model and the saturated model
@@ -158,7 +158,7 @@ crum <- function() {
 #'
 #' loglinear()
 #'
-#' loglinear(loglinear_interaction = 2)
+#' loglinear(max_interaction = 1)
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
@@ -171,9 +171,9 @@ independent <- function() {
 
 #' @rdname structural-model
 #' @export
-loglinear <- function(loglinear_interaction = Inf) {
+loglinear <- function(max_interaction = Inf) {
   LOGLINEAR(model = "loglinear",
-            list(loglinear_interaction = loglinear_interaction))
+            list(max_interaction = max_interaction))
 }
 
 

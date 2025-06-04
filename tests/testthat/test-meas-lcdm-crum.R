@@ -18,8 +18,8 @@ test_that("lcdm script works", {
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
 
-  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                            identifier = "item_id",
+  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                            identifier = "item",
                             measurement_model = lcdm(),
                             structural_model = loglinear())
   expect_snapshot(generate_stan(ecpe_spec3))
@@ -54,8 +54,8 @@ test_that("crum script works", {
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
 
-  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                            identifier = "item_id",
+  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                            identifier = "item",
                             measurement_model = crum(),
                             structural_model = loglinear())
   expect_snapshot(generate_stan(ecpe_spec3))

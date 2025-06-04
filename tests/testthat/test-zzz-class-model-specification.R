@@ -34,8 +34,9 @@ test_that("dcm_specification class errors when expected", {
   expect_error(dcm_specify(qmatrix = test_qmatrix, identifier = "item",
                            measurement_model = lcdm(),
                            structural_model = loglinear(),
-                           priors = prior("beta(1, 1)", type = "slip")),
-               "types not included")
+                           priors = prior("beta(1, 1)", type = "structural",
+                                          coefficient = "g_41234")),
+               "coefficients not included")
 })
 
 test_that("dcm_specification works", {
@@ -101,7 +102,7 @@ test_that("printing works", {
 
   spec3 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
                        measurement_model = lcdm(),
-                       structural_model = loglinear(loglinear_interaction = 1))
+                       structural_model = loglinear(max_interaction = 1))
 
   expect_snapshot({
     spec

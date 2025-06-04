@@ -48,7 +48,7 @@
       * "node3" (7 items)
       
       i Attribute structure:
-        Loglinear
+        Log-linear
       
       i Prior distributions:
         intercept ~ normal(0, 2)

@@ -18,8 +18,8 @@ test_that("dina script works", {
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
 
-  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                            identifier = "item_id",
+  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                            identifier = "item",
                             measurement_model = dina(),
                             structural_model = loglinear())
   expect_snapshot(generate_stan(ecpe_spec3))
@@ -45,8 +45,8 @@ test_that("dino script works", {
                             structural_model = independent())
   expect_snapshot(generate_stan(ecpe_spec2))
 
-  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                            identifier = "item_id",
+  ecpe_spec3 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                            identifier = "item",
                             measurement_model = dino(),
                             structural_model = loglinear())
   expect_snapshot(generate_stan(ecpe_spec3))

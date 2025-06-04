@@ -431,16 +431,22 @@
         matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
-        ////////////////////////////////// strc main effects
+        ////////////////////////////////// structural parameters
         real g_11;
         real g_12;
         real g_13;
-      
-        ////////////////////////////////// strc interactions
+        real g_14;
         real g_212;
         real g_213;
+        real g_214;
         real g_223;
+        real g_224;
+        real g_234;
         real g_3123;
+        real g_3124;
+        real g_3134;
+        real g_3234;
+        real g_41234;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -456,10 +462,18 @@
         mu[2] = g_11;
         mu[3] = g_12;
         mu[4] = g_13;
-        mu[5] = g_11+g_12+g_212;
-        mu[6] = g_11+g_13+g_213;
-        mu[7] = g_12+g_13+g_223;
-        mu[8] = g_11+g_12+g_13+g_212+g_213+g_223+g_3123;
+        mu[5] = g_14;
+        mu[6] = g_11+g_12+g_212;
+        mu[7] = g_11+g_13+g_213;
+        mu[8] = g_11+g_14+g_214;
+        mu[9] = g_12+g_13+g_223;
+        mu[10] = g_12+g_14+g_224;
+        mu[11] = g_13+g_14+g_234;
+        mu[12] = g_11+g_12+g_13+g_212+g_213+g_223+g_3123;
+        mu[13] = g_11+g_12+g_14+g_212+g_214+g_224+g_3124;
+        mu[14] = g_11+g_13+g_14+g_213+g_214+g_234+g_3134;
+        mu[15] = g_12+g_13+g_14+g_223+g_224+g_234+g_3234;
+        mu[16] = g_11+g_12+g_13+g_14+g_212+g_213+g_214+g_223+g_224+g_234+g_3123+g_3124+g_3134+g_3234+g_41234;
       
         log_Vc = mu - log_sum_exp(mu);
         Vc = exp(log_Vc);
@@ -477,10 +491,18 @@
         g_11 ~ normal(0, 10);
         g_12 ~ normal(0, 10);
         g_13 ~ normal(0, 10);
+        g_14 ~ normal(0, 10);
         g_212 ~ normal(0, 10);
         g_213 ~ normal(0, 10);
+        g_214 ~ normal(0, 10);
         g_223 ~ normal(0, 10);
+        g_224 ~ normal(0, 10);
+        g_234 ~ normal(0, 10);
         g_3123 ~ normal(0, 10);
+        g_3124 ~ normal(0, 10);
+        g_3134 ~ normal(0, 10);
+        g_3234 ~ normal(0, 10);
+        g_41234 ~ normal(0, 10);
         guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
         guess[2] ~ beta(5, 25);
@@ -535,8 +557,6 @@
         slip[26] ~ beta(5, 25);
         guess[27] ~ beta(5, 25);
         slip[27] ~ beta(5, 25);
-        guess[28] ~ beta(5, 25);
-        slip[28] ~ beta(5, 25);
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
@@ -987,16 +1007,22 @@
         matrix[I,C] Xi;                      // class attribute mastery indicator
       }
       parameters {
-        ////////////////////////////////// strc main effects
+        ////////////////////////////////// structural parameters
         real g_11;
         real g_12;
         real g_13;
-      
-        ////////////////////////////////// strc interactions
+        real g_14;
         real g_212;
         real g_213;
+        real g_214;
         real g_223;
+        real g_224;
+        real g_234;
         real g_3123;
+        real g_3124;
+        real g_3134;
+        real g_3234;
+        real g_41234;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -1012,10 +1038,18 @@
         mu[2] = g_11;
         mu[3] = g_12;
         mu[4] = g_13;
-        mu[5] = g_11+g_12+g_212;
-        mu[6] = g_11+g_13+g_213;
-        mu[7] = g_12+g_13+g_223;
-        mu[8] = g_11+g_12+g_13+g_212+g_213+g_223+g_3123;
+        mu[5] = g_14;
+        mu[6] = g_11+g_12+g_212;
+        mu[7] = g_11+g_13+g_213;
+        mu[8] = g_11+g_14+g_214;
+        mu[9] = g_12+g_13+g_223;
+        mu[10] = g_12+g_14+g_224;
+        mu[11] = g_13+g_14+g_234;
+        mu[12] = g_11+g_12+g_13+g_212+g_213+g_223+g_3123;
+        mu[13] = g_11+g_12+g_14+g_212+g_214+g_224+g_3124;
+        mu[14] = g_11+g_13+g_14+g_213+g_214+g_234+g_3134;
+        mu[15] = g_12+g_13+g_14+g_223+g_224+g_234+g_3234;
+        mu[16] = g_11+g_12+g_13+g_14+g_212+g_213+g_214+g_223+g_224+g_234+g_3123+g_3124+g_3134+g_3234+g_41234;
       
         log_Vc = mu - log_sum_exp(mu);
         Vc = exp(log_Vc);
@@ -1033,10 +1067,18 @@
         g_11 ~ normal(0, 10);
         g_12 ~ normal(0, 10);
         g_13 ~ normal(0, 10);
+        g_14 ~ normal(0, 10);
         g_212 ~ normal(0, 10);
         g_213 ~ normal(0, 10);
+        g_214 ~ normal(0, 10);
         g_223 ~ normal(0, 10);
+        g_224 ~ normal(0, 10);
+        g_234 ~ normal(0, 10);
         g_3123 ~ normal(0, 10);
+        g_3124 ~ normal(0, 10);
+        g_3134 ~ normal(0, 10);
+        g_3234 ~ normal(0, 10);
+        g_41234 ~ normal(0, 10);
         guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
         guess[2] ~ beta(5, 25);
@@ -1091,8 +1133,6 @@
         slip[26] ~ beta(5, 25);
         guess[27] ~ beta(5, 25);
         slip[27] ~ beta(5, 25);
-        guess[28] ~ beta(5, 25);
-        slip[28] ~ beta(5, 25);
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {

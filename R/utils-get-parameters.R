@@ -149,11 +149,17 @@ dina_parameters <- function(qmatrix, identifier = NULL, rename_items = FALSE) {
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
-#' @param loglinear_interaction Positive integer. For the Log-linear structural
+#' @param max_interaction Positive integer. For the Log-linear structural
 #' model, the highest structural-level interaction to include in the model.
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
+#'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-loglinear_parameters <- function(qmatrix, identifier = NULL, loglinear_interaction = Inf) {
+loglinear_parameters <- function(qmatrix, identifier = NULL,
+                                 max_interaction = Inf,
+                                 rename_attributes = FALSE) {
   if (is.null(identifier)) {
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id")
@@ -174,14 +180,15 @@ loglinear_parameters <- function(qmatrix, identifier = NULL, loglinear_interacti
     dplyr::rename_with(~glue::glue("att{1:(ncol(qmatrix) - 1)}"),
                        .cols = dplyr::everything())
 
-  all_params <- stats::model.matrix(stats::as.formula(paste0("~ .^",
-                                                              max(ncol(qmatrix), 2L))),
-                                     create_profiles(ncol(qmatrix))) |>
+  all_params <- stats::model.matrix(
+    stats::as.formula(paste0("~ .^", max(ncol(qmatrix), 2L))),
+    create_profiles(ncol(qmatrix))
+  ) |>
     tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
     tibble::rowid_to_column(var = "profile_id") |>
     tidyr::pivot_longer(cols = -"profile_id", names_to = "parameter",
                         values_to = "value") |>
-    dplyr::filter(!.data$parameter %in% c("intercept")) |>
+    dplyr::filter(.data$parameter != "intercept") |>
     dplyr::filter(.data$value == 1) |>
     dplyr::mutate(
       param_level = dplyr::case_when(
@@ -195,9 +202,18 @@ loglinear_parameters <- function(qmatrix, identifier = NULL, loglinear_interacti
       type = "structural",
       attributes = .data$parameter
     ) |>
-    dplyr::filter(.data$param_level <= loglinear_interaction) |>
+    dplyr::filter(.data$param_level <= max_interaction) |>
     dplyr::select("profile_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
+
+  if (!rename_attributes) {
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attributes = gsub(paste0("att", i),
+                                                    att_names[i],
+                                                    .data$attributes))
+    }
+  }
 
   return(all_params)
 }

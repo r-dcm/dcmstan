@@ -349,45 +349,45 @@ test_that("loglinear parameters work", {
   expect_equal(
     params,
     tibble::tribble(
-      ~profile_id,         ~type,              ~attributes, ~coefficient,
-      2L,   "structural",                  "att1",       "g_11",
-      3L,   "structural",                  "att2",       "g_12",
-      4L,   "structural",                  "att3",       "g_13",
-      5L,   "structural",                  "att1",       "g_11",
-      5L,   "structural",                  "att2",       "g_12",
-      5L,   "structural",            "att1__att2",      "g_212",
-      6L,   "structural",                  "att1",       "g_11",
-      6L,   "structural",                  "att3",       "g_13",
-      6L,   "structural",            "att1__att3",      "g_213",
-      7L,   "structural",                  "att2",       "g_12",
-      7L,   "structural",                  "att3",       "g_13",
-      7L,   "structural",            "att2__att3",      "g_223",
-      8L,   "structural",                  "att1",       "g_11",
-      8L,   "structural",                  "att2",       "g_12",
-      8L,   "structural",                  "att3",       "g_13",
-      8L,   "structural",            "att1__att2",      "g_212",
-      8L,   "structural",            "att1__att3",      "g_213",
-      8L,   "structural",            "att2__att3",      "g_223",
-      8L,   "structural",      "att1__att2__att3",     "g_3123"
+      ~profile_id,         ~type,             ~attributes, ~coefficient,
+               2L,  "structural",                  "att1",       "g_11",
+               3L,  "structural",                  "att2",       "g_12",
+               4L,  "structural",                  "att3",       "g_13",
+               5L,  "structural",                  "att1",       "g_11",
+               5L,  "structural",                  "att2",       "g_12",
+               5L,  "structural",            "att1__att2",      "g_212",
+               6L,  "structural",                  "att1",       "g_11",
+               6L,  "structural",                  "att3",       "g_13",
+               6L,  "structural",            "att1__att3",      "g_213",
+               7L,  "structural",                  "att2",       "g_12",
+               7L,  "structural",                  "att3",       "g_13",
+               7L,  "structural",            "att2__att3",      "g_223",
+               8L,  "structural",                  "att1",       "g_11",
+               8L,  "structural",                  "att2",       "g_12",
+               8L,  "structural",                  "att3",       "g_13",
+               8L,  "structural",            "att1__att2",      "g_212",
+               8L,  "structural",            "att1__att3",      "g_213",
+               8L,  "structural",            "att2__att3",      "g_223",
+               8L,  "structural",      "att1__att2__att3",     "g_3123"
     )
   )
 
   expect_equal(
-    loglinear_parameters(test_qmatrix, loglinear_interaction = 1),
+    loglinear_parameters(test_qmatrix, max_interaction = 1),
     tibble::tribble(
-      ~profile_id,         ~type,              ~attributes, ~coefficient,
-      2L,   "structural",                  "att1",       "g_11",
-      3L,   "structural",                  "att2",       "g_12",
-      4L,   "structural",                  "att3",       "g_13",
-      5L,   "structural",                  "att1",       "g_11",
-      5L,   "structural",                  "att2",       "g_12",
-      6L,   "structural",                  "att1",       "g_11",
-      6L,   "structural",                  "att3",       "g_13",
-      7L,   "structural",                  "att2",       "g_12",
-      7L,   "structural",                  "att3",       "g_13",
-      8L,   "structural",                  "att1",       "g_11",
-      8L,   "structural",                  "att2",       "g_12",
-      8L,   "structural",                  "att3",       "g_13"
+      ~profile_id,         ~type,             ~attributes, ~coefficient,
+               2L,  "structural",                  "att1",       "g_11",
+               3L,  "structural",                  "att2",       "g_12",
+               4L,  "structural",                  "att3",       "g_13",
+               5L,  "structural",                  "att1",       "g_11",
+               5L,  "structural",                  "att2",       "g_12",
+               6L,  "structural",                  "att1",       "g_11",
+               6L,  "structural",                  "att3",       "g_13",
+               7L,  "structural",                  "att2",       "g_12",
+               7L,  "structural",                  "att3",       "g_13",
+               8L,  "structural",                  "att1",       "g_11",
+               8L,  "structural",                  "att2",       "g_12",
+               8L,  "structural",                  "att3",       "g_13"
     )
   )
 })
@@ -455,11 +455,11 @@ test_that("combining parameters in a specification works", {
 
   spec4 <- dcm_specify(qmatrix = test_qmatrix,
                        measurement_model = lcdm(),
-                       structural_model = loglinear(loglinear_interaction = 1))
+                       structural_model = loglinear(max_interaction = 1))
   expect_equal(get_parameters(spec4),
                dplyr::bind_rows(
                  get_parameters(lcdm(), qmatrix = test_qmatrix),
-                 get_parameters(loglinear(loglinear_interaction = 1),
+                 get_parameters(loglinear(max_interaction = 1),
                                 qmatrix = test_qmatrix)
                ))
 })
