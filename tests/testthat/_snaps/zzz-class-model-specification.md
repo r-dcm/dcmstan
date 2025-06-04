@@ -37,7 +37,7 @@
         guess ~ beta(5, 25)
         structural ~ beta(1, 1)
     Code
-      spec3
+      logl1
     Message
       A loglinear cognitive diagnostic model (LCDM) measuring 3 attributes with 10
       items.
@@ -56,7 +56,45 @@
         interaction ~ normal(0, 2)
         structural ~ normal(0, 10)
     Code
-      spec4
+      logl2
+    Message
+      A loglinear cognitive diagnostic model (LCDM) measuring 3 attributes with 10
+      items.
+      
+      i Attributes:
+      * "node1" (4 items)
+      * "node2" (6 items)
+      * "node3" (7 items)
+      
+      i Attribute structure:
+        Log-linear, with only main effects
+      
+      i Prior distributions:
+        intercept ~ normal(0, 2)
+        maineffect ~ lognormal(0, 1)
+        interaction ~ normal(0, 2)
+        structural ~ normal(0, 10)
+    Code
+      logl3
+    Message
+      A loglinear cognitive diagnostic model (LCDM) measuring 3 attributes with 10
+      items.
+      
+      i Attributes:
+      * "node1" (4 items)
+      * "node2" (6 items)
+      * "node3" (7 items)
+      
+      i Attribute structure:
+        Log-linear, with up to 2-way interactions
+      
+      i Prior distributions:
+        intercept ~ normal(0, 2)
+        maineffect ~ lognormal(0, 1)
+        interaction ~ normal(0, 2)
+        structural ~ normal(0, 10)
+    Code
+      hdcm1
     Message
       A loglinear cognitive diagnostic model (LCDM) measuring 3 attributes with 10
       items.
@@ -76,7 +114,7 @@
         maineffect ~ lognormal(0, 1)
         `Vc` ~ dirichlet(1, 1, 1)
     Code
-      spec5
+      hdcm2
     Message
       A deterministic input, noisy "and" gate (DINA) model measuring 3 attributes
       with 10 items.

@@ -93,6 +93,7 @@ test_that("printing works", {
                        measurement_model = dina(),
                        structural_model = independent())
 
+
   test_qmatrix3 <- tibble::tibble(
     item = paste0("item_", 1:10),
     node1 = c(0L, 1L, 0L, 0L, 0L, 1L, 1L, 1L, 0L, 0L),
@@ -100,15 +101,25 @@ test_that("printing works", {
     node3 = c(1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 1L, 1L)
   )
 
-  spec3 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
+  logl1 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
+                       measurement_model = lcdm(),
+                       structural_model = loglinear())
+
+  logl2 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
                        measurement_model = lcdm(),
                        structural_model = loglinear(max_interaction = 1))
 
-    spec4 <- dcm_specify(qmatrix = test_qmatrix, identifier = "item",
+  logl3 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
+                       measurement_model = lcdm(),
+                       structural_model = loglinear(max_interaction = 2))
+
+
+
+  hdcm1 <- dcm_specify(qmatrix = test_qmatrix, identifier = "item",
                        measurement_model = lcdm(max_interaction = 1),
                        structural_model = hdcm("node3 -> node2 -> node1"))
 
-  spec5 <- dcm_specify(qmatrix = test_qmatrix2, identifier = "question",
+  hdcm2 <- dcm_specify(qmatrix = test_qmatrix2, identifier = "question",
                        measurement_model = dina(),
                        structural_model = hdcm("skill_1 -> skill_2
                                                 skill_1 -> skill_3"))
@@ -116,8 +127,10 @@ test_that("printing works", {
   expect_snapshot({
     spec
     spec2
-    spec3
-    spec4
-    spec5
+    logl1
+    logl2
+    logl3
+    hdcm1
+    hdcm2
   })
 })
