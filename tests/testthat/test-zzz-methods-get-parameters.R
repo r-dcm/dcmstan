@@ -373,21 +373,22 @@ test_that("loglinear parameters work", {
   )
 
   expect_equal(
-    loglinear_parameters(test_qmatrix, max_interaction = 1),
+    loglinear_parameters(test_qmatrix, max_interaction = 1,
+                         att_names = paste0("node", 1:3)),
     tibble::tribble(
       ~profile_id,         ~type,             ~attributes, ~coefficient,
-               2L,  "structural",                  "att1",       "g_11",
-               3L,  "structural",                  "att2",       "g_12",
-               4L,  "structural",                  "att3",       "g_13",
-               5L,  "structural",                  "att1",       "g_11",
-               5L,  "structural",                  "att2",       "g_12",
-               6L,  "structural",                  "att1",       "g_11",
-               6L,  "structural",                  "att3",       "g_13",
-               7L,  "structural",                  "att2",       "g_12",
-               7L,  "structural",                  "att3",       "g_13",
-               8L,  "structural",                  "att1",       "g_11",
-               8L,  "structural",                  "att2",       "g_12",
-               8L,  "structural",                  "att3",       "g_13"
+               2L,  "structural",                 "node1",       "g_11",
+               3L,  "structural",                 "node2",       "g_12",
+               4L,  "structural",                 "node3",       "g_13",
+               5L,  "structural",                 "node1",       "g_11",
+               5L,  "structural",                 "node2",       "g_12",
+               6L,  "structural",                 "node1",       "g_11",
+               6L,  "structural",                 "node3",       "g_13",
+               7L,  "structural",                 "node2",       "g_12",
+               7L,  "structural",                 "node3",       "g_13",
+               8L,  "structural",                 "node1",       "g_11",
+               8L,  "structural",                 "node2",       "g_12",
+               8L,  "structural",                 "node3",       "g_13"
     )
   )
 })
