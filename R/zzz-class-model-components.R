@@ -111,6 +111,8 @@ crum <- function() {
 #' `r print_choices(names(strc_choices()), last = " and ")`.
 #' See details for additional information on each model.
 #'
+#' @param max_interaction For the log-linear structural model, the highest
+#' structural-level interaction to include in the model.
 #' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
 #'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
 #'   how to draw the attribute hierarchy.
@@ -127,6 +129,15 @@ crum <- function() {
 #' presence of one attribute and the presence of any other. For an example of
 #' independent attributes model, see Lee (2016).
 #'
+#' The loglinear structural model assumes that class membership proportions can
+#' be estimated using a loglinear model that includes main and interaction
+#' effects (see Xu & von Davier, 2008). A saturated loglinear structural model
+#' includes interaction effects for all attributes measured in the model, and is
+#' equivalent to the unconstrained structural model and the saturated model
+#' described by Hu & Templin (2020) and in Chapter 8 of Rupp et al. (2010). A
+#' reduced form of the loglinear structural model containing only main effects
+#' is equivalent to an independent attributes model (e.g. Lee, 2016).
+#'
 #' The hierarchical attributes model assumes some attributes must be mastered
 #' before other attributes can be mastered. For an example of the hierarchical
 #' attributes model, see Leighton et al. (2004) and Templin & Bradshaw (2014).
@@ -142,22 +153,29 @@ crum <- function() {
 #' @references Lee, S. Y. (2016). *Cognitive diagnosis model: DINA model with
 #'   independent attributes*.
 #'   https://mc-stan.org/documentation/case-studies/dina_independent.html
-#' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
-#'   measurement: Theory, methods, and applications*. Guilford Press.
 #' @references Leighton, J. P., Gierl, M. J., & Hunka, S. M. (2004). The
 #'   attribute hierarchy method for cognitive assessment: A variation on
 #'   Tatsuoka's rule-space approach.
 #'   *Journal of Educational Measurement, 41*(3), 205-237.
 #'   \doi{10.1111/j.1745-3984.2004.tb01163.x}
+#' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
+#'   measurement: Theory, methods, and applications*. Guilford Press.
 #' @references Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
 #'   classification models: A family of models for estimating and testing
 #'   attribute hierarchies. *Psychometrika, 79*(2), 317-339
 #'   \doi{10.1007/s11336-013-9362-0}
+#' @references Xu, X., & von Davier, M. (2008). *Fitting the structured general
+#'   diagnostic model to NAEP data* (RR-08-27). Princeton, NJ: Educational
+#'   Testing Service.
 #'
 #' @examples
 #' unconstrained()
 #'
 #' independent()
+#'
+#' loglinear()
+#'
+#' loglinear(max_interaction = 1)
 #'
 #' hdcm(hierarchy = "att1 -> att2 -> att3")
 unconstrained <- function() {
@@ -168,6 +186,13 @@ unconstrained <- function() {
 #' @export
 independent <- function() {
   INDEPENDENT(model = "independent")
+}
+
+#' @rdname structural-model
+#' @export
+loglinear <- function(max_interaction = Inf) {
+  LOGLINEAR(model = "loglinear",
+            list(max_interaction = max_interaction))
 }
 
 #' @rdname structural-model
@@ -375,7 +400,9 @@ UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
 INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
                              package = "dcmstan",
                              properties = list(model = model_property))
-
+LOGLINEAR <- S7::new_class("LOGLINEAR", parent = structural,
+                           package = "dcmstan",
+                           properties = list(model = model_property))
 HDCM <- S7::new_class("HDCM", parent = structural, package = "dcmstan",
                       properties = list(model = model_property))
 

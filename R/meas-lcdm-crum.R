@@ -6,6 +6,8 @@
 #' `model` block.
 #'
 #' @param qmatrix A cleaned matrix (via [rdcmchecks::clean_qmatrix()]).
+#' @param max_interaction The highest level interaction that should be included
+#'   in the model. For the C-RUM, this is always 1 (i.e., main effects only).
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #' @param att_names Vector of attribute names, as in the

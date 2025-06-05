@@ -1,56 +1,68 @@
 test_that("lcdm script works", {
-  ecpe_spec <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                           identifier = "item_id",
-                           measurement_model = lcdm())
-  mdm_spec <- dcm_specify(qmatrix = dcmdata::mdm_qmatrix,
-                          identifier = "item",
-                          measurement_model = lcdm())
-  dtmr_spec <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
-                           identifier = "item",
-                           measurement_model = lcdm())
-  expect_snapshot(stan_code(ecpe_spec))
-  expect_snapshot(stan_code(mdm_spec))
-  expect_snapshot(stan_code(dtmr_spec))
+  ecpe_lcdm_unst <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                                identifier = "item_id",
+                                measurement_model = lcdm())
+  mdm_lcdm_unst <- dcm_specify(qmatrix = dcmdata::mdm_qmatrix,
+                               identifier = "item",
+                               measurement_model = lcdm())
+  dtmr_lcdm_unst <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                                identifier = "item",
+                                measurement_model = lcdm())
+  expect_snapshot(stan_code(ecpe_lcdm_unst))
+  expect_snapshot(stan_code(mdm_lcdm_unst))
+  expect_snapshot(stan_code(dtmr_lcdm_unst))
 
-  ecpe_spec2 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                            identifier = "item_id",
-                            measurement_model = lcdm(),
-                            structural_model = independent())
-  expect_snapshot(stan_code(ecpe_spec2))
+  ecpe_lcdm_indp <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                                identifier = "item_id",
+                                measurement_model = lcdm(),
+                                structural_model = independent())
+  expect_snapshot(stan_code(ecpe_lcdm_indp))
+
+  dtmr_lcdm_logl <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                                identifier = "item",
+                                measurement_model = lcdm(),
+                                structural_model = loglinear())
+  expect_snapshot(stan_code(dtmr_lcdm_logl))
 
   # edge case where all items are simple structure
-  dtmr_spec2 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix %>%
-                              dplyr::filter(!(item %in% c("10b", "10c", "13",
-                                                          "14", "15a", "17",
-                                                          "18", "22"))),
-                            identifier = "item",
-                            measurement_model = lcdm())
-  expect_snapshot(stan_code(dtmr_spec2))
+  dtmr_edge <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix %>%
+                             dplyr::filter(!(item %in% c("10b", "10c", "13",
+                                                         "14", "15a", "17",
+                                                         "18", "22"))),
+                           identifier = "item",
+                           measurement_model = lcdm())
+  expect_snapshot(stan_code(dtmr_edge))
 })
 
 test_that("crum script works", {
-  ecpe_spec <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                           identifier = "item_id",
-                           measurement_model = crum())
-  mdm_spec <- dcm_specify(qmatrix = dcmdata::mdm_qmatrix,
-                          identifier = "item",
-                          measurement_model = crum())
-  dtmr_spec <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
-                           identifier = "item",
-                           measurement_model = crum())
-  expect_snapshot(stan_code(ecpe_spec))
-  expect_snapshot(stan_code(mdm_spec))
-  expect_snapshot(stan_code(dtmr_spec))
+  ecpe_crum_unst <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                                identifier = "item_id",
+                                measurement_model = crum())
+  mdm_crum_unst <- dcm_specify(qmatrix = dcmdata::mdm_qmatrix,
+                               identifier = "item",
+                               measurement_model = crum())
+  dtmr_crum_unst <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                                identifier = "item",
+                                measurement_model = crum())
+  expect_snapshot(stan_code(ecpe_crum_unst))
+  expect_snapshot(stan_code(mdm_crum_unst))
+  expect_snapshot(stan_code(dtmr_crum_unst))
 
-  ecpe_spec2 <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
-                            identifier = "item_id",
-                            measurement_model = crum(),
-                            structural_model = independent())
-  expect_snapshot(stan_code(ecpe_spec2))
+  ecpe_crum_indp <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                                identifier = "item_id",
+                                measurement_model = crum(),
+                                structural_model = independent())
+  expect_snapshot(stan_code(ecpe_crum_indp))
+
+  dtmr_crum_logl <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix,
+                                identifier = "item",
+                                measurement_model = crum(),
+                                structural_model = loglinear())
+  expect_snapshot(stan_code(dtmr_crum_logl))
 })
 
 test_that("lcdm with hierarchy works", {
-  ecpe_spec <- dcm_specify(
+  ecpe_ldcm_hdcm <- dcm_specify(
     qmatrix = dcmdata::ecpe_qmatrix,
     identifier = "item_id",
     measurement_model = lcdm(),
@@ -58,5 +70,5 @@ test_that("lcdm with hierarchy works", {
       hierarchy = "lexical -> cohesive -> morphosyntactic"
     )
   )
-  expect_snapshot(stan_code(ecpe_spec))
+  expect_snapshot(stan_code(ecpe_ldcm_hdcm))
 })

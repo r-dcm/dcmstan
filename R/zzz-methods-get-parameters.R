@@ -44,7 +44,8 @@ S7::method(get_parameters, dcm_specification) <- function(x, qmatrix,
     get_parameters(x@measurement_model, qmatrix = x@qmatrix,
                    attributes = x@qmatrix_meta$attribute_names,
                    items = x@qmatrix_meta$item_names),
-    get_parameters(x@structural_model, qmatrix = x@qmatrix)
+    get_parameters(x@structural_model, qmatrix = x@qmatrix,
+                   attributes = x@qmatrix_meta$attribute_names)
   )
 }
 
@@ -86,14 +87,18 @@ S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL,
 
 # Methods for structural models ------------------------------------------------
 S7::method(get_parameters, UNCONSTRAINED) <- function(x, qmatrix,
-                                                      identifier = NULL) {
+                                                      identifier = NULL,
+                                                      attributes = NULL) {
   tibble::tibble(type = "structural", coefficient = "Vc")
 }
 
 S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
-                                                    identifier = NULL) {
+                                                    identifier = NULL,
+                                                    attributes = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
-  att_names <- if (is.null(identifier)) {
+  att_names <- if (!is.null(attributes)) {
+    names(attributes)
+  } else if (is.null(identifier)) {
     colnames(qmatrix)
   } else {
     colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
@@ -103,6 +108,19 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
                  coefficient = paste0("eta[", seq_along(att_names), "]"))
 }
 
-S7::method(get_parameters, HDCM) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, LOGLINEAR) <- function(x, qmatrix,
+                                                  identifier = NULL,
+                                                  attributes = NULL) {
+  check_number_whole(x@model_args$max_interaction, min = 1,
+                     allow_infinite = TRUE)
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+  loglinear_parameters(qmatrix = qmatrix, identifier = identifier,
+                       max_interaction = x@model_args$max_interaction,
+                       att_names = attributes)
+}
+
+S7::method(get_parameters, HDCM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL) {
   tibble::tibble(type = "structural", coefficient = "Vc")
 }

@@ -53,6 +53,7 @@ prior <- function(distribution, type,
 #' @examples
 #' default_dcm_priors(lcdm(), unconstrained())
 #' default_dcm_priors(dina(), independent())
+#' default_dcm_priors(lcdm(), loglinear())
 default_dcm_priors <- function(measurement_model = NULL,
                                structural_model = NULL) {
   meas_priors <- if (is.null(measurement_model)) {
@@ -74,12 +75,11 @@ default_dcm_priors <- function(measurement_model = NULL,
     NULL
   } else {
     S7::check_is_S7(structural_model, class = structural)
-    switch(
-      structural_model@model,
-      unconstrained = unconstrained_priors(),
-      independent = independent_priors(),
-      hdcm = hdcm_priors()
-    )
+    switch(structural_model@model,
+           unconstrained = unconstrained_priors(),
+           independent = independent_priors(),
+           loglinear = loglinear_priors(),
+           hdcm = hdcm_priors())
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -116,6 +116,10 @@ unconstrained_priors <- function() {
 
 independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
+}
+
+loglinear_priors <- function() {
+  prior("normal(0, 10)", type = "structural")
 }
 
 hdcm_priors <- unconstrained_priors
