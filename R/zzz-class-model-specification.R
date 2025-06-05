@@ -126,8 +126,7 @@ dcm_specify <- function(qmatrix, identifier = NULL,
 dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
   properties = list(
     qmatrix = S7::new_property(
-      class = S7::class_data.frame,
-      default = data.frame(),
+      class = S7::class_list,
       setter = function(self, value) {
         if (!is.null(self@qmatrix)) {
           stop("@qmatrix is read-only", call. = FALSE)
@@ -156,15 +155,15 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
     ),
     measurement_model = S7::new_property(
       class = measurement,
-      default = lcdm()
+      default = NULL
     ),
     structural_model = S7::new_property(
       class = structural,
-      default = unconstrained()
+      default = NULL
     ),
     priors = S7::new_property(
       class = dcmprior,
-      default = default_dcm_priors(lcdm(), unconstrained())
+      default = NULL
     )
   ),
   validator = function(self) {
