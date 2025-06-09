@@ -157,8 +157,6 @@ meas_lcdm <- function(qmatrix,
 meas_crum <- function(qmatrix, priors) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors)
 }
-<<<<<<< HEAD:R/meas-lcdm-crum.R
-=======
 
 #' @rdname lcdm-crum-ncrum
 #' @noRd
@@ -166,4 +164,3 @@ meas_ncrum <- function(qmatrix, max_interaction = Inf, priors) {
   meas_lcdm(qmatrix, max_interaction = max_interaction,
             positive_interactions = TRUE, priors = priors)
 }
->>>>>>> 6d32554aa0d2f5cef0d27f68119464f0110e4936:R/meas-lcdm-crum-ncrum.R
