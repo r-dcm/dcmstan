@@ -30,6 +30,11 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
                                 rename_attributes = TRUE,
                                 rename_items = TRUE)
 
+  if (!is.null(hierarchy)) {
+    type_hierarchy <- determine_hierarchy_type(hierarchy)
+  }
+
+
   meas_params <- all_params |>
     dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
                                                  "intercept",
@@ -52,7 +57,10 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
       constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
-        .data$param_level >= 2 & !is.null(hierarchy) ~ glue::glue("<lower=0>"),
+        .data$param_level >= 2 & type_hierarchy == "diverging" ~
+          glue::glue("<lower=-1 * min([{comp_atts}])>"),
+        .data$param_level >= 2 & type_hierarchy != "diverging" ~
+          glue::glue("<lower=0>")
         .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
       ),
       param_def = dplyr::case_when(

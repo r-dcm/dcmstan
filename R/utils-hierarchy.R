@@ -77,3 +77,39 @@ check_hierarchy_names <- function(x, attribute_names,
 
   invisible(NULL)
 }
+
+#' Determines the type of hierarchy
+#'
+#' @param x A character string containing the quoted attribute hierarchy.
+#'
+#' @returns A string.
+#' @noRd
+determine_hierarchy_type <- function(x) {
+  if (is.null(x) && allow_null) return(invisible(NULL))
+
+  check_string(x)
+
+  g <- glue::glue(" graph { <x> } ", .open = "<", .close = ">")
+  g <- dagitty::dagitty(g)
+
+  if (nrow(dagitty::edges(g)) == 0) return(invisible(NULL))
+
+  hierarchy <- glue::glue(" dag { <x> } ", .open = "<", .close = ">")
+  hierarchy <- ggdag::tidy_dagitty(hierarchy)
+
+  atts <- hierarchy |>
+    tibble::as_tibble() |>
+    dplyr::distinct(.data$name) |>
+    dplyr::pull()
+
+  for (ii in atts) {
+    tmp_att <- atts[ii]
+
+    successor_att <- hierarchy |>
+      dplyr::filter(.data$to == tmp_att)
+
+    if (nrow(successor_att) > 1) {
+      tmp_type <- "divergent"
+    }
+  }
+}
