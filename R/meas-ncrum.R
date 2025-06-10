@@ -30,7 +30,7 @@ meas_ncrum <- function(qmatrix, priors) {
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(attributes = ncol(qmatrix))
+  all_profiles <- create_profiles(ncol(qmatrix))
 
   profiles <- all_profiles |>
     tibble::rowid_to_column("profile_id") |>
