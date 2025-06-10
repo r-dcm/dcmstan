@@ -75,7 +75,7 @@ test_that("ncrum default priors", {
     prior_tibble(ncrum_priors()),
     tibble::tibble(type = c("slip", "penalty"),
                    coefficient = NA_character_,
-                   prior = c("beta(5, 25)", "beta(5, 25)"=))
+                   prior = c("beta(5, 25)", "beta(5, 25)"))
   )
 })
 

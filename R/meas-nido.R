@@ -65,7 +65,7 @@ meas_nido <- function(qmatrix, priors) {
                     grepl("__", .data$parameter) ~ .data$parameter,
                     grepl("beta", .data$parameter) ~ .data$parameter,
                     TRUE ~ gsub("att", "gamma", .data$parameter)
-                    ))
+                  ))
 
   pi_def <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
                                profile_id = seq_len(nrow(all_profiles))) |>

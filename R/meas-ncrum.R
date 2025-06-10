@@ -45,10 +45,10 @@ meas_ncrum <- function(qmatrix, priors) {
     dplyr::mutate(att_id = as.numeric(sub("att", "", .data$att_id)))
 
   pi_def <- tidyr::crossing(profiles |>
-                    dplyr::select(-"meas"),
-                  q |>
-                    dplyr::select(-"measured"),
-                  type = c("slip", "penalty")) |>
+                              dplyr::select(-"meas"),
+                            q |>
+                              dplyr::select(-"measured"),
+                            type = c("slip", "penalty")) |>
     dplyr::filter(.data$att == .data$att_id) |>
     dplyr::select("profile_id", "item_id", "att_id", "type") |>
     dplyr::left_join(profiles |>

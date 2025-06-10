@@ -178,7 +178,7 @@ nida_parameters <- function(qmatrix, identifier = NULL,
       dplyr::left_join(attribute_ids,
                        by = dplyr::join_by("att_id" == "att_number")) |>
       dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
-      dplyr::select( -"dcmstan_real_att_id")
+      dplyr::select(-"dcmstan_real_att_id")
   }
 
   return(all_params)
@@ -222,7 +222,7 @@ nido_parameters <- function(qmatrix, identifier = NULL,
       dplyr::left_join(attribute_ids,
                        by = dplyr::join_by("att_id" == "att_number")) |>
       dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
-      dplyr::select( -"dcmstan_real_att_id")
+      dplyr::select(-"dcmstan_real_att_id")
   }
 
   return(all_params)
@@ -298,7 +298,7 @@ ncrum_parameters <- function(qmatrix, identifier = NULL,
       dplyr::left_join(attribute_ids,
                        by = dplyr::join_by("att_id" == "att_number")) |>
       dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
-      dplyr::select( -"dcmstan_real_att_id")
+      dplyr::select(-"dcmstan_real_att_id")
   }
 
   if (!rename_items) {
