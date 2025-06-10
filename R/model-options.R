@@ -18,7 +18,9 @@ meas_choices <- function() {
 #' @noRd
 strc_choices <- function() {
   c("unconstrained" = "unconstrained",
-    "independent attributes" = "independent")
+    "independent attributes" = "independent",
+    "log-linear" = "loglinear",
+    "hierarchical diagnostic classification model (HDCM)" = "hdcm")
 }
 
 

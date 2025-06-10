@@ -14,10 +14,8 @@
 #'   attribute).
 #' @param identifier Optional. If present, the quoted name of the column in the
 #'   `qmatrix` that contains item identifiers.
-#' @param measurement_model A measurement model object (e.g., [lcdm()],
-#'   [dina()]).
-#' @param structural_model A structural model object (e.g., [unconstrained()],
-#'   [independent()]).
+#' @param measurement_model A [measurement model][measurement-model] object.
+#' @param structural_model A [structural model][structural-model] object.
 #' @param priors A prior object created by [prior()]. If `NULL` (the default),
 #'   default prior distributions defined by [default_dcm_priors()] are used.
 #'
@@ -44,12 +42,26 @@ dcm_specify <- function(qmatrix, identifier = NULL,
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
+  if (!is.null(structural_model@model_args$hierarchy)) {
+    check_hierarchy_names(structural_model@model_args$hierarchy,
+                          attribute_names = names(qmatrix$attribute_names),
+                          arg = rlang::caller_arg(structural_model))
+  }
+
+  # tweak measurement model as needed ------------------------------------------
   if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {
     measurement_model@model_args$max_interaction <- 1L
   } else if (measurement_model@model == "lcdm" &&
                all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
   }
+  if (measurement_model@model == "lcdm" &&
+        S7::S7_inherits(structural_model, HDCM)) {
+    measurement_model@model_args$hierarchy <-
+      structural_model@model_args$hierarchy
+  }
+
+  # define priors --------------------------------------------------------------
   if (is.null(priors)) {
     priors <- default_dcm_priors(measurement_model = measurement_model,
                                  structural_model = structural_model)
@@ -61,6 +73,7 @@ dcm_specify <- function(qmatrix, identifier = NULL,
                 replace = TRUE)
   }
 
+  # create specification -------------------------------------------------------
   dcm_specification(
     qmatrix = qmatrix$clean_qmatrix,
     qmatrix_meta = list(
@@ -76,10 +89,44 @@ dcm_specify <- function(qmatrix, identifier = NULL,
 
 
 # Model specification class ----------------------------------------------------
+#' S7 model specification class
+#'
+#' The `dcm_specification` constructor is exported to facilitate the defining
+#' of methods in other packages. We do not expect or recommend calling this
+#' function directly. Rather, to create a model specification, one should use
+#' [dcm_specify()].
+#'
+#' @param qmatrix A cleaned Q-matrix, as returned by
+#'   [rdcmchecks::clean_qmatrix()].
+#' @param qmatrix_meta A list of Q-matrix metadata consisting of the other
+#'   (not Q-matrix) elements returned by [rdcmchecks::clean_qmatrix()].
+#' @param measurement_model A [measurement model][measurement-model] object.
+#' @param structural_model A [structural model][structural-model] object.
+#' @param priors A [prior][prior()] object.
+#'
+#' @returns A `dcm_specification` object.
+#' @seealso [dcm_specify()]
+#' @export
+#'
+#' @examples
+#' qmatrix <- tibble::tibble(
+#'   att1 = sample(0:1, size = 15, replace = TRUE),
+#'   att2 = sample(0:1, size = 15, replace = TRUE),
+#'   att3 = sample(0:1, size = 15, replace = TRUE),
+#'   att4 = sample(0:1, size = 15, replace = TRUE)
+#' )
+#'
+#' dcm_specification(qmatrix = qmatrix,
+#'                   qmatrix_meta = list(attribute_names = paste0("att", 1:4),
+#'                                       item_identifier = NULL,
+#'                                       item_names = 1:15),
+#'                   measurement_model = lcdm(),
+#'                   structural_model = unconstrained(),
+#'                   priors = default_dcm_priors(lcdm(), unconstrained()))
 dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
   properties = list(
     qmatrix = S7::new_property(
-      class = S7::class_data.frame,
+      class = S7::class_list,
       setter = function(self, value) {
         if (!is.null(self@qmatrix)) {
           stop("@qmatrix is read-only", call. = FALSE)
@@ -108,17 +155,21 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
     ),
     measurement_model = S7::new_property(
       class = measurement,
-      default = lcdm()
+      default = NULL
     ),
     structural_model = S7::new_property(
       class = structural,
-      default = unconstrained()
+      default = NULL
     ),
-    priors = dcmprior
+    priors = S7::new_property(
+      class = dcmprior,
+      default = NULL
+    )
   ),
   validator = function(self) {
     all_params <- dplyr::bind_rows(
-      get_parameters(self@measurement_model, qmatrix = self@qmatrix),
+      get_parameters(self@measurement_model, qmatrix = self@qmatrix,
+                     attributes = self@qmatrix_meta$attribute_names),
       get_parameters(self@structural_model, qmatrix = self@qmatrix)
     )
 
@@ -170,6 +221,18 @@ S7::method(print, dcm_specification) <- function(x, ...) {
     which(strc_choices() == x@structural_model@model)
   ]
   strc_mod_name <- gsub("^([a-z])", "\\U\\1", strc_mod_name, perl = TRUE)
+  if (!rlang::is_empty(x@structural_model@model_args$hierarchy)) {
+    strc_mod_name <- c(paste0(strc_mod_name, ","),
+                       "with structure:",
+                       gsub("\n", ";", x@structural_model@model_args$hierarchy))
+  } else if (S7::S7_inherits(x@structural_model, LOGLINEAR) &&
+               !is.infinite(x@structural_model@model_args$max_interaction)) {
+    max_int <- x@structural_model@model_args$max_interaction
+    label <- dplyr::if_else(max_int == 1, "only main effects",
+                            paste0("up to ", max_int, "-way interactions"))
+
+    strc_mod_name <- paste0(strc_mod_name, ", with ", label)
+  }
 
   # prior distributions -----
   prior_statements <- x@priors |>

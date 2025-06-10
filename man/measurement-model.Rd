@@ -104,7 +104,7 @@ interaction parameters to be positive, which differs from the LCDM.
 \examples{
 lcdm()
 
-lcdm(max_interaction = 2)
+lcdm(max_interaction = 3)
 
 dina()
 

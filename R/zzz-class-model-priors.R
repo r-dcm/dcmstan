@@ -53,6 +53,7 @@ prior <- function(distribution, type,
 #' @examples
 #' default_dcm_priors(lcdm(), unconstrained())
 #' default_dcm_priors(dina(), independent())
+#' default_dcm_priors(lcdm(), loglinear())
 default_dcm_priors <- function(measurement_model = NULL,
                                structural_model = NULL) {
   meas_priors <- if (is.null(measurement_model)) {
@@ -79,7 +80,9 @@ default_dcm_priors <- function(measurement_model = NULL,
     S7::check_is_S7(structural_model, class = structural)
     switch(structural_model@model,
            unconstrained = unconstrained_priors(),
-           independent = independent_priors())
+           independent = independent_priors(),
+           loglinear = loglinear_priors(),
+           hdcm = hdcm_priors())
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -132,8 +135,31 @@ independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
 }
 
+loglinear_priors <- function() {
+  prior("normal(0, 10)", type = "structural")
+}
+
+hdcm_priors <- unconstrained_priors
 
 # dcmprior class ---------------------------------------------------------------
+#' S7 prior class
+#'
+#' The `dcmprior` constructor is exported to facilitate the defining
+#' of methods in other packages. We do not expect or recommend calling this
+#' function directly. Rather, to create a model specification, one should use
+#' [prior()] or [default_dcm_priors()].
+#'
+#' @inheritParams prior
+#'
+#' @returns A `dcmprior` object.
+#' @seealso [prior()], [default_dcm_priors()]
+#' @export
+#'
+#' @examples
+#' dcmprior(
+#'   distribution = "normal(0, 1)",
+#'   type = "intercept"
+#' )
 dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
   properties = list(
     distribution = S7::new_property(
@@ -191,8 +217,35 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
 
 
 # dcmprior methods -------------------------------------------------------------
+#' Coerce a dcmprior object to a tibble
+#'
+#' When specifying prior distributions, it is often useful to see which
+#' parameters are included in a given model. Using the Q-matrix and type of
+#' diagnostic model to estimated, we can create a list of all included
+#' parameters for which a prior can be specified.
+#'
+#' @param x A model specification (e.g., [dcm_specify()], measurement model
+#'   (e.g., [lcdm()]), or structural model (e.g., [unconstrained()]) object.
+#' @param ... Additional arguments passed to methods. See details.
+#'
+#' @details
+#' Additional arguments passed to methods:
+#'
+#' @return A [tibble][tibble::tibble-package] showing the specified priors.
+#' @export
+#'
+#' @examples
+#' prior_tibble(default_dcm_priors(lcdm()))
+#'
+#' prior_tibble(default_dcm_priors(dina(), independent()))
 prior_tibble <- S7::new_generic("prior_tibble", "x")
 
+#' @details
+#' `.keep_all`: Logical indicating if all components should be returned. When
+#'   `FALSE` (the default), only the `@type`, `@coefficient`, and `@prior`
+#'   elements of the [dcmprior][prior()] object is return. When `TRUE`, the
+#'   `@distribtuion`, `@lower_bound`, and `@upper_bound` are also returned.
+#' @name prior_tibble
 S7::method(prior_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
   tib <- tibble::tibble(
     distribution = x@distribution,

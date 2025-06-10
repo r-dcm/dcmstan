@@ -14,6 +14,7 @@ reference:
   contents:
   - measurement-model
   - structural-model
+  - generated-quantities
 
 - subtitle: Priors
   contents:
@@ -25,3 +26,9 @@ reference:
   contents:
   - stan_code
   - stan_data
+
+- title: internal
+  contents:
+  - dcm_specification
+  - dcmprior
+  - prior_tibble
