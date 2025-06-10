@@ -68,7 +68,7 @@ meas_nida <- function(qmatrix, priors) {
 
   # priors -----
   att_priors <- nida_parameters(qmatrix = qmatrix) |>
-    dplyr::left_join(dcmstan:::prior_tibble(priors) %>%
+    dplyr::left_join(prior_tibble(priors) |>
                        dplyr::select(-"coefficient"),
                      by = c("type")) |>
     dplyr::mutate(prior_def = glue::glue("{coefficient} ~ {prior};")) |>

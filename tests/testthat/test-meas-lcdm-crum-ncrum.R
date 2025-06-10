@@ -19,7 +19,7 @@ test_that("lcdm script works", {
   expect_snapshot(stan_code(ecpe_spec2))
 
   # edge case where all items are simple structure
-  dtmr_spec2 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix %>%
+  dtmr_spec2 <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix |>
                               dplyr::filter(!(item %in% c("10b", "10c", "13",
                                                           "14", "15a", "17",
                                                           "18", "22"))),
