@@ -166,29 +166,19 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
 }
 
 
-<<<<<<< HEAD
 #' Determine the possible parameters for a NIDA model
-=======
-#' Determine the possible parameters for a Log-linear structural model
->>>>>>> dc6f2a2bfa6f0d0cd09a3c5076b97c649da2aa68
 #'
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
-<<<<<<< HEAD
-=======
-#' @param max_interaction Positive integer. For the Log-linear structural
-#' model, the highest structural-level interaction to include in the model.
->>>>>>> dc6f2a2bfa6f0d0cd09a3c5076b97c649da2aa68
 #' @param rename_attributes Logical. Should the output rename the attributes to
 #'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
 #'   the original attributes names in the Q-matrix (`FALSE`, the default).
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-<<<<<<< HEAD
 nida_parameters <- function(qmatrix, identifier = NULL,
                             rename_attributes = FALSE) {
   if (!is.null(identifier)) {

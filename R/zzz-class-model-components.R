@@ -446,15 +446,12 @@ DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
 
 CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
-<<<<<<< HEAD
 NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 NIDO <- S7::new_class("NIDO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
                        properties = list(model = model_property))
-=======
->>>>>>> dc6f2a2bfa6f0d0cd09a3c5076b97c649da2aa68
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
