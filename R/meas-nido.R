@@ -12,7 +12,7 @@
 #'   and `priors`.
 #' @rdname nido
 #' @noRd
-meas_nido <- function(qmatrix, priors) {
+meas_nido <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   # parameters block -----
   all_params <- nido_parameters(qmatrix = qmatrix)
 

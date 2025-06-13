@@ -12,7 +12,7 @@
 #'   and `priors`.
 #' @rdname ncrum
 #' @noRd
-meas_ncrum <- function(qmatrix, priors) {
+meas_ncrum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   # parameters block -----
   all_params <- ncrum_parameters(qmatrix = qmatrix,
                                  rename_attributes = TRUE,

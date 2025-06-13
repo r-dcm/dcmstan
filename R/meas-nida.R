@@ -12,7 +12,7 @@
 #'   and `priors`.
 #' @rdname nida
 #' @noRd
-meas_nida <- function(qmatrix, priors) {
+meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   # parameters block -----
   parameters_block <- glue::glue(
     "  ////////////////////////////////// attribute parameters",
