@@ -440,7 +440,7 @@ model_matrix_name_repair <- function(x) {
 #' @noRd
 filter_hierarchy <- function(all_params, filtered_hierarchy) {
   graph_def <- filtered_hierarchy |>
-    glue::glue_data("{name} {direction} {to}", )
+    glue::glue_data("{name} {direction} {to}")
   g <- glue::glue("graph {{ ",
                   "{paste(graph_def, collapse = '\n')} ",
                   "}}", .sep = "\n") |>
