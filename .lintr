@@ -2,6 +2,15 @@ linters: linters_with_defaults(object_name_linter(styles = c("snake_case", "symb
 exclusions: list(
     "R/import-standalone-obj-type.R",
     "R/import-standalone-types-check.R",
+    "R/meas-ncrum.R" = list(
+      object_usage_linter = Inf
+    ),
+    "R/meas-nida.R" = list(
+      object_usage_linter = Inf
+    ),
+    "R/meas-nido.R" = list(
+      object_usage_linter = Inf
+    ),
     "R/meas-hdcm.R" = list(
       object_usage_linter = Inf
     ),

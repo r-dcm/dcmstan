@@ -67,7 +67,10 @@ default_dcm_priors <- function(measurement_model = NULL,
       ),
       dina = dina_priors(),
       dino = dino_priors(),
-      crum = crum_priors()
+      crum = crum_priors(),
+      nida = nida_priors(),
+      nido = nido_priors(),
+      ncrum = ncrum_priors()
     )
   }
 
@@ -107,6 +110,20 @@ dino_priors <- dina_priors
 crum_priors <- function() {
   c(prior("normal(0, 2)", type = "intercept"),
     prior("lognormal(0, 1)", type = "maineffect"))
+}
+
+nido_priors <- function() {
+  c(prior("normal(0, 2)", type = "beta"),
+    prior("lognormal(0, 1)", type = "gamma"))
+}
+
+nida_priors <- dina_priors
+
+ncrum_priors <- function() {
+  prior <- c(prior("beta(5, 25)", type = "slip"),
+             prior("beta(5, 25)", type = "penalty"))
+
+  prior
 }
 
 ## structural model defaults -----

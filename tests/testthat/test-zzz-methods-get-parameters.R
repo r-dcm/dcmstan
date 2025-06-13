@@ -251,6 +251,100 @@ test_that("dino parameters work", {
   )
 })
 
+test_that("nida parameters work", {
+  set.seed(123)
+  test_qmatrix <- tibble::tibble(
+    question = c("Q1", "Q2", "Q3", "Q4"),
+    att1 = c(1, 0, 1, 0),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1),
+    att4 = c(0, 0, 1, 1)
+  )
+
+  params <- get_parameters(nida(), qmatrix = test_qmatrix,
+                           identifier = "question")
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("att_id", "type", "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tibble(
+      att_id = rep(c("att1", "att2", "att3", "att4"), each = 2),
+      type = rep(c("guess", "slip"), 4),
+      coefficient = c("guess[1]", "slip[1]", "guess[2]", "slip[2]", "guess[3]",
+                      "slip[3]", "guess[4]", "slip[4]")
+    ),
+    ignore_attr = TRUE
+  )
+})
+
+test_that("nido parameters work", {
+  test_qmatrix <- tibble::tibble(
+    question = c("Q1", "Q2", "Q3", "Q4"),
+    skill1 = c(1, 0, 1, 1),
+    skill2 = c(0, 1, 0, 1),
+    skill3 = c(0, 1, 1, 1),
+    skill4 = c(0, 0, 1, 1)
+  )
+
+  params <- get_parameters(nido(), qmatrix = test_qmatrix,
+                           identifier = "question")
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("att_id", "type", "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~att_id,         ~type,              ~coefficient,
+        "skill1",       "beta",             "beta1",
+        "skill1",       "gamma",            "gamma1",
+        "skill2",       "beta",             "beta2",
+        "skill2",       "gamma",            "gamma2",
+        "skill3",       "beta",             "beta3",
+        "skill3",       "gamma",            "gamma3",
+        "skill4",       "beta",             "beta4",
+        "skill4",       "gamma",            "gamma4"
+    )
+  )
+})
+
+test_that("ncrum parameters work", {
+  set.seed(123)
+  test_qmatrix <- tibble::tibble(
+    question = c("Q1", "Q2", "Q3", "Q4"),
+    att1 = c(1, 0, 1, 0),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1),
+    att4 = c(0, 0, 1, 1)
+  )
+
+  params <- get_parameters(ncrum(), qmatrix = test_qmatrix,
+                           identifier = "question")
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("question", "att_id", "type", "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tibble(
+      question = c("Q1", "Q1", "Q2", "Q2", "Q2", "Q2", "Q3", "Q3", "Q3", "Q3",
+                   "Q3", "Q3", "Q4", "Q4", "Q4", "Q4", "Q4", "Q4"),
+      att_id = c(rep("att1", 2), rep("att2", 2), rep("att3", 2),
+                 rep("att1", 2), rep("att3", 2), rep("att4", 2),
+                 rep("att2", 2), rep("att3", 2), rep("att4", 2)),
+      type = rep(c("penalty", "slip"), 9),
+      coefficient = c("penalty_1_1", "slip_1_1", "penalty_2_2", "slip_2_2",
+                      "penalty_2_3", "slip_2_3", "penalty_3_1", "slip_3_1",
+                      "penalty_3_3", "slip_3_3", "penalty_3_4", "slip_3_4",
+                      "penalty_4_2", "slip_4_2", "penalty_4_3", "slip_4_3",
+                      "penalty_4_4", "slip_4_4")
+    ),
+    ignore_attr = TRUE
+  )
+})
+
 # structural model parameters --------------------------------------------------
 test_that("unconstrained parameters work", {
   test_qmatrix <- tibble::tibble(
