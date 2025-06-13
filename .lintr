@@ -9,6 +9,8 @@ exclusions: list(
       object_usage_linter = Inf
     ),
     "R/meas-nido.R" = list(
+      object_usage_linter = Inf
+    ),
     "R/meas-hdcm.R" = list(
       object_usage_linter = Inf
     ),
