@@ -85,19 +85,22 @@ S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL,
                   att_names = attributes, item_names = items)
 }
 
-S7::method(get_parameters, NIDA) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, NIDA) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   nida_parameters(qmatrix = qmatrix, identifier = identifier)
 }
 
-S7::method(get_parameters, NIDO) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, NIDO) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   nido_parameters(qmatrix = qmatrix, identifier = identifier)
 }
 
-S7::method(get_parameters, NCRUM) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, NCRUM) <- function(x, qmatrix, identifier = NULL,
+                                              attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   ncrum_parameters(qmatrix = qmatrix, identifier = identifier)
