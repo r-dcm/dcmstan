@@ -98,7 +98,7 @@ The reduced NC-RUM is used in practice because the full NC-RUM includes a
 parameter to account for Q-matrix incompleteness that is difficult to
 estimate reliably. The reduced NC-RUM is  less restrictive than the NIDA
 model, since it does not constrain parameters across items. Thus, the reduced
-NC-RUM is similar to the LDCM; however, the reduced NC-RUM constrains
+NC-RUM is similar to the LCDM; however, the reduced NC-RUM constrains
 interaction parameters to be positive, which differs from the LCDM.
 }
 \examples{
