@@ -34,57 +34,71 @@ S7::method(get_parameters, dcm_specification) <- function(x, qmatrix,
     arg <- rlang::caller_arg(x)
     cli::cli_warn(
       glue::glue("{{.arg qmatrix}} and {{.arg identifier}} should not be
-                 specified for {{.cls dcm_specification}} objects. Using",
-                 "{{.code {arg}@qmatrix}} instead.",
+                 specified for {{.cls dcm_specification}} objects. Using
+                 {{.code {arg}@qmatrix}} instead.",
                  .sep = " ")
     )
   }
 
   dplyr::bind_rows(
-    get_parameters(x@measurement_model, qmatrix = x@qmatrix),
-    get_parameters(x@structural_model, qmatrix = x@qmatrix)
+    get_parameters(x@measurement_model, qmatrix = x@qmatrix,
+                   attributes = x@qmatrix_meta$attribute_names,
+                   items = x@qmatrix_meta$item_names),
+    get_parameters(x@structural_model, qmatrix = x@qmatrix,
+                   attributes = x@qmatrix_meta$attribute_names)
   )
 }
 
 # Methods for measurement models -----------------------------------------------
-S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL) {
-  check_number_whole(x@model_args$max_interaction, min = 1,
-                     allow_infinite = TRUE)
+S7::method(get_parameters, LCDM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
-                  max_interaction = x@model_args$max_interaction)
+                  max_interaction = x@model_args$max_interaction,
+                  att_names = attributes, item_names = items,
+                  hierarchy = x@model_args$hierarchy)
 }
 
-S7::method(get_parameters, DINA) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, DINA) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  dina_parameters(qmatrix = qmatrix, identifier = identifier)
+  dina_parameters(qmatrix = qmatrix, identifier = identifier,
+                  item_names = items)
 }
 
-S7::method(get_parameters, DINO) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, DINO) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  dina_parameters(qmatrix = qmatrix, identifier = identifier)
+  dina_parameters(qmatrix = qmatrix, identifier = identifier,
+                  item_names = items)
 }
 
-S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL) {
+S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
-                  max_interaction = 1L)
+                  max_interaction = 1L,
+                  att_names = attributes, item_names = items)
 }
 
 # Methods for structural models ------------------------------------------------
 S7::method(get_parameters, UNCONSTRAINED) <- function(x, qmatrix,
-                                                      identifier = NULL) {
+                                                      identifier = NULL,
+                                                      attributes = NULL) {
   tibble::tibble(type = "structural", coefficient = "Vc")
 }
 
 S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
-                                                    identifier = NULL) {
+                                                    identifier = NULL,
+                                                    attributes = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
-  att_names <- if (is.null(identifier)) {
+  att_names <- if (!is.null(attributes)) {
+    names(attributes)
+  } else if (is.null(identifier)) {
     colnames(qmatrix)
   } else {
     colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
@@ -94,96 +108,27 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
                  coefficient = paste0("eta[", seq_along(att_names), "]"))
 }
 
-S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
-                                                  identifier = NULL) {
+S7::method(get_parameters, LOGLINEAR) <- function(x, qmatrix,
+                                                  identifier = NULL,
+                                                  attributes = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
-  hierarchy = x@model_args$hierarchy
-  att_labels = x@model_args$att_labels
-  if(is.null(hierarchy)) {
-    temp_hierarchy <- tidyr::expand_grid(param = att_labels$att,
-                                         parent = att_labels$att) |>
-      tibble::as_tibble() |>
-      dplyr::mutate(param_id = stringr::str_remove(.data$param, "att"),
-                    param_id = as.integer(param_id),
-                    parent_id = stringr::str_remove(.data$parent, "att"),
-                    parent_id = as.integer(parent_id)) |>
-      dplyr::filter(parent_id > param_id) |>
-      dplyr::select("param", "parent") |>
-      dplyr::left_join(att_labels, by = c("parent" = "att")) |>
-      dplyr::select(-"parent") |>
-      dplyr::rename(parent = att_label) |>
-      dplyr::left_join(att_labels, by = c("param" = "att")) |>
-      dplyr::select(-"param") |>
-      dplyr::rename(param = att_label) |>
-      dplyr::select("param", "parent")
 
-    hierarchy <- temp_hierarchy |>
-      dplyr::mutate(edge = paste(param, "->", parent)) |>
-      dplyr::select(edge) |>
-      dplyr::summarize(hierarchy = paste(edge, collapse = "  ")) |>
-      dplyr::pull(.data$hierarchy)
-  }
+  loglinear_parameters(qmatrix = qmatrix, identifier = identifier,
+                       max_interaction = x@model_args$max_interaction,
+                       att_names = attributes)
+}
 
-  g <- glue::glue(" graph { <hierarchy> } ", .open = "<", .close = ">")
-  g <- dagitty::dagitty(g)
-  hierarchy <- glue::glue(" dag { <hierarchy> } ", .open = "<", .close = ">")
-  hierarchy <- ggdag::tidy_dagitty(hierarchy)
+S7::method(get_parameters, HDCM) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL) {
+  tibble::tibble(type = "structural", coefficient = "Vc")
+}
 
-  parents <- tibble::tibble()
-  ancestors <- tibble::tibble()
-  roots <- dagitty::exogenousVariables(g)
+S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
+                                                 identifier = NULL,
+                                                 attributes = NULL) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  for (jj in hierarchy |> tibble::as_tibble() |> dplyr::pull(.data$name)) {
-    tmp_jj <- att_labels |>
-      dplyr::filter(.data$att_label == jj) |>
-      dplyr::pull(.data$att)
-
-    tmp <- dagitty::ancestors(g, jj) |>
-      tibble::as_tibble() |>
-      dplyr::mutate(param = tmp_jj) |>
-      dplyr::rename(ancestor = "value") |>
-      dplyr::select("param", "ancestor") |>
-      dplyr::left_join(att_labels, by = c("ancestor" = "att_label")) |>
-      dplyr::select("param", ancestor = "att")
-
-    ancestors <- dplyr::bind_rows(ancestors, tmp) |>
-      dplyr::distinct()
-
-    tmp2 <- dagitty::parents(g, jj) |>
-      tibble::as_tibble() |>
-      dplyr::mutate(param = tmp_jj) |>
-      dplyr::rename(parent = "value") |>
-      dplyr::select("param", "parent") |>
-      dplyr::left_join(att_labels, by = c("parent" = "att_label")) |>
-      dplyr::select("param", parent = "att")
-
-    parents <- dplyr::bind_rows(parents, tmp2) |>
-      dplyr::distinct()
-
-    if(jj %in% roots) {
-      parents <- dplyr::bind_rows(
-        parents,
-        jj |>
-          tibble::as_tibble() |>
-          dplyr::left_join(att_labels, by = c("value" = "att_label")) |>
-          dplyr::rename(param = att) |>
-          dplyr::select("param") |>
-          dplyr::mutate(parent = NA_character_)
-      ) |>
-        dplyr::arrange(param)
-    }
-  }
-
-  imatrix <- ancestors |>
-    dplyr::rename(parent = ancestor) |>
-    dplyr::left_join(parents |>
-                       dplyr::filter(!is.na(parent)) |>
-                       dplyr::mutate(meas = 1L),
-                     by = c("param", "parent")) |>
-    dplyr::arrange(param) |>
-    tidyr::pivot_wider(names_from = "parent", values_from = "meas") |>
-    dplyr::mutate(dplyr::across(dplyr::starts_with("att"), ~tidyr::replace_na(., 0L)))
-
-  bayesnet_parameters(imatrix = imatrix, identifier = "param")
-
+  bayesnet_parameters(qmatrix = qmatrix, identifier = identifier,
+                      hierarchy = x@model_args$hierarchy,
+                      att_names = attributes)
 }

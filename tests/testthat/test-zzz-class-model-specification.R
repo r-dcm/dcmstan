@@ -31,6 +31,12 @@ test_that("dcm_specification class errors when expected", {
                            priors = prior("beta(1, 1)", type = "intercept",
                                           coefficient = "l12_0")),
                "coefficients not included")
+  expect_error(dcm_specify(qmatrix = test_qmatrix, identifier = "item",
+                           measurement_model = lcdm(),
+                           structural_model = loglinear(),
+                           priors = prior("beta(1, 1)", type = "structural",
+                                          coefficient = "g_41234")),
+               "coefficients not included")
 })
 
 test_that("dcm_specification works", {
@@ -87,6 +93,7 @@ test_that("printing works", {
                        measurement_model = dina(),
                        structural_model = independent())
 
+<<<<<<< HEAD
   test_qmatrix4 <- tibble::tibble(
     item = paste0("item_", 1:10),
     att1 = c(0L, 1L, 0L, 0L, 0L, 1L, 1L, 1L, 0L, 0L),
@@ -97,10 +104,48 @@ test_that("printing works", {
   spec4 <- dcm_specify(qmatrix = test_qmatrix4, identifier = "item",
                        measurement_model = lcdm(),
                        structural_model = bayesnet())
+=======
+
+  test_qmatrix3 <- tibble::tibble(
+    item = paste0("item_", 1:10),
+    node1 = c(0L, 1L, 0L, 0L, 0L, 1L, 1L, 1L, 0L, 0L),
+    node2 = c(0L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 1L, 1L),
+    node3 = c(1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 1L, 1L)
+  )
+
+  logl1 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
+                       measurement_model = lcdm(),
+                       structural_model = loglinear())
+
+  logl2 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
+                       measurement_model = lcdm(),
+                       structural_model = loglinear(max_interaction = 1))
+
+  logl3 <- dcm_specify(qmatrix = test_qmatrix3, identifier = "item",
+                       measurement_model = lcdm(),
+                       structural_model = loglinear(max_interaction = 2))
+
+  hdcm1 <- dcm_specify(qmatrix = test_qmatrix, identifier = "item",
+                       measurement_model = lcdm(max_interaction = 1),
+                       structural_model = hdcm("node3 -> node2 -> node1"))
+
+  hdcm2 <- dcm_specify(qmatrix = test_qmatrix2, identifier = "question",
+                       measurement_model = dina(),
+                       structural_model = hdcm("skill_1 -> skill_2
+                                                skill_1 -> skill_3"))
+>>>>>>> dc6f2a2bfa6f0d0cd09a3c5076b97c649da2aa68
 
   expect_snapshot({
     spec
     spec2
+<<<<<<< HEAD
     spec4
+=======
+    logl1
+    logl2
+    logl3
+    hdcm1
+    hdcm2
+>>>>>>> dc6f2a2bfa6f0d0cd09a3c5076b97c649da2aa68
   })
 })

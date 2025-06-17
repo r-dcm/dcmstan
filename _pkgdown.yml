@@ -14,6 +14,7 @@ reference:
   contents:
   - measurement-model
   - structural-model
+  - generated-quantities
 
 - subtitle: Priors
   contents:
@@ -21,10 +22,13 @@ reference:
   - prior
   - get_parameters
 
-- title: Generate 'Stan' code
+- title: Interface with 'Stan'
   contents:
-  - generate_stan
+  - stan_code
+  - stan_data
 
 - title: internal
   contents:
-  - model-components
+  - dcm_specification
+  - dcmprior
+  - prior_tibble

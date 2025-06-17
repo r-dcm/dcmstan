@@ -15,7 +15,9 @@ meas_choices <- function() {
 strc_choices <- function() {
   c("unconstrained" = "unconstrained",
     "independent attributes" = "independent",
-    "bayesian network" = "bayesnet")
+    "log-linear" = "loglinear",
+    "hierarchical diagnostic classification model (HDCM)" = "hdcm",
+    "Bayesian network" = "bayesnet")
 }
 
 

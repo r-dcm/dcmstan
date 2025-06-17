@@ -70,7 +70,7 @@ attributes.
 \examples{
 lcdm()
 
-lcdm(max_interaction = 2)
+lcdm(max_interaction = 3)
 
 dina()
 }

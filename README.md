@@ -33,7 +33,7 @@ classification models. Using dcmstan, you can:
   models to specify a diagnostic model with `dcm_specify()`,
 - Define `prior()` distributions, and
 - Generate Stan code for the model, given the specifications and priors
-  with `generate_stan()`
+  with `stan_code()`
 
 dcmstan is used as a backend for generating the Stan code needed to
 estimate and evaluate with the [measr](https://measr.info) package. If
@@ -60,20 +60,17 @@ new_model <- dcm_specify(qmatrix = mdm_qmatrix, identifier = "item",
                          measurement_model = lcdm(),
                          structural_model = unconstrained())
 
-generate_stan(new_model)
+stan_code(new_model)
 #> data {
 #>   int<lower=1> I;                      // number of items
 #>   int<lower=1> R;                      // number of respondents
 #>   int<lower=1> N;                      // number of observations
 #>   int<lower=1> C;                      // number of classes
-#>   int<lower=1> A;                      // number of attributes
 #>   array[N] int<lower=1,upper=I> ii;    // item for observation n
 #>   array[N] int<lower=1,upper=R> rr;    // respondent for observation n
 #>   array[N] int<lower=0,upper=1> y;     // score for observation n
 #>   array[R] int<lower=1,upper=N> start; // starting row for respondent R
-#>   array[R] int<lower=1,upper=I> num;   // number of items for respondent R
-#>   matrix[C,A] Alpha;                   // attribute pattern for each class
-#>   matrix[I,C] Xi;                      // class attribute mastery indicator
+#>   array[R] int<lower=1,upper=I> num;   // number items for respondent R
 #> }
 #> parameters {
 #>   simplex[C] Vc;                  // base rates of class membership
@@ -140,6 +137,6 @@ generate_stan(new_model)
 
 Contributions are welcome. To ensure a smooth process, please review the
 [Contributing Guide](https://dcmstan.r-dcm.org/CONTRIBUTING.html).
-Please note that the dcmdata project is released with a [Contributor
+Please note that the dcmstan project is released with a [Contributor
 Code of Conduct](https://dcmstan.r-dcm.org/CODE_OF_CONDUCT.html). By
 contributing to this project, you agree to abide by its terms.
