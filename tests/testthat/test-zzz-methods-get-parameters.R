@@ -333,6 +333,66 @@ test_that("independent parameters work", {
   expect_equal(params, params2)
 })
 
+test_that("loglinear parameters work", {
+  test_qmatrix <- tibble::tibble(
+    att1 = c(1, 0, 1, 1),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1)
+  )
+
+  params <- get_parameters(loglinear(), qmatrix = test_qmatrix)
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("profile_id", "type", "attributes",
+                                   "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~profile_id,         ~type,             ~attributes, ~coefficient,
+               2L,  "structural",                  "att1",       "g_11",
+               3L,  "structural",                  "att2",       "g_12",
+               4L,  "structural",                  "att3",       "g_13",
+               5L,  "structural",                  "att1",       "g_11",
+               5L,  "structural",                  "att2",       "g_12",
+               5L,  "structural",            "att1__att2",      "g_212",
+               6L,  "structural",                  "att1",       "g_11",
+               6L,  "structural",                  "att3",       "g_13",
+               6L,  "structural",            "att1__att3",      "g_213",
+               7L,  "structural",                  "att2",       "g_12",
+               7L,  "structural",                  "att3",       "g_13",
+               7L,  "structural",            "att2__att3",      "g_223",
+               8L,  "structural",                  "att1",       "g_11",
+               8L,  "structural",                  "att2",       "g_12",
+               8L,  "structural",                  "att3",       "g_13",
+               8L,  "structural",            "att1__att2",      "g_212",
+               8L,  "structural",            "att1__att3",      "g_213",
+               8L,  "structural",            "att2__att3",      "g_223",
+               8L,  "structural",      "att1__att2__att3",     "g_3123"
+    )
+  )
+
+  expect_equal(
+    loglinear_parameters(test_qmatrix, max_interaction = 1,
+                         att_names = paste0("node", 1:3)),
+    tibble::tribble(
+      ~profile_id,         ~type,             ~attributes, ~coefficient,
+               2L,  "structural",                 "node1",       "g_11",
+               3L,  "structural",                 "node2",       "g_12",
+               4L,  "structural",                 "node3",       "g_13",
+               5L,  "structural",                 "node1",       "g_11",
+               5L,  "structural",                 "node2",       "g_12",
+               6L,  "structural",                 "node1",       "g_11",
+               6L,  "structural",                 "node3",       "g_13",
+               7L,  "structural",                 "node2",       "g_12",
+               7L,  "structural",                 "node3",       "g_13",
+               8L,  "structural",                 "node1",       "g_11",
+               8L,  "structural",                 "node2",       "g_12",
+               8L,  "structural",                 "node3",       "g_13"
+    )
+  )
+})
+
 test_that("hdcm parameters work", {
   test_qmatrix <- tibble::tibble(
     test_item = paste0("B", 1:5),
@@ -381,10 +441,10 @@ test_that("warnings are produced for unnecessary arguments", {
 
 test_that("combining parameters in a specification works", {
   test_qmatrix <- tibble::tibble(
-    att1 = c(1, 0, 1, 1),
-    att2 = c(0, 1, 0, 1),
-    att3 = c(0, 1, 1, 1),
-    att4 = c(0, 0, 1, 1)
+    skill1 = c(1, 0, 1, 1),
+    skill2 = c(0, 1, 0, 1),
+    skill3 = c(0, 1, 1, 1),
+    skill4 = c(0, 0, 1, 1)
   )
 
   spec1 <- dcm_specify(qmatrix = test_qmatrix)
@@ -412,12 +472,22 @@ test_that("combining parameters in a specification works", {
                  get_parameters(independent(), qmatrix = test_qmatrix)
                ))
 
-  spec3 <- dcm_specify(qmatrix = test_qmatrix,
-                       measurement_model = dino(),
-                       structural_model = independent())
-  expect_equal(get_parameters(spec3),
+  spec4 <- dcm_specify(qmatrix = test_qmatrix,
+                       measurement_model = lcdm(),
+                       structural_model = loglinear())
+  expect_equal(get_parameters(spec4),
                dplyr::bind_rows(
-                 get_parameters(dino(), qmatrix = test_qmatrix),
-                 get_parameters(independent(), qmatrix = test_qmatrix)
+                 get_parameters(lcdm(), qmatrix = test_qmatrix),
+                 get_parameters(loglinear(), qmatrix = test_qmatrix)
+               ))
+
+  spec4 <- dcm_specify(qmatrix = test_qmatrix,
+                       measurement_model = lcdm(),
+                       structural_model = loglinear(max_interaction = 1))
+  expect_equal(get_parameters(spec4),
+               dplyr::bind_rows(
+                 get_parameters(lcdm(), qmatrix = test_qmatrix),
+                 get_parameters(loglinear(max_interaction = 1),
+                                qmatrix = test_qmatrix)
                ))
 })

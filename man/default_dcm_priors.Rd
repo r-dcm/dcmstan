@@ -21,4 +21,5 @@ measurement and structural model.
 \examples{
 default_dcm_priors(lcdm(), unconstrained())
 default_dcm_priors(dina(), independent())
+default_dcm_priors(lcdm(), loglinear())
 }

@@ -5,12 +5,11 @@
 \title{S7 model specification class}
 \usage{
 dcm_specification(
-  qmatrix = structure(list(), names = character(0), row.names = integer(0), class =
-    "data.frame"),
+  qmatrix = list(),
   qmatrix_meta = list(),
-  measurement_model = <object>,
-  structural_model = <object>,
-  priors = <object>
+  measurement_model = measurement(),
+  structural_model = structural(),
+  priors = dcmprior()
 )
 }
 \arguments{
