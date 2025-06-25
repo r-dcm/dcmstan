@@ -36,6 +36,59 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
     type_hierarchy <- determine_hierarchy_type(hierarchy)
   }
 
+  att_dict <- att_names |>
+    tibble::as_tibble() %>%
+    dplyr::rename(new_name = value) |>
+    dplyr::mutate(name = names(att_names))
+
+  params_to_remove <- glue::glue(" dag { <hierarchy> } ", .open = "<",
+                                 .close = ">")
+  params_to_remove <- ggdag::tidy_dagitty(params_to_remove)
+  params_to_remove <- params_to_remove |>
+    tibble::as_tibble() |>
+    dplyr::filter(!is.na(.data$direction)) |>
+    dplyr::left_join(att_dict, by = "name") |>
+    dplyr::select(-"name") |>
+    dplyr::rename(name = new_name) |>
+    dplyr::left_join(att_dict, by = c("to" = "name")) |>
+    dplyr::select(-"to") |>
+    dplyr::rename(to = new_name) |>
+    dplyr::select("name", "to")
+
+  hier_qmatrix <- qmatrix
+
+  for (mm in seq_len(nrow(params_to_remove))) {
+    tmp_name <- params_to_remove$name[mm]
+    tmp_to <- params_to_remove$to[mm]
+
+    hier_qmatrix <- hier_qmatrix |>
+      dplyr::mutate(!!tmp_name := dplyr::case_when(!!sym(tmp_to) %in% c(1, -1) ~
+                                                     -1,
+                                                   TRUE ~ !!sym(tmp_name)))
+  }
+
+  hier_qmatrix <- hier_qmatrix |>
+    tibble::rowid_to_column("item_id") |>
+    tidyr::pivot_longer(cols = -c("item_id"), names_to = "att",
+                        values_to = "meas") |>
+    dplyr::filter(.data$meas == -1) |>
+    dplyr::select(-"meas")
+
+  # multi_att_items <- qmatrix |>
+  #
+  #
+  #   dplyr::rowwise() |>
+  #   dplyr::mutate(total = sum(c_across(where(is.numeric)))) |>
+  #   dplyr::ungroup() |>
+  #   tibble::rowid_to_column("item_id") %>%
+  #   dplyr::filter(.data$total >= 2) |>
+  #   dplyr::select(-"total") |>
+  #   tidyr::pivot_longer(cols = -c("item_id"), names_to = "att",
+  #                       values_to = "meas") |>
+  #   dplyr::filter(.data$meas == 1) |>
+  #   dplyr::select(-"meas")
+  #
+  # hier <-
 
   meas_params <- all_params |>
     dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
@@ -55,22 +108,25 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
         MoreArgs = list(possible_params = all_params$coefficient)
       ),
       param_name = glue::glue("l{item_id}_{param_level}",
-                              "{gsub(\"__\", \"\", atts)}"),
-      constraint = dplyr::case_when(
+                              "{gsub(\"__\", \"\", atts)}")
+    ) |>
+    dplyr::anti_join(hier_qmatrix, by = c("item_id", "parameter" = "att")) |>
+    dplyr::filter(.data$param_level <= max_interaction) |>
+    dplyr::mutate(constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
-        .data$param_level >= 2 & type_hierarchy == "diverging" ~
+        .data$param_level >= 2 & hier == "diverging" ~
           glue::glue("<lower=-1 * min([{comp_atts}])>"),
-        .data$param_level >= 2 & type_hierarchy != "diverging" ~
-          glue::glue("<lower=0>")
+        .data$param_level >= 2 & hier != "diverging" ~
+          glue::glue("<lower=0>"),
         .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
       ),
       param_def = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue("real {param_name};"),
         .data$param_level >= 1 ~ glue::glue("real{constraint} {param_name};")
       )
-    ) |>
-    dplyr::filter(.data$param_level <= max_interaction)
+    )
+
 
   intercepts <- meas_params |>
     dplyr::filter(.data$param_level == 0) |>
