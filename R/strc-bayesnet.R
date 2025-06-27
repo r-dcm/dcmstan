@@ -37,7 +37,7 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                       function(.x) length(attr(.x, "match.length"))) + 1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
-      comp_atts = one_down_params(.data$atts, item = .data$child_id),
+      comp_atts = mapply(one_down_params, x = .data$atts, item = .data$child_id),
       comp_atts = stringr::str_replace_all(comp_atts, "l", "g"),
       param_name = glue::glue("g{child_id}_{param_level}",
                               "{gsub(\"__\", \"\", atts)}"),
@@ -90,9 +90,23 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
 
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(length(att_names))
+  parents <- all_params %>%
+    dplyr::mutate(param = paste0("att", child_id)) %>%
+    tidyr::separate_longer_delim(attributes, delim = "__") %>%
+    dplyr::rename(parent = attributes) %>%
+    dplyr::group_by(param) %>%
+    dplyr::filter(dplyr::n() == 1 | !is.na(parent)) %>%
+    dplyr::ungroup() %>%
+    dplyr::distinct(param, parent)
 
-  all_profile_attributes <- tibble::tibble(profile_id = 1:nrow(all_profiles)) |>
+  all_profiles <- create_profiles(dplyr::n_distinct(dplyr::select(parents, "param")))
+
+  profile_params <- all_profiles |>
+    tibble::rowid_to_column("profile_id") |>
+    tidyr::pivot_longer(cols = -c("profile_id"),
+                        names_to = "param", values_to = "master")
+
+  profile_attributes <- tibble::tibble(profile_id = 1:nrow(all_profiles)) |>
     dplyr::left_join(
       all_profiles |>
         tibble::rowid_to_column("profile_id") |>
@@ -110,99 +124,97 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                   profile_attributes = dplyr::case_when(profile_id == 1L ~ "",
                                                         TRUE ~ profile_attributes))
 
-  tmp_rho_def <- tibble::tibble()
+  # create Vc terms based on parent configurations
+  Vc_terms <- parents %>%
+    dplyr::distinct(param) %>%
+    dplyr::pull(param) %>%
+    purrr::map_dfr(function(.x) {
+      param <- .x
 
-  for (jj in parents |> dplyr::distinct(param) |> dplyr::pull(.data$param)) {
+      # identify parents of a parameter
+      parents_jj <- parents %>%
+        dplyr::filter(param == !!param) %>%
+        dplyr::filter(!is.na(parent)) %>%
+        dplyr::pull(parent)
 
-    parents_jj <- parents |>
-      dplyr::filter(.data$param == jj) |>
-      dplyr::arrange(parent) |>
-      dplyr::select("parent") |>
-      dplyr::distinct()
+      # create a child parameter identifier
+      param_id <- as.integer(stringr::str_remove(param, "att"))
 
-    strc_params_jj <- strc_params |>
-      dplyr::filter(.data$param == jj) |>
-      dplyr::select("child_id","parameter", "param_name")
+      # return output for intercept-only case (endogenous variable)
+      if (length(parents_jj) == 0) {
+        param_names <- strc_params %>%
+          dplyr::filter(param == !!param) %>%
+          dplyr::pull(param_name)
 
-    if(nrow(parents_jj) == 1 && is.na(parents_jj$parent)) {
-      parents_jj_params <-
-        tibble::tibble(profile_id = 1L,
-                       parameter = "intercept",
-                       valid_for_profile = 1)
+        output <- tibble::tibble(
+          param_id = param_id,
+          profile_id = 1L,
+          parent_profile_id = 1L,
+          strc_params = param_names,
+          parent_attributes = ""
+        )
 
-      parents_jj_attributes <-
-        tibble::tibble(param_id = stringr::str_remove(jj, "att"),
-                       profile_id = 1L,
-                       parent_profile_id = 1L,
-                       parent_atts = "",
-                       parent_attributes = "") |>
-        dplyr::mutate(param_id = as.integer(param_id))
-    } else {
-      parent_profiles <- create_profiles(attributes = nrow(parents_jj)) |>
-        stats::setNames(parents_jj |> dplyr::pull(.data$parent))
+        return(output)
+      }
 
-      parents_jj_params <-
-        stats::model.matrix(stats::as.formula(paste0("~ .^",
-                                                     max(ncol(parent_profiles),
-                                                         2L))),
-                            parent_profiles) |>
-        tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
-        tibble::rowid_to_column(var = "profile_id") |>
-        tidyr::pivot_longer(-"profile_id", names_to = "parameter",
-                            values_to = "valid_for_profile")
+      # generate all profile configurations for parent attribute mastery
+      parent_profiles <- create_profiles(length(parents_jj)) %>%
+        stats::setNames(parents_jj)
 
-      parents_jj_attributes <- parent_profiles |>
-        tibble::rowid_to_column("profile_id") |>
-        tidyr::pivot_longer(cols = -c("profile_id"),
-                            names_to = "param", values_to = "valid_for_profile") |>
-        dplyr::filter(valid_for_profile == 1) |>
-        dplyr::mutate(param_id = stringr::str_remove(param, "att")) |>
-        dplyr::summarize(parent_atts = paste(param_id, collapse = "__"),
+      # generate all possible terms for the model: parent(s) -> child
+      parents_jj_terms <- stats::model.matrix(~ .^2, data = parent_profiles) %>%
+        tibble::as_tibble(.name_repair = model_matrix_name_repair) %>%
+        tibble::rowid_to_column("profile_id") %>%
+        tidyr::pivot_longer(cols = -c(profile_id),
+                            names_to = "parameter",
+                            values_to = "valid_for_profile") %>%
+        dplyr::filter(valid_for_profile == 1)
+
+      # generate the kernel expression of the logit function
+      param_lookup <- strc_params %>%
+        dplyr::filter(param == !!param) %>%
+        dplyr::select(parameter, param_name, child_id)
+      parents_jj_terms <- parents_jj_terms %>%
+        dplyr::left_join(param_lookup,
+                         by = "parameter") %>%
+        dplyr::filter(!is.na(param_name)) %>%
+        dplyr::summarize(strc_params = paste(param_name, collapse = "+"),
+                         .by = "profile_id")
+
+      # generate attribute information to assist mapping between parent_jj_terms
+      # and each Vc class index.
+      parent_attr_info <- parent_profiles %>%
+        tibble::rowid_to_column("profile_id") %>%
+        tidyr::pivot_longer(cols = -c(profile_id),
+                            names_to = "param", values_to = "valid_for_profile") %>%
+        dplyr::filter(valid_for_profile == 1) %>%
+        dplyr::mutate(param_id = stringr::str_remove(param, "att")) %>%
+        dplyr::summarise(parent_atts = paste(param_id, collapse = "__"),
                          parent_attributes = paste(param, collapse = "__"),
-                         .by = "profile_id") |>
-        dplyr::rename(parent_profile_id = profile_id) |>
-        dplyr::left_join(all_profile_attributes,
+                         .by = "profile_id") %>%
+        dplyr::rename(parent_profile_id = profile_id) %>%
+        dplyr::left_join(profile_attributes,
                          by = c("parent_atts" = "profile_atts",
-                                "parent_attributes" = "profile_attributes")) |>
+                                "parent_attributes" = "profile_attributes")) %>%
         dplyr::add_row(profile_id = 1L, parent_profile_id = 1L,
-                       parent_atts = "", parent_attributes = "") |>
-        dplyr::arrange(profile_id) |>
-        dplyr::mutate(param_id = stringr::str_remove(jj, "att")) |>
-        dplyr::mutate(param_id = as.integer(param_id)) |>
-        dplyr::select("child_id", "profile_id", dplyr::everything())
-    }
+                       parent_atts = "", parent_attributes = "") %>%
+        dplyr::mutate(param_id = param_id) %>%
+        dplyr::arrange(profile_id)
 
-    tmp <- parents_jj_attributes |>
-      dplyr::left_join(parents_jj_params |>
-                         dplyr::left_join(strc_params_jj, by = c("parameter"),
-                                          relationship = "many-to-many") |>
-                         dplyr::filter(valid_for_profile == 1) |>
-                         dplyr::select("param_id", "profile_id" = "profile_id",
-                                       "param_name") |>
-                         dplyr::distinct() |>
-                         dplyr::mutate(strc_params = paste(param_name,
-                                                           collapse = "+"),
-                                       .by = c("param_id", "profile_id")) |>
-                         dplyr::select(-"param_name") |>
-                         dplyr::rename(parent_profile_id = profile_id) |>
-                         dplyr::distinct(),
-                       by = c("param_id", "parent_profile_id"))
+      # map each strc node kernel to the correct Vc class
+      output <- parents_jj_terms %>%
+        dplyr::rename(parent_profile_id = profile_id) %>%
+        dplyr::inner_join(parent_attr_info,
+                          by = "parent_profile_id") %>%
+        dplyr::select(param_id, profile_id, parent_profile_id,
+                      strc_params, parent_attributes)
 
-    tmp_rho_def <- dplyr::bind_rows(tmp_rho_def, tmp)
-
-  }
-
-  rho_def <- tmp_rho_def |>
-    dplyr::arrange(param_id) |>
-    glue::glue_data("rho[{param_id},{profile_id}] = inv_logit({strc_params});")
-
-  profile_params <- all_profiles |>
-    tibble::rowid_to_column("profile_id") |>
-    tidyr::pivot_longer(cols = -c("profile_id"),
-                        names_to = "param", values_to = "master")
+      return(output)
+    })
 
   Vc_def <- tidyr::expand_grid(Vc_profile_id = seq_len(nrow(all_profiles)),
-                               param = att_labels$att) |>
+                               param = parents |> dplyr::arrange(param) |>
+                                 dplyr::distinct(param) |> dplyr::pull(param)) |>
     dplyr::left_join(profile_params,
                      by = c("Vc_profile_id" = "profile_id", "param")) |>
     dplyr::rename(param_master = master) |>
@@ -213,8 +225,9 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                                             TRUE ~ parent)) |>
     dplyr::left_join(profile_params,
                      by = c("Vc_profile_id" = "profile_id", "parent" = "param")) |>
-    dplyr::mutate(master = tidyr::replace_na(master, 0)) |>
-    dplyr::mutate(att = dplyr::case_when(master == 0L ~ "",
+    dplyr::rename(parent_master = master) |>
+    dplyr::mutate(parent_master = tidyr::replace_na(parent_master, 0)) %>%
+    dplyr::mutate(att = dplyr::case_when(parent_master == 0L ~ "",
                                          TRUE ~ parent)) |>
     dplyr::distinct(Vc_profile_id, param, param_master, att) |>
     dplyr::mutate(n_atts = dplyr::n(), .by = c(Vc_profile_id, param)) |>
@@ -227,27 +240,21 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
     dplyr::mutate(param_id = as.integer(stringr::str_remove(param, "att"))) |>
     dplyr::select("Vc_profile_id", "param_id",
                   "param_master", "parent_attributes") |>
-    dplyr::distinct() |>
-    dplyr::left_join(tmp_rho_def |>
-                       dplyr::rename(rho_profile_id = profile_id) |>
-                       dplyr::select(param_id, rho_profile_id, parent_attributes),
+    dplyr::distinct() %>%
+    dplyr::left_join(Vc_terms |>
+                       dplyr::select(param_id, parent_attributes, strc_params),
                      by = c("param_id", "parent_attributes")) |>
     dplyr::select(-"parent_attributes") |>
-    dplyr::mutate(
-      rhs = glue::glue("rho[{param_id},{rho_profile_id}]"),
-      rhs = dplyr::case_when(param_master == 0L ~ glue::glue("(1-{rhs})"),
-                             TRUE ~ rhs)
-    ) |>
+    dplyr::mutate(rhs = glue::glue("inv_logit({strc_params})")) |>
+    dplyr::mutate(rhs = dplyr::case_when(param_master == 0L ~
+                                           glue::glue("(1-{rhs})"),
+                                         TRUE ~ rhs)) |>
     dplyr::summarize(rhs = paste(rhs, collapse = "*"), .by = c(Vc_profile_id)) |>
     glue::glue_data("Vc[{Vc_profile_id}] = {rhs};")
 
   transformed_parameters_block <- glue::glue(
     "  simplex[C] Vc;",
     "  vector[C] log_Vc;",
-    "  matrix[I,C] rho;",
-    "",
-    "  ////////////////////////////////// marginal/conditional attr probabilities",
-    "  {glue::glue_collapse(rho_def, sep = \"\n  \")}",
     "",
     "  ////////////////////////////////// class membership probabilities",
     "  {glue::glue_collapse(Vc_def, sep = \"\n  \")}",
@@ -257,7 +264,7 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   )
 
   strc_priors <- strc_params |>
-    dplyr::select(-"param_id") |>
+    dplyr::select(-"child_id") |>
     dplyr::distinct() |>
     dplyr::left_join(prior_tibble(priors),
                      by = c("type", "param_name" = "coefficient"),
