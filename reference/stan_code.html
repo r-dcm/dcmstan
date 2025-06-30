@@ -15,7 +15,7 @@ and Thompson (2019)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dcmstan</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,96 +96,11 @@ Kansas; Accessible Teaching, Learning, and Assessment Systems.
 <span class="r-in"><span><span class="va">model_spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="dcm_specify.html">dcm_specify</a></span><span class="op">(</span>qmatrix <span class="op">=</span> <span class="va">qmatrix</span>,</span></span>
 <span class="r-in"><span>                          measurement_model <span class="op">=</span> <span class="fu"><a href="measurement-model.html">lcdm</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                          structural_model <span class="op">=</span> <span class="fu"><a href="structural-model.html">unconstrained</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> &lt;dcmstan::dcm_specification&gt; object is invalid:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> - `priors` contain types not included in the model: <span style="color: #0000BB;">"interaction"</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">stan_code</span><span class="op">(</span><span class="va">model_spec</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> data {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   int&lt;lower=1&gt; I;                      // number of items</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   int&lt;lower=1&gt; R;                      // number of respondents</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   int&lt;lower=1&gt; N;                      // number of observations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   int&lt;lower=1&gt; C;                      // number of classes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   array[N] int&lt;lower=1,upper=I&gt; ii;    // item for observation n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   array[N] int&lt;lower=1,upper=R&gt; rr;    // respondent for observation n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   array[N] int&lt;lower=0,upper=1&gt; y;     // score for observation n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   array[R] int&lt;lower=1,upper=N&gt; start; // starting row for respondent R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   array[R] int&lt;lower=1,upper=I&gt; num;   // number items for respondent R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> parameters {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   simplex[C] Vc;                  // base rates of class membership</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ////////////////////////////////// item intercepts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real l1_0;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real l2_0;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real l3_0;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real l4_0;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real l5_0;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ////////////////////////////////// item main effects</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real&lt;lower=0&gt; l1_11;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real&lt;lower=0&gt; l2_11;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real&lt;lower=0&gt; l2_12;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real&lt;lower=0&gt; l3_12;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real&lt;lower=0&gt; l5_12;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ////////////////////////////////// item interactions</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   real&lt;lower=-1 * min([l2_11,l2_12])&gt; l2_212;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> transformed parameters {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   vector[C] log_Vc = log(Vc);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   matrix[I,C] pi;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ////////////////////////////////// probability of correct response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[1,1] = inv_logit(l1_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[1,2] = inv_logit(l1_0+l1_11);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[1,3] = inv_logit(l1_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[1,4] = inv_logit(l1_0+l1_11);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[2,1] = inv_logit(l2_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[2,2] = inv_logit(l2_0+l2_11);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[2,3] = inv_logit(l2_0+l2_12);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[2,4] = inv_logit(l2_0+l2_11+l2_12+l2_212);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[3,1] = inv_logit(l3_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[3,2] = inv_logit(l3_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[3,3] = inv_logit(l3_0+l3_12);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[3,4] = inv_logit(l3_0+l3_12);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[4,1] = inv_logit(l4_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[4,2] = inv_logit(l4_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[4,3] = inv_logit(l4_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[4,4] = inv_logit(l4_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[5,1] = inv_logit(l5_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[5,2] = inv_logit(l5_0);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[5,3] = inv_logit(l5_0+l5_12);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   pi[5,4] = inv_logit(l5_0+l5_12);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> model {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ////////////////////////////////// priors</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Vc ~ dirichlet(rep_vector(1, C));</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l1_0 ~ normal(0, 2);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l1_11 ~ lognormal(0, 1);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l2_0 ~ normal(0, 2);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l2_11 ~ lognormal(0, 1);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l2_12 ~ lognormal(0, 1);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l2_212 ~ normal(0, 2);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l3_0 ~ normal(0, 2);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l3_12 ~ lognormal(0, 1);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l4_0 ~ normal(0, 2);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l5_0 ~ normal(0, 2);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   l5_12 ~ lognormal(0, 1);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ////////////////////////////////// likelihood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   for (r in 1:R) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     row_vector[C] ps;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     for (c in 1:C) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       array[num[r]] real log_items;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       for (m in 1:num[r]) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         int i = ii[start[r] + m - 1];</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         log_items[m] = y[start[r] + m - 1] * log(pi[i,c]) +</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                        (1 - y[start[r] + m - 1]) * log(1 - pi[i,c]);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       ps[c] = log_Vc[c] + sum(log_items);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     target += log_sum_exp(ps);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'model_spec' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
