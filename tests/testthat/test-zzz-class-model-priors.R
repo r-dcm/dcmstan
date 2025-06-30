@@ -26,6 +26,20 @@ test_that("define priors", {
   expect_identical(p@prior, "uniform(0, 20)T[,3]")
 })
 
+test_that("priors from variables works", {
+  my_prior <- "normal(0, 2)"
+  expect_identical(prior("normal(0, 2)", type = "intercept"),
+                   prior_string(my_prior, type = "intercept"))
+
+  my_prior <- "beta(5, 25)"
+  expect_identical(prior("beta(5, 25)", type = "slip"),
+                   prior_string(my_prior, type = "slip"))
+
+  my_prior <- "lognormal(0, 5)"
+  expect_identical(prior("lognormal(0, 5)", type = "maineffect"),
+                   prior_string(my_prior, type = "maineffect"))
+})
+
 # default priors work selectively ----------------------------------------------
 test_that("specify only measurement or structural", {
   expect_equal(default_dcm_priors(measurement_model = lcdm()),
