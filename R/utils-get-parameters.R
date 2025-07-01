@@ -130,7 +130,7 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
 dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
-                            rename_items = FALSE) {
+                            hierarchy = NULL, rename_items = FALSE) {
   if (is.null(identifier)) {
     if (is.null(item_names)) {
       item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
@@ -298,8 +298,8 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
 
             for (bb in ancs) {
               x <- x |>
-                dplyr::filter(!(grepl(aa, .data$attributes) &
-                                  !grepl(bb, .data$attributes)))
+                dplyr::filter(!(!grepl(bb, .data$attributes) &
+                                  grepl(aa, .data$attributes)))
             }
           }
 
