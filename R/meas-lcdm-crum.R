@@ -41,38 +41,61 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
     dplyr::rename(new_name = value) |>
     dplyr::mutate(name = names(att_names))
 
-  params_to_remove <- glue::glue(" dag { <hierarchy> } ", .open = "<",
-                                 .close = ">")
-  params_to_remove <- ggdag::tidy_dagitty(params_to_remove)
-  params_to_remove <- params_to_remove |>
-    tibble::as_tibble() |>
-    dplyr::filter(!is.na(.data$direction)) |>
-    dplyr::left_join(att_dict, by = "name") |>
-    dplyr::select(-"name") |>
-    dplyr::rename(name = new_name) |>
-    dplyr::left_join(att_dict, by = c("to" = "name")) |>
-    dplyr::select(-"to") |>
-    dplyr::rename(to = new_name) |>
-    dplyr::select("name", "to")
-
-  hier_qmatrix <- qmatrix
-
-  for (mm in seq_len(nrow(params_to_remove))) {
-    tmp_name <- params_to_remove$name[mm]
-    tmp_to <- params_to_remove$to[mm]
-
-    hier_qmatrix <- hier_qmatrix |>
-      dplyr::mutate(!!tmp_name := dplyr::case_when(!!sym(tmp_to) %in% c(1, -1) ~
-                                                     -1,
-                                                   TRUE ~ !!sym(tmp_name)))
-  }
-
-  hier_qmatrix <- hier_qmatrix |>
-    tibble::rowid_to_column("item_id") |>
-    tidyr::pivot_longer(cols = -c("item_id"), names_to = "att",
-                        values_to = "meas") |>
-    dplyr::filter(.data$meas == -1) |>
-    dplyr::select(-"meas")
+  # params_to_remove <- glue::glue(" daggity { <hierarchy> } ", .open = "<",
+  #                                .close = ">") |>
+  #   ggdag::tidy_dagitty()
+  # params_to_remove <- params_to_remove |>
+  #   tibble::as_tibble() |>
+  #   dplyr::filter(!is.na(.data$direction)) |>
+  #   dplyr::left_join(att_dict, by = "name") |>
+  #   dplyr::select(-"name") |>
+  #   dplyr::rename(name = new_name) |>
+  #   dplyr::left_join(att_dict, by = c("to" = "name")) |>
+  #   dplyr::select(-"to") |>
+  #   dplyr::rename(to = new_name) |>
+  #   dplyr::select("name", "to")
+  #
+  # hier <- dagitty::dagitty(glue::glue(" graph { <hierarchy> } ", .open = "<",
+  #                                     .close = ">"))
+  #
+  # for (ll in seq_len(length(att_names))) {
+  #   child_param <- att_names[ll]
+  #   child_param <- att_dict |>
+  #     dplyr::filter(.data$new_name == child_param) |>
+  #     dplyr::pull(.data$name)
+  #   parents <- dagitty::ancestors(hier, child_param) |>
+  #     tibble::as_tibble() |>
+  #     dplyr::rename(name = value) |>
+  #     dplyr::mutate(to = child_param) |>
+  #     dplyr::filter(.data$name != .data$to) |>
+  #     dplyr::left_join(att_dict, by = c("name")) |>
+  #     dplyr::select(name = "new_name", "to") |>
+  #     dplyr::left_join(att_dict, by = c("to" = "name")) |>
+  #     dplyr::select(name, to = "new_name") |>
+  #     dplyr::anti_join(params_to_remove, by = c("name", "to"))
+  #
+  #   params_to_remove <- bind_rows(params_to_remove, parents)
+  # }
+  #
+  # hier_qmatrix <- qmatrix
+  #
+  # for (mm in seq_len(nrow(params_to_remove))) {
+  #   tmp_name <- params_to_remove$name[mm]
+  #   tmp_to <- params_to_remove$to[mm]
+  #
+  #   hier_qmatrix <- hier_qmatrix |>
+  #     dplyr::mutate(!!tmp_to := dplyr::case_when(!!sym(tmp_to) == 1 &
+  #                                                   !!sym(tmp_name) %in% c(1, -1) ~
+  #                                                   -1,
+  #                                                TRUE ~ !!sym(tmp_to)))
+  # }
+  #
+  # hier_qmatrix <- hier_qmatrix |>
+  #   tibble::rowid_to_column("item_id") |>
+  #   tidyr::pivot_longer(cols = -c("item_id"), names_to = "att",
+  #                       values_to = "meas") |>
+  #   dplyr::filter(.data$meas == -1) |>
+  #   dplyr::select(-"meas")
 
   # multi_att_items <- qmatrix |>
   #
@@ -89,6 +112,159 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
   #   dplyr::select(-"meas")
   #
   # hier <-
+
+  diverging_peers <- type_hierarchy |>
+    dplyr::filter(.data$type == "diverging") |> # !is.na(.data$diverging_peers)) |>
+    dplyr::select("attribute", "children") |>
+    tidyr::unnest("children") |>
+    dplyr::group_by(.data$attribute) |>
+    dplyr::mutate(child_num = dplyr::row_number()) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(child_num = paste0("child", as.character(.data$child_num))) |>
+
+    dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
+    dplyr::select(-"attribute") |>
+    dplyr::rename(attribute = new_name) |>
+    dplyr::left_join(att_dict, by = c("children" = "name")) |>
+    dplyr::select(-"children") |>
+    dplyr::rename(children = new_name) |>
+    tidyr::pivot_wider(names_from = "child_num", values_from = "children")
+
+  diverging_items <- tibble::tibble()
+
+  if (nrow(diverging_peers) > 0) {
+    for (nn in seq_len(nrow(diverging_peers))) {
+      tmp_diverging <- diverging_peers[nn, ]
+
+      tmp2 <- tmp_diverging |>
+        dplyr::select(-"attribute") |>
+        tidyr::pivot_longer(cols = dplyr::everything(), names_to = "child_num",
+                            values_to = "att") |>
+        dplyr::select(-"child_num")
+
+      possible_items <- qmatrix |>
+        tibble::rowid_to_column("item_id")
+
+      for (pp in seq_len(nrow(tmp2))) {
+        tmp_att <- tmp2$att[pp]
+
+        possible_items <- possible_items |>
+          dplyr::filter(!!sym(tmp_att) == 1)
+      }
+
+      possible_items <- possible_items |>
+        dplyr::select("item_id") |>
+        dplyr::mutate(diverging = TRUE)
+
+      diverging_items <- bind_rows(diverging_items, possible_items)
+    }
+  }
+
+  if (nrow(diverging_items) == 0) {
+    diverging_items <- tibble::tibble(item_id = -9999, diverging = FALSE)
+  }
+
+
+
+  converging_peers <- type_hierarchy |>
+    dplyr::filter(.data$type == "converging") |>
+    dplyr::select("attribute", "parents") |>
+    tidyr::unnest("parents") |>
+    dplyr::group_by(.data$attribute) |>
+    dplyr::mutate(parent_num = dplyr::row_number()) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(parent_num = paste0("parent",
+                                      as.character(.data$parent_num))) |>
+    dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
+    dplyr::select(-"attribute") |>
+    dplyr::rename(attribute = new_name) |>
+    dplyr::left_join(att_dict, by = c("parents" = "name")) |>
+    dplyr::select(-"parents") |>
+    dplyr::rename(parent = new_name) |>
+    tidyr::pivot_wider(names_from = "parent_num", values_from = "parent")
+
+  converging_items <- tibble::tibble()
+
+  if (nrow(converging_peers) > 0) {
+    for (nn in seq_len(nrow(converging_peers))) {
+      tmp_converging <- converging_peers[nn, ]
+
+      tmp2 <- tmp_converging |>
+        dplyr::select(-"attribute") |>
+        tidyr::pivot_longer(cols = dplyr::everything(), names_to = "parent_num",
+                            values_to = "att") |>
+        dplyr::select(-"parent_num")
+
+      possible_items <- qmatrix |>
+        tibble::rowid_to_column("item_id")
+
+      for (pp in seq_len(nrow(tmp2))) {
+        tmp_att <- tmp2$att[pp]
+
+        possible_items <- possible_items |>
+          dplyr::filter(!!sym(tmp_att) == 1)
+      }
+
+      possible_items <- possible_items |>
+        dplyr::select("item_id") |>
+        dplyr::mutate(converging = TRUE)
+
+      converging_items <- bind_rows(converging_items, possible_items)
+    }
+  }
+
+  if (nrow(converging_items) == 0) {
+    converging_items <- tibble::tibble(item_id = -9999, diverging = FALSE)
+  }
+
+
+  # linear_atts <- type_hierarchy |>
+  #   dplyr::filter(.data$type != "diverging") |>
+  #   dplyr::filter(.data$type != "origin") |>
+  #   tidyr::unnest("parents") |>
+  #   dplyr::select("attribute", "parents") |>
+  #   tidyr::unnest("parents") |>
+  #   dplyr::group_by(.data$attribute) |>
+  #   dplyr::mutate(parent_num = dplyr::row_number()) |>
+  #   dplyr::ungroup() |>
+  #   dplyr::mutate(parent_num = paste0("parent",
+  #                                     as.character(.data$parent_num))) |>
+  #
+  #   dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
+  #   dplyr::select(-"attribute") |>
+  #   dplyr::rename(attribute = new_name) |>
+  #   dplyr::left_join(att_dict, by = c("parents" = "name")) |>
+  #   dplyr::select(-"parents") |>
+  #   dplyr::rename(parent = new_name) |>
+  #   tidyr::pivot_wider(names_from = "parent_num", values_from = "parent")
+  #
+  # linear_items <- tibble::tibble()
+  #
+  # for (nn in seq_len(nrow(linear_atts))) {
+  #   tmp_linear <- linear_atts[nn, ]
+  #
+  #   tmp2 <- tmp_linear |>
+  #     tidyr::pivot_longer(cols = -c("attribute"), names_to = "parent_num",
+  #                         values_to = "att") |>
+  #     dplyr::select(-"parent_num")
+  #
+  #   possible_items <- qmatrix |>
+  #     tibble::rowid_to_column("item_id")
+  #
+  #   for (pp in seq_len(nrow(tmp2))) {
+  #     parent_att <- tmp2$att[pp]
+  #     tmp_att <- tmp2$attribute[pp]
+  #
+  #     possible_items <- possible_items |>
+  #       dplyr::filter(!!sym(tmp_att) == 1 & !!sym(parent_att) == 1)
+  #   }
+  #
+  #   possible_items <- possible_items |>
+  #     dplyr::select("item_id") |>
+  #     dplyr::mutate(linear = TRUE)
+  #
+  #   linear_items <- bind_rows(linear_items, possible_items)
+  # }
 
   meas_params <- all_params |>
     dplyr::mutate(parameter = dplyr::case_when(is.na(.data$attributes) ~
@@ -110,23 +286,34 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
       param_name = glue::glue("l{item_id}_{param_level}",
                               "{gsub(\"__\", \"\", atts)}")
     ) |>
-    dplyr::anti_join(hier_qmatrix, by = c("item_id", "parameter" = "att")) |>
+    # dplyr::anti_join(hier_qmatrix, by = c("item_id", "parameter" = "att")) |>
     dplyr::filter(.data$param_level <= max_interaction) |>
+    dplyr::left_join(diverging_items, by = "item_id") |>
+    dplyr::mutate(diverging = dplyr::case_when(.data$param_level <= 1 ~ FALSE,
+                                               is.na(.data$diverging) ~ FALSE,
+                                               TRUE ~ .data$diverging)) |>
+    dplyr::left_join(converging_items, by = "item_id") |>
+    dplyr::mutate(converging = dplyr::case_when(.data$param_level <= 1 ~ FALSE,
+                                                is.na(.data$converging) ~ FALSE,
+                                                TRUE ~ .data$converging)) |>
+    # dplyr::left_join(linear_items, by = "item_id") |>
+    # dplyr::mutate(linear = dplyr::case_when(.data$param_level <= 1 ~ FALSE,
+    #                                         TRUE ~ .data$linear)) |>
     dplyr::mutate(constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
-        .data$param_level >= 2 & hier == "diverging" ~
+        .data$param_level >= 2 & diverging ~
           glue::glue("<lower=-1 * min([{comp_atts}])>"),
-        .data$param_level >= 2 & hier != "diverging" ~
-          glue::glue("<lower=0>"),
-        .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
+        .data$param_level >= 2 & converging ~
+          glue::glue("<lower=-1 * min([{comp_atts}])>"),
+        # .data$param_level >= 2 & linear ~ glue::glue("<lower=0>"),
+        .data$param_level >= 2 ~ glue::glue("<lower=0>")
       ),
       param_def = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue("real {param_name};"),
         .data$param_level >= 1 ~ glue::glue("real{constraint} {param_name};")
       )
     )
-
 
   intercepts <- meas_params |>
     dplyr::filter(.data$param_level == 0) |>
