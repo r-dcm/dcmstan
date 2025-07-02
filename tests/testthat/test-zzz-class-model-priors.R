@@ -41,18 +41,12 @@ test_that("specify only measurement or structural", {
                unconstrained_priors())
   expect_equal(default_dcm_priors(structural_model = independent()),
                independent_priors())
-<<<<<<< HEAD
-  expect_equal(default_dcm_priors(structural_model = bayesnet()),
-               bayesnet_priors())
-=======
   expect_equal(default_dcm_priors(structural_model = loglinear()),
                loglinear_priors())
-  expect_equal(default_dcm_priors(structural_model = hdcm()), hdcm_priors())
->>>>>>> dc6f2a2bfa6f0d0cd09a3c5076b97c649da2aa68
-
-  expect_equal(default_dcm_priors(measurement_model = crum(),
-                                  structural_model = unconstrained()),
-               c(crum_priors(), unconstrained_priors()))
+  expect_equal(default_dcm_priors(structural_model = hdcm()),
+               hdcm_priors())
+  expect_equal(default_dcm_priors(structural_model = bayesnet()),
+               bayesnet_priors())
 })
 
 # measurement model priors -----------------------------------------------------
@@ -118,15 +112,6 @@ test_that("independent default priors", {
   )
 })
 
-<<<<<<< HEAD
-test_that("bayesnet default priors", {
-  expect_identical(
-    prior_tibble(bayesnet_priors()),
-    tibble::tibble(type = c("structural_intercept", "structural_maineffect",
-                            "structural_interaction"),
-                   coefficient = NA_character_,
-                   prior = c("normal(0, 2)", "lognormal(0, 1)", "normal(0, 2)"))
-=======
 test_that("loglinear default priors", {
   expect_identical(
     prior_tibble(loglinear_priors()),
@@ -142,7 +127,15 @@ test_that("hdcm default priors", {
     tibble::tibble(type = c("structural"),
                    coefficient = "Vc",
                    prior = c("dirichlet(rep_vector(1, C))"))
->>>>>>> dc6f2a2bfa6f0d0cd09a3c5076b97c649da2aa68
+  )
+})
+
+test_that("bayesnet default priors", {
+  expect_identical(
+    prior_tibble(bayesnet_priors()),
+    tibble::tibble(type = c("structural"),
+                   coefficient = NA_character_,
+                   prior = c("normal(0, 2)"))
   )
 })
 

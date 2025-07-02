@@ -72,3 +72,15 @@ test_that("crum script works", {
                               structural_model = bayesnet())
   expect_snapshot(stan_code(ecpe_crum_bn))
 })
+
+test_that("lcdm with hierarchy works", {
+  ecpe_ldcm_hdcm <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = lcdm(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_snapshot(stan_code(ecpe_ldcm_hdcm))
+})
