@@ -47,7 +47,8 @@ S7::method(stan_code, dcm_specification) <- function(x) {
                  x@measurement_model@model_args)
   meas_code <- do.call(paste0("meas_", x@measurement_model@model), meas_args)
 
-  strc_args <- c(list(qmatrix = x@qmatrix, priors = x@priors),
+  strc_args <- c(list(qmatrix = x@qmatrix, priors = x@priors,
+                      att_names = x@qmatrix_meta$attribute_names),
                  x@structural_model@model_args)
   strc_code <- do.call(paste0("strc_", x@structural_model@model), strc_args)
 

@@ -96,7 +96,8 @@ default_dcm_priors <- function(measurement_model = NULL,
            unconstrained = unconstrained_priors(),
            independent = independent_priors(),
            loglinear = loglinear_priors(),
-           hdcm = hdcm_priors())
+           hdcm = hdcm_priors(),
+           bayesnet = bayesnet_priors())
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -140,6 +141,10 @@ loglinear_priors <- function() {
 }
 
 hdcm_priors <- unconstrained_priors
+
+bayesnet_priors <- function() {
+  prior("normal(0, 2)", type = "structural")
+}
 
 # dcmprior class ---------------------------------------------------------------
 #' S7 prior class

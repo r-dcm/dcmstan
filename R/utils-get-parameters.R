@@ -244,6 +244,96 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
 }
 
 
+#' Determine the possible parameters for a Bayesian network structural model
+#'
+#' @param imatrix An incidence matrix (structural version of a Q-matrix) that
+#'   details the conditional dependence relationships between the attributes in
+#'   structural model. Rows of the incidence matrix denote the child attributes
+#'   and the columns denote the parent attributes.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+bayesnet_parameters <- function(qmatrix, identifier = NULL,
+                                hierarchy = NULL,
+                                att_names = NULL,
+                                rename_attributes = FALSE) {
+  if (is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      tibble::rowid_to_column(var = "item_id")
+    identifier <- "item_id"
+  }
+
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
+      rlang::set_names(
+        colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
+      )
+  } else if (is.null(names(att_names))) {
+    att_names <- rlang::set_names(att_names, att_names)
+  }
+
+  hierarchy <- if (is.null(hierarchy)) {
+    tidyr::expand_grid(child = att_names,
+                       parent = att_names) |>
+      tibble::as_tibble() |>
+      dplyr::mutate(child_id = stringr::str_remove(.data$child, "att"),
+                    child_id = as.integer(.data$child_id),
+                    parent_id = stringr::str_remove(.data$parent, "att"),
+                    parent_id = as.integer(.data$parent_id)) |>
+      dplyr::filter(.data$parent_id > .data$child_id) |>
+      dplyr::select("child", "parent") |>
+      dplyr::mutate(edge = paste(.data$child, "->", .data$parent)) |>
+      dplyr::select("edge") |>
+      dplyr::summarize(hierarchy = paste(.data$edge, collapse = "  ")) |>
+      dplyr::pull(.data$hierarchy)
+  } else {
+    replace_hierarchy_names(hierarchy, attribute_names = att_names)
+  }
+
+  i_matrix <- calculate_imatrix(hierarchy)
+
+  all_params <-
+    stats::model.matrix(
+      stats::as.formula(paste0("~ .^", max(ncol(i_matrix), 2L))), i_matrix
+    ) |>
+    tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
+    tibble::rowid_to_column(var = "child_id") |>
+    tidyr::pivot_longer(cols = -"child_id", names_to = "parameter",
+                        values_to = "value") |>
+    dplyr::filter(.data$value == 1) |>
+    dplyr::mutate(
+      param_level = dplyr::case_when(
+        .data$parameter == "intercept" ~ 0,
+        !grepl("__", .data$parameter) ~ 1,
+        TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
+                      function(.x) length(attr(.x, "match.length"))) + 1
+      ),
+      atts = gsub("[^0-9|_]", "", .data$parameter),
+      coefficient = glue::glue("g{child_id}_{param_level}",
+                               "{gsub(\"__\", \"\", atts)}"),
+      type = "structural",
+      attributes = dplyr::case_when(.data$param_level == 0 ~ NA_character_,
+                                    .data$param_level >= 1 ~ .data$parameter)
+    ) |>
+    dplyr::select("child_id", "type", "attributes", "coefficient") |>
+    dplyr::mutate(coefficient = as.character(.data$coefficient))
+
+
+  if (!rename_attributes) {
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attributes = gsub(paste0("att", i),
+                                                    names(att_names)[i],
+                                                    .data$attributes))
+    }
+  }
+
+  all_params
+}
+
+
 # Other utilities --------------------------------------------------------------
 #' Consistent naming for model matrix output
 #'

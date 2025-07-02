@@ -14,7 +14,8 @@
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @noRd
-strc_loglinear <- function(qmatrix, max_interaction = Inf, priors) {
+strc_loglinear <- function(qmatrix, priors, att_names = NULL,
+                           max_interaction = Inf) {
   # parameters block -----
   all_params <- loglinear_parameters(qmatrix = qmatrix,
                                      max_interaction = max_interaction)

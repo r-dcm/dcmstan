@@ -333,6 +333,53 @@ test_that("independent parameters work", {
   expect_equal(params, params2)
 })
 
+
+test_that("bayesian network parameters work", {
+  test_qmatrix <- tibble::tibble(
+    att1 = c(1, 0, 1, 1),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1)
+  )
+
+  params <- get_parameters(bayesnet(), qmatrix = test_qmatrix)
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(colnames(params), c("child_id", "type", "attributes",
+                                   "coefficient"))
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~child_id,         ~type,              ~attributes, ~coefficient,
+      1L,            "structural",        NA_character_,   "g1_0",
+      2L,            "structural",        NA_character_,   "g2_0",
+      2L,            "structural",        "att1",          "g2_11",
+      3L,            "structural",        NA_character_,   "g3_0",
+      3L,            "structural",        "att1",          "g3_11",
+      3L,            "structural",        "att2",          "g3_12",
+      3L,            "structural",        "att1__att2",    "g3_212"
+    )
+  )
+
+  params <- get_parameters(
+    bayesnet(hierarchy <- "att3 -> att2 -> att1"),
+    qmatrix = test_qmatrix
+    )
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~child_id,         ~type,              ~attributes, ~coefficient,
+      1L,   "structural",       NA_character_,     "g1_0",
+      1L,   "structural",       "att2",            "g1_12",
+      2L,   "structural",       NA_character_,     "g2_0",
+      2L,   "structural",       "att3",            "g2_13",
+      3L,   "structural",       NA_character_,     "g3_0"
+    )
+  )
+
+})
+
 test_that("loglinear parameters work", {
   test_qmatrix <- tibble::tibble(
     att1 = c(1, 0, 1, 1),
@@ -350,25 +397,25 @@ test_that("loglinear parameters work", {
     params,
     tibble::tribble(
       ~profile_id,         ~type,             ~attributes, ~coefficient,
-               2L,  "structural",                  "att1",       "g_11",
-               3L,  "structural",                  "att2",       "g_12",
-               4L,  "structural",                  "att3",       "g_13",
-               5L,  "structural",                  "att1",       "g_11",
-               5L,  "structural",                  "att2",       "g_12",
-               5L,  "structural",            "att1__att2",      "g_212",
-               6L,  "structural",                  "att1",       "g_11",
-               6L,  "structural",                  "att3",       "g_13",
-               6L,  "structural",            "att1__att3",      "g_213",
-               7L,  "structural",                  "att2",       "g_12",
-               7L,  "structural",                  "att3",       "g_13",
-               7L,  "structural",            "att2__att3",      "g_223",
-               8L,  "structural",                  "att1",       "g_11",
-               8L,  "structural",                  "att2",       "g_12",
-               8L,  "structural",                  "att3",       "g_13",
-               8L,  "structural",            "att1__att2",      "g_212",
-               8L,  "structural",            "att1__att3",      "g_213",
-               8L,  "structural",            "att2__att3",      "g_223",
-               8L,  "structural",      "att1__att2__att3",     "g_3123"
+      2L,  "structural",                  "att1",       "g_11",
+      3L,  "structural",                  "att2",       "g_12",
+      4L,  "structural",                  "att3",       "g_13",
+      5L,  "structural",                  "att1",       "g_11",
+      5L,  "structural",                  "att2",       "g_12",
+      5L,  "structural",            "att1__att2",      "g_212",
+      6L,  "structural",                  "att1",       "g_11",
+      6L,  "structural",                  "att3",       "g_13",
+      6L,  "structural",            "att1__att3",      "g_213",
+      7L,  "structural",                  "att2",       "g_12",
+      7L,  "structural",                  "att3",       "g_13",
+      7L,  "structural",            "att2__att3",      "g_223",
+      8L,  "structural",                  "att1",       "g_11",
+      8L,  "structural",                  "att2",       "g_12",
+      8L,  "structural",                  "att3",       "g_13",
+      8L,  "structural",            "att1__att2",      "g_212",
+      8L,  "structural",            "att1__att3",      "g_213",
+      8L,  "structural",            "att2__att3",      "g_223",
+      8L,  "structural",      "att1__att2__att3",     "g_3123"
     )
   )
 
@@ -377,20 +424,21 @@ test_that("loglinear parameters work", {
                          att_names = paste0("node", 1:3)),
     tibble::tribble(
       ~profile_id,         ~type,             ~attributes, ~coefficient,
-               2L,  "structural",                 "node1",       "g_11",
-               3L,  "structural",                 "node2",       "g_12",
-               4L,  "structural",                 "node3",       "g_13",
-               5L,  "structural",                 "node1",       "g_11",
-               5L,  "structural",                 "node2",       "g_12",
-               6L,  "structural",                 "node1",       "g_11",
-               6L,  "structural",                 "node3",       "g_13",
-               7L,  "structural",                 "node2",       "g_12",
-               7L,  "structural",                 "node3",       "g_13",
-               8L,  "structural",                 "node1",       "g_11",
-               8L,  "structural",                 "node2",       "g_12",
-               8L,  "structural",                 "node3",       "g_13"
+      2L,  "structural",                 "node1",       "g_11",
+      3L,  "structural",                 "node2",       "g_12",
+      4L,  "structural",                 "node3",       "g_13",
+      5L,  "structural",                 "node1",       "g_11",
+      5L,  "structural",                 "node2",       "g_12",
+      6L,  "structural",                 "node1",       "g_11",
+      6L,  "structural",                 "node3",       "g_13",
+      7L,  "structural",                 "node2",       "g_12",
+      7L,  "structural",                 "node3",       "g_13",
+      8L,  "structural",                 "node1",       "g_11",
+      8L,  "structural",                 "node2",       "g_12",
+      8L,  "structural",                 "node3",       "g_13"
     )
   )
+
 })
 
 test_that("hdcm parameters work", {

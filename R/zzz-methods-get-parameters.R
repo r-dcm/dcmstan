@@ -111,8 +111,6 @@ S7::method(get_parameters, INDEPENDENT) <- function(x, qmatrix,
 S7::method(get_parameters, LOGLINEAR) <- function(x, qmatrix,
                                                   identifier = NULL,
                                                   attributes = NULL) {
-  check_number_whole(x@model_args$max_interaction, min = 1,
-                     allow_infinite = TRUE)
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   loglinear_parameters(qmatrix = qmatrix, identifier = identifier,
@@ -123,4 +121,14 @@ S7::method(get_parameters, LOGLINEAR) <- function(x, qmatrix,
 S7::method(get_parameters, HDCM) <- function(x, qmatrix, identifier = NULL,
                                              attributes = NULL) {
   tibble::tibble(type = "structural", coefficient = "Vc")
+}
+
+S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
+                                                 identifier = NULL,
+                                                 attributes = NULL) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+  bayesnet_parameters(qmatrix = qmatrix, identifier = identifier,
+                      hierarchy = x@model_args$hierarchy,
+                      att_names = attributes)
 }
