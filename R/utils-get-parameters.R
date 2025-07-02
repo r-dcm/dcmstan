@@ -284,7 +284,7 @@ bayesnet_parameters <- function(qmatrix, identifier = NULL,
                     parent_id = as.integer(.data$parent_id)) |>
       dplyr::filter(.data$parent_id > .data$child_id) |>
       dplyr::select("child", "parent") |>
-      dplyr::mutate(edge = paste(.data$child, "->", .dtat$parent)) |>
+      dplyr::mutate(edge = paste(.data$child, "->", .data$parent)) |>
       dplyr::select("edge") |>
       dplyr::summarize(hierarchy = paste(.data$edge, collapse = "  ")) |>
       dplyr::pull(.data$hierarchy)
