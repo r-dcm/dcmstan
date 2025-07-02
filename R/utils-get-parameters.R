@@ -279,14 +279,14 @@ bayesnet_parameters <- function(qmatrix, identifier = NULL,
                        parent = att_names) |>
       tibble::as_tibble() |>
       dplyr::mutate(child_id = stringr::str_remove(.data$child, "att"),
-                    child_id = as.integer(child_id),
+                    child_id = as.integer(.data$child_id),
                     parent_id = stringr::str_remove(.data$parent, "att"),
-                    parent_id = as.integer(parent_id)) |>
-      dplyr::filter(parent_id > child_id) |>
+                    parent_id = as.integer(.data$parent_id)) |>
+      dplyr::filter(.data$parent_id > .data$child_id) |>
       dplyr::select("child", "parent") |>
-      dplyr::mutate(edge = paste(child, "->", parent)) |>
-      dplyr::select(edge) |>
-      dplyr::summarize(hierarchy = paste(edge, collapse = "  ")) |>
+      dplyr::mutate(edge = paste(.data$child, "->", .dtat$parent)) |>
+      dplyr::select("edge") |>
+      dplyr::summarize(hierarchy = paste(.data$edge, collapse = "  ")) |>
       dplyr::pull(.data$hierarchy)
   } else {
     replace_hierarchy_names(hierarchy, attribute_names = att_names)
