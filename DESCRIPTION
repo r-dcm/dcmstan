@@ -31,6 +31,8 @@ Imports:
     dagitty,
     dplyr,
     ggdag,
+    purrr,
+    stringr,
     glue,
     lifecycle,
     rdcmchecks (>= 0.0.0.9000),
