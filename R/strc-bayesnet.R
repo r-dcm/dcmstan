@@ -55,23 +55,23 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
       )
     )
 
-  intercepts <- strc_params |>
+  intercepts <- strc_params |> #nolint
     dplyr::filter(.data$param_level == 0) |>
     dplyr::select("param_def") |>
     dplyr::distinct() |>
     dplyr::pull(.data$param_def)
-  main_effects <- strc_params |>
+  main_effects <- strc_params |> #nolint
     dplyr::filter(.data$param_level == 1) |>
     dplyr::select("param_def") |>
     dplyr::distinct() |>
     dplyr::pull(.data$param_def)
-  interactions <- strc_params |>
+  interactions <- strc_params |> #nolint
     dplyr::filter(.data$param_level >= 2) |>
     dplyr::select("param_def") |>
     dplyr::distinct() |>
     dplyr::pull(.data$param_def)
 
-  interaction_stan <- if (length(interactions) > 0) {
+  interaction_stan <- if (length(interactions) > 0) { #nolint
     glue::glue(
       "",
       "  ////////////////////////////////// structural interactions",
@@ -82,7 +82,7 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
     ""
   }
 
-  parameters_block <- glue::glue(
+  parameters_block <- glue::glue( #nolint
     "  ////////////////////////////////// structural intercepts",
     "  {glue::glue_collapse(intercepts, sep = \"\n  \")}",
     "  ////////////////////////////////// structural main effects",
@@ -224,11 +224,13 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
       output
     })
 
-  vc_def <- tidyr::expand_grid(Vc_profile_id = seq_len(nrow(all_profiles)),
-                               param = parents |>
-                                 dplyr::arrange(.data$param) |>
-                                 dplyr::distinct("param") |>
-                                 dplyr::pull(.data$param)) |>
+  vc_def <- tidyr::expand_grid( #nolint
+    Vc_profile_id = seq_len(nrow(all_profiles)),
+    param = parents |>
+      dplyr::arrange(.data$param) |>
+      dplyr::distinct("param") |>
+      dplyr::pull(.data$param)
+  ) |>
     dplyr::left_join(profile_params,
                      by = c("Vc_profile_id" = "profile_id", "param")) |>
     dplyr::rename(param_master = .data$master) |>
