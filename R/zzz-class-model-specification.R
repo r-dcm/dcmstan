@@ -62,7 +62,8 @@ dcm_specify <- function(qmatrix, identifier = NULL,
   }
 
   # tweak structural model as needed -------------------------------------------
-  if (structural_model@model == "bayesnet" && ncol(qmatrix$clean_qmatrix) == 1) {
+  if (structural_model@model == "bayesnet" &&
+        ncol(qmatrix$clean_qmatrix) == 1) {
     structural_model <- unconstrained()
   }
 

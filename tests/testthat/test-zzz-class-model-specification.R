@@ -79,8 +79,8 @@ test_that("printing works", {
   )
 
   unst1 <- dcm_specify(qmatrix = test_qmatrix, identifier = "item",
-                      measurement_model = lcdm(max_interaction = 1),
-                      structural_model = unconstrained())
+                       measurement_model = lcdm(max_interaction = 1),
+                       structural_model = unconstrained())
 
   test_qmatrix2 <- tibble::tibble(
     question = paste0("item_", 1:10),
