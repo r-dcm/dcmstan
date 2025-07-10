@@ -35,171 +35,174 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
 
   if (!is.null(hierarchy)) {
     type_hierarchy <- determine_hierarchy_type(hierarchy)
-  }
 
-  att_dict <- att_names |>
-    tibble::as_tibble() %>%
-    dplyr::rename(new_name = value) |>
-    dplyr::mutate(name = names(att_names))
+    att_dict <- att_names |>
+      tibble::as_tibble() %>%
+      dplyr::rename(new_name = value) |>
+      dplyr::mutate(name = names(att_names))
 
-  meas_all <- create_profiles(ncol(qmatrix))[2^ncol(qmatrix), ]
-  all_poss_params <- lcdm_parameters(qmatrix = meas_all,
-                                     max_interaction = max_interaction,
-                                     att_names = att_names,
-                                     hierarchy = NULL,
-                                     rename_attributes = TRUE,
-                                     rename_items = TRUE) |>
-    dplyr::select("attributes", "coefficient")
-  all_allowable_params <- lcdm_parameters(qmatrix = meas_all,
-                                          max_interaction = max_interaction,
-                                          att_names = att_names,
-                                          hierarchy = hierarchy,
-                                          rename_attributes = TRUE,
-                                          rename_items = TRUE) |>
-    dplyr::select("attributes", "coefficient")
-  params_to_update <- all_poss_params |>
-    dplyr::left_join(all_allowable_params |>
-                       dplyr::mutate(allowable = TRUE),
-                     by = c("attributes", "coefficient")) |>
-    dplyr::filter(is.na(.data$allowable)) |>
-    dplyr::mutate(new_att = NA)
-  good_params <- all_poss_params |>
-    dplyr::left_join(all_allowable_params |>
-                       dplyr::mutate(allowable = TRUE),
-                     by = c("attributes", "coefficient")) |>
-    dplyr::filter(!is.na(.data$allowable))
+    meas_all <- create_profiles(ncol(qmatrix))[2^ncol(qmatrix), ]
+    all_poss_params <- lcdm_parameters(qmatrix = meas_all,
+                                       max_interaction = max_interaction,
+                                       att_names = att_names,
+                                       hierarchy = NULL,
+                                       rename_attributes = TRUE,
+                                       rename_items = TRUE) |>
+      dplyr::select("attributes", "coefficient")
+    all_allowable_params <- lcdm_parameters(qmatrix = meas_all,
+                                            max_interaction = max_interaction,
+                                            att_names = att_names,
+                                            hierarchy = hierarchy,
+                                            rename_attributes = TRUE,
+                                            rename_items = TRUE) |>
+      dplyr::select("attributes", "coefficient")
+    params_to_update <- all_poss_params |>
+      dplyr::left_join(all_allowable_params |>
+                         dplyr::mutate(allowable = TRUE),
+                       by = c("attributes", "coefficient")) |>
+      dplyr::filter(is.na(.data$allowable)) |>
+      dplyr::mutate(new_att = NA)
+    good_params <- all_poss_params |>
+      dplyr::left_join(all_allowable_params |>
+                         dplyr::mutate(allowable = TRUE),
+                       by = c("attributes", "coefficient")) |>
+      dplyr::filter(!is.na(.data$allowable))
 
-  for (ii in seq_len(nrow(params_to_update))) {
-    tmp_att <- params_to_update$attributes[ii]
-    tmp_att <- strsplit(tmp_att, "__")[[1]]
-    tmp_att <- paste0(tmp_att, collapse=".*")
+    for (ii in seq_len(nrow(params_to_update))) {
+      tmp_att <- params_to_update$attributes[ii]
+      tmp_att <- strsplit(tmp_att, "__")[[1]]
+      tmp_att <- paste0(tmp_att, collapse=".*")
 
-    tmp_replacement <- good_params |>
-      dplyr::filter(grepl(tmp_att, .data$attributes)) |>
+      tmp_replacement <- good_params |>
+        dplyr::filter(grepl(tmp_att, .data$attributes)) |>
+        tidyr::separate(col = "coefficient",
+                        into = c("item_param", "coefficient"), sep = "_")
+
+      params_to_update$coefficient[ii] <- tmp_replacement$coefficient[1]
+      params_to_update$allowable[ii] <- TRUE
+      params_to_update$new_att[ii] <- tmp_replacement$attributes[1]
+    }
+
+    stan_att_dict <- all_poss_params |>
+      dplyr::left_join(params_to_update |>
+                         dplyr::rename("new_coef" = "coefficient") |>
+                         dplyr::select(-"allowable"),
+                       by = c("attributes")) |>
       tidyr::separate(col = "coefficient",
-                      into = c("item_param", "coefficient"), sep = "_")
+                      into = c("item_param", "coefficient"), sep = "_") |>
+      dplyr::select(-"item_param") |>
+      dplyr::mutate(coefficient = dplyr::case_when(is.na(.data$new_coef) ~
+                                                     .data$coefficient,
+                                                   !is.na(.data$new_coef) ~
+                                                     .data$new_coef)) |>
+      dplyr::select(-"new_coef")
 
-    params_to_update$coefficient[ii] <- tmp_replacement$coefficient[1]
-    params_to_update$allowable[ii] <- TRUE
-    params_to_update$new_att[ii] <- tmp_replacement$attributes[1]
-  }
+    diverging_peers <- type_hierarchy |>
+      dplyr::filter(.data$type == "diverging") |>
+      dplyr::select("attribute", "children") |>
+      tidyr::unnest("children") |>
+      dplyr::group_by(.data$attribute) |>
+      dplyr::mutate(child_num = dplyr::row_number()) |>
+      dplyr::ungroup() |>
+      dplyr::mutate(child_num = paste0("child",
+                                       as.character(.data$child_num))) |>
+      dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
+      dplyr::select(-"attribute") |>
+      dplyr::rename(attribute = new_name) |>
+      dplyr::left_join(att_dict, by = c("children" = "name")) |>
+      dplyr::select(-"children") |>
+      dplyr::rename(children = new_name) |>
+      tidyr::pivot_wider(names_from = "child_num", values_from = "children")
 
-  stan_att_dict <- all_poss_params |>
-    dplyr::left_join(params_to_update |>
-                       dplyr::rename("new_coef" = "coefficient") |>
-                       dplyr::select(-"allowable"),
-                     by = c("attributes")) |>
-    tidyr::separate(col = "coefficient",
-                    into = c("item_param", "coefficient"), sep = "_") |>
-    dplyr::select(-"item_param") |>
-    dplyr::mutate(coefficient = dplyr::case_when(is.na(.data$new_coef) ~
-                                                   .data$coefficient,
-                                                 !is.na(.data$new_coef) ~
-                                                   .data$new_coef)) |>
-    dplyr::select(-"new_coef")
+    diverging_items <- tibble::tibble()
 
-  diverging_peers <- type_hierarchy |>
-    dplyr::filter(.data$type == "diverging") |> # !is.na(.data$diverging_peers)) |>
-    dplyr::select("attribute", "children") |>
-    tidyr::unnest("children") |>
-    dplyr::group_by(.data$attribute) |>
-    dplyr::mutate(child_num = dplyr::row_number()) |>
-    dplyr::ungroup() |>
-    dplyr::mutate(child_num = paste0("child", as.character(.data$child_num))) |>
+    if (nrow(diverging_peers) > 0) {
+      for (nn in seq_len(nrow(diverging_peers))) {
+        tmp_diverging <- diverging_peers[nn, ]
 
-    dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
-    dplyr::select(-"attribute") |>
-    dplyr::rename(attribute = new_name) |>
-    dplyr::left_join(att_dict, by = c("children" = "name")) |>
-    dplyr::select(-"children") |>
-    dplyr::rename(children = new_name) |>
-    tidyr::pivot_wider(names_from = "child_num", values_from = "children")
+        tmp2 <- tmp_diverging |>
+          dplyr::select(-"attribute") |>
+          tidyr::pivot_longer(cols = dplyr::everything(),
+                              names_to = "child_num", values_to = "att") |>
+          dplyr::select(-"child_num")
 
-  diverging_items <- tibble::tibble()
+        possible_items <- qmatrix |>
+          tibble::rowid_to_column("item_id")
 
-  if (nrow(diverging_peers) > 0) {
-    for (nn in seq_len(nrow(diverging_peers))) {
-      tmp_diverging <- diverging_peers[nn, ]
+        for (pp in seq_len(nrow(tmp2))) {
+          tmp_att <- tmp2$att[pp]
 
-      tmp2 <- tmp_diverging |>
-        dplyr::select(-"attribute") |>
-        tidyr::pivot_longer(cols = dplyr::everything(), names_to = "child_num",
-                            values_to = "att") |>
-        dplyr::select(-"child_num")
-
-      possible_items <- qmatrix |>
-        tibble::rowid_to_column("item_id")
-
-      for (pp in seq_len(nrow(tmp2))) {
-        tmp_att <- tmp2$att[pp]
+          possible_items <- possible_items |>
+            dplyr::filter(!!sym(tmp_att) == 1)
+        }
 
         possible_items <- possible_items |>
-          dplyr::filter(!!sym(tmp_att) == 1)
+          dplyr::select("item_id") |>
+          dplyr::mutate(diverging = TRUE)
+
+        diverging_items <- bind_rows(diverging_items, possible_items)
       }
-
-      possible_items <- possible_items |>
-        dplyr::select("item_id") |>
-        dplyr::mutate(diverging = TRUE)
-
-      diverging_items <- bind_rows(diverging_items, possible_items)
     }
-  }
 
-  if (nrow(diverging_items) == 0) {
+    if (nrow(diverging_items) == 0) {
+      diverging_items <- tibble::tibble(item_id = -9999, diverging = FALSE)
+    }
+
+    converging_peers <- type_hierarchy |>
+      dplyr::filter(.data$type == "converging") |>
+      dplyr::select("attribute", "parents") |>
+      tidyr::unnest("parents") |>
+      dplyr::group_by(.data$attribute) |>
+      dplyr::mutate(parent_num = dplyr::row_number()) |>
+      dplyr::ungroup() |>
+      dplyr::mutate(parent_num = paste0("parent",
+                                        as.character(.data$parent_num))) |>
+      dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
+      dplyr::select(-"attribute") |>
+      dplyr::rename(attribute = new_name) |>
+      dplyr::left_join(att_dict, by = c("parents" = "name")) |>
+      dplyr::select(-"parents") |>
+      dplyr::rename(parent = new_name) |>
+      tidyr::pivot_wider(names_from = "parent_num", values_from = "parent")
+
+    converging_items <- tibble::tibble()
+
+    if (nrow(converging_peers) > 0) {
+      for (nn in seq_len(nrow(converging_peers))) {
+        tmp_converging <- converging_peers[nn, ]
+
+        tmp2 <- tmp_converging |>
+          dplyr::select(-"attribute") |>
+          tidyr::pivot_longer(cols = dplyr::everything(),
+                              names_to = "parent_num", values_to = "att") |>
+          dplyr::select(-"parent_num")
+
+        possible_items <- qmatrix |>
+          tibble::rowid_to_column("item_id")
+
+        for (pp in seq_len(nrow(tmp2))) {
+          tmp_att <- tmp2$att[pp]
+
+          possible_items <- possible_items |>
+            dplyr::filter(!!sym(tmp_att) == 1)
+        }
+
+        possible_items <- possible_items |>
+          dplyr::select("item_id") |>
+          dplyr::mutate(converging = TRUE)
+
+        converging_items <- bind_rows(converging_items, possible_items)
+      }
+    }
+
+    if (nrow(converging_items) == 0) {
+      converging_items <- tibble::tibble(item_id = -9999, converging = FALSE)
+    }
+  } else {
+    stan_att_dict <- tibble::tibble(attributes = "fake_att", coefficient = "0",
+                                    new_att = NA)
     diverging_items <- tibble::tibble(item_id = -9999, diverging = FALSE)
-  }
-
-
-
-  converging_peers <- type_hierarchy |>
-    dplyr::filter(.data$type == "converging") |>
-    dplyr::select("attribute", "parents") |>
-    tidyr::unnest("parents") |>
-    dplyr::group_by(.data$attribute) |>
-    dplyr::mutate(parent_num = dplyr::row_number()) |>
-    dplyr::ungroup() |>
-    dplyr::mutate(parent_num = paste0("parent",
-                                      as.character(.data$parent_num))) |>
-    dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
-    dplyr::select(-"attribute") |>
-    dplyr::rename(attribute = new_name) |>
-    dplyr::left_join(att_dict, by = c("parents" = "name")) |>
-    dplyr::select(-"parents") |>
-    dplyr::rename(parent = new_name) |>
-    tidyr::pivot_wider(names_from = "parent_num", values_from = "parent")
-
-  converging_items <- tibble::tibble()
-
-  if (nrow(converging_peers) > 0) {
-    for (nn in seq_len(nrow(converging_peers))) {
-      tmp_converging <- converging_peers[nn, ]
-
-      tmp2 <- tmp_converging |>
-        dplyr::select(-"attribute") |>
-        tidyr::pivot_longer(cols = dplyr::everything(), names_to = "parent_num",
-                            values_to = "att") |>
-        dplyr::select(-"parent_num")
-
-      possible_items <- qmatrix |>
-        tibble::rowid_to_column("item_id")
-
-      for (pp in seq_len(nrow(tmp2))) {
-        tmp_att <- tmp2$att[pp]
-
-        possible_items <- possible_items |>
-          dplyr::filter(!!sym(tmp_att) == 1)
-      }
-
-      possible_items <- possible_items |>
-        dplyr::select("item_id") |>
-        dplyr::mutate(converging = TRUE)
-
-      converging_items <- bind_rows(converging_items, possible_items)
-    }
-  }
-
-  if (nrow(converging_items) == 0) {
-    converging_items <- tibble::tibble(item_id = -9999, diverging = FALSE)
+    converging_items <- tibble::tibble(item_id = -9999, converging = FALSE)
   }
 
   meas_params <- all_params |>
@@ -366,5 +369,5 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
 #' @noRd
 meas_crum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   meas_lcdm(qmatrix, max_interaction = 1L, priors = priors,
-            hierarchy = hierarchy)
+            hierarchy = hierarchy, att_names = att_names)
 }
