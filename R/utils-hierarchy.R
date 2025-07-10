@@ -84,7 +84,7 @@ check_hierarchy_names <- function(x, attribute_names,
 #'
 #' @returns A string.
 #' @noRd
-determine_hierarchy_type <- function(x) {
+determine_hierarchy_type <- function(x, allow_null = TRUE) {
   if (is.null(x) && allow_null) return(invisible(NULL))
 
   check_string(x)

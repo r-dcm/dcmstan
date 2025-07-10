@@ -71,7 +71,7 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
     for (ii in seq_len(nrow(params_to_update))) {
       tmp_att <- params_to_update$attributes[ii]
       tmp_att <- strsplit(tmp_att, "__")[[1]]
-      tmp_att <- paste0(tmp_att, collapse=".*")
+      tmp_att <- paste0(tmp_att, collapse = ".*")
 
       tmp_replacement <- good_params |>
         dplyr::filter(grepl(tmp_att, .data$attributes)) |>
@@ -243,7 +243,8 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
     dplyr::mutate(converging = dplyr::case_when(.data$param_level <= 1 ~ FALSE,
                                                 is.na(.data$converging) ~ FALSE,
                                                 TRUE ~ .data$converging)) |>
-    dplyr::mutate(constraint = dplyr::case_when(
+    dplyr::mutate(
+      constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
         .data$param_level >= 2 & diverging ~
