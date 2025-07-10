@@ -208,7 +208,7 @@ determine_hierarchy_type <- function(x, allow_null = TRUE) {
                                parents = list(parent_atts),
                                children = list(child_atts))
 
-    hier_type <- bind_rows(hier_type, tmp_hier)
+    hier_type <- dplyr::bind_rows(hier_type, tmp_hier)
   }
 
   return(hier_type)

@@ -37,8 +37,8 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
     type_hierarchy <- determine_hierarchy_type(hierarchy)
 
     att_dict <- att_names |>
-      tibble::as_tibble() %>%
-      dplyr::rename(new_name = value) |>
+      tibble::as_tibble() |>
+      dplyr::rename("new_name" = "value") |>
       dplyr::mutate(name = names(att_names))
 
     meas_all <- create_profiles(ncol(qmatrix))[2^ncol(qmatrix), ]
@@ -108,10 +108,10 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
                                        as.character(.data$child_num))) |>
       dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
       dplyr::select(-"attribute") |>
-      dplyr::rename(attribute = new_name) |>
+      dplyr::rename("attribute" = "new_name") |>
       dplyr::left_join(att_dict, by = c("children" = "name")) |>
       dplyr::select(-"children") |>
-      dplyr::rename(children = new_name) |>
+      dplyr::rename("children" = "new_name") |>
       tidyr::pivot_wider(names_from = "child_num", values_from = "children")
 
     diverging_items <- tibble::tibble()
@@ -140,7 +140,7 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
           dplyr::select("item_id") |>
           dplyr::mutate(diverging = TRUE)
 
-        diverging_items <- bind_rows(diverging_items, possible_items)
+        diverging_items <- dplyr::bind_rows(diverging_items, possible_items)
       }
     }
 
@@ -159,10 +159,10 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
                                         as.character(.data$parent_num))) |>
       dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
       dplyr::select(-"attribute") |>
-      dplyr::rename(attribute = new_name) |>
+      dplyr::rename("attribute" = "new_name") |>
       dplyr::left_join(att_dict, by = c("parents" = "name")) |>
       dplyr::select(-"parents") |>
-      dplyr::rename(parent = new_name) |>
+      dplyr::rename("parent" = "new_name") |>
       tidyr::pivot_wider(names_from = "parent_num", values_from = "parent")
 
     converging_items <- tibble::tibble()
@@ -191,7 +191,7 @@ meas_lcdm <- function(qmatrix, priors, att_names = NULL, max_interaction = Inf,
           dplyr::select("item_id") |>
           dplyr::mutate(converging = TRUE)
 
-        converging_items <- bind_rows(converging_items, possible_items)
+        converging_items <- dplyr::bind_rows(converging_items, possible_items)
       }
     }
 
