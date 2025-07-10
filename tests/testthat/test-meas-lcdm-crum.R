@@ -72,3 +72,15 @@ test_that("lcdm with hierarchy works", {
   )
   expect_snapshot(stan_code(ecpe_ldcm_hdcm))
 })
+
+test_that("crum with hierarchy works", {
+  ecpe_crum_hdcm <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = crum(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_snapshot(stan_code(ecpe_crum_hdcm))
+})
