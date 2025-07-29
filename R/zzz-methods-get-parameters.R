@@ -89,7 +89,8 @@ S7::method(get_parameters, NIDA) <- function(x, qmatrix, identifier = NULL,
                                              attributes = NULL, items = NULL) {
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
-  nida_parameters(qmatrix = qmatrix, identifier = identifier)
+  nida_parameters(qmatrix = qmatrix, identifier = identifier,
+                  att_names = attributes)
 }
 
 S7::method(get_parameters, NIDO) <- function(x, qmatrix, identifier = NULL,

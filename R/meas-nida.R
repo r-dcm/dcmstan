@@ -16,13 +16,18 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   # parameters block -----
   parameters_block <- glue::glue(
     "  ////////////////////////////////// attribute parameters",
-    "  array[to_int(log2(C))] real<lower=0,upper=1> slip;",
-    "  array[to_int(log2(C))] real<lower=0,upper=1> guess;",
+    "  array[A] real<lower=0,upper=1> slip;",
+    "  array[A] real<lower=0,upper=1> guess;",
     .sep = "\n", .trim = FALSE
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(ncol(qmatrix))
+  all_profiles <- if (is.null(hierarchy)) {
+    create_profiles(ncol(qmatrix))
+  } else {
+    create_profiles(hdcm(hierarchy = hierarchy),
+                    attributes = att_names)
+  }
 
   profiles <- all_profiles |>
     tibble::rowid_to_column("profile_id") |>
@@ -41,21 +46,18 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                                                               "])"))) |>
     dplyr::select("profile_id", "att", "param")
 
-  pi_def <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
-                               profile_id = seq_len(nrow(all_profiles))) |>
-    dplyr::left_join(qmatrix |>
-                       stats::setNames(glue::glue("att{1:ncol(qmatrix)}")) |>
-                       tibble::rowid_to_column("item_id") |>
-                       tidyr::pivot_longer(cols = -c("item_id"),
-                                           names_to = "att_id",
-                                           values_to = "valid") |>
-                       dplyr::filter(.data$valid == 1L) |>
-                       dplyr::select(-"valid"),
-                     by = "item_id", relationship = "many-to-many") |>
-    dplyr::left_join(profile_params, by = c("profile_id", "att_id" = "att")) |>
-    tidyr::pivot_wider(names_from = "att_id", values_from = "param") |>
-    tidyr::unite(col = "param", -c("item_id", "profile_id"), sep = "*",
-                 remove = TRUE, na.rm = TRUE) |>
+  pi_def <- qmatrix |>
+    tibble::rowid_to_column("item_id") |>
+    tidyr::pivot_longer(cols = -c("item_id"),
+                        names_to = "att_id",
+                        values_to = "valid") |>
+    dplyr::filter(.data$valid == 1L) |>
+    dplyr::select(-"valid") |>
+    tidyr::expand_grid(profile_id = seq_len(nrow(all_profiles))) |>
+    dplyr::left_join(profile_params, by = c("profile_id", "att_id" = "att"),
+                     relationship = "many-to-one") |>
+    dplyr::summarize(param = paste(.data$param, collapse = "*"),
+                     .by = c("item_id", "profile_id")) |>
     glue::glue_data("pi[{item_id},{profile_id}] = {param};")
 
   transformed_parameters_block <- glue::glue(
@@ -68,10 +70,20 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
 
   # priors -----
   att_priors <- nida_parameters(qmatrix = qmatrix) |>
+    dplyr::left_join(prior_tibble(priors),
+                     by = c("type", "coefficient"),
+                     relationship = "one-to-one") |>
+    dplyr::rename(coef_def = "prior") |>
     dplyr::left_join(prior_tibble(priors) |>
+                       dplyr::filter(is.na(.data$coefficient)) |>
                        dplyr::select(-"coefficient"),
-                     by = c("type")) |>
-    dplyr::mutate(prior_def = glue::glue("{coefficient} ~ {prior};")) |>
+                     by = c("type"), relationship = "many-to-one") |>
+    dplyr::rename(type_def = "prior") |>
+    dplyr::mutate(
+      prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
+                               is.na(.data$coef_def) ~ .data$type_def),
+      prior_def = glue::glue("{coefficient} ~ {prior};")
+    ) |>
     dplyr::pull("prior_def")
 
   # return -----

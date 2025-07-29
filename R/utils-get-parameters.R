@@ -179,30 +179,35 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-nida_parameters <- function(qmatrix, identifier = NULL,
+nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
                             rename_attributes = FALSE) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
   }
 
-  attribute_ids <- tibble::tibble(dcmstan_real_att_id = colnames(qmatrix)) |>
-    tibble::rowid_to_column(var = "att_number")
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(colnames(qmatrix))
+  } else if (is.null(names(att_names))) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(att_names)
+  }
 
-  all_params <- expand.grid(att_id = seq_len(ncol(qmatrix)),
-                            type = c("slip", "guess"),
-                            stringsAsFactors = FALSE) |>
-    tibble::as_tibble() |>
-    dplyr::mutate(coefficient = glue::glue("{.data$type}[{.data$att_id}]")) |>
-    dplyr::arrange(.data$att_id, .data$type) |>
-    dplyr::mutate(coefficient = as.character(.data$coefficient))
+  all_params <- tibble::enframe(att_names) |>
+    tidyr::expand_grid(type = c("slip", "guess")) |>
+    dplyr::mutate(att_id = gsub("att", "", .data$value),
+                  coefficient = glue::glue("{.data$type}[{.data$att_id}]"),
+                  coefficient = as.character(.data$coefficient)) |>
+    dplyr::select(attribute = "value", "type", "coefficient")
 
   if (!rename_attributes) {
-    all_params <- all_params |>
-      dplyr::left_join(attribute_ids,
-                       by = dplyr::join_by("att_id" == "att_number")) |>
-      dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
-      dplyr::select(-"dcmstan_real_att_id")
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attribute = gsub(paste0("att", i),
+                                                   names(att_names)[i],
+                                                   .data$attribute))
+    }
   }
 
   return(all_params)

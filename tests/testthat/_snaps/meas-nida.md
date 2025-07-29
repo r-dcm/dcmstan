@@ -13,13 +13,14 @@
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        int<lower=1> A;                      // number of attributes
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
       
         ////////////////////////////////// attribute parameters
-        array[to_int(log2(C))] real<lower=0,upper=1> slip;
-        array[to_int(log2(C))] real<lower=0,upper=1> guess;
+        array[A] real<lower=0,upper=1> slip;
+        array[A] real<lower=0,upper=1> guess;
       }
       transformed parameters {
         vector[C] log_Vc = log(Vc);
@@ -255,12 +256,12 @@
       
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
-        guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
-        guess[2] ~ beta(5, 25);
+        guess[1] ~ beta(5, 25);
         slip[2] ~ beta(5, 25);
-        guess[3] ~ beta(5, 25);
+        guess[2] ~ beta(5, 25);
         slip[3] ~ beta(5, 25);
+        guess[3] ~ beta(5, 25);
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
@@ -293,13 +294,14 @@
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        int<lower=1> A;                      // number of attributes
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
       
         ////////////////////////////////// attribute parameters
-        array[to_int(log2(C))] real<lower=0,upper=1> slip;
-        array[to_int(log2(C))] real<lower=0,upper=1> guess;
+        array[A] real<lower=0,upper=1> slip;
+        array[A] real<lower=0,upper=1> guess;
       }
       transformed parameters {
         vector[C] log_Vc = log(Vc);
@@ -319,8 +321,8 @@
       
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
-        guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
+        guess[1] ~ beta(5, 25);
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
@@ -353,13 +355,14 @@
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        int<lower=1> A;                      // number of attributes
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
       
         ////////////////////////////////// attribute parameters
-        array[to_int(log2(C))] real<lower=0,upper=1> slip;
-        array[to_int(log2(C))] real<lower=0,upper=1> guess;
+        array[A] real<lower=0,upper=1> slip;
+        array[A] real<lower=0,upper=1> guess;
       }
       transformed parameters {
         vector[C] log_Vc = log(Vc);
@@ -803,14 +806,14 @@
       
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
-        guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
-        guess[2] ~ beta(5, 25);
+        guess[1] ~ beta(5, 25);
         slip[2] ~ beta(5, 25);
-        guess[3] ~ beta(5, 25);
+        guess[2] ~ beta(5, 25);
         slip[3] ~ beta(5, 25);
-        guess[4] ~ beta(5, 25);
+        guess[3] ~ beta(5, 25);
         slip[4] ~ beta(5, 25);
+        guess[4] ~ beta(5, 25);
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
@@ -850,8 +853,8 @@
         array[A] real<lower=0,upper=1> eta;
       
         ////////////////////////////////// attribute parameters
-        array[to_int(log2(C))] real<lower=0,upper=1> slip;
-        array[to_int(log2(C))] real<lower=0,upper=1> guess;
+        array[A] real<lower=0,upper=1> slip;
+        array[A] real<lower=0,upper=1> guess;
       }
       transformed parameters {
         simplex[C] Vc;
@@ -1098,12 +1101,12 @@
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
         eta[3] ~ beta(1, 1);
-        guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
-        guess[2] ~ beta(5, 25);
+        guess[1] ~ beta(5, 25);
         slip[2] ~ beta(5, 25);
-        guess[3] ~ beta(5, 25);
+        guess[2] ~ beta(5, 25);
         slip[3] ~ beta(5, 25);
+        guess[3] ~ beta(5, 25);
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
@@ -1136,13 +1139,14 @@
         array[N] int<lower=0,upper=1> y;     // score for observation n
         array[R] int<lower=1,upper=N> start; // starting row for respondent R
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        int<lower=1> A;                      // number of attributes
       }
       parameters {
         simplex[C] Vc;                  // base rates of class membership
       
         ////////////////////////////////// attribute parameters
-        array[to_int(log2(C))] real<lower=0,upper=1> slip;
-        array[to_int(log2(C))] real<lower=0,upper=1> guess;
+        array[A] real<lower=0,upper=1> slip;
+        array[A] real<lower=0,upper=1> guess;
       }
       transformed parameters {
         vector[C] log_Vc = log(Vc);
@@ -1458,14 +1462,14 @@
       
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
-        guess[1] ~ beta(5, 25);
         slip[1] ~ beta(5, 25);
-        guess[2] ~ beta(5, 25);
+        guess[1] ~ beta(5, 25);
         slip[2] ~ beta(5, 25);
-        guess[3] ~ beta(5, 25);
+        guess[2] ~ beta(5, 25);
         slip[3] ~ beta(5, 25);
-        guess[4] ~ beta(5, 25);
+        guess[3] ~ beta(5, 25);
         slip[4] ~ beta(5, 25);
+        guess[4] ~ beta(5, 25);
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
