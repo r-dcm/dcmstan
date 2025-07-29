@@ -113,8 +113,8 @@ crum_priors <- function() {
 }
 
 nido_priors <- function() {
-  c(prior("normal(0, 2)", type = "beta"),
-    prior("lognormal(0, 1)", type = "gamma"))
+  c(prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect"))
 }
 
 nida_priors <- dina_priors

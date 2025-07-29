@@ -17,83 +17,52 @@ meas_nido <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   all_params <- nido_parameters(qmatrix = qmatrix)
 
   meas_params <- all_params |>
-    dplyr::mutate(parameter = .data$type) |>
-    dplyr::select("att_id", "parameter", param_name = "coefficient") |>
     dplyr::mutate(
-      param_level = dplyr::case_when(.data$parameter == "beta" ~ 0,
-                                     .data$parameter == "gamma" ~ 1),
-      constraint = dplyr::case_when(.data$param_level == 0 ~ glue::glue(""),
-                                    .data$param_level == 1 ~
-                                      glue::glue("<lower=0>")),
-      param_def =
-        dplyr::case_when(.data$param_level == 0 ~
-                           glue::glue("real {param_name};"),
-                         .data$param_level >= 1 ~
-                           glue::glue("real{constraint} {param_name};"))
-    )
-
-  intercepts <- meas_params |>
-    dplyr::filter(.data$param_level == 0) |>
-    dplyr::pull(.data$param_def)
-  main_effects <- meas_params |>
-    dplyr::filter(.data$param_level == 1) |>
-    dplyr::pull(.data$param_def)
+      param_def = dplyr::case_when(
+        .data$type == "intercept" ~ glue::glue("real {coefficient};"),
+        .data$type >= "maineffect" ~ glue::glue("real<lower=0> {coefficient};")
+      )
+    ) |>
+    dplyr::pull("param_def")
 
   parameters_block <- glue::glue(
-    "  ////////////////////////////////// attribute intercepts",
-    "  {glue::glue_collapse(intercepts, sep = \"\n  \")}",
-    "",
-    "  ////////////////////////////////// attribute main effects",
-    "  {glue::glue_collapse(main_effects, sep = \"\n  \")}",
+    "  ////////////////////////////////// measurement parameters",
+    "  {glue::glue_collapse(meas_params, sep = \"\n  \")}",
     .sep = "\n", .trim = FALSE
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(ncol(qmatrix))
+  all_profiles <- if (is.null(hierarchy)) {
+    create_profiles(ncol(qmatrix))
+  } else {
+    create_profiles(hdcm(hierarchy = hierarchy),
+                    attributes = att_names)
+  }
 
-  profile_params <-
-    stats::model.matrix(stats::as.formula(paste0("~ .^",
-                                                 max(ncol(all_profiles),
-                                                     2L))),
-                        all_profiles) |>
-    tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
-    tibble::rowid_to_column(var = "profile_id") |>
-    tidyr::pivot_longer(-"profile_id", names_to = "parameter",
-                        values_to = "valid_for_profile") |>
-    dplyr::mutate(parameter = gsub("intercept", "beta", .data$parameter),
-                  parameter = dplyr::case_when(
-                    grepl("__", .data$parameter) ~ .data$parameter,
-                    grepl("beta", .data$parameter) ~ .data$parameter,
-                    TRUE ~ gsub("att", "gamma", .data$parameter)
-                  ))
+  profile_params <- all_profiles |>
+    tibble::rowid_to_column("profile_id") |>
+    tidyr::pivot_longer(cols = -"profile_id", names_to = "att",
+                        values_to = "meas") |>
+    dplyr::left_join(all_params, by = c("att" = "attribute"),
+                     relationship = "many-to-many") |>
+    dplyr::filter(!(meas == 0 & type == "maineffect")) |>
+    dplyr::summarize(param = paste(.data$coefficient, collapse = "+"),
+                     .by = c("profile_id", "att")) |>
+    dplyr::select("profile_id", "att", "param")
 
-  pi_def <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
-                               profile_id = seq_len(nrow(all_profiles))) |>
-    dplyr::left_join(qmatrix |>
-                       stats::setNames(glue::glue("att{1:ncol(qmatrix)}")) |>
-                       tibble::rowid_to_column("item_id") |>
-                       tidyr::pivot_longer(cols = -c("item_id"),
-                                           names_to = "att_id",
-                                           values_to = "valid") |>
-                       dplyr::filter(.data$valid == 1L) |>
-                       dplyr::select(-"valid"),
-                     by = "item_id", relationship = "many-to-many") |>
-    dplyr::left_join(
-      meas_params |>
-        dplyr::select("att_id", "parameter", "param_name"),
-      by = "att_id",  multiple = "all", relationship = "many-to-many"
-    ) |>
-    dplyr::mutate(parameter = dplyr::case_when(.data$parameter == "gamma" ~
-                                                 .data$param_name,
-                                               TRUE ~ .data$parameter)) |>
-    dplyr::left_join(profile_params, by = c("profile_id", "parameter"),
+  pi_def <- qmatrix |>
+    tibble::rowid_to_column("item_id") |>
+    tidyr::pivot_longer(cols = -c("item_id"),
+                        names_to = "att_id",
+                        values_to = "valid") |>
+    dplyr::filter(.data$valid == 1L) |>
+    dplyr::select(-"valid") |>
+    tidyr::expand_grid(profile_id = seq_len(nrow(all_profiles))) |>
+    dplyr::left_join(profile_params, by = c("profile_id", "att_id" = "att"),
                      relationship = "many-to-one") |>
-    dplyr::filter(.data$valid_for_profile == 1) |>
-    dplyr::group_by(.data$item_id, .data$profile_id) |>
-    dplyr::summarize(meas_params = paste(unique(.data$param_name),
-                                         collapse = "+"),
-                     .groups = "drop") |>
-    glue::glue_data("pi[{item_id},{profile_id}] = inv_logit({meas_params});")
+    dplyr::summarize(param = paste(.data$param, collapse = "+"),
+                     .by = c("item_id", "profile_id")) |>
+    glue::glue_data("pi[{item_id},{profile_id}] = inv_logit({param});")
 
   transformed_parameters_block <- glue::glue(
     "  matrix[I,C] pi;",
@@ -104,21 +73,25 @@ meas_nido <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   )
 
   # priors -----
-  item_priors <- meas_params |>
-    dplyr::mutate(
-      type = dplyr::case_when(.data$param_level == 0 ~ "beta",
-                              .data$param_level == 1 ~ "gamma")
-    ) |>
+  att_priors <- all_params |>
     dplyr::left_join(prior_tibble(priors),
-                     by = c("type"),
-                     relationship = "many-to-many") |>
+                     by = c("type", "coefficient"),
+                     relationship = "one-to-one") |>
+    dplyr::rename(coef_def = "prior") |>
+    dplyr::left_join(prior_tibble(priors) |>
+                       dplyr::filter(is.na(.data$coefficient)) |>
+                       dplyr::select(-"coefficient"),
+                     by = c("type"), relationship = "many-to-one") |>
+    dplyr::rename(type_def = "prior") |>
     dplyr::mutate(
-      prior_def = glue::glue("{param_name} ~ {prior};")
+      prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
+                               is.na(.data$coef_def) ~ .data$type_def),
+      prior_def = glue::glue("{coefficient} ~ {prior};")
     ) |>
     dplyr::pull("prior_def")
 
   # return -----
   list(parameters = parameters_block,
        transformed_parameters = transformed_parameters_block,
-       priors = item_priors)
+       priors = att_priors)
 }

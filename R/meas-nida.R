@@ -37,13 +37,13 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   profile_params <- tibble::tibble(profile_id = seq_len(nrow(all_profiles))) |>
     tidyr::crossing(att = colnames(qmatrix)) |>
     dplyr::left_join(profiles, by = c("profile_id", "att")) |>
-    dplyr::mutate(att_num = as.numeric(substr(.data$att, 4, nchar(.data$att))),
-                  param = dplyr::case_when(meas == 0 ~ paste0("guess[",
-                                                              .data$att_num,
-                                                              "]"),
-                                           meas == 1 ~ paste0("(1 - slip[",
-                                                              .data$att_num,
-                                                              "])"))) |>
+    dplyr::mutate(
+      att_num = gsub("att", "", .data$att),
+      param = dplyr::case_when(
+        meas == 0 ~ paste0("guess[", .data$att_num, "]"),
+        meas == 1 ~ paste0("(1 - slip[", .data$att_num, "])")
+      )
+    ) |>
     dplyr::select("profile_id", "att", "param")
 
   pi_def <- qmatrix |>

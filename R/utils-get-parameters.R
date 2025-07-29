@@ -42,7 +42,8 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
         colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
       )
   } else if (is.null(names(att_names))) {
-    att_names <- rlang::set_names(att_names, att_names)
+    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
+      rlang::set_names(att_names)
   }
 
   qmatrix <- qmatrix |>
@@ -227,31 +228,37 @@ nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-nido_parameters <- function(qmatrix, identifier = NULL,
+nido_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
                             rename_attributes = FALSE) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
   }
 
-  att_id <- seq_len(ncol(qmatrix))
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(colnames(qmatrix))
+  } else if (is.null(names(att_names))) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(att_names)
+  }
 
-  attribute_ids <- tibble::tibble(dcmstan_real_att_id = colnames(qmatrix)) |>
-    tibble::rowid_to_column(var = "att_number")
-
-  all_params <- tidyr::crossing(att_id = att_id,
-                                type = c("beta", "gamma")) |>
-    dplyr::mutate(coefficient = dplyr::case_when(.data$type == "beta" ~
-                                                   glue::glue("beta{att_id}"),
-                                                 .data$type == "gamma" ~
-                                                   glue::glue("gamma{att_id}")))
+  all_params <- tibble::enframe(att_names) |>
+    tidyr::expand_grid(type = c("intercept", "maineffect")) |>
+    dplyr::mutate(att_id = gsub("att", "", .data$value),
+                  level = dplyr::case_when(.data$type == "intercept" ~ 0L,
+                                           .data$type == "maineffect" ~ 1L),
+                  coefficient = glue::glue("l_{.data$level}{.data$att_id}"),
+                  coefficient = as.character(.data$coefficient)) |>
+    dplyr::select(attribute = "value", "type", "coefficient")
 
   if (!rename_attributes) {
-    all_params <- all_params |>
-      dplyr::left_join(attribute_ids,
-                       by = dplyr::join_by("att_id" == "att_number")) |>
-      dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
-      dplyr::select(-"dcmstan_real_att_id")
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attribute = gsub(paste0("att", i),
+                                                   names(att_names)[i],
+                                                   .data$attribute))
+    }
   }
 
   return(all_params)
@@ -288,7 +295,8 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
         colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
       )
   } else if (is.null(names(att_names))) {
-    att_names <- rlang::set_names(att_names, att_names)
+    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
+      rlang::set_names(att_names)
   }
 
   qmatrix <- qmatrix |>

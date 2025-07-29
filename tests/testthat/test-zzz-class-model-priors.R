@@ -121,7 +121,7 @@ test_that("nida default priors", {
 test_that("nido default priors", {
   expect_identical(
     prior_tibble(nido_priors()),
-    tibble::tibble(type = c("beta", "gamma"),
+    tibble::tibble(type = c("intercept", "maineffect"),
                    coefficient = NA_character_,
                    prior = c("normal(0, 2)", "lognormal(0, 1)"))
   )
