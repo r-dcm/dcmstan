@@ -69,7 +69,8 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   )
 
   # priors -----
-  att_priors <- nida_parameters(qmatrix = qmatrix) |>
+  att_priors <- nida_parameters(qmatrix = qmatrix,
+                                rename_attributes = TRUE) |>
     dplyr::left_join(prior_tibble(priors),
                      by = c("type", "coefficient"),
                      relationship = "one-to-one") |>
