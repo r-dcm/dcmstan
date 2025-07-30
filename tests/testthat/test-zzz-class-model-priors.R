@@ -76,9 +76,9 @@ test_that("lcdm default priors", {
 test_that("ncrum default priors", {
   expect_identical(
     prior_tibble(ncrum_priors()),
-    tibble::tibble(type = c("slip", "penalty"),
+    tibble::tibble(type = c("baseline", "penalty"),
                    coefficient = NA_character_,
-                   prior = c("beta(5, 25)", "beta(5, 25)"))
+                   prior = c("beta(15, 3)", "beta(2, 2)"))
   )
 })
 

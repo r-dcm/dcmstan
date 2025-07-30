@@ -120,8 +120,8 @@ nido_priors <- function() {
 nida_priors <- dina_priors
 
 ncrum_priors <- function() {
-  prior <- c(prior("beta(5, 25)", type = "slip"),
-             prior("beta(5, 25)", type = "penalty"))
+  prior <- c(prior("beta(15, 3)", type = "baseline"),
+             prior("beta(2, 2)", type = "penalty"))
 
   prior
 }

@@ -146,12 +146,11 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
     dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
     tibble::rowid_to_column(var = "item_number")
 
-  all_params <- expand.grid(item_id = seq_len(nrow(qmatrix)),
-                            type = c("slip", "guess"),
-                            stringsAsFactors = FALSE) |>
+  all_params <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
+                                   type = c("slip", "guess")) |>
     tibble::as_tibble() |>
     dplyr::mutate(coefficient = glue::glue("{.data$type}[{.data$item_id}]")) |>
-    dplyr::arrange(.data$item_id, .data$type) |>
+    dplyr::arrange(.data$item_id) |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
 
   if (!rename_items) {
@@ -360,6 +359,7 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
 ncrum_parameters <- function(qmatrix, identifier = NULL,
+                             att_names = NULL, item_names = NULL,
                              rename_attributes = FALSE, rename_items = FALSE) {
   if (is.null(identifier)) {
     qmatrix <- qmatrix |>
@@ -374,45 +374,43 @@ ncrum_parameters <- function(qmatrix, identifier = NULL,
       dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
       tibble::rowid_to_column(var = "item_number")
   }
-
   qmatrix <- qmatrix |>
     dplyr::select(-{{ identifier }})
 
-  attribute_ids <- tibble::tibble(dcmstan_real_att_id = colnames(qmatrix)) |>
-    tibble::rowid_to_column(var = "att_number") |>
-    dplyr::mutate(att_name = paste0("att", .data$att_number))
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(colnames(qmatrix))
+  } else if (is.null(names(att_names))) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(att_names)
+  }
 
-  colnames(qmatrix) <- attribute_ids$att_name
-
-  attribute_ids <- attribute_ids |>
-    dplyr::select(-"att_name")
-
-  measured_att <- qmatrix |>
-    tibble::rowid_to_column("item_id") |>
-    tidyr::pivot_longer(cols = -c("item_id"), names_to = "att_id",
-                        values_to = "meas") |>
-    dplyr::mutate(att_id = as.numeric(sub("att", "", .data$att_id)))
-
-  all_params <- expand.grid(item_id = seq_len(nrow(qmatrix)),
-                            att_id = seq_len(ncol(qmatrix)),
-                            type = c("slip", "penalty"),
-                            stringsAsFactors = FALSE) |>
-    tibble::as_tibble() |>
-    dplyr::mutate(coefficient = glue::glue(
-      "{.data$type}_{.data$item_id}_{.data$att_id}"
-    )) |>
-    dplyr::arrange(.data$item_id, .data$att_id, .data$type) |>
-    dplyr::mutate(coefficient = as.character(.data$coefficient)) |>
-    dplyr::left_join(measured_att, by = c("item_id", "att_id")) |>
-    dplyr::filter(.data$meas == 1) |>
-    dplyr::select(-"meas")
+  all_params <- qmatrix |>
+    tibble::rowid_to_column(var = "item_id") |>
+    dplyr::mutate(baseline = 1L, .before = 2) |>
+    tidyr::pivot_longer(cols = -"item_id", names_to = "attribute",
+                        values_to = "valid") |>
+    dplyr::filter(.data$valid == 1L) |>
+    dplyr::select(-"valid") |>
+    dplyr::mutate(
+      type = dplyr::case_when(.data$attribute == "baseline" ~ "baseline",
+                              .default = "penalty"),
+      attribute = dplyr::na_if(.data$attribute, "baseline"),
+      att_id = gsub("att", "", .data$attribute),
+      coefficient = dplyr::case_when(
+        .data$type == "baseline" ~ glue::glue("pistar_{item_id}"),
+        .data$type == "penalty" ~ glue::glue("rstar_{item_id}{att_id}")
+      )
+    ) |>
+    dplyr::select("item_id", "type", "attribute", "coefficient")
 
   if (!rename_attributes) {
-    all_params <- all_params |>
-      dplyr::left_join(attribute_ids,
-                       by = dplyr::join_by("att_id" == "att_number")) |>
-      dplyr::mutate(att_id = .data$dcmstan_real_att_id) |>
-      dplyr::select(-"dcmstan_real_att_id")
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attribute = gsub(paste0("att", i),
+                                                   names(att_names)[i],
+                                                   .data$attribute))
+    }
   }
 
   if (!rename_items) {

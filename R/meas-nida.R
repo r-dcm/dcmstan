@@ -35,7 +35,7 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                         values_to = "meas")
 
   profile_params <- tibble::tibble(profile_id = seq_len(nrow(all_profiles))) |>
-    tidyr::crossing(att = colnames(qmatrix)) |>
+    tidyr::crossing(att = paste0("att", seq_len(ncol(qmatrix)))) |>
     dplyr::left_join(profiles, by = c("profile_id", "att")) |>
     dplyr::mutate(
       att_num = gsub("att", "", .data$att),

@@ -19,65 +19,38 @@ meas_ncrum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                                  rename_items = TRUE)
 
   params <- all_params |>
-    dplyr::mutate(param = paste0("real<lower=0,upper=1> ", .data$coefficient,
-                                 ";")) |>
-    dplyr::pull(.data$param)
+    glue::glue_data("real<lower=0,upper=1> {coefficient};")
 
   parameters_block <- glue::glue(
-    "  ////////////////////////////////// parameters",
+    "  ////////////////////////////////// measurement parameters",
     "  {glue::glue_collapse(params, sep = \"\n  \")}",
     .sep = "\n", .trim = FALSE
   )
 
   # transformed parameters block -----
-  all_profiles <- create_profiles(ncol(qmatrix))
+  all_profiles <- if (is.null(hierarchy)) {
+    create_profiles(ncol(qmatrix))
+  } else {
+    create_profiles(hdcm(hierarchy = hierarchy),
+                    attributes = att_names)
+  }
 
-  profiles <- all_profiles |>
-    tibble::rowid_to_column("profile_id") |>
-    tidyr::pivot_longer(cols = -"profile_id", names_to = "att",
-                        values_to = "meas") |>
-    dplyr::mutate(att = as.numeric(sub("att", "", .data$att)))
-
-  q <- qmatrix |>
-    tibble::rowid_to_column("item_id") |>
-    tidyr::pivot_longer(cols = -c("item_id"), names_to = "att_id",
-                        values_to = "measured") |>
-    dplyr::mutate(att_id = as.numeric(sub("att", "", .data$att_id)))
-
-  pi_def <- tidyr::crossing(profiles |>
-                              dplyr::select(-"meas"),
-                            q |>
-                              dplyr::select(-"measured"),
-                            type = c("slip", "penalty")) |>
-    dplyr::filter(.data$att == .data$att_id) |>
-    dplyr::select("profile_id", "item_id", "att_id", "type") |>
-    dplyr::left_join(profiles |>
-                       dplyr::rename(att_id = "att", mastered = "meas"),
-                     by = c("profile_id", "att_id")) |>
-    dplyr::left_join(q, by = c("item_id", "att_id")) |>
-    dplyr::arrange(.data$profile_id, .data$item_id, .data$att_id,
-                   dplyr::desc(.data$type)) |>
-    dplyr::filter(.data$measured == 1) |>
-    dplyr::mutate(missing = .data$measured - .data$mastered) |>
-    dplyr::left_join(all_params, by = c("item_id", "att_id", "type")) |>
-    dplyr::mutate(param = dplyr::case_when(type == "slip" ~
-                                             paste0("(1 - ", .data$coefficient,
-                                                    ")"),
-                                           missing == 0 & type == "penalty" ~
-                                             NA_character_,
-                                           TRUE ~ .data$coefficient)) |>
-    dplyr::select("profile_id", "item_id", "param") |>
-    dplyr::group_by(.data$profile_id, .data$item_id) |>
-    dplyr::mutate(param_num = dplyr::row_number()) |>
-    dplyr::ungroup() |>
-    tidyr::pivot_wider(names_from = "param_num", values_from = "param") |>
-    tidyr::unite(col = "param", -c("profile_id", "item_id"),
-                 remove = TRUE, na.rm = TRUE, sep = " * ") |>
-    dplyr::mutate(full_param = paste0("pi[", .data$item_id, ",",
-                                      .data$profile_id, "] = ", .data$param,
-                                      ";")) |>
-    dplyr::pull(.data$full_param)
-
+  pi_def <- all_params |>
+    tidyr::expand_grid(profile_id = seq_len(nrow(all_profiles))) |>
+    dplyr::left_join(all_profiles |>
+                       tibble::rowid_to_column(var = "profile_id") |>
+                       tidyr::pivot_longer(cols = -"profile_id",
+                                           names_to = "attribute",
+                                           values_to = "valid"),
+                     by = c("profile_id", "attribute"),
+                     relationship = "many-to-one") |>
+    dplyr::filter(is.na(valid) | valid == 0) |>
+    dplyr::summarize(pi = paste(coefficient, collapse = "*"),
+                     .by = c("item_id", "profile_id")) |>
+    dplyr::mutate(
+      full_param = glue::glue("pi[{item_id},{profile_id}] = {pi};")
+    ) |>
+    dplyr::pull("full_param")
 
   transformed_parameters_block <- glue::glue(
     "  matrix[I,C] pi;",
@@ -88,11 +61,21 @@ meas_ncrum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   )
 
   # priors -----
-  prior_def <- ncrum_parameters(qmatrix = qmatrix) |>
+  prior_def <- all_params |>
+    dplyr::left_join(prior_tibble(priors),
+                     by = c("type", "coefficient"),
+                     relationship = "one-to-one") |>
+    dplyr::rename(coef_def = "prior") |>
     dplyr::left_join(prior_tibble(priors) |>
+                       dplyr::filter(is.na(.data$coefficient)) |>
                        dplyr::select(-"coefficient"),
-                     by = c("type")) |>
-    dplyr::mutate(prior_def = glue::glue("{coefficient} ~ {prior};")) |>
+                     by = c("type"), relationship = "many-to-one") |>
+    dplyr::rename(type_def = "prior") |>
+    dplyr::mutate(
+      prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
+                               is.na(.data$coef_def) ~ .data$type_def),
+      prior_def = glue::glue("{coefficient} ~ {prior};")
+    ) |>
     dplyr::pull("prior_def")
 
   # return -----
