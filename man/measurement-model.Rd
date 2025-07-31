@@ -49,10 +49,7 @@ parameters represent the increase in the log-odds for each required attribute
 that is present. Finally, interaction terms define the change in log-odds
 (after the main effects) when more than one of the required attributes are
 present.
-
-The C-RUM (Hartz, 2002) is similar to the LCDM, but is constrained to only
-include the intercept and main effect parameters. That is, no interaction
-terms are included for the C-RUM.
+\subsection{Non-compensatory models}{
 
 The DINA model (de la Torre & Douglas, 2004; Junker & Sijtsma, 2001) is a
 restrictive non-compensatory model. For each item two parameters are
@@ -65,6 +62,27 @@ respondent has all of the attributes required for an item, or they do not.
 There is no increase in the probability of providing a correct response if
 only a subset of the required attributes is present.
 
+The NIDA model (Junker & Sijtsma, 2001) is a non-compensatory model that is
+less restrictive than the DINA model. Where the DINA model takes an
+"all-or-nothing" approach, the NIDA model defines the probability of
+responding correctly based on each attribute that has been mastered. In doing
+this, the NIDA model estimates parameters for each attribute and holds these
+parameters constant across items. Thus, respondents have increased
+probability of responding correctly based on the specific attributes that
+have been mastered. However, the parameters are held constant across items.
+That is, the effect of non-proficiency on an attribute is the same for all
+items measuring that attribute.
+
+The reduced NC-RUM (DiBello et al., 1995; Hartz, 2002) is a non-compensatory
+model that is less restrictive than both the DINA and NIDA model, as the
+NC-RUM does not constrain parameters across items or attributes. Thus, the
+NC-RUM is most similar to the LCDM; however, the equivalent LCDM
+parameterization of the NC-RUM constrains interaction parameters to be
+positive, which differs from the full LCDM specification.
+}
+
+\subsection{Compensatory models}{
+
 The DINO model (Templin & Henson, 2006) is the inverse of the DINA model.
 Whereas the DINA model is "all-or-nothing", the DINO model can be thought of
 as "anything-or-nothing". In the DINO model, the guessing parameter defines
@@ -76,15 +94,6 @@ in an increased probability of a correct response, and there is no additional
 increase in probability for the presence of more than one of the required
 attributes.
 
-The NIDA model (Junker & Sijtsma, 2001) is a non-compensatory model that is
-less restrictive than the DINA model. Where the DINA model takes an
-"all-or-nothing" approach, the NIDA model defines the probability of
-responding correctly based on each attribute that has been mastered. In doing
-this, the NIDA model estimates parameters for each attribute and holds these
-parameters constant across items. Thus, respondents have increased
-probability of responding correctly based on the specific attributes that
-have been mastered.
-
 The NIDO model (Templin, 2006) is a compensatory model that defines the
 probability of responding correctly based on each attribute that has been
 mastered. Like the NIDA model, the NIDO model holds these parameters constant
@@ -92,14 +101,10 @@ across items. In the NIDO model, the probability of responding correctly
 increases with each mastered attribute without assuming a cumulative effect
 of mastering multiple attributes.
 
-The NC-RUM (DiBello et al., 1995; Hartz, 2002) is a non-compensatory model.
-There are two versions of the NC-RUM, the full NC-RUM and the reduced NC-RUM.
-The reduced NC-RUM is used in practice because the full NC-RUM includes a
-parameter to account for Q-matrix incompleteness that is difficult to
-estimate reliably. The reduced NC-RUM is  less restrictive than the NIDA
-model, since it does not constrain parameters across items. Thus, the reduced
-NC-RUM is similar to the LDCM; however, the reduced NC-RUM constrains
-interaction parameters to be positive, which differs from the LCDM.
+The C-RUM (Hartz, 2002) is similar to the LCDM, but is constrained to only
+include the intercept and main effect parameters. That is, no interaction
+terms are included for the C-RUM.
+}
 }
 \examples{
 lcdm()

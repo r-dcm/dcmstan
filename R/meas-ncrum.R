@@ -49,8 +49,8 @@ meas_ncrum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                                            values_to = "valid"),
                      by = c("profile_id", "attribute"),
                      relationship = "many-to-one") |>
-    dplyr::filter(is.na(valid) | valid == 0) |>
-    dplyr::summarize(pi = paste(coefficient, collapse = "*"),
+    dplyr::filter(is.na(.data$valid) | .data$valid == 0) |>
+    dplyr::summarize(pi = paste(.data$coefficient, collapse = "*"),
                      .by = c("item_id", "profile_id")) |>
     dplyr::mutate(
       full_param = glue::glue("pi[{item_id},{profile_id}] = {pi};")

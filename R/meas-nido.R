@@ -51,7 +51,7 @@ meas_nido <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
                         values_to = "meas") |>
     dplyr::left_join(all_params, by = c("att" = "attribute"),
                      relationship = "many-to-many") |>
-    dplyr::filter(!(meas == 0 & type == "maineffect")) |>
+    dplyr::filter(!(.data$meas == 0 & .data$type == "maineffect")) |>
     dplyr::summarize(param = paste(.data$coefficient, collapse = "+"),
                      .by = c("profile_id", "att")) |>
     dplyr::select("profile_id", "att", "param")
