@@ -2,7 +2,8 @@ default_data_names <- c("I", "R", "N", "C", "ii", "rr", "y", "start", "num")
 extra_data_names <- list(
   independent = c("A", "Alpha"),
   dina = c("Xi"),
-  dino = c("Xi")
+  dino = c("Xi"),
+  nida = c("A")
 )
 
 test_that("correct data objects are returned", {

@@ -68,7 +68,13 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     if (!is.null(meas_data)) glue::glue("{meas_data}"),
     if (!is.null(strc_data)) glue::glue("{strc_data}"),
     "}}", .sep = "\n", .null = NULL
-  )
+  ) |>
+    tibble::as_tibble() |>
+    tidyr::separate_longer_delim("value", delim = "\n") |>
+    dplyr::distinct() |>
+    glue::glue_data("{value}") |>
+    glue::glue_collapse(sep = "\n")
+
 
   # parameters block -----
   parameters_block <- glue::glue(
@@ -140,6 +146,14 @@ S7::method(stan_data_code, DINA) <- function(x) {
 S7::method(stan_data_code, DINO) <- function(x) {
   data_block <- glue::glue(
     "  matrix[I,C] Xi;                      // class attribute indicator"
+  )
+
+  data_block
+}
+
+S7::method(stan_data_code, NIDA) <- function(x) {
+  data_block <- glue::glue(
+    "  int<lower=1> A;                      // number of attributes"
   )
 
   data_block

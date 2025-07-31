@@ -3,6 +3,9 @@
 #' @param x A character string indicating the attributes measured by an item,
 #'   separated by a double underscore (`__`).
 #' @param item The item number.
+#' @param possible_params A vector of possible parameters. Used to filter the
+#'   list of component parameters to only those that can be included in the
+#'   model.
 #'
 #' @returns A character string with the component parameters.
 #' @noRd

@@ -8,6 +8,13 @@
 #' @param max_interaction For the LCDM, the highest level interaction that
 #'   should be included in the model. For the C-RUM, this is always 1 (i.e.,
 #'   main effects only).
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#' @param item_names Vector of item names, as in the
+#'   `qmatrix_meta$item_names` of a [DCM specification][dcm_specify()].
+#' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
+#'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+#'   how to draw the attribute hierarchy.
 #' @param rename_attributes Logical. Should the output rename the attributes to
 #'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
 #'   the original attributes names in the Q-matrix (`FALSE`, the default).
@@ -42,7 +49,8 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
         colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
       )
   } else if (is.null(names(att_names))) {
-    att_names <- rlang::set_names(att_names, att_names)
+    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
+      rlang::set_names(att_names)
   }
 
   qmatrix <- qmatrix |>
@@ -122,6 +130,8 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
+#' @param item_names Vector of item names, as in the
+#'   `qmatrix_meta$item_names` of a [DCM specification][dcm_specify()].
 #' @param rename_items Logical. Should the output rename and number the items to
 #'   have consistent and generic names (e.g., `1`, `2`; `TRUE`) or keep the
 #'   original item names in the Q-matrix (`FALSE`, the default). If there are no
@@ -145,12 +155,11 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
     dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
     tibble::rowid_to_column(var = "item_number")
 
-  all_params <- expand.grid(item_id = seq_len(nrow(qmatrix)),
-                            type = c("slip", "guess"),
-                            stringsAsFactors = FALSE) |>
+  all_params <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
+                                   type = c("slip", "guess")) |>
     tibble::as_tibble() |>
     dplyr::mutate(coefficient = glue::glue("{.data$type}[{.data$item_id}]")) |>
-    dplyr::arrange(.data$item_id, .data$type) |>
+    dplyr::arrange(.data$item_id) |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
 
   if (!rename_items) {
@@ -166,6 +175,198 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
 }
 
 
+#' Determine the possible parameters for a NIDA model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
+                            rename_attributes = FALSE) {
+  if (!is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      dplyr::select(-{{ identifier }})
+  }
+
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(colnames(qmatrix))
+  } else if (is.null(names(att_names))) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(att_names)
+  }
+
+  all_params <- tibble::enframe(att_names) |>
+    tidyr::expand_grid(type = c("slip", "guess")) |>
+    dplyr::mutate(att_id = gsub("att", "", .data$value),
+                  coefficient = glue::glue("{.data$type}[{.data$att_id}]"),
+                  coefficient = as.character(.data$coefficient)) |>
+    dplyr::select(attribute = "value", "type", "coefficient")
+
+  if (!rename_attributes) {
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attribute = gsub(paste0("att", i),
+                                                   names(att_names)[i],
+                                                   .data$attribute))
+    }
+  }
+
+  return(all_params)
+}
+
+
+#' Determine the possible parameters for a NIDO model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+nido_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
+                            rename_attributes = FALSE) {
+  if (!is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      dplyr::select(-{{ identifier }})
+  }
+
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(colnames(qmatrix))
+  } else if (is.null(names(att_names))) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(att_names)
+  }
+
+  all_params <- tibble::enframe(att_names) |>
+    tidyr::expand_grid(type = c("intercept", "maineffect")) |>
+    dplyr::mutate(att_id = gsub("att", "", .data$value),
+                  level = dplyr::case_when(.data$type == "intercept" ~ 0L,
+                                           .data$type == "maineffect" ~ 1L),
+                  coefficient = glue::glue("l_{.data$level}{.data$att_id}"),
+                  coefficient = as.character(.data$coefficient)) |>
+    dplyr::select(attribute = "value", "type", "coefficient")
+
+  if (!rename_attributes) {
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attribute = gsub(paste0("att", i),
+                                                   names(att_names)[i],
+                                                   .data$attribute))
+    }
+  }
+
+  return(all_params)
+}
+
+
+#' Determine the possible parameters for a NC-RUM model
+#'
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#' @param item_names Vector of item names, as in the
+#'   `qmatrix_meta$item_names` of a [DCM specification][dcm_specify()].
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
+#' @param rename_items Logical. Should the output rename and number the items to
+#'   have consistent and generic names (e.g., `1`, `2`; `TRUE`) or keep the
+#'   original item names in the Q-matrix (`FALSE`, the default). If there are no
+#'   identifiers in the Q-matrix, generic names are always used.
+#'
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+ncrum_parameters <- function(qmatrix, identifier = NULL,
+                             att_names = NULL, item_names = NULL,
+                             rename_attributes = FALSE, rename_items = FALSE) {
+  if (is.null(identifier)) {
+    if (is.null(item_names)) {
+      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
+                                     as.character(seq_len(nrow(qmatrix))))
+    } else if (is.null(names(item_names))) {
+      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
+                                     item_names)
+    }
+    qmatrix <- qmatrix |>
+      tibble::rowid_to_column(var = "item_id") |>
+      dplyr::mutate(item_id = names(item_names)[.data$item_id])
+    identifier <- "item_id"
+  }
+  item_ids <- qmatrix |>
+    dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+    tibble::rowid_to_column(var = "item_number")
+  qmatrix <- qmatrix |>
+    dplyr::select(-{{ identifier }})
+
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(colnames(qmatrix))
+  } else if (is.null(names(att_names))) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix))) |>
+      rlang::set_names(att_names)
+  }
+
+  all_params <- qmatrix |>
+    dplyr::rename_with(~att_names) |>
+    tibble::rowid_to_column(var = "item_id") |>
+    dplyr::mutate(baseline = 1L, .before = 2) |>
+    tidyr::pivot_longer(cols = -"item_id", names_to = "attribute",
+                        values_to = "valid") |>
+    dplyr::filter(.data$valid == 1L) |>
+    dplyr::select(-"valid") |>
+    dplyr::mutate(
+      type = dplyr::case_when(.data$attribute == "baseline" ~ "baseline",
+                              .default = "penalty"),
+      attribute = dplyr::na_if(.data$attribute, "baseline"),
+      att_id = gsub("att", "", .data$attribute),
+      coefficient = dplyr::case_when(
+        .data$type == "baseline" ~ glue::glue("pistar_{item_id}"),
+        .data$type == "penalty" ~ glue::glue("rstar_{item_id}{att_id}")
+      )
+    ) |>
+    dplyr::select("item_id", "type", "attribute", "coefficient")
+
+  if (!rename_attributes) {
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(all_params,
+                                  attribute = gsub(paste0("att", i),
+                                                   names(att_names)[i],
+                                                   .data$attribute))
+    }
+  }
+
+  if (!rename_items) {
+    all_params <- all_params |>
+      dplyr::left_join(item_ids,
+                       by = dplyr::join_by("item_id" == "item_number")) |>
+      dplyr::select({{ identifier }} := "dcmstan_real_item_id",
+                    dplyr::everything(),
+                    -"item_id")
+  }
+
+  return(all_params)
+}
+
 #' Determine the possible parameters for a Log-linear structural model
 #'
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
@@ -175,6 +376,8 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
 #'   (the default).
 #' @param max_interaction Positive integer. For the Log-linear structural
 #' model, the highest structural-level interaction to include in the model.
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
 #' @param rename_attributes Logical. Should the output rename the attributes to
 #'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
 #'   the original attributes names in the Q-matrix (`FALSE`, the default).
@@ -197,7 +400,8 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
         colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
       )
   } else if (is.null(names(att_names))) {
-    att_names <- rlang::set_names(att_names, att_names)
+    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
+      rlang::set_names(att_names)
   }
 
   qmatrix <- qmatrix |>
@@ -269,7 +473,7 @@ model_matrix_name_repair <- function(x) {
 #' @noRd
 filter_hierarchy <- function(all_params, filtered_hierarchy) {
   graph_def <- filtered_hierarchy |>
-    glue::glue_data("{name} {direction} {to}", )
+    glue::glue_data("{name} {direction} {to}")
   g <- glue::glue("graph {{ ",
                   "{paste(graph_def, collapse = '\n')} ",
                   "}}", .sep = "\n") |>

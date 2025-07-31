@@ -1,3 +1,4 @@
+# nolint start: indendation_linter
 true_1 <- tibble::tribble(
   ~att1,
      0L,
@@ -18,10 +19,10 @@ true_3 <- tibble::tribble(
 
 true_3_hdcm <- tibble::tribble(
   ~att1, ~att2, ~att3,
-  0L,    0L,    0L,
-  0L,    0L,    1L,
-  0L,    1L,    1L,
-  1L,    1L,    1L
+     0L,    0L,    0L,
+     0L,    0L,    1L,
+     0L,    1L,    1L,
+     1L,    1L,    1L
 )
 
 true_4 <- tibble::tribble(
@@ -43,6 +44,7 @@ true_4 <- tibble::tribble(
      0L,    1L,    1L,    1L,
      1L,    1L,    1L,    1L
 )
+# nolint end
 
 test_that("numeric method works", {
   err <- rlang::catch_cnd(create_profiles(3.2))
