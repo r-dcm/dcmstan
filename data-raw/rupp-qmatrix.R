@@ -3,6 +3,7 @@
 # (2010) to demonstrate the different parameters that are included in each DCM
 # subtype.
 
+# nolint start: indentation_linter
 rupp_math <- tibble::tribble(
   ~items,   ~addition, ~subtraction, ~multiplication, ~division,
   "Item 1",         1,            1,               0,         0,
@@ -21,15 +22,15 @@ rupp_gri <- tibble::tribble(
 
 rupp_profiles <- tibble::tribble(
   ~id, ~rupp_id, ~att1, ~att2, ~att3, ~att4,
-   1L,       1L,     0,     0,     0,     0,
-   2L,       9L,     1,     0,     0,     0,
-   3L,       5L,     0,     1,     0,     0,
-   4L,       3L,     0,     0,     1,     0,
-   5L,       2L,     0,     0,     0,     1,
-   6L,      13L,     1,     1,     0,     0,
-   7L,      11L,     1,     0,     1,     0,
-   8L,      10L,     1,     0,     0,     1,
-   9L,       7L,     0,     1,     1,     0,
+   1L,        1L,     0,     0,     0,     0,
+   2L,        9L,     1,     0,     0,     0,
+   3L,        5L,     0,     1,     0,     0,
+   4L,        3L,     0,     0,     1,     0,
+   5L,        2L,     0,     0,     0,     1,
+   6L,       13L,     1,     1,     0,     0,
+   7L,       11L,     1,     0,     1,     0,
+   8L,       10L,     1,     0,     0,     1,
+   9L,        7L,     0,     1,     1,     0,
   10L,       6L,     0,     1,     0,     1,
   11L,       4L,     0,     0,     1,     1,
   12L,      15L,     1,     1,     1,     0,
@@ -38,6 +39,7 @@ rupp_profiles <- tibble::tribble(
   15L,       8L,     0,     1,     1,     1,
   16L,      16L,     1,     1,     1,     1
 )
+# nolint end
 
 usethis::use_data(rupp_math, rupp_gri, rupp_profiles,
                   internal = TRUE, overwrite = TRUE)

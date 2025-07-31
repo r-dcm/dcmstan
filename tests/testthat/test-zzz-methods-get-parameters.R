@@ -15,6 +15,7 @@ test_that("lcdm parameters work", {
 
   expect_equal(
     params,
+    # nolint start: indentation_linter
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
            "1",   "intercept",                       NA,       "l1_0",
@@ -48,10 +49,12 @@ test_that("lcdm parameters work", {
            "4", "interaction",       "att2__att3__att4",    "l4_3234",
            "4", "interaction", "att1__att2__att3__att4",   "l4_41234"
     )
+    # nolint end
   )
 
   expect_equal(
     lcdm_parameters(test_qmatrix, max_interaction = 2),
+    # nolint start: indentation_linter
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
            "1",   "intercept",                       NA,       "l1_0",
@@ -79,6 +82,7 @@ test_that("lcdm parameters work", {
            "4", "interaction",             "att2__att4",     "l4_224",
            "4", "interaction",             "att3__att4",     "l4_234"
     )
+    # nolint end
   )
 })
 
@@ -384,7 +388,8 @@ test_that("nida parameters (table 6.6)", {
       coefficient = c("slip[1]", "guess[1]",
                       "slip[2]", "guess[2]",
                       "slip[3]", "guess[3]",
-                      "slip[4]", "guess[4]"))
+                      "slip[4]", "guess[4]")
+    )
   )
 
   nida_code <- meas_nida(qmatrix = rlang::set_names(rupp_math[, -1],
@@ -456,7 +461,8 @@ test_that("ncrum parameters (table 6.8)", {
       coefficient = c("pistar_1", "rstar_11", "rstar_12",
                       "pistar_2", "rstar_24",
                       "pistar_3", "rstar_32", "rstar_33",
-                      "pistar_4", "rstar_41"))
+                      "pistar_4", "rstar_41")
+    )
   )
 
   ncrum_code <- meas_ncrum(qmatrix = rlang::set_names(rupp_math[, -1],
@@ -539,7 +545,8 @@ test_that("nido parameters (table 6.15)", {
       attribute = rep(paste0("attribute", 1:4), each = 2),
       type = rep(c("intercept", "maineffect"), 4),
       coefficient = c("l_01", "l_11", "l_02", "l_12", "l_03", "l_13",
-                      "l_04", "l_14"))
+                      "l_04", "l_14")
+    )
   )
 
   nido_code <- meas_nido(qmatrix = rlang::set_names(rupp_gri[, -1],
@@ -608,7 +615,8 @@ test_that("crum parameters (table 6.17)", {
                      NA, "attribute4",
                      NA, "attribute2", "attribute3", "attribute4"),
       coefficient = c("l1_0", "l1_11", "l2_0", "l2_12", "l2_13",
-                      "l3_0", "l3_14", "l4_0", "l4_12", "l4_13", "l4_14"))
+                      "l3_0", "l3_14", "l4_0", "l4_12", "l4_13", "l4_14")
+    )
   )
 
   crum_code <- meas_crum(qmatrix = rlang::set_names(rupp_gri[, -1],
@@ -755,6 +763,7 @@ test_that("loglinear parameters work", {
 
   expect_equal(
     params,
+    # nolint start: indentation_linter
     tibble::tribble(
       ~profile_id,         ~type,             ~attributes, ~coefficient,
                2L,  "structural",                  "att1",       "g_11",
@@ -777,11 +786,13 @@ test_that("loglinear parameters work", {
                8L,  "structural",            "att2__att3",      "g_223",
                8L,  "structural",      "att1__att2__att3",     "g_3123"
     )
+    # nolint end
   )
 
   expect_equal(
     loglinear_parameters(test_qmatrix, max_interaction = 1,
                          att_names = paste0("node", 1:3)),
+    # nolint start: indentation_linter
     tibble::tribble(
       ~profile_id,         ~type,             ~attributes, ~coefficient,
                2L,  "structural",                 "node1",       "g_11",
@@ -797,6 +808,7 @@ test_that("loglinear parameters work", {
                8L,  "structural",                 "node2",       "g_12",
                8L,  "structural",                 "node3",       "g_13"
     )
+    # nolint end
   )
 })
 
