@@ -112,11 +112,15 @@
 #'
 #' dina()
 #'
+#' dino()
+#'
 #' nida()
 #'
 #' nido()
 #'
 #' ncrum()
+#'
+#' crum()
 lcdm <- function(max_interaction = Inf) {
   check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
   LCDM(model = "lcdm", list(max_interaction = max_interaction))
@@ -399,6 +403,9 @@ structural <- S7::new_class("structural", package = "dcmstan",
 
 #' S7 class for generated quantities
 #'
+#' @param model_args A named list of arguments to be passed on to the
+#'   corresponding `strc_*()` function.
+#'
 #' @noRd
 quantities <- S7::new_class("quantities", package = "dcmstan",
   properties = list(
@@ -444,14 +451,17 @@ DINA <- S7::new_class("DINA", parent = measurement, package = "dcmstan",
 DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
 
-CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
 NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 NIDO <- S7::new_class("NIDO", parent = measurement, package = "dcmstan",
                       properties = list(model = model_property))
+
 NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
                        properties = list(model = model_property))
+
+CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
+                      properties = list(model = model_property))
 
 ## Structural models -----
 UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
@@ -468,5 +478,4 @@ HDCM <- S7::new_class("HDCM", parent = structural, package = "dcmstan",
                       properties = list(model = model_property))
 
 ## Generated quantities -----
-GQS <- S7::new_class("GQS", parent = quantities,
-                     package = "dcmstan")
+GQS <- S7::new_class("GQS", parent = quantities, package = "dcmstan")

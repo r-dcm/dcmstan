@@ -7,10 +7,10 @@ meas_choices <- function() {
   c("loglinear cognitive diagnostic model (LCDM)" = "lcdm",
     "deterministic input, noisy \"and\" gate (DINA)" = "dina",
     "deterministic input, noisy \"or\" gate (DINO)" = "dino",
-    "compensatory reparameterized unified model (C-RUM)" = "crum",
     "noisy-input, deterministic \"and\" gate (NIDA)" = "nida",
     "noisy-input, deterministic \"or\" gate (NIDO)" = "nido",
-    "noncompensatory reparameterized unified model (NC-RUM)" = "ncrum"
+    "noncompensatory reparameterized unified model (NC-RUM)" = "ncrum",
+    "compensatory reparameterized unified model (C-RUM)" = "crum"
   )
 }
 

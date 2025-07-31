@@ -35,7 +35,7 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); compensatory, reparameterized unified model (C-RUM); noisy-input, deterministic "and" gate, (NIDA); noisy-input, deterministic "or" gate (NIDO); and noncompensatory, reparameterized unified model (NC-RUM).
+loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); noisy-input,, deterministic "and" gate (NIDA); noisy-input, deterministic "or" gate (NIDO);, noncompensatory reparameterized unified model (NC-RUM); and compensatory, reparameterized unified model (C-RUM).
 See details for additional information on each model.
 }
 \details{
@@ -98,7 +98,7 @@ The reduced NC-RUM is used in practice because the full NC-RUM includes a
 parameter to account for Q-matrix incompleteness that is difficult to
 estimate reliably. The reduced NC-RUM is  less restrictive than the NIDA
 model, since it does not constrain parameters across items. Thus, the reduced
-NC-RUM is similar to the LCDM; however, the reduced NC-RUM constrains
+NC-RUM is similar to the LDCM; however, the reduced NC-RUM constrains
 interaction parameters to be positive, which differs from the LCDM.
 }
 \examples{
@@ -108,11 +108,15 @@ lcdm(max_interaction = 3)
 
 dina()
 
+dino()
+
 nida()
 
 nido()
 
 ncrum()
+
+crum()
 }
 \references{
 de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
