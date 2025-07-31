@@ -300,18 +300,21 @@ ncrum_parameters <- function(qmatrix, identifier = NULL,
                              att_names = NULL, item_names = NULL,
                              rename_attributes = FALSE, rename_items = FALSE) {
   if (is.null(identifier)) {
+    if (is.null(item_names)) {
+      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
+                                     as.character(seq_len(nrow(qmatrix))))
+    } else if (is.null(names(item_names))) {
+      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
+                                     item_names)
+    }
     qmatrix <- qmatrix |>
-      tibble::rowid_to_column(var = "item_id")
+      tibble::rowid_to_column(var = "item_id") |>
+      dplyr::mutate(item_id = names(item_names)[.data$item_id])
     identifier <- "item_id"
-
-    item_ids <- qmatrix |>
-      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
-      tibble::rowid_to_column(var = "item_number")
-  } else {
-    item_ids <- qmatrix |>
-      dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
-      tibble::rowid_to_column(var = "item_number")
   }
+  item_ids <- qmatrix |>
+    dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
+    tibble::rowid_to_column(var = "item_number")
   qmatrix <- qmatrix |>
     dplyr::select(-{{ identifier }})
 
@@ -324,6 +327,7 @@ ncrum_parameters <- function(qmatrix, identifier = NULL,
   }
 
   all_params <- qmatrix |>
+    dplyr::rename_with(~att_names) |>
     tibble::rowid_to_column(var = "item_id") |>
     dplyr::mutate(baseline = 1L, .before = 2) |>
     tidyr::pivot_longer(cols = -"item_id", names_to = "attribute",

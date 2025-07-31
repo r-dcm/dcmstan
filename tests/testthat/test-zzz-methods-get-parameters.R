@@ -152,10 +152,10 @@ test_that("nida parameters work", {
   set.seed(123)
   test_qmatrix <- tibble::tibble(
     question = c("Q1", "Q2", "Q3", "Q4"),
-    att1 = c(1, 0, 1, 0),
-    att2 = c(0, 1, 0, 1),
-    att3 = c(0, 1, 1, 1),
-    att4 = c(0, 0, 1, 1)
+    node1 = c(1, 0, 1, 0),
+    node2 = c(0, 1, 0, 1),
+    node3 = c(0, 1, 1, 1),
+    node4 = c(0, 0, 1, 1)
   )
 
   params <- get_parameters(nida(), qmatrix = test_qmatrix,
@@ -167,12 +167,33 @@ test_that("nida parameters work", {
   expect_equal(
     params,
     tibble::tibble(
-      att_id = rep(c("att1", "att2", "att3", "att4"), each = 2),
+      attribute = rep(c("node1", "node2", "node3", "node4"), each = 2),
       type = rep(c("slip", "guess"), 4),
       coefficient = c("slip[1]", "guess[1]", "slip[2]", "guess[2]",
                       "slip[3]", "guess[3]", "slip[4]", "guess[4]")
-    ),
-    ignore_attr = TRUE
+    )
+  )
+
+  expect_equal(
+    nida_parameters(test_qmatrix, identifier = "question",
+                    att_names = paste0("skill", 1:4)),
+    tibble::tibble(
+      attribute = rep(c("skill1", "skill2", "skill3", "skill4"), each = 2),
+      type = rep(c("slip", "guess"), 4),
+      coefficient = c("slip[1]", "guess[1]", "slip[2]", "guess[2]",
+                      "slip[3]", "guess[3]", "slip[4]", "guess[4]")
+    )
+  )
+
+  expect_equal(
+    nida_parameters(test_qmatrix, identifier = "question",
+                    att_names = paste0("skill", 1:4), rename_attributes = TRUE),
+    tibble::tibble(
+      attribute = rep(c("att1", "att2", "att3", "att4"), each = 2),
+      type = rep(c("slip", "guess"), 4),
+      coefficient = c("slip[1]", "guess[1]", "slip[2]", "guess[2]",
+                      "slip[3]", "guess[3]", "slip[4]", "guess[4]")
+    )
   )
 })
 
@@ -205,16 +226,48 @@ test_that("nido parameters work", {
       "skill4",       "maineffect",       "l_14"
     )
   )
+
+  expect_equal(
+    nido_parameters(test_qmatrix, identifier = "question",
+                    att_names = c("larry", "peggy", "broccoli", "henry")),
+    tibble::tribble(
+      ~attribute,     ~type,              ~coefficient,
+      "larry",        "intercept",        "l_01",
+      "larry",        "maineffect",       "l_11",
+      "peggy",        "intercept",        "l_02",
+      "peggy",        "maineffect",       "l_12",
+      "broccoli",     "intercept",        "l_03",
+      "broccoli",     "maineffect",       "l_13",
+      "henry",        "intercept",        "l_04",
+      "henry",        "maineffect",       "l_14"
+    )
+  )
+
+  expect_equal(
+    nido_parameters(test_qmatrix, identifier = "question",
+                    att_names = c("larry", "peggy", "broccoli", "henry"),
+                    rename_attributes = TRUE),
+    tibble::tribble(
+      ~attribute,     ~type,              ~coefficient,
+      "att1",         "intercept",        "l_01",
+      "att1",         "maineffect",       "l_11",
+      "att2",         "intercept",        "l_02",
+      "att2",         "maineffect",       "l_12",
+      "att3",         "intercept",        "l_03",
+      "att3",         "maineffect",       "l_13",
+      "att4",         "intercept",        "l_04",
+      "att4",         "maineffect",       "l_14"
+    )
+  )
 })
 
 test_that("ncrum parameters work", {
-  set.seed(123)
   test_qmatrix <- tibble::tibble(
     question = c("Q1", "Q2", "Q3", "Q4"),
-    att1 = c(1, 0, 1, 0),
-    att2 = c(0, 1, 0, 1),
-    att3 = c(0, 1, 1, 1),
-    att4 = c(0, 0, 1, 1)
+    addition = c(1, 0, 1, 0),
+    subtraction = c(0, 1, 0, 1),
+    multiplication = c(0, 1, 1, 1),
+    division = c(0, 0, 1, 1)
   )
 
   params <- get_parameters(ncrum(), qmatrix = test_qmatrix,
@@ -235,10 +288,104 @@ test_that("ncrum parameters work", {
                "baseline", rep("penalty", 2),
                "baseline", rep("penalty", 3),
                "baseline", rep("penalty", 3)),
+      attribute = c(NA, "addition",
+                    NA, "subtraction", "multiplication",
+                    NA, "addition", "multiplication", "division",
+                    NA, "subtraction", "multiplication", "division"),
+      coefficient = c("pistar_1", "rstar_11",
+                      "pistar_2", "rstar_22", "rstar_23",
+                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
+                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+    )
+  )
+
+  expect_equal(
+    ncrum_parameters(test_qmatrix, identifier = "question",
+                     att_names = paste0("skill", 1:4)),
+    tibble::tibble(
+      question = c("Q1", "Q1",
+                   "Q2", "Q2", "Q2",
+                   "Q3", "Q3", "Q3", "Q3",
+                   "Q4", "Q4", "Q4", "Q4"),
+      type = c("baseline", "penalty",
+               "baseline", rep("penalty", 2),
+               "baseline", rep("penalty", 3),
+               "baseline", rep("penalty", 3)),
+      attribute = c(NA, "skill1",
+                    NA, "skill2", "skill3",
+                    NA, "skill1", "skill3", "skill4",
+                    NA, "skill2", "skill3", "skill4"),
+      coefficient = c("pistar_1", "rstar_11",
+                      "pistar_2", "rstar_22", "rstar_23",
+                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
+                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+    )
+  )
+
+  expect_equal(
+    ncrum_parameters(test_qmatrix[, -1], identifier = NULL,
+                     item_names = paste0("item", 1:4)),
+    tibble::tibble(
+      item_id = c("item1", "item1",
+                  "item2", "item2", "item2",
+                  "item3", "item3", "item3", "item3",
+                  "item4", "item4", "item4", "item4"),
+      type = c("baseline", "penalty",
+               "baseline", rep("penalty", 2),
+               "baseline", rep("penalty", 3),
+               "baseline", rep("penalty", 3)),
+      attribute = c(NA, "addition",
+                    NA, "subtraction", "multiplication",
+                    NA, "addition", "multiplication", "division",
+                    NA, "subtraction", "multiplication", "division"),
+      coefficient = c("pistar_1", "rstar_11",
+                      "pistar_2", "rstar_22", "rstar_23",
+                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
+                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+    )
+  )
+
+  expect_equal(
+    ncrum_parameters(test_qmatrix[, -1], identifier = NULL,
+                     att_names = paste0("skill", 1:4),
+                     item_names = rlang::set_names(1:4, paste0("q_", 1:4)),
+                     rename_attributes = TRUE, rename_items = TRUE),
+    tibble::tibble(
+      item_id = c(1L, 1L,
+                  2L, 2L, 2L,
+                  3L, 3L, 3L, 3L,
+                  4L, 4L, 4L, 4L),
+      type = c("baseline", "penalty",
+               "baseline", rep("penalty", 2),
+               "baseline", rep("penalty", 3),
+               "baseline", rep("penalty", 3)),
       attribute = c(NA, "att1",
                     NA, "att2", "att3",
                     NA, "att1", "att3", "att4",
                     NA, "att2", "att3", "att4"),
+      coefficient = c("pistar_1", "rstar_11",
+                      "pistar_2", "rstar_22", "rstar_23",
+                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
+                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+    )
+  )
+
+  expect_equal(
+    ncrum_parameters(test_qmatrix[, -1], identifier = NULL,
+                     item_names = rlang::set_names(1:4, paste0("q_", 1:4))),
+    tibble::tibble(
+      item_id = c("q_1", "q_1",
+                  "q_2", "q_2", "q_2",
+                  "q_3", "q_3", "q_3", "q_3",
+                  "q_4", "q_4", "q_4", "q_4"),
+      type = c("baseline", "penalty",
+               "baseline", rep("penalty", 2),
+               "baseline", rep("penalty", 3),
+               "baseline", rep("penalty", 3)),
+      attribute = c(NA, "addition",
+                    NA, "subtraction", "multiplication",
+                    NA, "addition", "multiplication", "division",
+                    NA, "subtraction", "multiplication", "division"),
       coefficient = c("pistar_1", "rstar_11",
                       "pistar_2", "rstar_22", "rstar_23",
                       "pistar_3", "rstar_31", "rstar_33", "rstar_34",
@@ -265,89 +412,97 @@ test_that("crum parameters work", {
 
   expect_equal(
     params,
+    # nolint start: indentation_linter
     tibble::tribble(
       ~question,         ~type,              ~attributes, ~coefficient,
-      "Q1",   "intercept",                       NA,       "l1_0",
-      "Q1",  "maineffect",                 "skill1",      "l1_11",
-      "Q2",   "intercept",                       NA,       "l2_0",
-      "Q2",  "maineffect",                 "skill2",      "l2_12",
-      "Q2",  "maineffect",                 "skill3",      "l2_13",
-      "Q3",   "intercept",                       NA,       "l3_0",
-      "Q3",  "maineffect",                 "skill1",      "l3_11",
-      "Q3",  "maineffect",                 "skill3",      "l3_13",
-      "Q3",  "maineffect",                 "skill4",      "l3_14",
-      "Q4",   "intercept",                       NA,       "l4_0",
-      "Q4",  "maineffect",                 "skill1",      "l4_11",
-      "Q4",  "maineffect",                 "skill2",      "l4_12",
-      "Q4",  "maineffect",                 "skill3",      "l4_13",
-      "Q4",  "maineffect",                 "skill4",      "l4_14"
+           "Q1",   "intercept",                       NA,       "l1_0",
+           "Q1",  "maineffect",                 "skill1",      "l1_11",
+           "Q2",   "intercept",                       NA,       "l2_0",
+           "Q2",  "maineffect",                 "skill2",      "l2_12",
+           "Q2",  "maineffect",                 "skill3",      "l2_13",
+           "Q3",   "intercept",                       NA,       "l3_0",
+           "Q3",  "maineffect",                 "skill1",      "l3_11",
+           "Q3",  "maineffect",                 "skill3",      "l3_13",
+           "Q3",  "maineffect",                 "skill4",      "l3_14",
+           "Q4",   "intercept",                       NA,       "l4_0",
+           "Q4",  "maineffect",                 "skill1",      "l4_11",
+           "Q4",  "maineffect",                 "skill2",      "l4_12",
+           "Q4",  "maineffect",                 "skill3",      "l4_13",
+           "Q4",  "maineffect",                 "skill4",      "l4_14"
     )
+    # nolint end
   )
 
   expect_equal(
     lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
                     att_names = paste0("att", 1:4), rename_attributes = TRUE),
+    # nolint start: indentation_linter
     tibble::tribble(
       ~question,         ~type,              ~attributes, ~coefficient,
-      "Q1",   "intercept",                       NA,       "l1_0",
-      "Q1",  "maineffect",                   "att1",      "l1_11",
-      "Q2",   "intercept",                       NA,       "l2_0",
-      "Q2",  "maineffect",                   "att2",      "l2_12",
-      "Q2",  "maineffect",                   "att3",      "l2_13",
-      "Q3",   "intercept",                       NA,       "l3_0",
-      "Q3",  "maineffect",                   "att1",      "l3_11",
-      "Q3",  "maineffect",                   "att3",      "l3_13",
-      "Q3",  "maineffect",                   "att4",      "l3_14",
-      "Q4",   "intercept",                       NA,       "l4_0",
-      "Q4",  "maineffect",                   "att1",      "l4_11",
-      "Q4",  "maineffect",                   "att2",      "l4_12",
-      "Q4",  "maineffect",                   "att3",      "l4_13",
-      "Q4",  "maineffect",                   "att4",      "l4_14"
+           "Q1",   "intercept",                       NA,       "l1_0",
+           "Q1",  "maineffect",                   "att1",      "l1_11",
+           "Q2",   "intercept",                       NA,       "l2_0",
+           "Q2",  "maineffect",                   "att2",      "l2_12",
+           "Q2",  "maineffect",                   "att3",      "l2_13",
+           "Q3",   "intercept",                       NA,       "l3_0",
+           "Q3",  "maineffect",                   "att1",      "l3_11",
+           "Q3",  "maineffect",                   "att3",      "l3_13",
+           "Q3",  "maineffect",                   "att4",      "l3_14",
+           "Q4",   "intercept",                       NA,       "l4_0",
+           "Q4",  "maineffect",                   "att1",      "l4_11",
+           "Q4",  "maineffect",                   "att2",      "l4_12",
+           "Q4",  "maineffect",                   "att3",      "l4_13",
+           "Q4",  "maineffect",                   "att4",      "l4_14"
     )
+    # nolint end
   )
 
   expect_equal(
     lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
                     rename_items = TRUE),
+    # nolint start: indentation_linter
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
-      1L,   "intercept",                       NA,       "l1_0",
-      1L,  "maineffect",                 "skill1",      "l1_11",
-      2L,   "intercept",                       NA,       "l2_0",
-      2L,  "maineffect",                 "skill2",      "l2_12",
-      2L,  "maineffect",                 "skill3",      "l2_13",
-      3L,   "intercept",                       NA,       "l3_0",
-      3L,  "maineffect",                 "skill1",      "l3_11",
-      3L,  "maineffect",                 "skill3",      "l3_13",
-      3L,  "maineffect",                 "skill4",      "l3_14",
-      4L,   "intercept",                       NA,       "l4_0",
-      4L,  "maineffect",                 "skill1",      "l4_11",
-      4L,  "maineffect",                 "skill2",      "l4_12",
-      4L,  "maineffect",                 "skill3",      "l4_13",
-      4L,  "maineffect",                 "skill4",      "l4_14"
+            1L,   "intercept",                       NA,       "l1_0",
+            1L,  "maineffect",                 "skill1",      "l1_11",
+            2L,   "intercept",                       NA,       "l2_0",
+            2L,  "maineffect",                 "skill2",      "l2_12",
+            2L,  "maineffect",                 "skill3",      "l2_13",
+            3L,   "intercept",                       NA,       "l3_0",
+            3L,  "maineffect",                 "skill1",      "l3_11",
+            3L,  "maineffect",                 "skill3",      "l3_13",
+            3L,  "maineffect",                 "skill4",      "l3_14",
+            4L,   "intercept",                       NA,       "l4_0",
+            4L,  "maineffect",                 "skill1",      "l4_11",
+            4L,  "maineffect",                 "skill2",      "l4_12",
+            4L,  "maineffect",                 "skill3",      "l4_13",
+            4L,  "maineffect",                 "skill4",      "l4_14"
     )
+    # nolint end
   )
 
   expect_equal(
     lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
                     rename_attributes = TRUE, rename_items = TRUE),
+    # nolint start: indentation_linter
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
-      1L,   "intercept",                       NA,       "l1_0",
-      1L,  "maineffect",                   "att1",      "l1_11",
-      2L,   "intercept",                       NA,       "l2_0",
-      2L,  "maineffect",                   "att2",      "l2_12",
-      2L,  "maineffect",                   "att3",      "l2_13",
-      3L,   "intercept",                       NA,       "l3_0",
-      3L,  "maineffect",                   "att1",      "l3_11",
-      3L,  "maineffect",                   "att3",      "l3_13",
-      3L,  "maineffect",                   "att4",      "l3_14",
-      4L,   "intercept",                       NA,       "l4_0",
-      4L,  "maineffect",                   "att1",      "l4_11",
-      4L,  "maineffect",                   "att2",      "l4_12",
-      4L,  "maineffect",                   "att3",      "l4_13",
-      4L,  "maineffect",                   "att4",      "l4_14"
+            1L,   "intercept",                       NA,       "l1_0",
+            1L,  "maineffect",                   "att1",      "l1_11",
+            2L,   "intercept",                       NA,       "l2_0",
+            2L,  "maineffect",                   "att2",      "l2_12",
+            2L,  "maineffect",                   "att3",      "l2_13",
+            3L,   "intercept",                       NA,       "l3_0",
+            3L,  "maineffect",                   "att1",      "l3_11",
+            3L,  "maineffect",                   "att3",      "l3_13",
+            3L,  "maineffect",                   "att4",      "l3_14",
+            4L,   "intercept",                       NA,       "l4_0",
+            4L,  "maineffect",                   "att1",      "l4_11",
+            4L,  "maineffect",                   "att2",      "l4_12",
+            4L,  "maineffect",                   "att3",      "l4_13",
+            4L,  "maineffect",                   "att4",      "l4_14"
     )
+    # nolint end
   )
 })
 

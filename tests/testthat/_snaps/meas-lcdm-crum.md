@@ -4825,7 +4825,7 @@
 # lcdm with hierarchy works
 
     Code
-      stan_code(ecpe_ldcm_hdcm)
+      stan_code(ecpe_lcdm_hdcm)
     Output
       data {
         int<lower=1> I;                      // number of items
