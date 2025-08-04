@@ -26,16 +26,36 @@ test_that("define priors", {
   expect_identical(p@prior, "uniform(0, 20)T[,3]")
 })
 
+test_that("priors from variables works", {
+  my_prior <- "normal(0, 2)"
+  expect_identical(prior("normal(0, 2)", type = "intercept"),
+                   prior_string(my_prior, type = "intercept"))
+
+  my_prior <- "beta(5, 25)"
+  expect_identical(prior("beta(5, 25)", type = "slip"),
+                   prior_string(my_prior, type = "slip"))
+
+  my_prior <- "lognormal(0, 5)"
+  expect_identical(prior("lognormal(0, 5)", type = "maineffect"),
+                   prior_string(my_prior, type = "maineffect"))
+})
+
 # default priors work selectively ----------------------------------------------
 test_that("specify only measurement or structural", {
   expect_equal(default_dcm_priors(measurement_model = lcdm()),
                lcdm_priors(max_interaction = Inf))
+  expect_equal(default_dcm_priors(measurement_model = ncrum()),
+               ncrum_priors())
   expect_equal(default_dcm_priors(measurement_model = dina()),
                dina_priors())
   expect_equal(default_dcm_priors(measurement_model = dino()),
                dino_priors())
   expect_equal(default_dcm_priors(measurement_model = crum()),
                crum_priors())
+  expect_equal(default_dcm_priors(measurement_model = nida()),
+               nida_priors())
+  expect_equal(default_dcm_priors(measurement_model = nido()),
+               nido_priors())
 
   expect_equal(default_dcm_priors(structural_model = unconstrained()),
                unconstrained_priors())
@@ -67,6 +87,15 @@ test_that("lcdm default priors", {
   )
 })
 
+test_that("ncrum default priors", {
+  expect_identical(
+    prior_tibble(ncrum_priors()),
+    tibble::tibble(type = c("baseline", "penalty"),
+                   coefficient = NA_character_,
+                   prior = c("beta(15, 3)", "beta(2, 2)"))
+  )
+})
+
 test_that("dina default priors", {
   expect_identical(
     prior_tibble(dina_priors()),
@@ -88,6 +117,24 @@ test_that("dino default priors", {
 test_that("crum default priors", {
   expect_identical(
     prior_tibble(crum_priors()),
+    tibble::tibble(type = c("intercept", "maineffect"),
+                   coefficient = NA_character_,
+                   prior = c("normal(0, 2)", "lognormal(0, 1)"))
+  )
+})
+
+test_that("nida default priors", {
+  expect_identical(
+    prior_tibble(nida_priors()),
+    tibble::tibble(type = c("slip", "guess"),
+                   coefficient = NA_character_,
+                   prior = c("beta(5, 25)", "beta(5, 25)"))
+  )
+})
+
+test_that("nido default priors", {
+  expect_identical(
+    prior_tibble(nido_priors()),
     tibble::tibble(type = c("intercept", "maineffect"),
                    coefficient = NA_character_,
                    prior = c("normal(0, 2)", "lognormal(0, 1)"))

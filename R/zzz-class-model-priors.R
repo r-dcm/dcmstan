@@ -17,6 +17,14 @@
 #'   truncated.
 #' @param upper_bound Optional. The upper bound where the distribution should be
 #'   truncated.
+#' @param ... Additional arguments passed to [prior()].
+#'
+#' @details
+#' [prior()] should be used for directly specifying priors. That is, when you
+#' are directly typing out or providing the distribution statement to the
+#' function. If you have previously created a variable with a distribution
+#' statement as a character string (e.g., `dist <- "normal(0, 2)"`), then you
+#' should use [prior_string()] to create your prior. See examples.
 #'
 #' @returns A `dcmprior` object.
 #' @seealso [get_parameters()]
@@ -27,8 +35,11 @@
 #'
 #' c(prior(beta(5, 17), type = "slip"),
 #'   prior(beta(5, 25), type = "guess"))
-prior <- function(distribution, type,
-                  coefficient = NA, lower_bound = NA, upper_bound = NA) {
+#'
+#' my_prior <- "normal(0, 2)"
+#' prior_string(my_prior, type = "intercept")
+prior <- function(distribution, type, coefficient = NA,
+                  lower_bound = NA, upper_bound = NA) {
   call <- as.list(match.call()[-1])
   call <- lapply(call, deparse_no_string)
   if (any(names(call) %in% c("lower_bound", "upper_bound"))) {
@@ -37,6 +48,12 @@ prior <- function(distribution, type,
              as.numeric)
   }
   do.call(dcmprior, call)
+}
+
+#' @rdname prior
+#' @export
+prior_string <- function(distribution, ...) {
+  dcmprior(distribution, ...)
 }
 
 # Default priors ---------------------------------------------------------------
@@ -67,6 +84,9 @@ default_dcm_priors <- function(measurement_model = NULL,
       ),
       dina = dina_priors(),
       dino = dino_priors(),
+      nida = nida_priors(),
+      nido = nido_priors(),
+      ncrum = ncrum_priors(),
       crum = crum_priors()
     )
   }
@@ -103,6 +123,20 @@ dina_priors <- function() {
 }
 
 dino_priors <- dina_priors
+
+nido_priors <- function() {
+  c(prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect"))
+}
+
+nida_priors <- dina_priors
+
+ncrum_priors <- function() {
+  prior <- c(prior("beta(15, 3)", type = "baseline"),
+             prior("beta(2, 2)", type = "penalty"))
+
+  prior
+}
 
 crum_priors <- function() {
   c(prior("normal(0, 2)", type = "intercept"),

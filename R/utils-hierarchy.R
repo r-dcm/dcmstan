@@ -1,6 +1,9 @@
 #' Checks the validity of the hierarchy
 #'
 #' @param x A character string containing the quoted attribute hierarchy.
+#' @param allow_null Logical. Should a `NULL` value be accepted?
+#' @param arg The name of the argument.
+#' @param call The call stack.
 #'
 #' @returns A string.
 #' @noRd
@@ -34,6 +37,8 @@ check_hierarchy <- function(x, allow_null = TRUE,
   invisible(NULL)
 }
 
+#' @param attribute_names A vector of expected attributes.
+#' @noRd
 check_hierarchy_names <- function(x, attribute_names,
                                   arg = rlang::caller_arg(x),
                                   call = rlang::caller_env()) {

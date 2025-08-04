@@ -55,7 +55,8 @@ dcm_specify <- function(qmatrix, identifier = NULL,
                all(rowSums(qmatrix$clean_qmatrix) == 1)) {
     measurement_model@model_args$max_interaction <- 1L
   }
-  if (S7::S7_inherits(structural_model, HDCM)) {
+  if (measurement_model@model %in% c("lcdm", "nida", "nido", "ncrum") &&
+        S7::S7_inherits(structural_model, HDCM)) {
     measurement_model@model_args$hierarchy <-
       structural_model@model_args$hierarchy
   }

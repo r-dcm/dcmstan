@@ -194,6 +194,10 @@ S7::method(extra_data, DINO) <- function(x, dcm_spec) {
   list(Xi = xi)
 }
 
+S7::method(extra_data, NIDA) <- function(x, dcm_spec) {
+  list(A = length(dcm_spec@qmatrix_meta$attribute_names))
+}
+
 S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
   profiles <- create_profiles(
     dcm_spec@structural_model,

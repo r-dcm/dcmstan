@@ -2,9 +2,12 @@
 % Please edit documentation in R/zzz-class-model-priors.R
 \name{prior}
 \alias{prior}
+\alias{prior_string}
 \title{Prior definitions for diagnostic classification models}
 \usage{
 prior(distribution, type, coefficient = NA, lower_bound = NA, upper_bound = NA)
+
+prior_string(distribution, ...)
 }
 \arguments{
 \item{distribution}{A distribution statement for the prior
@@ -24,6 +27,8 @@ truncated.}
 
 \item{upper_bound}{Optional. The upper bound where the distribution should be
 truncated.}
+
+\item{...}{Additional arguments passed to \code{\link[=prior]{prior()}}.}
 }
 \value{
 A \code{dcmprior} object.
@@ -33,11 +38,21 @@ Define prior distributions for types of parameters or specific parameters
 within a model. For a complete list of types and parameters available for a
 given model, see \code{\link[=get_parameters]{get_parameters()}}.
 }
+\details{
+\code{\link[=prior]{prior()}} should be used for directly specifying priors. That is, when you
+are directly typing out or providing the distribution statement to the
+function. If you have previously created a variable with a distribution
+statement as a character string (e.g., \code{dist <- "normal(0, 2)"}), then you
+should use \code{\link[=prior_string]{prior_string()}} to create your prior. See examples.
+}
 \examples{
 prior(normal(0, 2), type = "intercept")
 
 c(prior(beta(5, 17), type = "slip"),
   prior(beta(5, 25), type = "guess"))
+
+my_prior <- "normal(0, 2)"
+prior_string(my_prior, type = "intercept")
 }
 \seealso{
 \code{\link[=get_parameters]{get_parameters()}}
