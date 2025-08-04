@@ -103,7 +103,8 @@ S7::method(get_parameters, NIDA) <- function(x, qmatrix, identifier = NULL,
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   nida_parameters(qmatrix = qmatrix, identifier = identifier,
-                  att_names = attributes)
+                  att_names = attributes,
+                  hierarchy = x@model_args$hierarchy)
 }
 
 S7::method(get_parameters, NIDO) <- function(x, qmatrix, identifier = NULL,
@@ -111,7 +112,8 @@ S7::method(get_parameters, NIDO) <- function(x, qmatrix, identifier = NULL,
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   nido_parameters(qmatrix = qmatrix, identifier = identifier,
-                  att_names = attributes)
+                  att_names = attributes,
+                  hierarchy = x@model_args$hierarchy)
 }
 
 S7::method(get_parameters, NCRUM) <- function(x, qmatrix, identifier = NULL,
@@ -119,7 +121,8 @@ S7::method(get_parameters, NCRUM) <- function(x, qmatrix, identifier = NULL,
   qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
 
   ncrum_parameters(qmatrix = qmatrix, identifier = identifier,
-                   att_names = attributes, item_names = items)
+                   att_names = attributes, item_names = items,
+                   hierarchy = x@model_args$hierarchy)
 }
 
 # Methods for structural models ------------------------------------------------

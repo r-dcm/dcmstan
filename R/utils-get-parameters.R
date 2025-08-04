@@ -27,8 +27,8 @@
 #' @noRd
 lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
                             att_names = NULL, item_names = NULL,
-                            hierarchy = NULL,
-                            rename_attributes = FALSE, rename_items = FALSE) {
+                            hierarchy = NULL, rename_attributes = FALSE,
+                            rename_items = FALSE) {
   if (is.null(identifier)) {
     if (is.null(item_names)) {
       item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
@@ -189,7 +189,7 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
 nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
-                            rename_attributes = FALSE) {
+                            hierarchy = NULL, rename_attributes = FALSE) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
@@ -239,7 +239,7 @@ nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
 nido_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
-                            rename_attributes = FALSE) {
+                            hierarchy = NULL, rename_attributes = FALSE) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
@@ -298,7 +298,8 @@ nido_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
 #' @noRd
 ncrum_parameters <- function(qmatrix, identifier = NULL,
                              att_names = NULL, item_names = NULL,
-                             rename_attributes = FALSE, rename_items = FALSE) {
+                             hierarchy = NULL, rename_attributes = FALSE,
+                             rename_items = FALSE) {
   if (is.null(identifier)) {
     if (is.null(item_names)) {
       item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
