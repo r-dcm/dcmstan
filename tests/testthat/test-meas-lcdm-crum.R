@@ -70,7 +70,7 @@ test_that("lcdm with hierarchy works", {
       hierarchy = "lexical -> cohesive -> morphosyntactic"
     )
   )
-  expect_snapshot(stan_code(ecpe_ldcm_hdcm))
+  expect_snapshot(stan_code(ecpe_lcdm_hdcm))
 
   ecpe_ldcm_hdcm_conv <- dcm_specify(
     qmatrix = dcmdata::ecpe_qmatrix,
