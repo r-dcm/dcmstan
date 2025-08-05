@@ -27,3 +27,15 @@ test_that("ncrum script works", {
                             measurement_model = ncrum())
   expect_snapshot(stan_code(dtmr_spec2))
 })
+
+test_that("ncrum with hierarchy works", {
+  ecpe_ncrum_hdcm <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = ncrum(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_snapshot(stan_code(ecpe_ncrum_hdcm))
+})

@@ -27,3 +27,15 @@ test_that("nida script works", {
                             measurement_model = nida())
   expect_snapshot(stan_code(dtmr_spec2))
 })
+
+test_that("nida with hierarchy works", {
+  ecpe_nida_hdcm <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = nida(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_snapshot(stan_code(ecpe_nida_hdcm))
+})
