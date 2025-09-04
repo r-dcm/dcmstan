@@ -1,2 +1,2 @@
 [format]
-skip = ["tibble::tribble"]
+skip = ["tribble"]

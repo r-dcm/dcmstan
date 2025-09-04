@@ -7,17 +7,24 @@
 #'
 #' @returns A string.
 #' @noRd
-check_hierarchy <- function(x, allow_null = TRUE,
-                            arg = rlang::caller_arg(x),
-                            call = rlang::caller_env()) {
-  if (is.null(x) && allow_null) return(invisible(NULL))
+check_hierarchy <- function(
+  x,
+  allow_null = TRUE,
+  arg = rlang::caller_arg(x),
+  call = rlang::caller_env()
+) {
+  if (is.null(x) && allow_null) {
+    return(invisible(NULL))
+  }
 
   check_string(x)
 
   g <- glue::glue(" graph { <x> } ", .open = "<", .close = ">")
   g <- dagitty::dagitty(g)
 
-  if (nrow(dagitty::edges(g)) == 0) return(invisible(NULL))
+  if (nrow(dagitty::edges(g)) == 0) {
+    return(invisible(NULL))
+  }
 
   hierarchy <- glue::glue(" dag { <x> } ", .open = "<", .close = ">")
   hierarchy <- ggdag::tidy_dagitty(hierarchy)
@@ -29,9 +36,11 @@ check_hierarchy <- function(x, allow_null = TRUE,
     dplyr::filter(.data$direction == "<->")
 
   if (nrow(bidirectional_flag) > 0 || cycle_flag) {
-    rdcmchecks::abort_bad_argument(arg = arg,
-                                   must = "not be cyclical",
-                                   call = call)
+    rdcmchecks::abort_bad_argument(
+      arg = arg,
+      must = "not be cyclical",
+      call = call
+    )
   }
 
   invisible(NULL)
@@ -39,9 +48,12 @@ check_hierarchy <- function(x, allow_null = TRUE,
 
 #' @param attribute_names A vector of expected attributes.
 #' @noRd
-check_hierarchy_names <- function(x, attribute_names,
-                                  arg = rlang::caller_arg(x),
-                                  call = rlang::caller_env()) {
+check_hierarchy_names <- function(
+  x,
+  attribute_names,
+  arg = rlang::caller_arg(x),
+  call = rlang::caller_env()
+) {
   check_string(x)
   check_character(attribute_names)
 

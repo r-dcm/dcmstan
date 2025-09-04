@@ -27,7 +27,8 @@ gqs_default <- function(loglik = FALSE, probabilities = FALSE, ppmc = FALSE) {
     prob_vars <- glue::glue(
       "  matrix[R,C] prob_resp_class;       // post prob of resp R in class C",
       "  matrix[R,A] prob_resp_attr;        // post prob of resp R master A",
-      .sep = "\n", .trim = FALSE
+      .sep = "\n",
+      .trim = FALSE
     )
   } else {
     prob_vars <- NULL
@@ -37,7 +38,8 @@ gqs_default <- function(loglik = FALSE, probabilities = FALSE, ppmc = FALSE) {
     ppmc_vars <- glue::glue(
       "  array[N] int y_rep;",
       "  array[R] int r_class;",
-      .sep = "\n", .trim = FALSE
+      .sep = "\n",
+      .trim = FALSE
     )
   } else {
     ppmc_vars <- NULL
@@ -46,8 +48,10 @@ gqs_default <- function(loglik = FALSE, probabilities = FALSE, ppmc = FALSE) {
   # identify loops -------------------------------------------------------------
   if (loglik || probabilities) {
     loglik_line <- "    log_lik[r] = log_sum_exp(prob_joint);"
-    prob_line <- paste0("    prob_resp_class[r] = exp(prob_joint) / ",
-                        "exp(log_sum_exp(prob_joint));")
+    prob_line <- paste0(
+      "    prob_resp_class[r] = exp(prob_joint) / ",
+      "exp(log_sum_exp(prob_joint));"
+    )
 
     loop1 <- glue::glue(
       "  for (r in 1:R) {{",
@@ -64,7 +68,9 @@ gqs_default <- function(loglik = FALSE, probabilities = FALSE, ppmc = FALSE) {
       if (loglik) glue::glue("{loglik_line}"),
       if (probabilities) glue::glue("{prob_line}"),
       "  }}",
-      .sep = "\n", .trim = FALSE, .null = NULL
+      .sep = "\n",
+      .trim = FALSE,
+      .null = NULL
     )
 
     loop2 <- glue::glue(
@@ -78,13 +84,16 @@ gqs_default <- function(loglik = FALSE, probabilities = FALSE, ppmc = FALSE) {
       "      prob_resp_attr[r,a] = sum(prob_attr_class);",
       "    }}",
       "  }}",
-      .sep = "\n", .trim = FALSE, .null = NULL
+      .sep = "\n",
+      .trim = FALSE,
+      .null = NULL
     )
 
     loglik_prob_loop <- glue::glue(
       "{loop1}",
       if (probabilities) "{loop2}",
-      .sep = "\n", .null = NULL
+      .sep = "\n",
+      .null = NULL
     )
   } else {
     loglik_prob_loop <- NULL
@@ -100,7 +109,10 @@ gqs_default <- function(loglik = FALSE, probabilities = FALSE, ppmc = FALSE) {
       "      int i = ii[start[r] + m - 1];",
       "      y_rep[start[r] + m - 1] = bernoulli_rng(pi[i, r_class[r]]);",
       "    }}",
-      "  }}", .sep = "\n", .trim = FALSE, .null = NULL
+      "  }}",
+      .sep = "\n",
+      .trim = FALSE,
+      .null = NULL
     )
   } else {
     ppmc_loop <- NULL
@@ -115,7 +127,9 @@ gqs_default <- function(loglik = FALSE, probabilities = FALSE, ppmc = FALSE) {
     "",
     if (!is.null(loglik_prob_loop)) "{loglik_prob_loop}",
     if (!is.null(ppmc_loop)) "{ppmc_loop}",
-    "}}", .sep = "\n", .null = NULL
+    "}}",
+    .sep = "\n",
+    .null = NULL
   )
 
   gqs_block

@@ -28,7 +28,11 @@ test_that("printing works", {
   })
 
   expect_snapshot({
-    print_choices(names(meas_choices()), sep = "; ", last = "; ",
-                  format = FALSE)
+    print_choices(
+      names(meas_choices()),
+      sep = "; ",
+      last = "; ",
+      format = FALSE
+    )
   })
 })

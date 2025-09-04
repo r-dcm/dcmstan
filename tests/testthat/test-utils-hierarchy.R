@@ -28,31 +28,38 @@ test_that("check hierarchy names", {
   expect_match(err$message, "a character vector")
 
   err <- rlang::catch_cnd(
-    check_hierarchy_names("red -> yellow -> blue",
-                          attribute_names = c("red", "yellow"))
+    check_hierarchy_names(
+      "red -> yellow -> blue",
+      attribute_names = c("red", "yellow")
+    )
   )
   expect_s3_class(err, "rlang_error")
   expect_match(err$message, "only include attributes")
   expect_match(err$footer, "blue")
 
   err <- rlang::catch_cnd(
-    check_hierarchy_names("red -> yellow -> blue",
-                          attribute_names = c("red", "yellow", "blue", "green"))
+    check_hierarchy_names(
+      "red -> yellow -> blue",
+      attribute_names = c("red", "yellow", "blue", "green")
+    )
   )
   expect_s3_class(err, "rlang_error")
   expect_match(err$message, "include all attributes")
   expect_match(err$footer, "green")
 
   expect_null(
-    check_hierarchy_names("red -> yellow -> blue",
-                          attribute_names = c("blue", "red", "yellow"))
+    check_hierarchy_names(
+      "red -> yellow -> blue",
+      attribute_names = c("blue", "red", "yellow")
+    )
   )
 })
 
 test_that("check hierarchy names in specification", {
   err <- rlang::catch_cnd(
     dcm_specify(
-      qmatrix = dcmdata::ecpe_qmatrix, identifier = "item_id",
+      qmatrix = dcmdata::ecpe_qmatrix,
+      identifier = "item_id",
       structural_model = hdcm("lexcial -> cohesive -> morphosyntactic")
     )
   )
@@ -62,7 +69,8 @@ test_that("check hierarchy names in specification", {
 
   err <- rlang::catch_cnd(
     dcm_specify(
-      qmatrix = dcmdata::mdm_qmatrix, identifier = "item",
+      qmatrix = dcmdata::mdm_qmatrix,
+      identifier = "item",
       structural_model = hdcm("division")
     )
   )
@@ -72,7 +80,8 @@ test_that("check hierarchy names in specification", {
 
   err <- rlang::catch_cnd(
     dcm_specify(
-      qmatrix = dcmdata::dtmr_qmatrix, identifier = "item",
+      qmatrix = dcmdata::dtmr_qmatrix,
+      identifier = "item",
       structural_model = hdcm(
         "referent_units -> partitioning_iterating <- appropriateness"
       )
@@ -84,7 +93,8 @@ test_that("check hierarchy names in specification", {
 
   expect_true(S7::S7_inherits(
     dcm_specify(
-      qmatrix = dcmdata::ecpe_qmatrix, identifier = "item_id",
+      qmatrix = dcmdata::ecpe_qmatrix,
+      identifier = "item_id",
       structural_model = hdcm("lexical -> cohesive -> morphosyntactic")
     ),
     dcm_specification
