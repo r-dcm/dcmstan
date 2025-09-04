@@ -23,21 +23,24 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
     "  ////////////////////////////////// attribute parameters",
     "  array[A] real<lower=0,upper=1> slip;",
     "  array[A] real<lower=0,upper=1> guess;",
-    .sep = "\n", .trim = FALSE
+    .sep = "\n",
+    .trim = FALSE
   )
 
   # transformed parameters block -----
   all_profiles <- if (is.null(hierarchy)) {
     create_profiles(ncol(qmatrix))
   } else {
-    create_profiles(hdcm(hierarchy = hierarchy),
-                    attributes = att_names)
+    create_profiles(hdcm(hierarchy = hierarchy), attributes = att_names)
   }
 
   profiles <- all_profiles |>
     tibble::rowid_to_column("profile_id") |>
-    tidyr::pivot_longer(cols = -"profile_id", names_to = "att",
-                        values_to = "meas")
+    tidyr::pivot_longer(
+      cols = -"profile_id",
+      names_to = "att",
+      values_to = "meas"
+    )
 
   profile_params <- tibble::tibble(profile_id = seq_len(nrow(all_profiles))) |>
     tidyr::crossing(att = paste0("att", seq_len(ncol(qmatrix)))) |>
@@ -53,16 +56,23 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
 
   pi_def <- qmatrix |>
     tibble::rowid_to_column("item_id") |>
-    tidyr::pivot_longer(cols = -c("item_id"),
-                        names_to = "att_id",
-                        values_to = "valid") |>
+    tidyr::pivot_longer(
+      cols = -c("item_id"),
+      names_to = "att_id",
+      values_to = "valid"
+    ) |>
     dplyr::filter(.data$valid == 1L) |>
     dplyr::select(-"valid") |>
     tidyr::expand_grid(profile_id = seq_len(nrow(all_profiles))) |>
-    dplyr::left_join(profile_params, by = c("profile_id", "att_id" = "att"),
-                     relationship = "many-to-one") |>
-    dplyr::summarize(param = paste(.data$param, collapse = "*"),
-                     .by = c("item_id", "profile_id")) |>
+    dplyr::left_join(
+      profile_params,
+      by = c("profile_id", "att_id" = "att"),
+      relationship = "many-to-one"
+    ) |>
+    dplyr::summarize(
+      param = paste(.data$param, collapse = "*"),
+      .by = c("item_id", "profile_id")
+    ) |>
     glue::glue_data("pi[{item_id},{profile_id}] = {param};")
 
   transformed_parameters_block <- glue::glue(
@@ -70,30 +80,39 @@ meas_nida <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
     "",
     "  ////////////////////////////////// probability of correct response",
     "  {glue::glue_collapse(pi_def, sep = \"\n  \")}",
-    .sep = "\n", .trim = FALSE
+    .sep = "\n",
+    .trim = FALSE
   )
 
   # priors -----
-  att_priors <- nida_parameters(qmatrix = qmatrix,
-                                rename_attributes = TRUE) |>
-    dplyr::left_join(prior_tibble(priors),
-                     by = c("type", "coefficient"),
-                     relationship = "one-to-one") |>
+  att_priors <- nida_parameters(qmatrix = qmatrix, rename_attributes = TRUE) |>
+    dplyr::left_join(
+      prior_tibble(priors),
+      by = c("type", "coefficient"),
+      relationship = "one-to-one"
+    ) |>
     dplyr::rename(coef_def = "prior") |>
-    dplyr::left_join(prior_tibble(priors) |>
-                       dplyr::filter(is.na(.data$coefficient)) |>
-                       dplyr::select(-"coefficient"),
-                     by = c("type"), relationship = "many-to-one") |>
+    dplyr::left_join(
+      prior_tibble(priors) |>
+        dplyr::filter(is.na(.data$coefficient)) |>
+        dplyr::select(-"coefficient"),
+      by = c("type"),
+      relationship = "many-to-one"
+    ) |>
     dplyr::rename(type_def = "prior") |>
     dplyr::mutate(
-      prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
-                               is.na(.data$coef_def) ~ .data$type_def),
+      prior = dplyr::case_when(
+        !is.na(.data$coef_def) ~ .data$coef_def,
+        is.na(.data$coef_def) ~ .data$type_def
+      ),
       prior_def = glue::glue("{coefficient} ~ {prior};")
     ) |>
     dplyr::pull("prior_def")
 
   # return -----
-  return(list(parameters = parameters_block,
-              transformed_parameters = transformed_parameters_block,
-              priors = att_priors))
+  list(
+    parameters = parameters_block,
+    transformed_parameters = transformed_parameters_block,
+    priors = att_priors
+  )
 }

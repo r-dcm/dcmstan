@@ -38,14 +38,21 @@
 #'
 #' my_prior <- "normal(0, 2)"
 #' prior_string(my_prior, type = "intercept")
-prior <- function(distribution, type, coefficient = NA,
-                  lower_bound = NA, upper_bound = NA) {
+prior <- function(
+  distribution,
+  type,
+  coefficient = NA,
+  lower_bound = NA,
+  upper_bound = NA
+) {
   call <- as.list(match.call()[-1])
   call <- lapply(call, deparse_no_string)
   if (any(names(call) %in% c("lower_bound", "upper_bound"))) {
     call[which(names(call) %in% c("lower_bound", "upper_bound"))] <-
-      lapply(call[which(names(call) %in% c("lower_bound", "upper_bound"))],
-             as.numeric)
+      lapply(
+        call[which(names(call) %in% c("lower_bound", "upper_bound"))],
+        as.numeric
+      )
   }
   do.call(dcmprior, call)
 }
@@ -71,8 +78,10 @@ prior_string <- function(distribution, ...) {
 #' default_dcm_priors(lcdm(), unconstrained())
 #' default_dcm_priors(dina(), independent())
 #' default_dcm_priors(lcdm(), loglinear())
-default_dcm_priors <- function(measurement_model = NULL,
-                               structural_model = NULL) {
+default_dcm_priors <- function(
+  measurement_model = NULL,
+  structural_model = NULL
+) {
   meas_priors <- if (is.null(measurement_model)) {
     NULL
   } else {
@@ -95,11 +104,13 @@ default_dcm_priors <- function(measurement_model = NULL,
     NULL
   } else {
     S7::check_is_S7(structural_model, class = structural)
-    switch(structural_model@model,
-           unconstrained = unconstrained_priors(),
-           independent = independent_priors(),
-           loglinear = loglinear_priors(),
-           hdcm = hdcm_priors())
+    switch(
+      structural_model@model,
+      unconstrained = unconstrained_priors(),
+      independent = independent_priors(),
+      loglinear = loglinear_priors(),
+      hdcm = hdcm_priors()
+    )
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -107,40 +118,46 @@ default_dcm_priors <- function(measurement_model = NULL,
 
 ## measurement model defaults -----
 lcdm_priors <- function(max_interaction) {
-  prior <- c(prior("normal(0, 2)", type = "intercept"),
-             prior("lognormal(0, 1)", type = "maineffect"))
+  prior <- c(
+    prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect")
+  )
   if (max_interaction > 1) {
-    prior <- c(prior,
-               prior("normal(0, 2)", type = "interaction"))
+    prior <- c(prior, prior("normal(0, 2)", type = "interaction"))
   }
 
   prior
 }
 
 dina_priors <- function() {
-  c(prior("beta(5, 25)", type = "slip"),
-    prior("beta(5, 25)", type = "guess"))
+  c(prior("beta(5, 25)", type = "slip"), prior("beta(5, 25)", type = "guess"))
 }
 
 dino_priors <- dina_priors
 
 nido_priors <- function() {
-  c(prior("normal(0, 2)", type = "intercept"),
-    prior("lognormal(0, 1)", type = "maineffect"))
+  c(
+    prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect")
+  )
 }
 
 nida_priors <- dina_priors
 
 ncrum_priors <- function() {
-  prior <- c(prior("beta(15, 3)", type = "baseline"),
-             prior("beta(2, 2)", type = "penalty"))
+  prior <- c(
+    prior("beta(15, 3)", type = "baseline"),
+    prior("beta(2, 2)", type = "penalty")
+  )
 
   prior
 }
 
 crum_priors <- function() {
-  c(prior("normal(0, 2)", type = "intercept"),
-    prior("lognormal(0, 1)", type = "maineffect"))
+  c(
+    prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect")
+  )
 }
 
 ## structural model defaults -----
@@ -177,7 +194,9 @@ hdcm_priors <- unconstrained_priors
 #'   distribution = "normal(0, 1)",
 #'   type = "intercept"
 #' )
-dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
+dcmprior <- S7::new_class(
+  "dcmprior",
+  package = "dcmstan",
   properties = list(
     distribution = S7::new_property(
       class = S7::class_character,
@@ -190,18 +209,28 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
         }
       }
     ),
-    type = S7::new_property(class = S7::class_character,
-                            default = NA_character_),
-    coefficient = S7::new_property(class = S7::class_character,
-                                   default = NA_character_),
-    lower_bound = S7::new_property(class = S7::class_numeric,
-                                   default = NA_real_),
-    upper_bound = S7::new_property(class = S7::class_numeric,
-                                   default = NA_real_),
+    type = S7::new_property(
+      class = S7::class_character,
+      default = NA_character_
+    ),
+    coefficient = S7::new_property(
+      class = S7::class_character,
+      default = NA_character_
+    ),
+    lower_bound = S7::new_property(
+      class = S7::class_numeric,
+      default = NA_real_
+    ),
+    upper_bound = S7::new_property(
+      class = S7::class_numeric,
+      default = NA_real_
+    ),
     prior = S7::new_property(
       class = S7::class_character,
       getter = function(self) {
-        if (!length(self@distribution)) return(character())
+        if (!length(self@distribution)) {
+          return(character())
+        }
         mapply(
           function(lb, ub, dist) {
             if (is.na(lb) && is.na(ub)) {
@@ -209,22 +238,32 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
             }
             as.character(glue::glue("{dist}T[{lb},{ub}]", .na = ""))
           },
-          self@lower_bound, self@upper_bound, self@distribution,
+          self@lower_bound,
+          self@upper_bound,
+          self@distribution,
           USE.NAMES = FALSE
         )
       }
     )
   ),
   validator = function(self) {
-    reverse <- mapply(\(dist, lb, ub) lb >= ub,
-                      self@prior, self@lower_bound, self@upper_bound)
+    reverse <- mapply(
+      \(dist, lb, ub) lb >= ub,
+      self@prior,
+      self@lower_bound,
+      self@upper_bound
+    )
     if (length(reverse)) {
-      bad <- cli::cli_vec(names(reverse[reverse & !is.na(reverse)]),
-                          style = list("vec-last" = ", and "))
-      err <- cli::cli_fmt(cli::cli_text("@lower_bound must be less than ",
-                                        "@upper_bound. ",
-                                        "Problematic specifications: ",
-                                        "{.val {bad}}"))
+      bad <- cli::cli_vec(
+        names(reverse[reverse & !is.na(reverse)]),
+        style = list("vec-last" = ", and ")
+      )
+      err <- cli::cli_fmt(cli::cli_text(
+        "@lower_bound must be less than ",
+        "@upper_bound. ",
+        "Problematic specifications: ",
+        "{.val {bad}}"
+      ))
     }
     if (any(reverse, na.rm = TRUE)) {
       err
@@ -295,15 +334,19 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
   }
 
   all_priors <- if (!replace) {
-    do.call(dplyr::bind_rows,
-            lapply(list(x, ...), prior_tibble, .keep_all = TRUE))
+    do.call(
+      dplyr::bind_rows,
+      lapply(list(x, ...), prior_tibble, .keep_all = TRUE)
+    )
   } else {
-    do.call(dplyr::bind_rows,
-            lapply(list(x, ...), prior_tibble, .keep_all = TRUE)) |>
+    do.call(
+      dplyr::bind_rows,
+      lapply(list(x, ...), prior_tibble, .keep_all = TRUE)
+    ) |>
       dplyr::distinct(.data$type, .data$coefficient, .keep_all = TRUE)
   }
 
   out <- do.call(dcmprior, as.list(dplyr::select(all_priors, -"prior")))
 
-  return(out)
+  out
 }

@@ -10,8 +10,10 @@ test_that("lcdm parameters work", {
   params <- get_parameters(lcdm(), qmatrix = test_qmatrix)
 
   expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("item_id", "type", "attributes",
-                                   "coefficient"))
+  expect_equal(
+    colnames(params),
+    c("item_id", "type", "attributes", "coefficient")
+  )
 
   expect_equal(
     params,
@@ -118,8 +120,11 @@ test_that("dino parameters work", {
     att4 = sample(0:1, size = 5, replace = TRUE)
   )
 
-  params <- get_parameters(dino(), qmatrix = test_qmatrix,
-                           identifier = "test_item")
+  params <- get_parameters(
+    dino(),
+    qmatrix = test_qmatrix,
+    identifier = "test_item"
+  )
 
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("test_item", "type", "coefficient"))
@@ -136,8 +141,11 @@ test_that("dino parameters work", {
   )
 
   expect_equal(
-    dina_parameters(qmatrix = test_qmatrix, identifier = "test_item",
-                    rename_items = TRUE),
+    dina_parameters(
+      qmatrix = test_qmatrix,
+      identifier = "test_item",
+      rename_items = TRUE
+    ),
     tibble::tibble(
       item_id = rep(1:5, each = 2),
       type = rep(c("slip", "guess"), 5)
@@ -158,8 +166,11 @@ test_that("nida parameters work", {
     node4 = c(0, 0, 1, 1)
   )
 
-  params <- get_parameters(nida(), qmatrix = test_qmatrix,
-                           identifier = "question")
+  params <- get_parameters(
+    nida(),
+    qmatrix = test_qmatrix,
+    identifier = "question"
+  )
 
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("attribute", "type", "coefficient"))
@@ -169,30 +180,61 @@ test_that("nida parameters work", {
     tibble::tibble(
       attribute = rep(c("node1", "node2", "node3", "node4"), each = 2),
       type = rep(c("slip", "guess"), 4),
-      coefficient = c("slip[1]", "guess[1]", "slip[2]", "guess[2]",
-                      "slip[3]", "guess[3]", "slip[4]", "guess[4]")
+      coefficient = c(
+        "slip[1]",
+        "guess[1]",
+        "slip[2]",
+        "guess[2]",
+        "slip[3]",
+        "guess[3]",
+        "slip[4]",
+        "guess[4]"
+      )
     )
   )
 
   expect_equal(
-    nida_parameters(test_qmatrix, identifier = "question",
-                    att_names = paste0("skill", 1:4)),
+    nida_parameters(
+      test_qmatrix,
+      identifier = "question",
+      att_names = paste0("skill", 1:4)
+    ),
     tibble::tibble(
       attribute = rep(c("skill1", "skill2", "skill3", "skill4"), each = 2),
       type = rep(c("slip", "guess"), 4),
-      coefficient = c("slip[1]", "guess[1]", "slip[2]", "guess[2]",
-                      "slip[3]", "guess[3]", "slip[4]", "guess[4]")
+      coefficient = c(
+        "slip[1]",
+        "guess[1]",
+        "slip[2]",
+        "guess[2]",
+        "slip[3]",
+        "guess[3]",
+        "slip[4]",
+        "guess[4]"
+      )
     )
   )
 
   expect_equal(
-    nida_parameters(test_qmatrix, identifier = "question",
-                    att_names = paste0("skill", 1:4), rename_attributes = TRUE),
+    nida_parameters(
+      test_qmatrix,
+      identifier = "question",
+      att_names = paste0("skill", 1:4),
+      rename_attributes = TRUE
+    ),
     tibble::tibble(
       attribute = rep(c("att1", "att2", "att3", "att4"), each = 2),
       type = rep(c("slip", "guess"), 4),
-      coefficient = c("slip[1]", "guess[1]", "slip[2]", "guess[2]",
-                      "slip[3]", "guess[3]", "slip[4]", "guess[4]")
+      coefficient = c(
+        "slip[1]",
+        "guess[1]",
+        "slip[2]",
+        "guess[2]",
+        "slip[3]",
+        "guess[3]",
+        "slip[4]",
+        "guess[4]"
+      )
     )
   )
 })
@@ -206,8 +248,11 @@ test_that("nido parameters work", {
     skill4 = c(0, 0, 1, 1)
   )
 
-  params <- get_parameters(nido(), qmatrix = test_qmatrix,
-                           identifier = "question")
+  params <- get_parameters(
+    nido(),
+    qmatrix = test_qmatrix,
+    identifier = "question"
+  )
 
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("attribute", "type", "coefficient"))
@@ -228,8 +273,11 @@ test_that("nido parameters work", {
   )
 
   expect_equal(
-    nido_parameters(test_qmatrix, identifier = "question",
-                    att_names = c("larry", "peggy", "broccoli", "henry")),
+    nido_parameters(
+      test_qmatrix,
+      identifier = "question",
+      att_names = c("larry", "peggy", "broccoli", "henry")
+    ),
     tibble::tribble(
       ~attribute,     ~type,              ~coefficient,
       "larry",        "intercept",        "l_01",
@@ -244,9 +292,12 @@ test_that("nido parameters work", {
   )
 
   expect_equal(
-    nido_parameters(test_qmatrix, identifier = "question",
-                    att_names = c("larry", "peggy", "broccoli", "henry"),
-                    rename_attributes = TRUE),
+    nido_parameters(
+      test_qmatrix,
+      identifier = "question",
+      att_names = c("larry", "peggy", "broccoli", "henry"),
+      rename_attributes = TRUE
+    ),
     tibble::tribble(
       ~attribute,     ~type,              ~coefficient,
       "att1",         "intercept",        "l_01",
@@ -270,126 +321,325 @@ test_that("ncrum parameters work", {
     division = c(0, 0, 1, 1)
   )
 
-  params <- get_parameters(ncrum(), qmatrix = test_qmatrix,
-                           identifier = "question")
+  params <- get_parameters(
+    ncrum(),
+    qmatrix = test_qmatrix,
+    identifier = "question"
+  )
 
   expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params),
-               c("question", "type", "attribute", "coefficient"))
+  expect_equal(
+    colnames(params),
+    c("question", "type", "attribute", "coefficient")
+  )
 
   expect_equal(
     params,
     tibble::tibble(
-      question = c("Q1", "Q1",
-                   "Q2", "Q2", "Q2",
-                   "Q3", "Q3", "Q3", "Q3",
-                   "Q4", "Q4", "Q4", "Q4"),
-      type = c("baseline", "penalty",
-               "baseline", rep("penalty", 2),
-               "baseline", rep("penalty", 3),
-               "baseline", rep("penalty", 3)),
-      attribute = c(NA, "addition",
-                    NA, "subtraction", "multiplication",
-                    NA, "addition", "multiplication", "division",
-                    NA, "subtraction", "multiplication", "division"),
-      coefficient = c("pistar_1", "rstar_11",
-                      "pistar_2", "rstar_22", "rstar_23",
-                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
-                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+      question = c(
+        "Q1",
+        "Q1",
+        "Q2",
+        "Q2",
+        "Q2",
+        "Q3",
+        "Q3",
+        "Q3",
+        "Q3",
+        "Q4",
+        "Q4",
+        "Q4",
+        "Q4"
+      ),
+      type = c(
+        "baseline",
+        "penalty",
+        "baseline",
+        rep("penalty", 2),
+        "baseline",
+        rep("penalty", 3),
+        "baseline",
+        rep("penalty", 3)
+      ),
+      attribute = c(
+        NA,
+        "addition",
+        NA,
+        "subtraction",
+        "multiplication",
+        NA,
+        "addition",
+        "multiplication",
+        "division",
+        NA,
+        "subtraction",
+        "multiplication",
+        "division"
+      ),
+      coefficient = c(
+        "pistar_1",
+        "rstar_11",
+        "pistar_2",
+        "rstar_22",
+        "rstar_23",
+        "pistar_3",
+        "rstar_31",
+        "rstar_33",
+        "rstar_34",
+        "pistar_4",
+        "rstar_42",
+        "rstar_43",
+        "rstar_44"
+      )
     )
   )
 
   expect_equal(
-    ncrum_parameters(test_qmatrix, identifier = "question",
-                     att_names = paste0("skill", 1:4)),
+    ncrum_parameters(
+      test_qmatrix,
+      identifier = "question",
+      att_names = paste0("skill", 1:4)
+    ),
     tibble::tibble(
-      question = c("Q1", "Q1",
-                   "Q2", "Q2", "Q2",
-                   "Q3", "Q3", "Q3", "Q3",
-                   "Q4", "Q4", "Q4", "Q4"),
-      type = c("baseline", "penalty",
-               "baseline", rep("penalty", 2),
-               "baseline", rep("penalty", 3),
-               "baseline", rep("penalty", 3)),
-      attribute = c(NA, "skill1",
-                    NA, "skill2", "skill3",
-                    NA, "skill1", "skill3", "skill4",
-                    NA, "skill2", "skill3", "skill4"),
-      coefficient = c("pistar_1", "rstar_11",
-                      "pistar_2", "rstar_22", "rstar_23",
-                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
-                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+      question = c(
+        "Q1",
+        "Q1",
+        "Q2",
+        "Q2",
+        "Q2",
+        "Q3",
+        "Q3",
+        "Q3",
+        "Q3",
+        "Q4",
+        "Q4",
+        "Q4",
+        "Q4"
+      ),
+      type = c(
+        "baseline",
+        "penalty",
+        "baseline",
+        rep("penalty", 2),
+        "baseline",
+        rep("penalty", 3),
+        "baseline",
+        rep("penalty", 3)
+      ),
+      attribute = c(
+        NA,
+        "skill1",
+        NA,
+        "skill2",
+        "skill3",
+        NA,
+        "skill1",
+        "skill3",
+        "skill4",
+        NA,
+        "skill2",
+        "skill3",
+        "skill4"
+      ),
+      coefficient = c(
+        "pistar_1",
+        "rstar_11",
+        "pistar_2",
+        "rstar_22",
+        "rstar_23",
+        "pistar_3",
+        "rstar_31",
+        "rstar_33",
+        "rstar_34",
+        "pistar_4",
+        "rstar_42",
+        "rstar_43",
+        "rstar_44"
+      )
     )
   )
 
   expect_equal(
-    ncrum_parameters(test_qmatrix[, -1], identifier = NULL,
-                     item_names = paste0("item", 1:4)),
+    ncrum_parameters(
+      test_qmatrix[, -1],
+      identifier = NULL,
+      item_names = paste0("item", 1:4)
+    ),
     tibble::tibble(
-      item_id = c("item1", "item1",
-                  "item2", "item2", "item2",
-                  "item3", "item3", "item3", "item3",
-                  "item4", "item4", "item4", "item4"),
-      type = c("baseline", "penalty",
-               "baseline", rep("penalty", 2),
-               "baseline", rep("penalty", 3),
-               "baseline", rep("penalty", 3)),
-      attribute = c(NA, "addition",
-                    NA, "subtraction", "multiplication",
-                    NA, "addition", "multiplication", "division",
-                    NA, "subtraction", "multiplication", "division"),
-      coefficient = c("pistar_1", "rstar_11",
-                      "pistar_2", "rstar_22", "rstar_23",
-                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
-                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+      item_id = c(
+        "item1",
+        "item1",
+        "item2",
+        "item2",
+        "item2",
+        "item3",
+        "item3",
+        "item3",
+        "item3",
+        "item4",
+        "item4",
+        "item4",
+        "item4"
+      ),
+      type = c(
+        "baseline",
+        "penalty",
+        "baseline",
+        rep("penalty", 2),
+        "baseline",
+        rep("penalty", 3),
+        "baseline",
+        rep("penalty", 3)
+      ),
+      attribute = c(
+        NA,
+        "addition",
+        NA,
+        "subtraction",
+        "multiplication",
+        NA,
+        "addition",
+        "multiplication",
+        "division",
+        NA,
+        "subtraction",
+        "multiplication",
+        "division"
+      ),
+      coefficient = c(
+        "pistar_1",
+        "rstar_11",
+        "pistar_2",
+        "rstar_22",
+        "rstar_23",
+        "pistar_3",
+        "rstar_31",
+        "rstar_33",
+        "rstar_34",
+        "pistar_4",
+        "rstar_42",
+        "rstar_43",
+        "rstar_44"
+      )
     )
   )
 
   expect_equal(
-    ncrum_parameters(test_qmatrix[, -1], identifier = NULL,
-                     att_names = paste0("skill", 1:4),
-                     item_names = rlang::set_names(1:4, paste0("q_", 1:4)),
-                     rename_attributes = TRUE, rename_items = TRUE),
+    ncrum_parameters(
+      test_qmatrix[, -1],
+      identifier = NULL,
+      att_names = paste0("skill", 1:4),
+      item_names = rlang::set_names(1:4, paste0("q_", 1:4)),
+      rename_attributes = TRUE,
+      rename_items = TRUE
+    ),
     tibble::tibble(
-      item_id = c(1L, 1L,
-                  2L, 2L, 2L,
-                  3L, 3L, 3L, 3L,
-                  4L, 4L, 4L, 4L),
-      type = c("baseline", "penalty",
-               "baseline", rep("penalty", 2),
-               "baseline", rep("penalty", 3),
-               "baseline", rep("penalty", 3)),
-      attribute = c(NA, "att1",
-                    NA, "att2", "att3",
-                    NA, "att1", "att3", "att4",
-                    NA, "att2", "att3", "att4"),
-      coefficient = c("pistar_1", "rstar_11",
-                      "pistar_2", "rstar_22", "rstar_23",
-                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
-                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+      item_id = c(1L, 1L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 4L, 4L, 4L, 4L),
+      type = c(
+        "baseline",
+        "penalty",
+        "baseline",
+        rep("penalty", 2),
+        "baseline",
+        rep("penalty", 3),
+        "baseline",
+        rep("penalty", 3)
+      ),
+      attribute = c(
+        NA,
+        "att1",
+        NA,
+        "att2",
+        "att3",
+        NA,
+        "att1",
+        "att3",
+        "att4",
+        NA,
+        "att2",
+        "att3",
+        "att4"
+      ),
+      coefficient = c(
+        "pistar_1",
+        "rstar_11",
+        "pistar_2",
+        "rstar_22",
+        "rstar_23",
+        "pistar_3",
+        "rstar_31",
+        "rstar_33",
+        "rstar_34",
+        "pistar_4",
+        "rstar_42",
+        "rstar_43",
+        "rstar_44"
+      )
     )
   )
 
   expect_equal(
-    ncrum_parameters(test_qmatrix[, -1], identifier = NULL,
-                     item_names = rlang::set_names(1:4, paste0("q_", 1:4))),
+    ncrum_parameters(
+      test_qmatrix[, -1],
+      identifier = NULL,
+      item_names = rlang::set_names(1:4, paste0("q_", 1:4))
+    ),
     tibble::tibble(
-      item_id = c("q_1", "q_1",
-                  "q_2", "q_2", "q_2",
-                  "q_3", "q_3", "q_3", "q_3",
-                  "q_4", "q_4", "q_4", "q_4"),
-      type = c("baseline", "penalty",
-               "baseline", rep("penalty", 2),
-               "baseline", rep("penalty", 3),
-               "baseline", rep("penalty", 3)),
-      attribute = c(NA, "addition",
-                    NA, "subtraction", "multiplication",
-                    NA, "addition", "multiplication", "division",
-                    NA, "subtraction", "multiplication", "division"),
-      coefficient = c("pistar_1", "rstar_11",
-                      "pistar_2", "rstar_22", "rstar_23",
-                      "pistar_3", "rstar_31", "rstar_33", "rstar_34",
-                      "pistar_4", "rstar_42", "rstar_43", "rstar_44")
+      item_id = c(
+        "q_1",
+        "q_1",
+        "q_2",
+        "q_2",
+        "q_2",
+        "q_3",
+        "q_3",
+        "q_3",
+        "q_3",
+        "q_4",
+        "q_4",
+        "q_4",
+        "q_4"
+      ),
+      type = c(
+        "baseline",
+        "penalty",
+        "baseline",
+        rep("penalty", 2),
+        "baseline",
+        rep("penalty", 3),
+        "baseline",
+        rep("penalty", 3)
+      ),
+      attribute = c(
+        NA,
+        "addition",
+        NA,
+        "subtraction",
+        "multiplication",
+        NA,
+        "addition",
+        "multiplication",
+        "division",
+        NA,
+        "subtraction",
+        "multiplication",
+        "division"
+      ),
+      coefficient = c(
+        "pistar_1",
+        "rstar_11",
+        "pistar_2",
+        "rstar_22",
+        "rstar_23",
+        "pistar_3",
+        "rstar_31",
+        "rstar_33",
+        "rstar_34",
+        "pistar_4",
+        "rstar_42",
+        "rstar_43",
+        "rstar_44"
+      )
     )
   )
 })
@@ -403,12 +653,17 @@ test_that("crum parameters work", {
     skill4 = c(0, 0, 1, 1)
   )
 
-  params <- get_parameters(crum(), qmatrix = test_qmatrix,
-                           identifier = "question")
+  params <- get_parameters(
+    crum(),
+    qmatrix = test_qmatrix,
+    identifier = "question"
+  )
 
   expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("question", "type", "attributes",
-                                   "coefficient"))
+  expect_equal(
+    colnames(params),
+    c("question", "type", "attributes", "coefficient")
+  )
 
   expect_equal(
     params,
@@ -434,8 +689,13 @@ test_that("crum parameters work", {
   )
 
   expect_equal(
-    lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
-                    att_names = paste0("att", 1:4), rename_attributes = TRUE),
+    lcdm_parameters(
+      test_qmatrix,
+      max_interaction = 1,
+      identifier = "question",
+      att_names = paste0("att", 1:4),
+      rename_attributes = TRUE
+    ),
     # nolint start: indentation_linter
     tibble::tribble(
       ~question,         ~type,              ~attributes, ~coefficient,
@@ -458,8 +718,12 @@ test_that("crum parameters work", {
   )
 
   expect_equal(
-    lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
-                    rename_items = TRUE),
+    lcdm_parameters(
+      test_qmatrix,
+      max_interaction = 1,
+      identifier = "question",
+      rename_items = TRUE
+    ),
     # nolint start: indentation_linter
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
@@ -482,8 +746,13 @@ test_that("crum parameters work", {
   )
 
   expect_equal(
-    lcdm_parameters(test_qmatrix, max_interaction = 1, identifier = "question",
-                    rename_attributes = TRUE, rename_items = TRUE),
+    lcdm_parameters(
+      test_qmatrix,
+      max_interaction = 1,
+      identifier = "question",
+      rename_attributes = TRUE,
+      rename_items = TRUE
+    ),
     # nolint start: indentation_linter
     tibble::tribble(
       ~item_id,         ~type,              ~attributes, ~coefficient,
@@ -508,62 +777,100 @@ test_that("crum parameters work", {
 
 # duplicate Rupp et al. parameters ---------------------------------------------
 test_that("dina parameters (table 6.5)", {
-  params <- dcm_specify(qmatrix = rupp_math, identifier = "items",
-                        measurement_model = dina()) |>
-    get_parameters() |>
-    dplyr::filter(type != "structural")
-
-  expect_equal(params,
-               tibble::tibble(items = rep(paste("Item", 1:4), each = 2),
-                              type = rep(c("slip", "guess"), 4),
-                              coefficient = c("slip[1]", "guess[1]",
-                                              "slip[2]", "guess[2]",
-                                              "slip[3]", "guess[3]",
-                                              "slip[4]", "guess[4]")))
-
-  dina_code <- meas_dina(qmatrix = rupp_math[, -1],
-                         priors = default_dcm_priors(dina()),
-                         att_names = NULL)
-  dina_code$priors <- NULL
-  expect_snapshot(dina_code)
-})
-
-test_that("nida parameters (table 6.6)", {
-  params <- dcm_specify(qmatrix = rupp_math, identifier = "items",
-                        measurement_model = nida()) |>
+  params <- dcm_specify(
+    qmatrix = rupp_math,
+    identifier = "items",
+    measurement_model = dina()
+  ) |>
     get_parameters() |>
     dplyr::filter(type != "structural")
 
   expect_equal(
     params,
     tibble::tibble(
-      attribute = rep(c("addition", "subtraction", "multiplication",
-                        "division"), each = 2),
+      items = rep(paste("Item", 1:4), each = 2),
       type = rep(c("slip", "guess"), 4),
-      coefficient = c("slip[1]", "guess[1]",
-                      "slip[2]", "guess[2]",
-                      "slip[3]", "guess[3]",
-                      "slip[4]", "guess[4]")
+      coefficient = c(
+        "slip[1]",
+        "guess[1]",
+        "slip[2]",
+        "guess[2]",
+        "slip[3]",
+        "guess[3]",
+        "slip[4]",
+        "guess[4]"
+      )
     )
   )
 
-  nida_code <- meas_nida(qmatrix = rlang::set_names(rupp_math[, -1],
-                                                    paste0("att", 1:4)),
-                         priors = default_dcm_priors(nida()),
-                         att_names = NULL, hierarchy = NULL)
+  dina_code <- meas_dina(
+    qmatrix = rupp_math[, -1],
+    priors = default_dcm_priors(dina()),
+    att_names = NULL
+  )
+  dina_code$priors <- NULL
+  expect_snapshot(dina_code)
+})
+
+test_that("nida parameters (table 6.6)", {
+  params <- dcm_specify(
+    qmatrix = rupp_math,
+    identifier = "items",
+    measurement_model = nida()
+  ) |>
+    get_parameters() |>
+    dplyr::filter(type != "structural")
+
+  expect_equal(
+    params,
+    tibble::tibble(
+      attribute = rep(
+        c("addition", "subtraction", "multiplication", "division"),
+        each = 2
+      ),
+      type = rep(c("slip", "guess"), 4),
+      coefficient = c(
+        "slip[1]",
+        "guess[1]",
+        "slip[2]",
+        "guess[2]",
+        "slip[3]",
+        "guess[3]",
+        "slip[4]",
+        "guess[4]"
+      )
+    )
+  )
+
+  nida_code <- meas_nida(
+    qmatrix = rlang::set_names(rupp_math[, -1], paste0("att", 1:4)),
+    priors = default_dcm_priors(nida()),
+    att_names = NULL,
+    hierarchy = NULL
+  )
 
   pi_code <- nida_code$transformed_parameters |>
     tibble::as_tibble() |>
     tidyr::separate_longer_delim("value", delim = "\n") |>
     dplyr::filter(grepl("^  pi", .data$value)) |>
-    tidyr::separate_wider_regex("value",
-                                patterns = c(".*\\[", i = "[0-9]*", ",",
-                                             c = "[0-9]*", "\\] = ",
-                                             value = ".*", ";$")) |>
-    dplyr::mutate(i = paste0("Item ", i),
-                  c = as.integer(.data$c)) |>
-    dplyr::left_join(dplyr::select(rupp_profiles, "id", "rupp_id"),
-                     by = c("c" = "id"), relationship = "many-to-one") |>
+    tidyr::separate_wider_regex(
+      "value",
+      patterns = c(
+        ".*\\[",
+        i = "[0-9]*",
+        ",",
+        c = "[0-9]*",
+        "\\] = ",
+        value = ".*",
+        ";$"
+      )
+    ) |>
+    dplyr::mutate(i = paste0("Item ", i), c = as.integer(.data$c)) |>
+    dplyr::left_join(
+      dplyr::select(rupp_profiles, "id", "rupp_id"),
+      by = c("c" = "id"),
+      relationship = "many-to-one"
+    ) |>
     dplyr::select(-"c") |>
     tidyr::pivot_wider(names_from = "i", values_from = "value") |>
     dplyr::arrange(.data$rupp_id)
@@ -595,48 +902,89 @@ test_that("nida parameters (table 6.6)", {
 })
 
 test_that("ncrum parameters (table 6.8)", {
-  params <- dcm_specify(qmatrix = rupp_math, identifier = "items",
-                        measurement_model = ncrum()) |>
+  params <- dcm_specify(
+    qmatrix = rupp_math,
+    identifier = "items",
+    measurement_model = ncrum()
+  ) |>
     get_parameters() |>
     dplyr::filter(type != "structural")
 
   expect_equal(
     params,
     tibble::tibble(
-      items = c(rep("Item 1", 3), rep("Item 2", 2), rep("Item 3", 3),
-                rep("Item 4", 2)),
-      type = c("baseline", rep("penalty", 2),
-               "baseline", rep("penalty", 1),
-               "baseline", rep("penalty", 2),
-               "baseline", rep("penalty", 1)),
-      attribute = c(NA, "addition", "subtraction",
-                    NA, "division",
-                    NA, "subtraction", "multiplication",
-                    NA, "addition"),
-      coefficient = c("pistar_1", "rstar_11", "rstar_12",
-                      "pistar_2", "rstar_24",
-                      "pistar_3", "rstar_32", "rstar_33",
-                      "pistar_4", "rstar_41")
+      items = c(
+        rep("Item 1", 3),
+        rep("Item 2", 2),
+        rep("Item 3", 3),
+        rep("Item 4", 2)
+      ),
+      type = c(
+        "baseline",
+        rep("penalty", 2),
+        "baseline",
+        rep("penalty", 1),
+        "baseline",
+        rep("penalty", 2),
+        "baseline",
+        rep("penalty", 1)
+      ),
+      attribute = c(
+        NA,
+        "addition",
+        "subtraction",
+        NA,
+        "division",
+        NA,
+        "subtraction",
+        "multiplication",
+        NA,
+        "addition"
+      ),
+      coefficient = c(
+        "pistar_1",
+        "rstar_11",
+        "rstar_12",
+        "pistar_2",
+        "rstar_24",
+        "pistar_3",
+        "rstar_32",
+        "rstar_33",
+        "pistar_4",
+        "rstar_41"
+      )
     )
   )
 
-  ncrum_code <- meas_ncrum(qmatrix = rlang::set_names(rupp_math[, -1],
-                                                      paste0("att", 1:4)),
-                           priors = default_dcm_priors(ncrum()),
-                           att_names = NULL, hierarchy = NULL)
+  ncrum_code <- meas_ncrum(
+    qmatrix = rlang::set_names(rupp_math[, -1], paste0("att", 1:4)),
+    priors = default_dcm_priors(ncrum()),
+    att_names = NULL,
+    hierarchy = NULL
+  )
 
   pi_code <- ncrum_code$transformed_parameters |>
     tibble::as_tibble() |>
     tidyr::separate_longer_delim("value", delim = "\n") |>
     dplyr::filter(grepl("^  pi", .data$value)) |>
-    tidyr::separate_wider_regex("value",
-                                patterns = c(".*\\[", i = "[0-9]*", ",",
-                                             c = "[0-9]*", "\\] = ",
-                                             value = ".*", ";$")) |>
-    dplyr::mutate(i = paste0("Item ", i),
-                  c = as.integer(.data$c)) |>
-    dplyr::left_join(dplyr::select(rupp_profiles, "id", "rupp_id"),
-                     by = c("c" = "id"), relationship = "many-to-one") |>
+    tidyr::separate_wider_regex(
+      "value",
+      patterns = c(
+        ".*\\[",
+        i = "[0-9]*",
+        ",",
+        c = "[0-9]*",
+        "\\] = ",
+        value = ".*",
+        ";$"
+      )
+    ) |>
+    dplyr::mutate(i = paste0("Item ", i), c = as.integer(.data$c)) |>
+    dplyr::left_join(
+      dplyr::select(rupp_profiles, "id", "rupp_id"),
+      by = c("c" = "id"),
+      relationship = "many-to-one"
+    ) |>
     dplyr::select(-"c") |>
     tidyr::pivot_wider(names_from = "i", values_from = "value") |>
     dplyr::arrange(.data$rupp_id)
@@ -668,29 +1016,47 @@ test_that("ncrum parameters (table 6.8)", {
 })
 
 test_that("dino parameters (table 6.13)", {
-  params <- dcm_specify(qmatrix = rupp_gri, identifier = "item",
-                        measurement_model = dino()) |>
+  params <- dcm_specify(
+    qmatrix = rupp_gri,
+    identifier = "item",
+    measurement_model = dino()
+  ) |>
     get_parameters() |>
     dplyr::filter(type != "structural")
 
-  expect_equal(params,
-               tibble::tibble(item = rep(paste0("GRI", 1:4), each = 2),
-                              type = rep(c("slip", "guess"), 4),
-                              coefficient = c("slip[1]", "guess[1]",
-                                              "slip[2]", "guess[2]",
-                                              "slip[3]", "guess[3]",
-                                              "slip[4]", "guess[4]")))
+  expect_equal(
+    params,
+    tibble::tibble(
+      item = rep(paste0("GRI", 1:4), each = 2),
+      type = rep(c("slip", "guess"), 4),
+      coefficient = c(
+        "slip[1]",
+        "guess[1]",
+        "slip[2]",
+        "guess[2]",
+        "slip[3]",
+        "guess[3]",
+        "slip[4]",
+        "guess[4]"
+      )
+    )
+  )
 
-  dino_code <- meas_dino(qmatrix = rupp_gri[, -1],
-                         priors = default_dcm_priors(dino()),
-                         att_names = NULL)
+  dino_code <- meas_dino(
+    qmatrix = rupp_gri[, -1],
+    priors = default_dcm_priors(dino()),
+    att_names = NULL
+  )
   dino_code$priors <- NULL
   expect_snapshot(dino_code)
 })
 
 test_that("nido parameters (table 6.15)", {
-  params <- dcm_specify(qmatrix = rupp_gri, identifier = "item",
-                        measurement_model = nido()) |>
+  params <- dcm_specify(
+    qmatrix = rupp_gri,
+    identifier = "item",
+    measurement_model = nido()
+  ) |>
     get_parameters() |>
     dplyr::filter(type != "structural")
 
@@ -699,28 +1065,48 @@ test_that("nido parameters (table 6.15)", {
     tibble::tibble(
       attribute = rep(paste0("attribute", 1:4), each = 2),
       type = rep(c("intercept", "maineffect"), 4),
-      coefficient = c("l_01", "l_11", "l_02", "l_12", "l_03", "l_13",
-                      "l_04", "l_14")
+      coefficient = c(
+        "l_01",
+        "l_11",
+        "l_02",
+        "l_12",
+        "l_03",
+        "l_13",
+        "l_04",
+        "l_14"
+      )
     )
   )
 
-  nido_code <- meas_nido(qmatrix = rlang::set_names(rupp_gri[, -1],
-                                                    paste0("att", 1:4)),
-                         priors = default_dcm_priors(nido()),
-                         att_names = NULL, hierarchy = NULL)
+  nido_code <- meas_nido(
+    qmatrix = rlang::set_names(rupp_gri[, -1], paste0("att", 1:4)),
+    priors = default_dcm_priors(nido()),
+    att_names = NULL,
+    hierarchy = NULL
+  )
 
   pi_code <- nido_code$transformed_parameters |>
     tibble::as_tibble() |>
     tidyr::separate_longer_delim("value", delim = "\n") |>
     dplyr::filter(grepl("^  pi", .data$value)) |>
-    tidyr::separate_wider_regex("value",
-                                patterns = c(".*\\[", i = "[0-9]*", ",",
-                                             c = "[0-9]*", "\\] = inv_logit\\(",
-                                             value = ".*", "\\);$")) |>
-    dplyr::mutate(i = paste0("Item ", i),
-                  c = as.integer(.data$c)) |>
-    dplyr::left_join(dplyr::select(rupp_profiles, "id", "rupp_id"),
-                     by = c("c" = "id"), relationship = "many-to-one") |>
+    tidyr::separate_wider_regex(
+      "value",
+      patterns = c(
+        ".*\\[",
+        i = "[0-9]*",
+        ",",
+        c = "[0-9]*",
+        "\\] = inv_logit\\(",
+        value = ".*",
+        "\\);$"
+      )
+    ) |>
+    dplyr::mutate(i = paste0("Item ", i), c = as.integer(.data$c)) |>
+    dplyr::left_join(
+      dplyr::select(rupp_profiles, "id", "rupp_id"),
+      by = c("c" = "id"),
+      relationship = "many-to-one"
+    ) |>
     dplyr::select(-"c") |>
     tidyr::pivot_wider(names_from = "i", values_from = "value") |>
     dplyr::arrange(.data$rupp_id)
@@ -752,8 +1138,11 @@ test_that("nido parameters (table 6.15)", {
 })
 
 test_that("crum parameters (table 6.17)", {
-  params <- dcm_specify(qmatrix = rupp_gri, identifier = "item",
-                        measurement_model = crum()) |>
+  params <- dcm_specify(
+    qmatrix = rupp_gri,
+    identifier = "item",
+    measurement_model = crum()
+  ) |>
     get_parameters() |>
     dplyr::filter(type != "structural")
 
@@ -761,36 +1150,74 @@ test_that("crum parameters (table 6.17)", {
     params,
     tibble::tibble(
       item = c(rep("GRI1", 2), rep("GRI2", 3), rep("GRI3", 2), rep("GRI4", 4)),
-      type = c("intercept", rep("maineffect", 1),
-               "intercept", rep("maineffect", 2),
-               "intercept", rep("maineffect", 1),
-               "intercept", rep("maineffect", 3)),
-      attributes = c(NA, "attribute1",
-                     NA, "attribute2", "attribute3",
-                     NA, "attribute4",
-                     NA, "attribute2", "attribute3", "attribute4"),
-      coefficient = c("l1_0", "l1_11", "l2_0", "l2_12", "l2_13",
-                      "l3_0", "l3_14", "l4_0", "l4_12", "l4_13", "l4_14")
+      type = c(
+        "intercept",
+        rep("maineffect", 1),
+        "intercept",
+        rep("maineffect", 2),
+        "intercept",
+        rep("maineffect", 1),
+        "intercept",
+        rep("maineffect", 3)
+      ),
+      attributes = c(
+        NA,
+        "attribute1",
+        NA,
+        "attribute2",
+        "attribute3",
+        NA,
+        "attribute4",
+        NA,
+        "attribute2",
+        "attribute3",
+        "attribute4"
+      ),
+      coefficient = c(
+        "l1_0",
+        "l1_11",
+        "l2_0",
+        "l2_12",
+        "l2_13",
+        "l3_0",
+        "l3_14",
+        "l4_0",
+        "l4_12",
+        "l4_13",
+        "l4_14"
+      )
     )
   )
 
-  crum_code <- meas_crum(qmatrix = rlang::set_names(rupp_gri[, -1],
-                                                    paste0("att", 1:4)),
-                         priors = default_dcm_priors(crum()),
-                         att_names = NULL, hierarchy = NULL)
+  crum_code <- meas_crum(
+    qmatrix = rlang::set_names(rupp_gri[, -1], paste0("att", 1:4)),
+    priors = default_dcm_priors(crum()),
+    att_names = NULL,
+    hierarchy = NULL
+  )
 
   pi_code <- crum_code$transformed_parameters |>
     tibble::as_tibble() |>
     tidyr::separate_longer_delim("value", delim = "\n") |>
     dplyr::filter(grepl("^  pi", .data$value)) |>
-    tidyr::separate_wider_regex("value",
-                                patterns = c(".*\\[", i = "[0-9]*", ",",
-                                             c = "[0-9]*", "\\] = inv_logit\\(",
-                                             value = ".*", "\\);$")) |>
-    dplyr::mutate(i = paste0("Item ", i),
-                  c = as.integer(.data$c)) |>
-    dplyr::left_join(dplyr::select(rupp_profiles, "id", "rupp_id"),
-                     by = c("c" = "id"), relationship = "many-to-one") |>
+    tidyr::separate_wider_regex(
+      "value",
+      patterns = c(
+        ".*\\[",
+        i = "[0-9]*",
+        ",",
+        c = "[0-9]*",
+        "\\] = inv_logit\\(",
+        value = ".*",
+        "\\);$"
+      )
+    ) |>
+    dplyr::mutate(i = paste0("Item ", i), c = as.integer(.data$c)) |>
+    dplyr::left_join(
+      dplyr::select(rupp_profiles, "id", "rupp_id"),
+      by = c("c" = "id"),
+      relationship = "many-to-one"
+    ) |>
     dplyr::select(-"c") |>
     tidyr::pivot_wider(names_from = "i", values_from = "value") |>
     dplyr::arrange(.data$rupp_id)
@@ -831,15 +1258,17 @@ test_that("unconstrained parameters work", {
     att4 = sample(0:1, size = 5, replace = TRUE)
   )
 
-  params <- get_parameters(unconstrained(), qmatrix = test_qmatrix,
-                           identifier = "test_item")
+  params <- get_parameters(
+    unconstrained(),
+    qmatrix = test_qmatrix,
+    identifier = "test_item"
+  )
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("type", "coefficient"))
 
   expect_equal(
     params,
-    tibble::tibble(type = "structural",
-                   coefficient = "Vc")
+    tibble::tibble(type = "structural", coefficient = "Vc")
   )
 
   params2 <- get_parameters(unconstrained(), qmatrix = test_qmatrix[, -1])
@@ -858,16 +1287,21 @@ test_that("independent parameters work", {
     att4 = sample(0:1, size = 5, replace = TRUE)
   )
 
-  params <- get_parameters(independent(), qmatrix = test_qmatrix,
-                           identifier = "test_item")
+  params <- get_parameters(
+    independent(),
+    qmatrix = test_qmatrix,
+    identifier = "test_item"
+  )
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("type", "attributes", "coefficient"))
 
   expect_equal(
     params,
-    tibble::tibble(type = "structural",
-                   attributes = paste0("att", 1:4),
-                   coefficient = paste0("eta[", 1:4, "]"))
+    tibble::tibble(
+      type = "structural",
+      attributes = paste0("att", 1:4),
+      coefficient = paste0("eta[", 1:4, "]")
+    )
   )
 
   params2 <- get_parameters(independent(), qmatrix = test_qmatrix[, -1])
@@ -884,16 +1318,21 @@ test_that("independent parameters work", {
     divide = sample(0:1, size = 5, replace = TRUE)
   )
 
-  params <- get_parameters(independent(), qmatrix = test_qmatrix,
-                           identifier = "test_item")
+  params <- get_parameters(
+    independent(),
+    qmatrix = test_qmatrix,
+    identifier = "test_item"
+  )
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("type", "attributes", "coefficient"))
 
   expect_equal(
     params,
-    tibble::tibble(type = "structural",
-                   attributes = c("add", "subtract", "multiply", "divide"),
-                   coefficient = paste0("eta[", 1:4, "]"))
+    tibble::tibble(
+      type = "structural",
+      attributes = c("add", "subtract", "multiply", "divide"),
+      coefficient = paste0("eta[", 1:4, "]")
+    )
   )
 
   params2 <- get_parameters(independent(), qmatrix = test_qmatrix[, -1])
@@ -913,8 +1352,10 @@ test_that("loglinear parameters work", {
   params <- get_parameters(loglinear(), qmatrix = test_qmatrix)
 
   expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("profile_id", "type", "attributes",
-                                   "coefficient"))
+  expect_equal(
+    colnames(params),
+    c("profile_id", "type", "attributes", "coefficient")
+  )
 
   expect_equal(
     params,
@@ -945,8 +1386,11 @@ test_that("loglinear parameters work", {
   )
 
   expect_equal(
-    loglinear_parameters(test_qmatrix, max_interaction = 1,
-                         att_names = paste0("node", 1:3)),
+    loglinear_parameters(
+      test_qmatrix,
+      max_interaction = 1,
+      att_names = paste0("node", 1:3)
+    ),
     # nolint start: indentation_linter
     tibble::tribble(
       ~profile_id,         ~type,             ~attributes, ~coefficient,
@@ -976,15 +1420,17 @@ test_that("hdcm parameters work", {
     att4 = sample(0:1, size = 5, replace = TRUE)
   )
 
-  params <- get_parameters(hdcm(), qmatrix = test_qmatrix,
-                           identifier = "test_item")
+  params <- get_parameters(
+    hdcm(),
+    qmatrix = test_qmatrix,
+    identifier = "test_item"
+  )
   expect_true(tibble::is_tibble(params))
   expect_equal(colnames(params), c("type", "coefficient"))
 
   expect_equal(
     params,
-    tibble::tibble(type = "structural",
-                   coefficient = "Vc")
+    tibble::tibble(type = "structural", coefficient = "Vc")
   )
 
   params2 <- get_parameters(hdcm(), qmatrix = test_qmatrix[, -1])
@@ -1004,13 +1450,18 @@ test_that("warnings are produced for unnecessary arguments", {
   )
 
   spec1 <- dcm_specify(qmatrix = test_qmatrix)
-  expect_warning(get_parameters(spec1, qmatrix = test_qmatrix),
-                 "should not be specified")
-  expect_warning(get_parameters(spec1, qmatrix = test_qmatrix,
-                                identifier = "item"),
-                 "should not be specified")
-  expect_warning(get_parameters(spec1, identifier = "item"),
-                 "should not be specified")
+  expect_warning(
+    get_parameters(spec1, qmatrix = test_qmatrix),
+    "should not be specified"
+  )
+  expect_warning(
+    get_parameters(spec1, qmatrix = test_qmatrix, identifier = "item"),
+    "should not be specified"
+  )
+  expect_warning(
+    get_parameters(spec1, identifier = "item"),
+    "should not be specified"
+  )
 })
 
 test_that("combining parameters in a specification works", {
@@ -1022,46 +1473,62 @@ test_that("combining parameters in a specification works", {
   )
 
   spec1 <- dcm_specify(qmatrix = test_qmatrix)
-  expect_equal(get_parameters(spec1),
-               dplyr::bind_rows(
-                 get_parameters(lcdm(), qmatrix = test_qmatrix),
-                 get_parameters(unconstrained(), qmatrix = test_qmatrix)
-               ))
+  expect_equal(
+    get_parameters(spec1),
+    dplyr::bind_rows(
+      get_parameters(lcdm(), qmatrix = test_qmatrix),
+      get_parameters(unconstrained(), qmatrix = test_qmatrix)
+    )
+  )
 
-  spec2 <- dcm_specify(qmatrix = test_qmatrix,
-                       measurement_model = lcdm(max_interaction = 2))
-  expect_equal(get_parameters(spec2),
-               dplyr::bind_rows(
-                 get_parameters(lcdm(max_interaction = 2),
-                                qmatrix = test_qmatrix),
-                 get_parameters(unconstrained(), qmatrix = test_qmatrix)
-               ))
+  spec2 <- dcm_specify(
+    qmatrix = test_qmatrix,
+    measurement_model = lcdm(max_interaction = 2)
+  )
+  expect_equal(
+    get_parameters(spec2),
+    dplyr::bind_rows(
+      get_parameters(lcdm(max_interaction = 2), qmatrix = test_qmatrix),
+      get_parameters(unconstrained(), qmatrix = test_qmatrix)
+    )
+  )
 
-  spec3 <- dcm_specify(qmatrix = test_qmatrix,
-                       measurement_model = crum(),
-                       structural_model = independent())
-  expect_equal(get_parameters(spec3),
-               dplyr::bind_rows(
-                 get_parameters(crum(), qmatrix = test_qmatrix),
-                 get_parameters(independent(), qmatrix = test_qmatrix)
-               ))
+  spec3 <- dcm_specify(
+    qmatrix = test_qmatrix,
+    measurement_model = crum(),
+    structural_model = independent()
+  )
+  expect_equal(
+    get_parameters(spec3),
+    dplyr::bind_rows(
+      get_parameters(crum(), qmatrix = test_qmatrix),
+      get_parameters(independent(), qmatrix = test_qmatrix)
+    )
+  )
 
-  spec4 <- dcm_specify(qmatrix = test_qmatrix,
-                       measurement_model = lcdm(),
-                       structural_model = loglinear())
-  expect_equal(get_parameters(spec4),
-               dplyr::bind_rows(
-                 get_parameters(lcdm(), qmatrix = test_qmatrix),
-                 get_parameters(loglinear(), qmatrix = test_qmatrix)
-               ))
+  spec4 <- dcm_specify(
+    qmatrix = test_qmatrix,
+    measurement_model = lcdm(),
+    structural_model = loglinear()
+  )
+  expect_equal(
+    get_parameters(spec4),
+    dplyr::bind_rows(
+      get_parameters(lcdm(), qmatrix = test_qmatrix),
+      get_parameters(loglinear(), qmatrix = test_qmatrix)
+    )
+  )
 
-  spec4 <- dcm_specify(qmatrix = test_qmatrix,
-                       measurement_model = lcdm(),
-                       structural_model = loglinear(max_interaction = 1))
-  expect_equal(get_parameters(spec4),
-               dplyr::bind_rows(
-                 get_parameters(lcdm(), qmatrix = test_qmatrix),
-                 get_parameters(loglinear(max_interaction = 1),
-                                qmatrix = test_qmatrix)
-               ))
+  spec4 <- dcm_specify(
+    qmatrix = test_qmatrix,
+    measurement_model = lcdm(),
+    structural_model = loglinear(max_interaction = 1)
+  )
+  expect_equal(
+    get_parameters(spec4),
+    dplyr::bind_rows(
+      get_parameters(lcdm(), qmatrix = test_qmatrix),
+      get_parameters(loglinear(max_interaction = 1), qmatrix = test_qmatrix)
+    )
+  )
 })

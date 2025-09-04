@@ -40,8 +40,10 @@ S7::method(create_profiles, S7::class_numeric) <- function(x) {
     dplyr::rowwise() |>
     dplyr::mutate(total = sum(dplyr::c_across(dplyr::everything()))) |>
     dplyr::select("total", dplyr::everything()) |>
-    dplyr::arrange(.data$total,
-                   dplyr::desc(dplyr::across(dplyr::everything()))) |>
+    dplyr::arrange(
+      .data$total,
+      dplyr::desc(dplyr::across(dplyr::everything()))
+    ) |>
     dplyr::ungroup() |>
     dplyr::select(-"total") |>
     tibble::as_tibble()
@@ -80,31 +82,36 @@ S7::method(create_profiles, structural) <- function(x, attributes) {
 S7::method(create_profiles, HDCM) <-
   function(x, attributes) {
     if (is.null(x@model_args$hierarchy)) {
-      return(create_profiles(S7::super(x, to = structural),
-                             attributes = attributes))
+      return(create_profiles(
+        S7::super(x, to = structural),
+        attributes = attributes
+      ))
     }
 
     if (is.null(names(attributes))) {
       attributes <- rlang::set_names(attributes, attributes)
     }
 
-    hierarchy <- glue::glue(" dag { <x@model_args$hierarchy> } ",
-                            .open = "<", .close = ">")
+    hierarchy <- glue::glue(
+      " dag { <x@model_args$hierarchy> } ",
+      .open = "<",
+      .close = ">"
+    )
     hierarchy <- ggdag::tidy_dagitty(hierarchy)
 
-    filtered_hierarchy <- hierarchy |>
+    filt_hierarchy <- hierarchy |>
       tibble::as_tibble() |>
       dplyr::filter(!is.na(.data$direction)) |>
       dplyr::select("name", "direction", "to") |>
-      dplyr::mutate(name = attributes[.data$name],
-                    to = attributes[.data$to])
+      dplyr::mutate(name = attributes[.data$name], to = attributes[.data$to])
 
     possible_profiles <- create_profiles(length(attributes))
 
-    for (jj in seq_len(nrow(filtered_hierarchy))) {
+    for (jj in seq_len(nrow(filt_hierarchy))) {
       possible_profiles <- possible_profiles |>
-        dplyr::filter(!(!!sym(filtered_hierarchy$to[jj]) >
-                          !!sym(filtered_hierarchy$name[jj])))
+        dplyr::filter(
+          !(!!sym(filt_hierarchy$to[jj]) > !!sym(filt_hierarchy$name[jj]))
+        )
     }
 
     possible_profiles

@@ -254,8 +254,7 @@ independent <- function() {
 #' @rdname structural-model
 #' @export
 loglinear <- function(max_interaction = Inf) {
-  LOGLINEAR(model = "loglinear",
-            list(max_interaction = max_interaction))
+  LOGLINEAR(model = "loglinear", list(max_interaction = max_interaction))
 }
 
 #' @rdname structural-model
@@ -313,8 +312,11 @@ hdcm <- function(hierarchy = NULL) {
 #'
 #' @examples
 #' generated_quantities(loglik = TRUE)
-generated_quantities <- function(loglik = FALSE, probabilities = FALSE,
-                                 ppmc = FALSE) {
+generated_quantities <- function(
+  loglik = FALSE,
+  probabilities = FALSE,
+  ppmc = FALSE
+) {
   GQS(list(loglik = loglik, probabilities = probabilities, ppmc = ppmc))
 }
 
@@ -327,14 +329,18 @@ generated_quantities <- function(loglik = FALSE, probabilities = FALSE,
 #'   corresponding `meas_*()` function.
 #'
 #' @noRd
-measurement <- S7::new_class("measurement", package = "dcmstan",
+measurement <- S7::new_class(
+  "measurement",
+  package = "dcmstan",
   properties = list(
     model = S7::new_property(
       class = S7::class_character,
       validator = function(value) {
         opts <- cli::cli_vec(meas_choices(), style = list("vec-last" = ", or "))
-        err <- cli::cli_fmt(cli::cli_text("must be one of {.val {opts}}, ",
-                                          "not {.val {value}}"))
+        err <- cli::cli_fmt(cli::cli_text(
+          "must be one of {.val {opts}}, ",
+          "not {.val {value}}"
+        ))
         if (!(value %in% meas_choices())) {
           err
         }
@@ -351,12 +357,18 @@ measurement <- S7::new_class("measurement", package = "dcmstan",
     opts <- cli::cli_vec(names(formals(paste0("meas_", self@model))))
     diff <- setdiff(provided, opts)
     err <- cli::cli_fmt(
-      cli::cli_text("@model_args contains unknown arguments for ",
-                    "{.fun {self@model}}: ",
-                    "{.var {diff}}")
+      cli::cli_text(
+        "@model_args contains unknown arguments for ",
+        "{.fun {self@model}}: ",
+        "{.var {diff}}"
+      )
     )
-    if (!all(names(self@model_args) %in%
-               names(as.list(formals(paste0("meas_", self@model)))))) {
+    if (
+      !all(
+        names(self@model_args) %in%
+          names(as.list(formals(paste0("meas_", self@model))))
+      )
+    ) {
       err
     }
   }
@@ -370,14 +382,18 @@ measurement <- S7::new_class("measurement", package = "dcmstan",
 #'   corresponding `strc_*()` function.
 #'
 #' @noRd
-structural <- S7::new_class("structural", package = "dcmstan",
+structural <- S7::new_class(
+  "structural",
+  package = "dcmstan",
   properties = list(
     model = S7::new_property(
       class = S7::class_character,
       validator = function(value) {
         opts <- cli::cli_vec(strc_choices(), style = list("vec-last" = ", or "))
-        err <- cli::cli_fmt(cli::cli_text("must be one of {.val {opts}}, ",
-                                          "not {.val {value}}"))
+        err <- cli::cli_fmt(cli::cli_text(
+          "must be one of {.val {opts}}, ",
+          "not {.val {value}}"
+        ))
         if (!(value %in% strc_choices())) {
           err
         }
@@ -394,12 +410,18 @@ structural <- S7::new_class("structural", package = "dcmstan",
     opts <- names(formals(paste0("strc_", self@model)))
     diff <- setdiff(provided, opts)
     err <- cli::cli_fmt(
-      cli::cli_text("@model_args contains unknown arguments for ",
-                    "{.fun {self@model}}: ",
-                    "{.var {diff}}")
+      cli::cli_text(
+        "@model_args contains unknown arguments for ",
+        "{.fun {self@model}}: ",
+        "{.var {diff}}"
+      )
     )
-    if (!all(names(self@model_args) %in%
-               names(as.list(formals(paste0("strc_", self@model)))))) {
+    if (
+      !all(
+        names(self@model_args) %in%
+          names(as.list(formals(paste0("strc_", self@model))))
+      )
+    ) {
       err
     }
   }
@@ -411,7 +433,9 @@ structural <- S7::new_class("structural", package = "dcmstan",
 #'   corresponding `strc_*()` function.
 #'
 #' @noRd
-quantities <- S7::new_class("quantities", package = "dcmstan",
+quantities <- S7::new_class(
+  "quantities",
+  package = "dcmstan",
   properties = list(
     model_args = S7::new_property(
       class = S7::class_list,
@@ -423,12 +447,18 @@ quantities <- S7::new_class("quantities", package = "dcmstan",
     opts <- names(formals("gqs_default"))
     diff <- setdiff(provided, opts)
     err <- cli::cli_fmt(
-      cli::cli_text("@model_args contains unknown arguments for ",
-                    "{.fun generated_quantities}: ",
-                    "{.var {diff}}")
+      cli::cli_text(
+        "@model_args contains unknown arguments for ",
+        "{.fun generated_quantities}: ",
+        "{.var {diff}}"
+      )
     )
-    if (!all(names(self@model_args) %in%
-               names(as.list(formals(gqs_default))))) {
+    if (
+      !all(
+        names(self@model_args) %in%
+          names(as.list(formals(gqs_default)))
+      )
+    ) {
       err
     }
   }
@@ -446,40 +476,81 @@ model_property <- S7::new_property(
 )
 
 ## Measurement models -----
-LCDM <- S7::new_class("LCDM", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
+LCDM <- S7::new_class(
+  "LCDM",
+  parent = measurement,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
-DINA <- S7::new_class("DINA", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
+DINA <- S7::new_class(
+  "DINA",
+  parent = measurement,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
-DINO <- S7::new_class("DINO", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
+DINO <- S7::new_class(
+  "DINO",
+  parent = measurement,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
-NIDA <- S7::new_class("NIDA", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
+NIDA <- S7::new_class(
+  "NIDA",
+  parent = measurement,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
-NIDO <- S7::new_class("NIDO", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
+NIDO <- S7::new_class(
+  "NIDO",
+  parent = measurement,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
-NCRUM <- S7::new_class("NCRUM", parent = measurement, package = "dcmstan",
-                       properties = list(model = model_property))
+NCRUM <- S7::new_class(
+  "NCRUM",
+  parent = measurement,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
-CRUM <- S7::new_class("CRUM", parent = measurement, package = "dcmstan",
-                      properties = list(model = model_property))
+CRUM <- S7::new_class(
+  "CRUM",
+  parent = measurement,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
 ## Structural models -----
-UNCONSTRAINED <- S7::new_class("UNCONSTRAINED", parent = structural,
-                               package = "dcmstan",
-                               properties = list(model = model_property))
+UNCONSTRAINED <- S7::new_class(
+  "UNCONSTRAINED",
+  parent = structural,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
-INDEPENDENT <- S7::new_class("INDEPENDENT", parent = structural,
-                             package = "dcmstan",
-                             properties = list(model = model_property))
-LOGLINEAR <- S7::new_class("LOGLINEAR", parent = structural,
-                           package = "dcmstan",
-                           properties = list(model = model_property))
-HDCM <- S7::new_class("HDCM", parent = structural, package = "dcmstan",
-                      properties = list(model = model_property))
+INDEPENDENT <- S7::new_class(
+  "INDEPENDENT",
+  parent = structural,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
+LOGLINEAR <- S7::new_class(
+  "LOGLINEAR",
+  parent = structural,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
+HDCM <- S7::new_class(
+  "HDCM",
+  parent = structural,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
 
 ## Generated quantities -----
 GQS <- S7::new_class("GQS", parent = quantities, package = "dcmstan")
