@@ -30,7 +30,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained, independent attributes, log-linear, and hierarchical diagnostic, classification model (HDCM).
+unconstrained, independent attributes, log-linear, and hierarchical diagnostic classification model (HDCM).
 See details for additional information on each model.
 }
 \details{
