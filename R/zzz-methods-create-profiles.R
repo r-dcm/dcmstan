@@ -110,7 +110,7 @@ S7::method(create_profiles, HDCM) <-
     for (jj in seq_len(nrow(filt_hierarchy))) {
       possible_profiles <- possible_profiles |>
         dplyr::filter(
-          !(!!sym(filt_hierarchy$to[jj]) > !sym(filt_hierarchy$name[jj]))
+          !(!!sym(filt_hierarchy$to[jj]) > !!sym(filt_hierarchy$name[jj]))
         )
     }
 
