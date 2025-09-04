@@ -41,5 +41,10 @@ rupp_profiles <- tibble::tribble(
 )
 # nolint end
 
-usethis::use_data(rupp_math, rupp_gri, rupp_profiles,
-                  internal = TRUE, overwrite = TRUE)
+usethis::use_data(
+  rupp_math,
+  rupp_gri,
+  rupp_profiles,
+  internal = TRUE,
+  overwrite = TRUE
+)

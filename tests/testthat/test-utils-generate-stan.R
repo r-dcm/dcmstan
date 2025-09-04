@@ -1,6 +1,5 @@
 test_that("create_profiles function works - 2 attributes", {
-  exp_profiles <- tibble::tibble(att1 = c(0, 1, 0, 1),
-                                 att2 = c(0, 0, 1, 1))
+  exp_profiles <- tibble::tibble(att1 = c(0, 1, 0, 1), att2 = c(0, 0, 1, 1))
 
   profiles <- create_profiles(2)
 
@@ -8,9 +7,11 @@ test_that("create_profiles function works - 2 attributes", {
 })
 
 test_that("create_profiles function works - 3 attributes", {
-  exp_profiles <- tibble::tibble(att1 = c(0, 1, 0, 0, 1, 1, 0, 1),
-                                 att2 = c(0, 0, 1, 0, 1, 0, 1, 1),
-                                 att3 = c(0, 0, 0, 1, 0, 1, 1, 1))
+  exp_profiles <- tibble::tibble(
+    att1 = c(0, 1, 0, 0, 1, 1, 0, 1),
+    att2 = c(0, 0, 1, 0, 1, 0, 1, 1),
+    att3 = c(0, 0, 0, 1, 0, 1, 1, 1)
+  )
 
   profiles <- create_profiles(3)
 

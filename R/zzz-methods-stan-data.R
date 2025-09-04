@@ -47,13 +47,19 @@ stan_data <- S7::new_generic("stan_data", "x")
 #' * `identifier`: Optional. If present, the quoted name of the column in
 #'   `data` that contains respondent identifiers.
 #' @name stan_data
-S7::method(stan_data, dcm_specification) <- function(x, ..., data,
-                                                     missing = NA,
-                                                     identifier = NULL) {
+S7::method(stan_data, dcm_specification) <- function(
+  x,
+  ...,
+  data,
+  missing = NA,
+  identifier = NULL
+) {
   # check function inputs ------------------------------------------------------
   check_string(identifier, allow_null = TRUE)
   clean_data <- rdcmchecks::clean_data(
-    data, identifier = identifier, missing = missing,
+    data,
+    identifier = identifier,
+    missing = missing,
     cleaned_qmatrix = list(
       clean_qmatrix = x@qmatrix,
       attribute_names = x@qmatrix_meta$attribute_names,
@@ -67,12 +73,13 @@ S7::method(stan_data, dcm_specification) <- function(x, ..., data,
   ragged_array <- clean_data$clean_data |>
     tibble::rowid_to_column() |>
     dplyr::group_by(.data$resp_id) |>
-    dplyr::summarize(start = min(.data$rowid),
-                     num = dplyr::n()) |>
+    dplyr::summarize(start = min(.data$rowid), num = dplyr::n()) |>
     dplyr::arrange(.data$resp_id)
 
-  profiles <- create_profiles(x@structural_model,
-                              attributes = x@qmatrix_meta$attribute_names)
+  profiles <- create_profiles(
+    x@structural_model,
+    attributes = x@qmatrix_meta$attribute_names
+  )
 
   stan_data <- list(
     I = nrow(x@qmatrix),
@@ -109,12 +116,20 @@ S7::method(stan_data, dcm_specification) <- function(x, ..., data,
 #' * `identifier`: Optional. If present, the quoted name of the column in
 #'   `data` that contains respondent identifiers.
 #' @name stan_data
-S7::method(stan_data, quantities) <- function(x, ..., dcm_spec, data,
-                                              missing = NA, identifier = NULL) {
+S7::method(stan_data, quantities) <- function(
+  x,
+  ...,
+  dcm_spec,
+  data,
+  missing = NA,
+  identifier = NULL
+) {
   # check function inputs ------------------------------------------------------
   check_string(identifier, allow_null = TRUE)
   clean_data <- rdcmchecks::clean_data(
-    data, identifier = identifier, missing = missing,
+    data,
+    identifier = identifier,
+    missing = missing,
     cleaned_qmatrix = list(
       clean_qmatrix = dcm_spec@qmatrix,
       attribute_names = dcm_spec@qmatrix_meta$attribute_names,
@@ -128,8 +143,7 @@ S7::method(stan_data, quantities) <- function(x, ..., dcm_spec, data,
   ragged_array <- clean_data$clean_data |>
     tibble::rowid_to_column() |>
     dplyr::group_by(.data$resp_id) |>
-    dplyr::summarize(start = min(.data$rowid),
-                     num = dplyr::n()) |>
+    dplyr::summarize(start = min(.data$rowid), num = dplyr::n()) |>
     dplyr::arrange(.data$resp_id)
 
   profiles <- create_profiles(
@@ -171,7 +185,7 @@ S7::method(extra_data, DINA) <- function(x, dcm_spec) {
   xi <- matrix(0, nrow = nrow(dcm_spec@qmatrix), ncol = nrow(profiles))
   for (i in seq_len(nrow(dcm_spec@qmatrix))) {
     for (c in seq_len(nrow(profiles))) {
-      xi[i, c] <- prod(profiles[c, ] ^ dcm_spec@qmatrix[i, ])
+      xi[i, c] <- prod(profiles[c, ]^dcm_spec@qmatrix[i, ])
     }
   }
 
@@ -187,7 +201,7 @@ S7::method(extra_data, DINO) <- function(x, dcm_spec) {
   xi <- matrix(0, nrow = nrow(dcm_spec@qmatrix), ncol = nrow(profiles))
   for (i in seq_len(nrow(dcm_spec@qmatrix))) {
     for (c in seq_len(nrow(profiles))) {
-      xi[i, c] <- 1 - prod((1 - profiles[c, ]) ^ dcm_spec@qmatrix[i, ])
+      xi[i, c] <- 1 - prod((1 - profiles[c, ])^dcm_spec@qmatrix[i, ])
     }
   }
 
@@ -204,6 +218,8 @@ S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
     attributes = dcm_spec@qmatrix_meta$attribute_names
   )
 
-  list(A = length(dcm_spec@qmatrix_meta$attribute_names),
-       Alpha = as.matrix(profiles))
+  list(
+    A = length(dcm_spec@qmatrix_meta$attribute_names),
+    Alpha = as.matrix(profiles)
+  )
 }

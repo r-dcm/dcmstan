@@ -25,14 +25,22 @@
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
-                            att_names = NULL, item_names = NULL,
-                            hierarchy = NULL, rename_attributes = FALSE,
-                            rename_items = FALSE) {
+lcdm_parameters <- function(
+  qmatrix,
+  identifier = NULL,
+  max_interaction = Inf,
+  att_names = NULL,
+  item_names = NULL,
+  hierarchy = NULL,
+  rename_attributes = FALSE,
+  rename_items = FALSE
+) {
   if (is.null(identifier)) {
     if (is.null(item_names)) {
-      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
-                                     as.character(seq_len(nrow(qmatrix))))
+      item_names <- rlang::set_names(
+        seq_len(nrow(qmatrix)),
+        as.character(seq_len(nrow(qmatrix)))
+      )
     }
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id") |>
@@ -55,8 +63,10 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
 
   qmatrix <- qmatrix |>
     dplyr::select(-{{ identifier }}) |>
-    dplyr::rename_with(~glue::glue("att{1:(ncol(qmatrix) - 1)}"),
-                       .cols = dplyr::everything())
+    dplyr::rename_with(
+      ~ glue::glue("att{1:(ncol(qmatrix) - 1)}"),
+      .cols = dplyr::everything()
+    )
 
   all_params <- stats::model.matrix(
     stats::as.formula(paste0("~ .^", max(ncol(qmatrix), 2L))),
@@ -65,24 +75,37 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
     tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
     dplyr::select(dplyr::where(~ sum(.x) > 0)) |>
     tibble::rowid_to_column(var = "item_id") |>
-    tidyr::pivot_longer(cols = -"item_id", names_to = "parameter",
-                        values_to = "value") |>
+    tidyr::pivot_longer(
+      cols = -"item_id",
+      names_to = "parameter",
+      values_to = "value"
+    ) |>
     dplyr::filter(.data$value == 1) |>
     dplyr::mutate(
       param_level = dplyr::case_when(
         .data$parameter == "intercept" ~ 0,
         !grepl("__", .data$parameter) ~ 1,
-        TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
-                      function(.x) length(attr(.x, "match.length"))) + 1
+        TRUE ~
+          sapply(
+            gregexpr(pattern = "__", text = .data$parameter),
+            function(.x) length(attr(.x, "match.length"))
+          ) +
+            1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
-      coefficient = glue::glue("l{item_id}_{param_level}",
-                               "{gsub(\"__\", \"\", atts)}"),
-      type = dplyr::case_when(.data$param_level == 0 ~ "intercept",
-                              .data$param_level == 1 ~ "maineffect",
-                              .data$param_level >= 2 ~ "interaction"),
-      attributes = dplyr::case_when(.data$param_level == 0 ~ NA_character_,
-                                    .data$param_level >= 1 ~ .data$parameter)
+      coefficient = glue::glue(
+        "l{item_id}_{param_level}",
+        "{gsub(\"__\", \"\", atts)}"
+      ),
+      type = dplyr::case_when(
+        .data$param_level == 0 ~ "intercept",
+        .data$param_level == 1 ~ "maineffect",
+        .data$param_level >= 2 ~ "interaction"
+      ),
+      attributes = dplyr::case_when(
+        .data$param_level == 0 ~ NA_character_,
+        .data$param_level >= 1 ~ .data$parameter
+      )
     ) |>
     dplyr::filter(.data$param_level <= max_interaction) |>
     dplyr::select("item_id", "type", "attributes", "coefficient") |>
@@ -94,32 +117,41 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
       tibble::as_tibble() |>
       dplyr::filter(!is.na(.data$direction)) |>
       dplyr::select("name", "direction", "to") |>
-      dplyr::mutate(name = att_names[.data$name],
-                    to = att_names[.data$to])
+      dplyr::mutate(name = att_names[.data$name], to = att_names[.data$to])
 
-    all_params <- filter_hierarchy(all_params,
-                                   filtered_hierarchy = filtered_hierarchy)
+    all_params <- filter_hierarchy(
+      all_params,
+      filtered_hierarchy = filtered_hierarchy
+    )
   }
 
   if (!rename_attributes) {
     for (i in seq_along(att_names)) {
-      all_params <- dplyr::mutate(all_params,
-                                  attributes = gsub(paste0("att", i),
-                                                    names(att_names)[i],
-                                                    .data$attributes))
+      all_params <- dplyr::mutate(
+        all_params,
+        attributes = gsub(
+          paste0("att", i),
+          names(att_names)[i],
+          .data$attributes
+        )
+      )
     }
   }
 
   if (!rename_items) {
     all_params <- all_params |>
-      dplyr::left_join(item_ids,
-                       by = dplyr::join_by("item_id" == "item_number")) |>
-      dplyr::select({{ identifier }} := "dcmstan_real_item_id",
-                    dplyr::everything(),
-                    -"item_id")
+      dplyr::left_join(
+        item_ids,
+        by = dplyr::join_by("item_id" == "item_number")
+      ) |>
+      dplyr::select(
+        {{ identifier }} := "dcmstan_real_item_id",
+        dplyr::everything(),
+        -"item_id"
+      )
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -139,12 +171,19 @@ lcdm_parameters <- function(qmatrix, identifier = NULL, max_interaction = Inf,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
-                            hierarchy = NULL, rename_items = FALSE) {
+dina_parameters <- function(
+  qmatrix,
+  identifier = NULL,
+  item_names = NULL,
+  hierarchy = NULL,
+  rename_items = FALSE
+) {
   if (is.null(identifier)) {
     if (is.null(item_names)) {
-      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
-                                     as.character(seq_len(nrow(qmatrix))))
+      item_names <- rlang::set_names(
+        seq_len(nrow(qmatrix)),
+        as.character(seq_len(nrow(qmatrix)))
+      )
     }
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id") |>
@@ -155,8 +194,10 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
     dplyr::select(dcmstan_real_item_id = {{ identifier }}) |>
     tibble::rowid_to_column(var = "item_number")
 
-  all_params <- tidyr::expand_grid(item_id = seq_len(nrow(qmatrix)),
-                                   type = c("slip", "guess")) |>
+  all_params <- tidyr::expand_grid(
+    item_id = seq_len(nrow(qmatrix)),
+    type = c("slip", "guess")
+  ) |>
     tibble::as_tibble() |>
     dplyr::mutate(coefficient = glue::glue("{.data$type}[{.data$item_id}]")) |>
     dplyr::arrange(.data$item_id) |>
@@ -164,14 +205,18 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
 
   if (!rename_items) {
     all_params <- all_params |>
-      dplyr::left_join(item_ids,
-                       by = dplyr::join_by("item_id" == "item_number")) |>
-      dplyr::select({{ identifier }} := "dcmstan_real_item_id",
-                    dplyr::everything(),
-                    -"item_id")
+      dplyr::left_join(
+        item_ids,
+        by = dplyr::join_by("item_id" == "item_number")
+      ) |>
+      dplyr::select(
+        {{ identifier }} := "dcmstan_real_item_id",
+        dplyr::everything(),
+        -"item_id"
+      )
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -188,8 +233,13 @@ dina_parameters <- function(qmatrix, identifier = NULL, item_names = NULL,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
-                            hierarchy = NULL, rename_attributes = FALSE) {
+nida_parameters <- function(
+  qmatrix,
+  identifier = NULL,
+  att_names = NULL,
+  hierarchy = NULL,
+  rename_attributes = FALSE
+) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
@@ -205,21 +255,23 @@ nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
 
   all_params <- tibble::enframe(att_names) |>
     tidyr::expand_grid(type = c("slip", "guess")) |>
-    dplyr::mutate(att_id = gsub("att", "", .data$value),
-                  coefficient = glue::glue("{.data$type}[{.data$att_id}]"),
-                  coefficient = as.character(.data$coefficient)) |>
+    dplyr::mutate(
+      att_id = gsub("att", "", .data$value),
+      coefficient = glue::glue("{.data$type}[{.data$att_id}]"),
+      coefficient = as.character(.data$coefficient)
+    ) |>
     dplyr::select(attribute = "value", "type", "coefficient")
 
   if (!rename_attributes) {
     for (i in seq_along(att_names)) {
-      all_params <- dplyr::mutate(all_params,
-                                  attribute = gsub(paste0("att", i),
-                                                   names(att_names)[i],
-                                                   .data$attribute))
+      all_params <- dplyr::mutate(
+        all_params,
+        attribute = gsub(paste0("att", i), names(att_names)[i], .data$attribute)
+      )
     }
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -238,8 +290,13 @@ nida_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-nido_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
-                            hierarchy = NULL, rename_attributes = FALSE) {
+nido_parameters <- function(
+  qmatrix,
+  identifier = NULL,
+  att_names = NULL,
+  hierarchy = NULL,
+  rename_attributes = FALSE
+) {
   if (!is.null(identifier)) {
     qmatrix <- qmatrix |>
       dplyr::select(-{{ identifier }})
@@ -255,23 +312,27 @@ nido_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
 
   all_params <- tibble::enframe(att_names) |>
     tidyr::expand_grid(type = c("intercept", "maineffect")) |>
-    dplyr::mutate(att_id = gsub("att", "", .data$value),
-                  level = dplyr::case_when(.data$type == "intercept" ~ 0L,
-                                           .data$type == "maineffect" ~ 1L),
-                  coefficient = glue::glue("l_{.data$level}{.data$att_id}"),
-                  coefficient = as.character(.data$coefficient)) |>
+    dplyr::mutate(
+      att_id = gsub("att", "", .data$value),
+      level = dplyr::case_when(
+        .data$type == "intercept" ~ 0L,
+        .data$type == "maineffect" ~ 1L
+      ),
+      coefficient = glue::glue("l_{.data$level}{.data$att_id}"),
+      coefficient = as.character(.data$coefficient)
+    ) |>
     dplyr::select(attribute = "value", "type", "coefficient")
 
   if (!rename_attributes) {
     for (i in seq_along(att_names)) {
-      all_params <- dplyr::mutate(all_params,
-                                  attribute = gsub(paste0("att", i),
-                                                   names(att_names)[i],
-                                                   .data$attribute))
+      all_params <- dplyr::mutate(
+        all_params,
+        attribute = gsub(paste0("att", i), names(att_names)[i], .data$attribute)
+      )
     }
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -296,17 +357,23 @@ nido_parameters <- function(qmatrix, identifier = NULL, att_names = NULL,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-ncrum_parameters <- function(qmatrix, identifier = NULL,
-                             att_names = NULL, item_names = NULL,
-                             hierarchy = NULL, rename_attributes = FALSE,
-                             rename_items = FALSE) {
+ncrum_parameters <- function(
+  qmatrix,
+  identifier = NULL,
+  att_names = NULL,
+  item_names = NULL,
+  hierarchy = NULL,
+  rename_attributes = FALSE,
+  rename_items = FALSE
+) {
   if (is.null(identifier)) {
     if (is.null(item_names)) {
-      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
-                                     as.character(seq_len(nrow(qmatrix))))
+      item_names <- rlang::set_names(
+        seq_len(nrow(qmatrix)),
+        as.character(seq_len(nrow(qmatrix)))
+      )
     } else if (is.null(names(item_names))) {
-      item_names <- rlang::set_names(seq_len(nrow(qmatrix)),
-                                     item_names)
+      item_names <- rlang::set_names(seq_len(nrow(qmatrix)), item_names)
     }
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id") |>
@@ -331,13 +398,18 @@ ncrum_parameters <- function(qmatrix, identifier = NULL,
     dplyr::rename_with(~att_names) |>
     tibble::rowid_to_column(var = "item_id") |>
     dplyr::mutate(baseline = 1L, .before = 2) |>
-    tidyr::pivot_longer(cols = -"item_id", names_to = "attribute",
-                        values_to = "valid") |>
+    tidyr::pivot_longer(
+      cols = -"item_id",
+      names_to = "attribute",
+      values_to = "valid"
+    ) |>
     dplyr::filter(.data$valid == 1L) |>
     dplyr::select(-"valid") |>
     dplyr::mutate(
-      type = dplyr::case_when(.data$attribute == "baseline" ~ "baseline",
-                              .default = "penalty"),
+      type = dplyr::case_when(
+        .data$attribute == "baseline" ~ "baseline",
+        .default = "penalty"
+      ),
       attribute = dplyr::na_if(.data$attribute, "baseline"),
       att_id = gsub("att", "", .data$attribute),
       coefficient = dplyr::case_when(
@@ -349,23 +421,27 @@ ncrum_parameters <- function(qmatrix, identifier = NULL,
 
   if (!rename_attributes) {
     for (i in seq_along(att_names)) {
-      all_params <- dplyr::mutate(all_params,
-                                  attribute = gsub(paste0("att", i),
-                                                   names(att_names)[i],
-                                                   .data$attribute))
+      all_params <- dplyr::mutate(
+        all_params,
+        attribute = gsub(paste0("att", i), names(att_names)[i], .data$attribute)
+      )
     }
   }
 
   if (!rename_items) {
     all_params <- all_params |>
-      dplyr::left_join(item_ids,
-                       by = dplyr::join_by("item_id" == "item_number")) |>
-      dplyr::select({{ identifier }} := "dcmstan_real_item_id",
-                    dplyr::everything(),
-                    -"item_id")
+      dplyr::left_join(
+        item_ids,
+        by = dplyr::join_by("item_id" == "item_number")
+      ) |>
+      dplyr::select(
+        {{ identifier }} := "dcmstan_real_item_id",
+        dplyr::everything(),
+        -"item_id"
+      )
   }
 
-  return(all_params)
+  all_params
 }
 
 #' Determine the possible parameters for a Log-linear structural model
@@ -385,10 +461,13 @@ ncrum_parameters <- function(qmatrix, identifier = NULL,
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
-loglinear_parameters <- function(qmatrix, identifier = NULL,
-                                 max_interaction = Inf,
-                                 att_names = NULL,
-                                 rename_attributes = FALSE) {
+loglinear_parameters <- function(
+  qmatrix,
+  identifier = NULL,
+  max_interaction = Inf,
+  att_names = NULL,
+  rename_attributes = FALSE
+) {
   if (is.null(identifier)) {
     qmatrix <- qmatrix |>
       tibble::rowid_to_column(var = "item_id")
@@ -407,8 +486,10 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
 
   qmatrix <- qmatrix |>
     dplyr::select(-{{ identifier }}) |>
-    dplyr::rename_with(~glue::glue("att{1:(ncol(qmatrix) - 1)}"),
-                       .cols = dplyr::everything())
+    dplyr::rename_with(
+      ~ glue::glue("att{1:(ncol(qmatrix) - 1)}"),
+      .cols = dplyr::everything()
+    )
 
   all_params <- stats::model.matrix(
     stats::as.formula(paste0("~ .^", max(ncol(qmatrix), 2L))),
@@ -416,19 +497,25 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
   ) |>
     tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
     tibble::rowid_to_column(var = "profile_id") |>
-    tidyr::pivot_longer(cols = -"profile_id", names_to = "parameter",
-                        values_to = "value") |>
+    tidyr::pivot_longer(
+      cols = -"profile_id",
+      names_to = "parameter",
+      values_to = "value"
+    ) |>
     dplyr::filter(.data$parameter != "intercept") |>
     dplyr::filter(.data$value == 1) |>
     dplyr::mutate(
       param_level = dplyr::case_when(
         !grepl("__", .data$parameter) ~ 1,
-        TRUE ~ sapply(gregexpr(pattern = "__", text = .data$parameter),
-                      function(.x) length(attr(.x, "match.length"))) + 1
+        TRUE ~
+          sapply(
+            gregexpr(pattern = "__", text = .data$parameter),
+            function(.x) length(attr(.x, "match.length"))
+          ) +
+            1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
-      coefficient = glue::glue("g_{param_level}",
-                               "{gsub(\"__\", \"\", atts)}"),
+      coefficient = glue::glue("g_{param_level}", "{gsub(\"__\", \"\", atts)}"),
       type = "structural",
       attributes = .data$parameter
     ) |>
@@ -438,14 +525,18 @@ loglinear_parameters <- function(qmatrix, identifier = NULL,
 
   if (!rename_attributes) {
     for (i in seq_along(att_names)) {
-      all_params <- dplyr::mutate(all_params,
-                                  attributes = gsub(paste0("att", i),
-                                                    names(att_names)[i],
-                                                    .data$attributes))
+      all_params <- dplyr::mutate(
+        all_params,
+        attributes = gsub(
+          paste0("att", i),
+          names(att_names)[i],
+          .data$attributes
+        )
+      )
     }
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -475,9 +566,12 @@ model_matrix_name_repair <- function(x) {
 filter_hierarchy <- function(all_params, filtered_hierarchy) {
   graph_def <- filtered_hierarchy |>
     glue::glue_data("{name} {direction} {to}")
-  g <- glue::glue("graph {{ ",
-                  "{paste(graph_def, collapse = '\n')} ",
-                  "}}", .sep = "\n") |>
+  g <- glue::glue(
+    "graph {{ ",
+    "{paste(graph_def, collapse = '\n')} ",
+    "}}",
+    .sep = "\n"
+  ) |>
     dagitty::dagitty()
 
   all_params |>
@@ -486,25 +580,28 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
       new_params = lapply(
         .data$dat,
         \(x, g) {
-          if (nrow(x) == 2) return(x)
+          if (nrow(x) == 2) {
+            return(x)
+          }
 
           item_atts <- x |>
-            dplyr::filter(!is.na(attributes),
-                          !grepl("__", .data$attributes)) |>
+            dplyr::filter(!is.na(attributes), !grepl("__", .data$attributes)) |>
             dplyr::pull("attributes")
 
           for (aa in item_atts) {
             ancs <- dagitty::ancestors(g, aa) |>
               tibble::as_tibble() |>
-              dplyr::filter(.data$value != aa,
-                            .data$value %in% item_atts) |>
+              dplyr::filter(.data$value != aa, .data$value %in% item_atts) |>
               dplyr::pull("value")
-            if (!length(ancs)) next
+            if (!length(ancs)) {
+              next
+            }
 
             for (bb in ancs) {
               x <- x |>
-                dplyr::filter(!(!grepl(bb, .data$attributes) &
-                                  grepl(aa, .data$attributes)))
+                dplyr::filter(
+                  !(grepl(aa, .data$attributes) & !grepl(bb, .data$attributes))
+                )
             }
           }
 

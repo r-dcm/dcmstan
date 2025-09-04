@@ -34,44 +34,60 @@
 #' dcm_specify(qmatrix = qmatrix,
 #'             measurement_model = lcdm(),
 #'             structural_model = unconstrained())
-dcm_specify <- function(qmatrix, identifier = NULL,
-                        measurement_model = lcdm(),
-                        structural_model = unconstrained(),
-                        priors = NULL) {
+dcm_specify <- function(
+  qmatrix,
+  identifier = NULL,
+  measurement_model = lcdm(),
+  structural_model = unconstrained(),
+  priors = NULL
+) {
   check_string(identifier, allow_null = TRUE)
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
   if (!is.null(structural_model@model_args$hierarchy)) {
-    check_hierarchy_names(structural_model@model_args$hierarchy,
-                          attribute_names = names(qmatrix$attribute_names),
-                          arg = rlang::caller_arg(structural_model))
+    check_hierarchy_names(
+      structural_model@model_args$hierarchy,
+      attribute_names = names(qmatrix$attribute_names),
+      arg = rlang::caller_arg(structural_model)
+    )
   }
 
   # tweak measurement model as needed ------------------------------------------
   if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {
     measurement_model@model_args$max_interaction <- 1L
-  } else if (measurement_model@model == "lcdm" &&
-               all(rowSums(qmatrix$clean_qmatrix) == 1)) {
+  } else if (
+    measurement_model@model == "lcdm" &&
+      all(rowSums(qmatrix$clean_qmatrix) == 1)
+  ) {
     measurement_model@model_args$max_interaction <- 1L
   }
-  if (measurement_model@model %in% c("lcdm", "crum", "dino", "dina", "nida",
-                                     "nido", "ncrum") &&
-        S7::S7_inherits(structural_model, HDCM)) {
+
+  if (
+    measurement_model@model %in%
+      c("lcdm", "dina", "dino", "nida", "nido", "ncrum", "crum") &&
+      S7::S7_inherits(structural_model, HDCM)
+  ) {
     measurement_model@model_args$hierarchy <-
       structural_model@model_args$hierarchy
   }
 
   # define priors --------------------------------------------------------------
   if (is.null(priors)) {
-    priors <- default_dcm_priors(measurement_model = measurement_model,
-                                 structural_model = structural_model)
+    priors <- default_dcm_priors(
+      measurement_model = measurement_model,
+      structural_model = structural_model
+    )
   } else {
     S7::check_is_S7(priors, dcmprior)
-    priors <- c(priors,
-                default_dcm_priors(measurement_model = measurement_model,
-                                   structural_model = structural_model),
-                replace = TRUE)
+    priors <- c(
+      priors,
+      default_dcm_priors(
+        measurement_model = measurement_model,
+        structural_model = structural_model
+      ),
+      replace = TRUE
+    )
   }
 
   # create specification -------------------------------------------------------
@@ -124,7 +140,9 @@ dcm_specify <- function(qmatrix, identifier = NULL,
 #'                   measurement_model = lcdm(),
 #'                   structural_model = unconstrained(),
 #'                   priors = default_dcm_priors(lcdm(), unconstrained()))
-dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
+dcm_specification <- S7::new_class(
+  "dcm_specification",
+  package = "dcmstan",
   properties = list(
     qmatrix = S7::new_property(
       class = S7::class_list,
@@ -138,8 +156,9 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
       validator = function(value) {
         if (!all(vapply(value, is.numeric, logical(1)))) {
           "must contain only numeric values of 0 or 1"
-        } else if (!all(vapply(value, \(x) all(x %in% c(0L, 1L)),
-                               logical(1)))) {
+        } else if (
+          !all(vapply(value, \(x) all(x %in% c(0L, 1L)), logical(1)))
+        ) {
           "must contain only values of 0 or 1"
         }
       }
@@ -169,8 +188,11 @@ dcm_specification <- S7::new_class("dcm_specification", package = "dcmstan",
   ),
   validator = function(self) {
     all_params <- dplyr::bind_rows(
-      get_parameters(self@measurement_model, qmatrix = self@qmatrix,
-                     attributes = self@qmatrix_meta$attribute_names),
+      get_parameters(
+        self@measurement_model,
+        qmatrix = self@qmatrix,
+        attributes = self@qmatrix_meta$attribute_names
+      ),
       get_parameters(self@structural_model, qmatrix = self@qmatrix)
     )
 
@@ -210,12 +232,18 @@ S7::method(print, dcm_specification) <- function(x, ...) {
   mod_name <- names(meas_choices())[
     which(meas_choices() == x@measurement_model@model)
   ]
-  mod_name <- gsub("(?<!model) (\\([A-Z]*\\))", " \\1 model",
-                   mod_name, perl = TRUE)
+  mod_name <- gsub(
+    "(?<!model) (\\([A-Z]*\\))",
+    " \\1 model",
+    mod_name,
+    perl = TRUE
+  )
 
   # count items per attribute -----
-  att_items <- glue::glue("{{.val {names(x@qmatrix_meta$attribute_names)}}} ",
-                          "({{{colSums(x@qmatrix)}}} item{{?s}})")
+  att_items <- glue::glue(
+    "{{.val {names(x@qmatrix_meta$attribute_names)}}} ",
+    "({{{colSums(x@qmatrix)}}} item{{?s}})"
+  )
 
   # structural model name -----
   strc_mod_name <- names(strc_choices())[
@@ -223,14 +251,21 @@ S7::method(print, dcm_specification) <- function(x, ...) {
   ]
   strc_mod_name <- gsub("^([a-z])", "\\U\\1", strc_mod_name, perl = TRUE)
   if (!rlang::is_empty(x@structural_model@model_args$hierarchy)) {
-    strc_mod_name <- c(paste0(strc_mod_name, ","),
-                       "with structure:",
-                       gsub("\n", ";", x@structural_model@model_args$hierarchy))
-  } else if (S7::S7_inherits(x@structural_model, LOGLINEAR) &&
-               !is.infinite(x@structural_model@model_args$max_interaction)) {
+    strc_mod_name <- c(
+      paste0(strc_mod_name, ","),
+      "with structure:",
+      gsub("\n", ";", x@structural_model@model_args$hierarchy)
+    )
+  } else if (
+    S7::S7_inherits(x@structural_model, LOGLINEAR) &&
+      !is.infinite(x@structural_model@model_args$max_interaction)
+  ) {
     max_int <- x@structural_model@model_args$max_interaction
-    label <- dplyr::if_else(max_int == 1, "only main effects",
-                            paste0("up to ", max_int, "-way interactions"))
+    label <- dplyr::if_else(
+      max_int == 1,
+      "only main effects",
+      paste0("up to ", max_int, "-way interactions")
+    )
 
     strc_mod_name <- paste0(strc_mod_name, ", with ", label)
   }
@@ -239,12 +274,15 @@ S7::method(print, dcm_specification) <- function(x, ...) {
   prior_statements <- x@priors |>
     prior_tibble() |>
     dplyr::mutate(
-      class = dplyr::case_when(.data$type == "structural" ~ "structural",
-                               .default = "measurement"),
-      prior = gsub("rep_vector\\(([0-9\\.]+), C\\)",
-                   paste(rep("\\1", length(att_items)),
-                         collapse = ", "),
-                   .data$prior),
+      class = dplyr::case_when(
+        .data$type == "structural" ~ "structural",
+        .default = "measurement"
+      ),
+      prior = gsub(
+        "rep_vector\\(([0-9\\.]+), C\\)",
+        paste(rep("\\1", length(att_items)), collapse = ", "),
+        .data$prior
+      ),
 
       prior = dplyr::case_when(
         is.na(.data$coefficient) ~
@@ -257,9 +295,11 @@ S7::method(print, dcm_specification) <- function(x, ...) {
     dplyr::pull("prior")
 
   # printing -----
-  cli::cli_text("A {mod_name} measuring ",
-                "{length(x@qmatrix_meta$attribute_names)} attributes with ",
-                "{nrow(x@qmatrix)} items.")
+  cli::cli_text(
+    "A {mod_name} measuring ",
+    "{length(x@qmatrix_meta$attribute_names)} attributes with ",
+    "{nrow(x@qmatrix)} items."
+  )
   cli::cli_text("")
   cli::cli_alert_info("Attributes:")
   cli::cli_bullets(rlang::set_names(att_items, "*"))
