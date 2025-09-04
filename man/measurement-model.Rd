@@ -6,6 +6,9 @@
 \alias{dina}
 \alias{dino}
 \alias{crum}
+\alias{nida}
+\alias{nido}
+\alias{ncrum}
 \title{Measurement models for diagnostic classification}
 \usage{
 lcdm(max_interaction = Inf)
@@ -15,6 +18,12 @@ dina()
 dino()
 
 crum()
+
+nida()
+
+nido()
+
+ncrum()
 }
 \arguments{
 \item{max_interaction}{For the LCDM, the highest item-level interaction to
@@ -26,7 +35,7 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); and compensatory, reparameterized unified model (C-RUM).
+loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and", gate (DINA); deterministic input, noisy "or" gate (DINO); noisy-input,, deterministic "and" gate (NIDA); noisy-input, deterministic "or" gate (NIDO);, noncompensatory reparameterized unified model (NC-RUM); and compensatory, reparameterized unified model (C-RUM).
 See details for additional information on each model.
 }
 \details{
@@ -40,10 +49,7 @@ parameters represent the increase in the log-odds for each required attribute
 that is present. Finally, interaction terms define the change in log-odds
 (after the main effects) when more than one of the required attributes are
 present.
-
-The C-RUM (Hartz, 2002) is similar to the LCDM, but is constrained to only
-include the intercept and main effect parameters. That is, no interaction
-terms are included for the C-RUM.
+\subsection{Non-compensatory models}{
 
 The DINA model (de la Torre & Douglas, 2004; Junker & Sijtsma, 2001) is a
 restrictive non-compensatory model. For each item two parameters are
@@ -56,6 +62,27 @@ respondent has all of the attributes required for an item, or they do not.
 There is no increase in the probability of providing a correct response if
 only a subset of the required attributes is present.
 
+The NIDA model (Junker & Sijtsma, 2001) is a non-compensatory model that is
+less restrictive than the DINA model. Where the DINA model takes an
+"all-or-nothing" approach, the NIDA model defines the probability of
+responding correctly based on each attribute that has been mastered. In doing
+this, the NIDA model estimates parameters for each attribute and holds these
+parameters constant across items. Thus, respondents have increased
+probability of responding correctly based on the specific attributes that
+have been mastered. However, the parameters are held constant across items.
+That is, the effect of non-proficiency on an attribute is the same for all
+items measuring that attribute.
+
+The reduced NC-RUM (DiBello et al., 1995; Hartz, 2002) is a non-compensatory
+model that is less restrictive than both the DINA and NIDA model, as the
+NC-RUM does not constrain parameters across items or attributes. Thus, the
+NC-RUM is most similar to the LCDM; however, the equivalent LCDM
+parameterization of the NC-RUM constrains interaction parameters to be
+positive, which differs from the full LCDM specification.
+}
+
+\subsection{Compensatory models}{
+
 The DINO model (Templin & Henson, 2006) is the inverse of the DINA model.
 Whereas the DINA model is "all-or-nothing", the DINO model can be thought of
 as "anything-or-nothing". In the DINO model, the guessing parameter defines
@@ -66,6 +93,18 @@ using the DINO model, the presence of any of the required attributes results
 in an increased probability of a correct response, and there is no additional
 increase in probability for the presence of more than one of the required
 attributes.
+
+The NIDO model (Templin, 2006) is a compensatory model that defines the
+probability of responding correctly based on each attribute that has been
+mastered. Like the NIDA model, the NIDO model holds these parameters constant
+across items. In the NIDO model, the probability of responding correctly
+increases with each mastered attribute without assuming a cumulative effect
+of mastering multiple attributes.
+
+The C-RUM (Hartz, 2002) is similar to the LCDM, but is constrained to only
+include the intercept and main effect parameters. That is, no interaction
+terms are included for the C-RUM.
+}
 }
 \examples{
 lcdm()
@@ -73,11 +112,26 @@ lcdm()
 lcdm(max_interaction = 3)
 
 dina()
+
+dino()
+
+nida()
+
+nido()
+
+ncrum()
+
+crum()
 }
 \references{
 de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
 trait models for cognitive diagnosis. \emph{Psychometrika, 69}(3), 333-353.
 \doi{10.1007/BF02295640}
+
+DiBello, L. V., Stout, W. F., & Roussos, L. (1995). Unified
+cognitive psychometric assessment likelihood-based classification
+techniques. In P. D. Nichols, S. F. Chipman, & R. L. Brennan (Eds.),
+\emph{Cognitively diagnostic assessment} (pp. 361-390). Erlbaum.
 
 Hartz, S. M. (2002). \emph{A Bayesian framework for the unified model
 for assessing cognitive abilities: Blending theory with practicality}
@@ -97,6 +151,9 @@ Junker, B. W., & Sijtsma, K. (2001). Cognitive assessment models
 with few assumptions, and connections with nonparametric item response
 theory. \emph{Applied Psychological Measurement, 25}(3), 258-272.
 \doi{10.1177/01466210122032064}
+
+Templin, J. L. (2006). \emph{CDM user's guide}. Unpublished
+manuscript.
 
 Templin, J. L., & Henson, R. A. (2006). Measurement of
 psychological disorders using cognitive diagnosis models. \emph{Psychological

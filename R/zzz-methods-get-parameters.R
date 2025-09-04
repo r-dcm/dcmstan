@@ -40,8 +40,18 @@ S7::method(get_parameters, dcm_specification) <- function(x, qmatrix,
     )
   }
 
+  if (is.null(x@qmatrix_meta$item_identifier)) {
+    q_matrix <- x@qmatrix
+  } else {
+    q_matrix <- x@qmatrix |>
+      dplyr::mutate(!!x@qmatrix_meta$item_identifier :=
+                      names(x@qmatrix_meta$item_names),
+                    .before = 1)
+  }
+
   dplyr::bind_rows(
-    get_parameters(x@measurement_model, qmatrix = x@qmatrix,
+    get_parameters(x@measurement_model, qmatrix = q_matrix,
+                   identifier = x@qmatrix_meta$item_identifier,
                    attributes = x@qmatrix_meta$attribute_names,
                    items = x@qmatrix_meta$item_names),
     get_parameters(x@structural_model, qmatrix = x@qmatrix,
@@ -83,6 +93,30 @@ S7::method(get_parameters, CRUM) <- function(x, qmatrix, identifier = NULL,
   lcdm_parameters(qmatrix = qmatrix, identifier = identifier,
                   max_interaction = 1L,
                   att_names = attributes, item_names = items)
+}
+
+S7::method(get_parameters, NIDA) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+  nida_parameters(qmatrix = qmatrix, identifier = identifier,
+                  att_names = attributes)
+}
+
+S7::method(get_parameters, NIDO) <- function(x, qmatrix, identifier = NULL,
+                                             attributes = NULL, items = NULL) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+  nido_parameters(qmatrix = qmatrix, identifier = identifier,
+                  att_names = attributes)
+}
+
+S7::method(get_parameters, NCRUM) <- function(x, qmatrix, identifier = NULL,
+                                              attributes = NULL, items = NULL) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+  ncrum_parameters(qmatrix = qmatrix, identifier = identifier,
+                   att_names = attributes, item_names = items)
 }
 
 # Methods for structural models ------------------------------------------------
