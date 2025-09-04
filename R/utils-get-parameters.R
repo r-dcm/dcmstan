@@ -111,7 +111,7 @@ lcdm_parameters <- function(
     dplyr::select("item_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
 
-  if (!is.null(hierarchy)) {
+  if (!is.null(hierarchy) && max_interaction > 1) {
     filtered_hierarchy <- glue::glue("dag {{ {hierarchy} }}") |>
       ggdag::tidy_dagitty() |>
       tibble::as_tibble() |>
@@ -175,6 +175,7 @@ dina_parameters <- function(
   qmatrix,
   identifier = NULL,
   item_names = NULL,
+  hierarchy = NULL,
   rename_items = FALSE
 ) {
   if (is.null(identifier)) {
@@ -236,6 +237,7 @@ nida_parameters <- function(
   qmatrix,
   identifier = NULL,
   att_names = NULL,
+  hierarchy = NULL,
   rename_attributes = FALSE
 ) {
   if (!is.null(identifier)) {
@@ -292,6 +294,7 @@ nido_parameters <- function(
   qmatrix,
   identifier = NULL,
   att_names = NULL,
+  hierarchy = NULL,
   rename_attributes = FALSE
 ) {
   if (!is.null(identifier)) {
@@ -359,6 +362,7 @@ ncrum_parameters <- function(
   identifier = NULL,
   att_names = NULL,
   item_names = NULL,
+  hierarchy = NULL,
   rename_attributes = FALSE,
   rename_items = FALSE
 ) {

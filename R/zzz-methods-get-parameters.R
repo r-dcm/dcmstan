@@ -106,7 +106,8 @@ S7::method(get_parameters, DINA) <- function(
   dina_parameters(
     qmatrix = qmatrix,
     identifier = identifier,
-    item_names = items
+    item_names = items,
+    hierarchy = x@model_args$hierarchy
   )
 }
 
@@ -122,7 +123,8 @@ S7::method(get_parameters, DINO) <- function(
   dina_parameters(
     qmatrix = qmatrix,
     identifier = identifier,
-    item_names = items
+    item_names = items,
+    hierarchy = x@model_args$hierarchy
   )
 }
 
@@ -140,7 +142,8 @@ S7::method(get_parameters, CRUM) <- function(
     identifier = identifier,
     max_interaction = 1L,
     att_names = attributes,
-    item_names = items
+    item_names = items,
+    hierarchy = x@model_args$hierarchy
   )
 }
 
@@ -156,7 +159,8 @@ S7::method(get_parameters, NIDA) <- function(
   nida_parameters(
     qmatrix = qmatrix,
     identifier = identifier,
-    att_names = attributes
+    att_names = attributes,
+    hierarchy = x@model_args$hierarchy
   )
 }
 
@@ -172,7 +176,8 @@ S7::method(get_parameters, NIDO) <- function(
   nido_parameters(
     qmatrix = qmatrix,
     identifier = identifier,
-    att_names = attributes
+    att_names = attributes,
+    hierarchy = x@model_args$hierarchy
   )
 }
 
@@ -189,7 +194,8 @@ S7::method(get_parameters, NCRUM) <- function(
     qmatrix = qmatrix,
     identifier = identifier,
     att_names = attributes,
-    item_names = items
+    item_names = items,
+    hierarchy = x@model_args$hierarchy
   )
 }
 

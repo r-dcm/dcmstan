@@ -1135,3 +1135,175 @@
         }
       }
 
+# nido with hierarchy works
+
+    Code
+      stan_code(ecpe_nido_hdcm)
+    Output
+      data {
+        int<lower=1> I;                      // number of items
+        int<lower=1> R;                      // number of respondents
+        int<lower=1> N;                      // number of observations
+        int<lower=1> C;                      // number of classes
+        array[N] int<lower=1,upper=I> ii;    // item for observation n
+        array[N] int<lower=1,upper=R> rr;    // respondent for observation n
+        array[N] int<lower=0,upper=1> y;     // score for observation n
+        array[R] int<lower=1,upper=N> start; // starting row for respondent R
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+      }
+      parameters {
+        simplex[C] Vc;                  // base rates of class membership
+      
+        ////////////////////////////////// measurement parameters
+        real l_01;
+        real<lower=0> l_11;
+        real l_02;
+        real<lower=0> l_12;
+        real l_03;
+        real<lower=0> l_13;
+      }
+      transformed parameters {
+        vector[C] log_Vc = log(Vc);
+        matrix[I,C] pi;
+      
+        ////////////////////////////////// probability of correct response
+        pi[1,1] = inv_logit(l_01+l_02);
+        pi[1,2] = inv_logit(l_01+l_02);
+        pi[1,3] = inv_logit(l_01+l_02+l_12);
+        pi[1,4] = inv_logit(l_01+l_11+l_02+l_12);
+        pi[2,1] = inv_logit(l_02);
+        pi[2,2] = inv_logit(l_02);
+        pi[2,3] = inv_logit(l_02+l_12);
+        pi[2,4] = inv_logit(l_02+l_12);
+        pi[3,1] = inv_logit(l_01+l_03);
+        pi[3,2] = inv_logit(l_01+l_03+l_13);
+        pi[3,3] = inv_logit(l_01+l_03+l_13);
+        pi[3,4] = inv_logit(l_01+l_11+l_03+l_13);
+        pi[4,1] = inv_logit(l_03);
+        pi[4,2] = inv_logit(l_03+l_13);
+        pi[4,3] = inv_logit(l_03+l_13);
+        pi[4,4] = inv_logit(l_03+l_13);
+        pi[5,1] = inv_logit(l_03);
+        pi[5,2] = inv_logit(l_03+l_13);
+        pi[5,3] = inv_logit(l_03+l_13);
+        pi[5,4] = inv_logit(l_03+l_13);
+        pi[6,1] = inv_logit(l_03);
+        pi[6,2] = inv_logit(l_03+l_13);
+        pi[6,3] = inv_logit(l_03+l_13);
+        pi[6,4] = inv_logit(l_03+l_13);
+        pi[7,1] = inv_logit(l_01+l_03);
+        pi[7,2] = inv_logit(l_01+l_03+l_13);
+        pi[7,3] = inv_logit(l_01+l_03+l_13);
+        pi[7,4] = inv_logit(l_01+l_11+l_03+l_13);
+        pi[8,1] = inv_logit(l_02);
+        pi[8,2] = inv_logit(l_02);
+        pi[8,3] = inv_logit(l_02+l_12);
+        pi[8,4] = inv_logit(l_02+l_12);
+        pi[9,1] = inv_logit(l_03);
+        pi[9,2] = inv_logit(l_03+l_13);
+        pi[9,3] = inv_logit(l_03+l_13);
+        pi[9,4] = inv_logit(l_03+l_13);
+        pi[10,1] = inv_logit(l_01);
+        pi[10,2] = inv_logit(l_01);
+        pi[10,3] = inv_logit(l_01);
+        pi[10,4] = inv_logit(l_01+l_11);
+        pi[11,1] = inv_logit(l_01+l_03);
+        pi[11,2] = inv_logit(l_01+l_03+l_13);
+        pi[11,3] = inv_logit(l_01+l_03+l_13);
+        pi[11,4] = inv_logit(l_01+l_11+l_03+l_13);
+        pi[12,1] = inv_logit(l_01+l_03);
+        pi[12,2] = inv_logit(l_01+l_03+l_13);
+        pi[12,3] = inv_logit(l_01+l_03+l_13);
+        pi[12,4] = inv_logit(l_01+l_11+l_03+l_13);
+        pi[13,1] = inv_logit(l_01);
+        pi[13,2] = inv_logit(l_01);
+        pi[13,3] = inv_logit(l_01);
+        pi[13,4] = inv_logit(l_01+l_11);
+        pi[14,1] = inv_logit(l_01);
+        pi[14,2] = inv_logit(l_01);
+        pi[14,3] = inv_logit(l_01);
+        pi[14,4] = inv_logit(l_01+l_11);
+        pi[15,1] = inv_logit(l_03);
+        pi[15,2] = inv_logit(l_03+l_13);
+        pi[15,3] = inv_logit(l_03+l_13);
+        pi[15,4] = inv_logit(l_03+l_13);
+        pi[16,1] = inv_logit(l_01+l_03);
+        pi[16,2] = inv_logit(l_01+l_03+l_13);
+        pi[16,3] = inv_logit(l_01+l_03+l_13);
+        pi[16,4] = inv_logit(l_01+l_11+l_03+l_13);
+        pi[17,1] = inv_logit(l_02+l_03);
+        pi[17,2] = inv_logit(l_02+l_03+l_13);
+        pi[17,3] = inv_logit(l_02+l_12+l_03+l_13);
+        pi[17,4] = inv_logit(l_02+l_12+l_03+l_13);
+        pi[18,1] = inv_logit(l_03);
+        pi[18,2] = inv_logit(l_03+l_13);
+        pi[18,3] = inv_logit(l_03+l_13);
+        pi[18,4] = inv_logit(l_03+l_13);
+        pi[19,1] = inv_logit(l_03);
+        pi[19,2] = inv_logit(l_03+l_13);
+        pi[19,3] = inv_logit(l_03+l_13);
+        pi[19,4] = inv_logit(l_03+l_13);
+        pi[20,1] = inv_logit(l_01+l_03);
+        pi[20,2] = inv_logit(l_01+l_03+l_13);
+        pi[20,3] = inv_logit(l_01+l_03+l_13);
+        pi[20,4] = inv_logit(l_01+l_11+l_03+l_13);
+        pi[21,1] = inv_logit(l_01+l_03);
+        pi[21,2] = inv_logit(l_01+l_03+l_13);
+        pi[21,3] = inv_logit(l_01+l_03+l_13);
+        pi[21,4] = inv_logit(l_01+l_11+l_03+l_13);
+        pi[22,1] = inv_logit(l_03);
+        pi[22,2] = inv_logit(l_03+l_13);
+        pi[22,3] = inv_logit(l_03+l_13);
+        pi[22,4] = inv_logit(l_03+l_13);
+        pi[23,1] = inv_logit(l_02);
+        pi[23,2] = inv_logit(l_02);
+        pi[23,3] = inv_logit(l_02+l_12);
+        pi[23,4] = inv_logit(l_02+l_12);
+        pi[24,1] = inv_logit(l_02);
+        pi[24,2] = inv_logit(l_02);
+        pi[24,3] = inv_logit(l_02+l_12);
+        pi[24,4] = inv_logit(l_02+l_12);
+        pi[25,1] = inv_logit(l_01);
+        pi[25,2] = inv_logit(l_01);
+        pi[25,3] = inv_logit(l_01);
+        pi[25,4] = inv_logit(l_01+l_11);
+        pi[26,1] = inv_logit(l_03);
+        pi[26,2] = inv_logit(l_03+l_13);
+        pi[26,3] = inv_logit(l_03+l_13);
+        pi[26,4] = inv_logit(l_03+l_13);
+        pi[27,1] = inv_logit(l_01);
+        pi[27,2] = inv_logit(l_01);
+        pi[27,3] = inv_logit(l_01);
+        pi[27,4] = inv_logit(l_01+l_11);
+        pi[28,1] = inv_logit(l_03);
+        pi[28,2] = inv_logit(l_03+l_13);
+        pi[28,3] = inv_logit(l_03+l_13);
+        pi[28,4] = inv_logit(l_03+l_13);
+      }
+      model {
+      
+        ////////////////////////////////// priors
+        Vc ~ dirichlet(rep_vector(1, C));
+        l_01 ~ normal(0, 2);
+        l_11 ~ lognormal(0, 1);
+        l_02 ~ normal(0, 2);
+        l_12 ~ lognormal(0, 1);
+        l_03 ~ normal(0, 2);
+        l_13 ~ lognormal(0, 1);
+      
+        ////////////////////////////////// likelihood
+        for (r in 1:R) {
+          row_vector[C] ps;
+          for (c in 1:C) {
+            array[num[r]] real log_items;
+            for (m in 1:num[r]) {
+              int i = ii[start[r] + m - 1];
+              log_items[m] = y[start[r] + m - 1] * log(pi[i,c]) +
+                             (1 - y[start[r] + m - 1]) * log(1 - pi[i,c]);
+            }
+            ps[c] = log_Vc[c] + sum(log_items);
+          }
+          target += log_sum_exp(ps);
+        }
+      }
+
