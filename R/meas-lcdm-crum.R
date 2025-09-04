@@ -201,11 +201,11 @@ meas_lcdm <- function(
     dplyr::pull("prior_def")
 
   # return -----
-  return(list(
+  list(
     parameters = parameters_block,
     transformed_parameters = transformed_parameters_block,
     priors = item_priors
-  ))
+  )
 }
 
 #' @rdname lcdm-crum

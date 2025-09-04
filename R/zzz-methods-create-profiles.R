@@ -99,7 +99,7 @@ S7::method(create_profiles, HDCM) <-
     )
     hierarchy <- ggdag::tidy_dagitty(hierarchy)
 
-    filtered_hierarchy <- hierarchy |>
+    filt_hierarchy <- hierarchy |>
       tibble::as_tibble() |>
       dplyr::filter(!is.na(.data$direction)) |>
       dplyr::select("name", "direction", "to") |>
@@ -107,11 +107,10 @@ S7::method(create_profiles, HDCM) <-
 
     possible_profiles <- create_profiles(length(attributes))
 
-    for (jj in seq_len(nrow(filtered_hierarchy))) {
+    for (jj in seq_len(nrow(filt_hierarchy))) {
       possible_profiles <- possible_profiles |>
         dplyr::filter(
-          !(!!sym(filtered_hierarchy$to[jj]) >
-            !!sym(filtered_hierarchy$name[jj]))
+          !(!!sym(filt_hierarchy$to[jj]) > !sym(filt_hierarchy$name[jj]))
         )
     }
 

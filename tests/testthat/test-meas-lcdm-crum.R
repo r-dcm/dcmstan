@@ -36,7 +36,7 @@ test_that("lcdm script works", {
 
   # edge case where all items are simple structure
   dtmr_edge <- dcm_specify(
-    qmatrix = dcmdata::dtmr_qmatrix %>%
+    qmatrix = dcmdata::dtmr_qmatrix |>
       dplyr::filter(
         !(item %in% c("10b", "10c", "13", "14", "15a", "17", "18", "22"))
       ),

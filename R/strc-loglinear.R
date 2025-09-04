@@ -84,9 +84,9 @@ strc_loglinear <- function(qmatrix, max_interaction = Inf, priors) {
     dplyr::pull("prior_def")
 
   # return -----
-  return(list(
+  list(
     parameters = parameters_block,
     transformed_parameters = transformed_parameters_block,
     priors = strc_priors
-  ))
+  )
 }

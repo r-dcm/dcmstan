@@ -348,5 +348,5 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
 
   out <- do.call(dcmprior, as.list(dplyr::select(all_priors, -"prior")))
 
-  return(out)
+  out
 }

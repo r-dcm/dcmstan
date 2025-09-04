@@ -151,7 +151,7 @@ lcdm_parameters <- function(
       )
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -215,7 +215,7 @@ dina_parameters <- function(
       )
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -269,7 +269,7 @@ nida_parameters <- function(
     }
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -329,7 +329,7 @@ nido_parameters <- function(
     }
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -437,7 +437,7 @@ ncrum_parameters <- function(
       )
   }
 
-  return(all_params)
+  all_params
 }
 
 #' Determine the possible parameters for a Log-linear structural model
@@ -532,7 +532,7 @@ loglinear_parameters <- function(
     }
   }
 
-  return(all_params)
+  all_params
 }
 
 
@@ -596,8 +596,7 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
             for (bb in ancs) {
               x <- x |>
                 dplyr::filter(
-                  !(grepl(aa, .data$attributes) &
-                    !grepl(bb, .data$attributes))
+                  !(grepl(aa, .data$attributes) & !grepl(bb, .data$attributes))
                 )
             }
           }
