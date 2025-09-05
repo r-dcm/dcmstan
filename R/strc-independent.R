@@ -12,7 +12,7 @@
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @noRd
-strc_independent <- function(qmatrix, priors) {
+strc_independent <- function(qmatrix, priors, att_names = NULL) {
   parameters_block <-
     glue::glue("  array[A] real<lower=0,upper=1> eta;", .trim = FALSE)
 

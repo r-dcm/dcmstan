@@ -81,7 +81,14 @@ test_that("specify only measurement or structural", {
     default_dcm_priors(structural_model = loglinear()),
     loglinear_priors()
   )
-  expect_equal(default_dcm_priors(structural_model = hdcm()), hdcm_priors())
+  expect_equal(
+    default_dcm_priors(structural_model = hdcm()),
+    hdcm_priors()
+  )
+  expect_equal(
+    default_dcm_priors(structural_model = bayesnet()),
+    bayesnet_priors()
+  )
 
   expect_equal(
     default_dcm_priors(
@@ -221,6 +228,15 @@ test_that("hdcm default priors", {
       coefficient = "Vc",
       prior = c("dirichlet(rep_vector(1, C))")
     )
+  )
+})
+
+test_that("bayesnet default priors", {
+  expect_identical(
+    prior_tibble(bayesnet_priors()),
+    tibble::tibble(type = c("structural"),
+                   coefficient = NA_character_,
+                   prior = c("normal(0, 2)"))
   )
 })
 

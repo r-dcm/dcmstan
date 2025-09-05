@@ -253,3 +253,13 @@ S7::method(get_parameters, HDCM) <- function(
 ) {
   tibble::tibble(type = "structural", coefficient = "Vc")
 }
+
+S7::method(get_parameters, BAYESNET) <- function(x, qmatrix,
+                                                 identifier = NULL,
+                                                 attributes = NULL) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+  bayesnet_parameters(qmatrix = qmatrix, identifier = identifier,
+                      hierarchy = x@model_args$hierarchy,
+                      att_names = attributes)
+}

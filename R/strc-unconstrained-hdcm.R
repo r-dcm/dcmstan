@@ -12,7 +12,7 @@
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @noRd
-strc_unconstrained <- function(qmatrix, priors) {
+strc_unconstrained <- function(qmatrix, priors, att_names = NULL) {
   parameters_block <-
     glue::glue(
       "  simplex[C] Vc;                  // base rates of class membership",
@@ -55,6 +55,6 @@ strc_unconstrained <- function(qmatrix, priors) {
 
 #' @rdname lcdm-crum
 #' @noRd
-strc_hdcm <- function(qmatrix, priors, hierarchy) {
-  strc_unconstrained(qmatrix, priors = priors)
+strc_hdcm <- function(qmatrix, priors, att_names = NULL, hierarchy) {
+  strc_unconstrained(qmatrix, priors = priors, att_names = att_names)
 }

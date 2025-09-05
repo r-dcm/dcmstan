@@ -33,6 +33,12 @@ test_that("dina script works", {
     structural_model = loglinear()
   )
   expect_snapshot(stan_code(dtmr_dina_logl))
+
+  ecpe_dina_bn <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                              identifier = "item_id",
+                              measurement_model = dina(),
+                              structural_model = bayesnet())
+  expect_snapshot(stan_code(ecpe_dina_bn))
 })
 
 test_that("dino script works", {
@@ -70,4 +76,10 @@ test_that("dino script works", {
     structural_model = loglinear()
   )
   expect_snapshot(stan_code(dtmr_dino_logl))
+
+  ecpe_dino_bn <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix,
+                              identifier = "item_id",
+                              measurement_model = dino(),
+                              structural_model = bayesnet())
+  expect_snapshot(stan_code(ecpe_dino_bn))
 })

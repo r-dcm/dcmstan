@@ -71,6 +71,12 @@ dcm_specify <- function(
       structural_model@model_args$hierarchy
   }
 
+  # tweak structural model as needed -------------------------------------------
+  if (structural_model@model == "bayesnet" &&
+        ncol(qmatrix$clean_qmatrix) == 1) {
+    structural_model <- unconstrained()
+  }
+
   # define priors --------------------------------------------------------------
   if (is.null(priors)) {
     priors <- default_dcm_priors(

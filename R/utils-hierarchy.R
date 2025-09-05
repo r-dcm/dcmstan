@@ -94,3 +94,26 @@ check_hierarchy_names <- function(
 
   invisible(NULL)
 }
+
+replace_hierarchy_names <- function(x, attribute_names) {
+  for (i in seq_along(attribute_names)) {
+    x <- gsub(names(attribute_names[i]), attribute_names[i], x)
+  }
+
+  x
+}
+
+
+calculate_imatrix <- function(hierarchy) {
+  g <- glue::glue(" graph { <hierarchy> } ", .open = "<", .close = ">")
+  g <- dagitty::dagitty(g)
+
+  i_matrix <- matrix(data = 0L,
+                     nrow = length(names(g)), ncol = length(names(g)),
+                     dimnames = list(names(g), names(g)))
+  for (i in names(g)) {
+    i_matrix[dagitty::children(g, i), i] <- 1L
+  }
+
+  as.data.frame(i_matrix)
+}

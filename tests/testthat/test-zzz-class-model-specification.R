@@ -185,17 +185,25 @@ test_that("printing works", {
     measurement_model = dina(),
     structural_model = hdcm(
       "skill_1 -> skill_2
-                                                skill_1 -> skill_3"
+       skill_1 -> skill_3"
     )
   )
 
+  bn1 <- dcm_specify(
+    qmatrix = test_qmatrix,
+    identifier = "item",
+    measurement_model = lcdm(),
+    structural_model = bayesnet()
+  )
+
   expect_snapshot({
-    spec
-    spec2
+    unst1
+    indp1
     logl1
     logl2
     logl3
     hdcm1
     hdcm2
+    bn1
   })
 })
