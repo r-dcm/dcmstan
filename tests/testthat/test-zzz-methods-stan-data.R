@@ -7,20 +7,29 @@ extra_data_names <- list(
 )
 
 test_that("correct data objects are returned", {
-  combos <- expand.grid(meas = meas_choices(), strc = strc_choices(),
-                        stringsAsFactors = FALSE)
+  combos <- expand.grid(
+    meas = meas_choices(),
+    strc = strc_choices(),
+    stringsAsFactors = FALSE
+  )
   for (i in seq_len(nrow(combos))) {
     model_spec <- dcm_specify(
-      dcmdata::mdm_qmatrix, identifier = "item",
+      dcmdata::mdm_qmatrix,
+      identifier = "item",
       measurement_model = do.call(combos$meas[i], args = list()),
       structural_model = do.call(combos$strc[i], args = list())
     )
 
-    test_data <- stan_data(model_spec, data = dcmdata::mdm_data,
-                           identifier = "respondent")
-    exp_names <- c(default_data_names,
-                   extra_data_names[[combos$meas[i]]],
-                   extra_data_names[[combos$strc[i]]])
+    test_data <- stan_data(
+      model_spec,
+      data = dcmdata::mdm_data,
+      identifier = "respondent"
+    )
+    exp_names <- c(
+      default_data_names,
+      extra_data_names[[combos$meas[i]]],
+      extra_data_names[[combos$strc[i]]]
+    )
     expect_identical(names(test_data), exp_names)
   }
 })
@@ -28,12 +37,17 @@ test_that("correct data objects are returned", {
 test_that("correct gqs objects are returned", {
   # dtmr -----------------------------------------------------------------------
   spec <- dcm_specify(qmatrix = dcmdata::dtmr_qmatrix, identifier = "item")
-  dtmr_dat <- stan_data(generated_quantities(), dcm_spec = spec,
-                        data = dcmdata::dtmr_data, identifier = "id")
+  dtmr_dat <- stan_data(
+    generated_quantities(),
+    dcm_spec = spec,
+    data = dcmdata::dtmr_data,
+    identifier = "id"
+  )
 
-  expect_equal(names(dtmr_dat),
-               c("I", "R", "N", "C", "A", "ii", "rr", "y", "start", "num",
-                 "Alpha"))
+  expect_equal(
+    names(dtmr_dat),
+    c("I", "R", "N", "C", "A", "ii", "rr", "y", "start", "num", "Alpha")
+  )
   expect_equal(dtmr_dat$I, 27)
   expect_equal(dtmr_dat$R, 990)
   expect_equal(dtmr_dat$N, 27 * 990)
@@ -48,8 +62,12 @@ test_that("correct gqs objects are returned", {
 
   # ecpe -----------------------------------------------------------------------
   spec <- dcm_specify(qmatrix = dcmdata::ecpe_qmatrix, identifier = "item_id")
-  ecpe_dat <- stan_data(generated_quantities(), dcm_spec = spec,
-                        data = dcmdata::ecpe_data, identifier = "resp_id")
+  ecpe_dat <- stan_data(
+    generated_quantities(),
+    dcm_spec = spec,
+    data = dcmdata::ecpe_data,
+    identifier = "resp_id"
+  )
 
   expect_equal(ecpe_dat$I, 28)
   expect_equal(ecpe_dat$R, 2922)
@@ -65,8 +83,11 @@ test_that("correct gqs objects are returned", {
 })
 
 test_that("independent data objects are correct", {
-  model_spec <- dcm_specify(dcmdata::dtmr_qmatrix, identifier = "item",
-                            structural_model = independent())
+  model_spec <- dcm_specify(
+    dcmdata::dtmr_qmatrix,
+    identifier = "item",
+    structural_model = independent()
+  )
   dat <- stan_data(model_spec, data = dcmdata::dtmr_data, identifier = "id")
 
   expect_equal(dat$I, 27)
@@ -83,10 +104,16 @@ test_that("independent data objects are correct", {
 })
 
 test_that("dina data objects are correct", {
-  model_spec <- dcm_specify(dcmdata::ecpe_qmatrix, identifier = "item_id",
-                            measurement_model = dina())
-  dat <- stan_data(model_spec, data = dcmdata::ecpe_data,
-                   identifier = "resp_id")
+  model_spec <- dcm_specify(
+    dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = dina()
+  )
+  dat <- stan_data(
+    model_spec,
+    data = dcmdata::ecpe_data,
+    identifier = "resp_id"
+  )
 
   expect_equal(dat$I, 28)
   expect_equal(dat$R, 2922)
@@ -102,22 +129,29 @@ test_that("dina data objects are correct", {
   test_xi <- matrix(data = NA, nrow = 28, ncol = 8)
   for (r in seq_len(28)) {
     for (c in seq_len(8)) {
-      test_xi[r, c] <- prod(profiles[c, ] ^ model_spec@qmatrix[r, ])
+      test_xi[r, c] <- prod(profiles[c, ]^model_spec@qmatrix[r, ])
     }
   }
   expect_equal(dat$Xi, test_xi)
 })
 
 test_that("dino data objects are correct", {
-  model_spec <- dcm_specify(dcmdata::ecpe_qmatrix, identifier = "item_id",
-                            measurement_model = dino(),
-                            structural_model = independent())
-  dat <- stan_data(model_spec, data = dcmdata::ecpe_data,
-                   identifier = "resp_id")
+  model_spec <- dcm_specify(
+    dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = dino(),
+    structural_model = independent()
+  )
+  dat <- stan_data(
+    model_spec,
+    data = dcmdata::ecpe_data,
+    identifier = "resp_id"
+  )
 
-  expect_equal(names(dat),
-               c(default_data_names, extra_data_names$dino,
-                 extra_data_names$independent))
+  expect_equal(
+    names(dat),
+    c(default_data_names, extra_data_names$dino, extra_data_names$independent)
+  )
   expect_equal(dat$I, 28)
   expect_equal(dat$R, 2922)
   expect_equal(dat$N, 28 * 2922)
@@ -132,7 +166,7 @@ test_that("dino data objects are correct", {
   test_xi <- matrix(data = NA, nrow = 28, ncol = 8)
   for (r in seq_len(28)) {
     for (c in seq_len(8)) {
-      test_xi[r, c] <- 1 - prod((1 - profiles[c, ]) ^ model_spec@qmatrix[r, ])
+      test_xi[r, c] <- 1 - prod((1 - profiles[c, ])^model_spec@qmatrix[r, ])
     }
   }
   expect_equal(dat$Xi, test_xi)
@@ -143,14 +177,18 @@ test_that("dino data objects are correct", {
 
 test_that("hdcm data objects are correct", {
   model_spec <- dcm_specify(
-    dcmdata::ecpe_qmatrix, identifier = "item_id",
+    dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
     measurement_model = lcdm(),
     structural_model = hdcm(
       hierarchy = "lexical -> cohesive -> morphosyntactic"
     )
   )
-  dat <- stan_data(model_spec, data = dcmdata::ecpe_data,
-                   identifier = "resp_id")
+  dat <- stan_data(
+    model_spec,
+    data = dcmdata::ecpe_data,
+    identifier = "resp_id"
+  )
 
   expect_equal(names(dat), c(default_data_names))
   expect_equal(dat$I, 28)

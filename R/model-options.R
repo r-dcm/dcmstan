@@ -4,7 +4,8 @@
 #' @rdname model-choices
 #' @noRd
 meas_choices <- function() {
-  c("loglinear cognitive diagnostic model (LCDM)" = "lcdm",
+  c(
+    "loglinear cognitive diagnostic model (LCDM)" = "lcdm",
     "deterministic input, noisy \"and\" gate (DINA)" = "dina",
     "deterministic input, noisy \"or\" gate (DINO)" = "dino",
     "noisy-input, deterministic \"and\" gate (NIDA)" = "nida",
@@ -17,11 +18,13 @@ meas_choices <- function() {
 #' @rdname model-choices
 #' @noRd
 strc_choices <- function() {
-  c("unconstrained" = "unconstrained",
+  c(
+    "unconstrained" = "unconstrained",
     "independent attributes" = "independent",
     "log-linear" = "loglinear",
     "hierarchical diagnostic classification model (HDCM)" = "hdcm",
-    "Bayesian network" = "bayesnet")
+    "Bayesian network" = "bayesnet"
+  )
 }
 
 

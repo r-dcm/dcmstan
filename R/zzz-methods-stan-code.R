@@ -42,14 +42,24 @@ stan_code <- S7::new_generic("stan_code", "x")
 
 # Method for dcm_specification -------------------------------------------------
 S7::method(stan_code, dcm_specification) <- function(x) {
-  meas_args <- c(list(qmatrix = x@qmatrix, priors = x@priors,
-                      att_names = x@qmatrix_meta$attribute_names),
-                 x@measurement_model@model_args)
+  meas_args <- c(
+    list(
+      qmatrix = x@qmatrix,
+      priors = x@priors,
+      att_names = x@qmatrix_meta$attribute_names
+    ),
+    x@measurement_model@model_args
+  )
   meas_code <- do.call(paste0("meas_", x@measurement_model@model), meas_args)
 
-  strc_args <- c(list(qmatrix = x@qmatrix, priors = x@priors,
-                      att_names = x@qmatrix_meta$attribute_names),
-                 x@structural_model@model_args)
+  strc_args <- c(
+    list(
+      qmatrix = x@qmatrix,
+      priors = x@priors,
+      att_names = x@qmatrix_meta$attribute_names
+    ),
+    x@structural_model@model_args
+  )
   strc_code <- do.call(paste0("strc_", x@structural_model@model), strc_args)
 
   # data block -----
@@ -68,7 +78,9 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "  array[R] int<lower=1,upper=I> num;   // number items for respondent R",
     if (!is.null(meas_data)) glue::glue("{meas_data}"),
     if (!is.null(strc_data)) glue::glue("{strc_data}"),
-    "}}", .sep = "\n", .null = NULL
+    "}}",
+    .sep = "\n",
+    .null = NULL
   ) |>
     tibble::as_tibble() |>
     tidyr::separate_longer_delim("value", delim = "\n") |>
@@ -76,14 +88,14 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     glue::glue_data("{value}") |>
     glue::glue_collapse(sep = "\n")
 
-
   # parameters block -----
   parameters_block <- glue::glue(
     "parameters {{",
     "{strc_code$parameters}",
     "",
     "{meas_code$parameters}",
-    "}}", .sep = "\n"
+    "}}",
+    .sep = "\n"
   )
 
   # transformed parameters block -----
@@ -91,7 +103,8 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "transformed parameters {{",
     "{strc_code$transformed_parameters}",
     "{meas_code$transformed_parameters}",
-    "}}", .sep = "\n"
+    "}}",
+    .sep = "\n"
   )
 
   # model block -----
@@ -116,7 +129,8 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "    }}",
     "    target += log_sum_exp(ps);",
     "  }}",
-    "}}", .sep = "\n"
+    "}}",
+    .sep = "\n"
   )
 
   full_script <- glue::glue(
@@ -164,7 +178,8 @@ S7::method(stan_data_code, INDEPENDENT) <- function(x) {
   data_block <- glue::glue(
     "  int<lower=1> A;                      // number of attributes",
     "  matrix[C,A] Alpha;                   // attribute pattern for class",
-    .sep = "\n", .trim = FALSE
+    .sep = "\n",
+    .trim = FALSE
   )
 
   data_block
@@ -188,7 +203,9 @@ S7::method(stan_code, quantities) <- function(x) {
     "  array[R] int<lower=1,upper=N> start; // starting row for respondent R",
     "  array[R] int<lower=1,upper=I> num;   // number items for respondent R",
     "  matrix[C,A] Alpha;                   // attribute patterns for classes",
-    "}}", .sep = "\n", .null = NULL
+    "}}",
+    .sep = "\n",
+    .null = NULL
   )
 
   # parameters block -----

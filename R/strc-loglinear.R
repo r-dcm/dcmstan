@@ -17,8 +17,10 @@
 strc_loglinear <- function(qmatrix, priors, att_names = NULL,
                            max_interaction = Inf) {
   # parameters block -----
-  all_params <- loglinear_parameters(qmatrix = qmatrix,
-                                     max_interaction = max_interaction)
+  all_params <- loglinear_parameters(
+    qmatrix = qmatrix,
+    max_interaction = max_interaction
+  )
 
   parameters_block <- glue::glue(
     "  ////////////////////////////////// structural parameters",
@@ -26,15 +28,17 @@ strc_loglinear <- function(qmatrix, priors, att_names = NULL,
           glue::glue(\"real {unique(all_params$coefficient)};\"),
           sep = \"\n  \"
         )}",
-    .sep = "\n", .trim = FALSE
+    .sep = "\n",
+    .trim = FALSE
   )
 
   # transformed parameters block -----
   class_def <- all_params |>
     dplyr::select("profile_id", "attributes", "coefficient") |>
-    dplyr::summarize(strc_params = paste(unique(.data$coefficient),
-                                         collapse = "+"),
-                     .by = "profile_id") |>
+    dplyr::summarize(
+      strc_params = paste(unique(.data$coefficient), collapse = "+"),
+      .by = "profile_id"
+    ) |>
     glue::glue_data("mu[{profile_id}] = {strc_params};")
 
   transformed_parameters_block <-
@@ -49,32 +53,41 @@ strc_loglinear <- function(qmatrix, priors, att_names = NULL,
       "",
       "  log_Vc = mu - log_sum_exp(mu);",
       "  Vc = exp(log_Vc);",
-      .sep = "\n", .trim = FALSE
+      .sep = "\n",
+      .trim = FALSE
     )
 
   # priors -----
   strc_priors <- all_params |>
     dplyr::select(-"profile_id") |>
     dplyr::distinct() |>
-    dplyr::left_join(prior_tibble(priors),
-                     by = c("type", "coefficient"),
-                     relationship = "one-to-one") |>
+    dplyr::left_join(
+      prior_tibble(priors),
+      by = c("type", "coefficient"),
+      relationship = "one-to-one"
+    ) |>
     dplyr::rename(coef_def = "prior") |>
-    dplyr::left_join(prior_tibble(priors) |>
-                       dplyr::filter(is.na(.data$coefficient)) |>
-                       dplyr::select(-"coefficient"),
-                     by = "type", relationship = "many-to-one") |>
+    dplyr::left_join(
+      prior_tibble(priors) |>
+        dplyr::filter(is.na(.data$coefficient)) |>
+        dplyr::select(-"coefficient"),
+      by = "type",
+      relationship = "many-to-one"
+    ) |>
     dplyr::rename(type_def = "prior") |>
     dplyr::mutate(
-      prior = dplyr::case_when(!is.na(.data$coef_def) ~ .data$coef_def,
-                               is.na(.data$coef_def) ~ .data$type_def),
+      prior = dplyr::case_when(
+        !is.na(.data$coef_def) ~ .data$coef_def,
+        is.na(.data$coef_def) ~ .data$type_def
+      ),
       prior_def = glue::glue("{coefficient} ~ {prior};")
     ) |>
     dplyr::pull("prior_def")
 
   # return -----
-  return(list(parameters = parameters_block,
-              transformed_parameters = transformed_parameters_block,
-              priors = strc_priors))
-
+  list(
+    parameters = parameters_block,
+    transformed_parameters = transformed_parameters_block,
+    priors = strc_priors
+  )
 }
