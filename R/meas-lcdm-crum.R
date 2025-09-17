@@ -37,193 +37,7 @@ meas_lcdm <- function(
     rename_items = TRUE
   )
 
-  if (!is.null(hierarchy)) {
-    type_hierarchy <- determine_hierarchy_type(hierarchy)
-
-    att_dict <- att_names |>
-      tibble::as_tibble() |>
-      dplyr::rename("new_name" = "value") |>
-      dplyr::mutate(name = names(att_names))
-
-    meas_all <- create_profiles(ncol(qmatrix))[2^ncol(qmatrix), ]
-    all_poss_params <- lcdm_parameters(qmatrix = meas_all,
-                                       max_interaction = max_interaction,
-                                       att_names = att_names,
-                                       hierarchy = NULL,
-                                       rename_attributes = TRUE,
-                                       rename_items = TRUE) |>
-      dplyr::select("attributes", "coefficient")
-    all_allowable_params <- lcdm_parameters(qmatrix = meas_all,
-                                            max_interaction = max_interaction,
-                                            att_names = att_names,
-                                            hierarchy = hierarchy,
-                                            rename_attributes = TRUE,
-                                            rename_items = TRUE) |>
-      dplyr::select("attributes", "coefficient")
-    params_to_update <- all_poss_params |>
-      dplyr::left_join(all_allowable_params |>
-                         dplyr::mutate(allowable = TRUE),
-                       by = c("attributes", "coefficient")) |>
-      dplyr::filter(is.na(.data$allowable)) |>
-      dplyr::mutate(new_att = NA)
-    good_params <- all_poss_params |>
-      dplyr::left_join(all_allowable_params |>
-                         dplyr::mutate(allowable = TRUE),
-                       by = c("attributes", "coefficient")) |>
-      dplyr::filter(!is.na(.data$allowable))
-
-    for (ii in seq_len(nrow(params_to_update))) {
-      tmp_att <- params_to_update$attributes[ii]
-      tmp_att <- strsplit(tmp_att, "__")[[1]]
-      tmp_att <- paste0(tmp_att, collapse = ".*")
-
-      tmp_replacement <- good_params |>
-        dplyr::filter(grepl(tmp_att, .data$attributes)) |>
-        tidyr::separate(col = "coefficient",
-                        into = c("item_param", "coefficient"), sep = "_")
-
-      params_to_update$coefficient[ii] <- tmp_replacement$coefficient[1]
-      params_to_update$allowable[ii] <- TRUE
-      params_to_update$new_att[ii] <- tmp_replacement$attributes[1]
-    }
-
-    stan_att_dict <- all_poss_params |>
-      dplyr::left_join(params_to_update |>
-                         dplyr::rename("new_coef" = "coefficient") |>
-                         dplyr::select(-"allowable"),
-                       by = c("attributes")) |>
-      tidyr::separate(col = "coefficient",
-                      into = c("item_param", "coefficient"), sep = "_") |>
-      dplyr::select(-"item_param") |>
-      dplyr::mutate(coefficient = dplyr::case_when(is.na(.data$new_coef) ~
-                                                     .data$coefficient,
-                                                   !is.na(.data$new_coef) ~
-                                                     .data$new_coef)) |>
-      dplyr::select(-"new_coef")
-
-    diverging_peers <- type_hierarchy |>
-      dplyr::filter(.data$type == "diverging") |>
-      dplyr::select("attribute", "children") |>
-      tidyr::unnest("children") |>
-      dplyr::group_by(.data$attribute) |>
-      dplyr::mutate(child_num = dplyr::row_number()) |>
-      dplyr::ungroup() |>
-      dplyr::mutate(child_num = paste0("child",
-                                       as.character(.data$child_num))) |>
-      dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
-      dplyr::select(-"attribute") |>
-      dplyr::rename("attribute" = "new_name") |>
-      dplyr::left_join(att_dict, by = c("children" = "name")) |>
-      dplyr::select(-"children") |>
-      dplyr::rename("children" = "new_name") |>
-      tidyr::pivot_wider(names_from = "child_num", values_from = "children")
-
-    diverging_items <- tibble::tibble()
-
-    if (nrow(diverging_peers) > 0) {
-      for (nn in seq_len(nrow(diverging_peers))) {
-        tmp_diverging <- diverging_peers[nn, ]
-
-        tmp2 <- tmp_diverging |>
-          dplyr::select(-"attribute") |>
-          tidyr::pivot_longer(cols = dplyr::everything(),
-                              names_to = "child_num", values_to = "att") |>
-          dplyr::select(-"child_num")
-
-        possible_items <- qmatrix |>
-          tibble::rowid_to_column("item_id")
-
-        for (pp in seq_len(nrow(tmp2))) {
-          tmp_att <- tmp2$att[pp]
-
-          possible_items <- possible_items |>
-            dplyr::filter(!!sym(tmp_att) == 1)
-        }
-
-        possible_items <- possible_items |>
-          dplyr::select("item_id") |>
-          dplyr::mutate(diverging = TRUE)
-
-        diverging_items <- dplyr::bind_rows(diverging_items, possible_items)
-      }
-    }
-
-    if (nrow(diverging_items) == 0) {
-      diverging_items <- tibble::tibble(item_id = -9999, diverging = FALSE)
-    }
-
-    converging_peers <- type_hierarchy |>
-      dplyr::filter(.data$type == "converging") |>
-      dplyr::select("attribute", "parents") |>
-      tidyr::unnest("parents") |>
-      dplyr::group_by(.data$attribute) |>
-      dplyr::mutate(parent_num = dplyr::row_number()) |>
-      dplyr::ungroup() |>
-      dplyr::mutate(parent_num = paste0("parent",
-                                        as.character(.data$parent_num))) |>
-      dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
-      dplyr::select(-"attribute") |>
-      dplyr::rename("attribute" = "new_name") |>
-      dplyr::left_join(att_dict, by = c("parents" = "name")) |>
-      dplyr::select(-"parents") |>
-      dplyr::rename("parent" = "new_name") |>
-      tidyr::pivot_wider(names_from = "parent_num", values_from = "parent")
-
-    converging_items <- tibble::tibble()
-
-    if (nrow(converging_peers) > 0) {
-      for (nn in seq_len(nrow(converging_peers))) {
-        tmp_converging <- converging_peers[nn, ]
-
-        tmp2 <- tmp_converging |>
-          dplyr::select(-"attribute") |>
-          tidyr::pivot_longer(cols = dplyr::everything(),
-                              names_to = "parent_num", values_to = "att") |>
-          dplyr::select(-"parent_num")
-
-        possible_items <- qmatrix |>
-          tibble::rowid_to_column("item_id")
-
-        for (pp in seq_len(nrow(tmp2))) {
-          tmp_att <- tmp2$att[pp]
-
-          possible_items <- possible_items |>
-            dplyr::filter(!!sym(tmp_att) == 1)
-        }
-
-        possible_items <- possible_items |>
-          dplyr::select("item_id") |>
-          dplyr::mutate(converging = TRUE)
-
-        converging_items <- dplyr::bind_rows(converging_items, possible_items)
-      }
-    }
-
-    if (nrow(converging_items) == 0) {
-      converging_items <- tibble::tibble(item_id = -9999, converging = FALSE)
-    }
-  } else {
-    stan_att_dict <- tibble::tibble(attributes = "fake_att", coefficient = "0",
-                                    new_att = NA)
-    diverging_items <- tibble::tibble(item_id = -9999, diverging = FALSE)
-    converging_items <- tibble::tibble(item_id = -9999, converging = FALSE)
-  }
-
   meas_params <- all_params |>
-    tidyr::separate(
-      col = "coefficient",
-      into = c("item_param", "old_coef"),
-      sep = "_"
-    ) |>
-    dplyr::left_join(stan_att_dict, by = c("attributes")) |>
-    dplyr::mutate(
-      coefficient = paste0("l", .data$item_id, "_", .data$coefficient),
-      attributes = dplyr::case_when(
-        !is.na(.data$new_att) ~ .data$new_att,
-        TRUE ~ .data$attributes
-      )
-    ) |>
-    dplyr::select("item_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(
       parameter = dplyr::case_when(
         is.na(.data$attributes) ~ "intercept",
@@ -239,8 +53,7 @@ meas_lcdm <- function(
           sapply(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
-          ) +
-            1
+          ) + 1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       comp_atts = mapply(
@@ -252,40 +65,23 @@ meas_lcdm <- function(
       param_name = glue::glue(
         "l{item_id}_{param_level}",
         "{gsub(\"__\", \"\", atts)}"
-      )
-    ) |>
-    dplyr::filter(.data$param_level <= max_interaction) |>
-    dplyr::left_join(diverging_items, by = "item_id") |>
-    dplyr::mutate(
-      diverging = dplyr::case_when(
-        .data$param_level <= 1 ~ FALSE,
-        is.na(.data$diverging) ~ FALSE,
-        TRUE ~ .data$diverging
-      )
-    ) |>
-    dplyr::left_join(converging_items, by = "item_id") |>
-    dplyr::mutate(
-      converging = dplyr::case_when(
-        .data$param_level <= 1 ~ FALSE,
-        is.na(.data$converging) ~ FALSE,
-        TRUE ~ .data$converging
-      )
-    ) |>
-    dplyr::mutate(
+      ),
       constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
-        .data$param_level >= 2 & diverging ~
-          glue::glue("<lower=-1 * min([{comp_atts}])>"),
-        .data$param_level >= 2 & converging ~
-          glue::glue("<lower=-1 * min([{comp_atts}])>"),
-        .data$param_level >= 2 ~ glue::glue("<lower=0>")
+        .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
       ),
       param_def = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue("real {param_name};"),
         .data$param_level >= 1 ~ glue::glue("real{constraint} {param_name};")
       )
-    )
+    ) |>
+    dplyr::filter(.data$param_level <= max_interaction)
+
+  if (!is.null(hierarchy)) {
+    meas_params <- update_constraints(meas_params, hierarchy, qmatrix,
+                                      att_names)
+  }
 
   intercepts <- meas_params |>
     dplyr::filter(.data$param_level == 0) |>
@@ -401,7 +197,6 @@ meas_lcdm <- function(
     dplyr::mutate(
       prior = dplyr::case_when(
         !is.na(.data$coef_def) ~ .data$coef_def,
-        .data$type == "interaction" & .data$constraint == "<lower=0>" ~ "lognormal(0, 1)",
         is.na(.data$coef_def) ~ .data$type_def
       ),
       prior_def = glue::glue("{param_name} ~ {prior};")
