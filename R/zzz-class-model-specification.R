@@ -65,7 +65,7 @@ dcm_specify <- function(
 
   if (
     measurement_model@model %in%
-      c("lcdm", "dina", "dino", "nida", "nido", "ncrum", "crum") &&
+      c("lcdm", "nida", "nido", "ncrum", "crum") &&
       S7::S7_inherits(structural_model, HDCM)
   ) {
     measurement_model@model_args$hierarchy <-
