@@ -98,12 +98,10 @@ check_hierarchy_names <- function(
 #' Determines the type of hierarchy
 #'
 #' @param x A character string containing the quoted attribute hierarchy.
-#' @param qmatrix A Q-matrix specifying which attributes are measured by which
-#'   items.
 #'
 #' @returns A string.
 #' @noRd
-determine_hierarchy_type <- function(x, qmatrix, allow_null = TRUE) {
+determine_hierarchy_type <- function(x, allow_null = TRUE) {
   if (is.null(x) && allow_null) {
     return(invisible(NULL))
   }
@@ -120,8 +118,10 @@ determine_hierarchy_type <- function(x, qmatrix, allow_null = TRUE) {
   hierarchy <- glue::glue(" dag { <x> } ", .open = "<", .close = ">")
   hierarchy <- ggdag::tidy_dagitty(hierarchy)
 
-  atts <- qmatrix |>
-    colnames()
+  atts <- hierarchy |>
+    tibble::as_tibble() |>
+    dplyr::distinct(.data$name) |>
+    dplyr::pull()
 
   hier_type <- tibble::tibble()
 
