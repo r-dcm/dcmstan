@@ -53,7 +53,8 @@ meas_lcdm <- function(
           sapply(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
-          ) + 1
+          ) +
+            1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       comp_atts = mapply(
@@ -79,8 +80,12 @@ meas_lcdm <- function(
     dplyr::filter(.data$param_level <= max_interaction)
 
   if (!is.null(hierarchy)) {
-    meas_params <- update_constraints(meas_params, hierarchy, qmatrix,
-                                      att_names)
+    meas_params <- update_constraints(
+      meas_params,
+      hierarchy,
+      qmatrix,
+      att_names
+    )
   }
 
   intercepts <- meas_params |>

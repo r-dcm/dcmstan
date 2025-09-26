@@ -153,9 +153,15 @@ lcdm_parameters <- function(
   }
 
   if (!is.null(hierarchy) && !allowable_params) {
-    all_params <- rename_parameters(all_params, qmatrix, att_names,
-                                    max_interaction, hierarchy,
-                                    rename_attributes, rename_items)
+    all_params <- rename_parameters(
+      all_params,
+      qmatrix,
+      att_names,
+      max_interaction,
+      hierarchy,
+      rename_attributes,
+      rename_items
+    )
   }
 
   all_params
@@ -650,34 +656,49 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
 #' @returns An `all_params` object where parameters are renamed according to
 #' the attribute hierarhcy.
 #' @noRd
-rename_parameters <- function(all_params, qmatrix, att_names, max_interaction,
-                              hierarchy, rename_attributes, rename_items) {
+rename_parameters <- function(
+  all_params,
+  qmatrix,
+  att_names,
+  max_interaction,
+  hierarchy,
+  rename_attributes,
+  rename_items
+) {
   meas_all <- create_profiles(ncol(qmatrix))[2^ncol(qmatrix), ]
-  all_poss_params <- lcdm_parameters(qmatrix = meas_all,
-                                     max_interaction = max_interaction,
-                                     att_names = att_names,
-                                     hierarchy = NULL,
-                                     rename_attributes = rename_attributes,
-                                     rename_items = rename_items) |>
+  all_poss_params <- lcdm_parameters(
+    qmatrix = meas_all,
+    max_interaction = max_interaction,
+    att_names = att_names,
+    hierarchy = NULL,
+    rename_attributes = rename_attributes,
+    rename_items = rename_items
+  ) |>
     dplyr::select("attributes", "coefficient")
-  all_allowable_params <- lcdm_parameters(qmatrix = meas_all,
-                                          max_interaction = max_interaction,
-                                          att_names = att_names,
-                                          hierarchy = hierarchy,
-                                          rename_attributes = rename_attributes,
-                                          rename_items = rename_items,
-                                          allowable_params = TRUE) |>
+  all_allowable_params <- lcdm_parameters(
+    qmatrix = meas_all,
+    max_interaction = max_interaction,
+    att_names = att_names,
+    hierarchy = hierarchy,
+    rename_attributes = rename_attributes,
+    rename_items = rename_items,
+    allowable_params = TRUE
+  ) |>
     dplyr::select("attributes", "coefficient")
   params_to_update <- all_poss_params |>
-    dplyr::left_join(all_allowable_params |>
-                       dplyr::mutate(allowable = TRUE),
-                     by = c("attributes", "coefficient")) |>
+    dplyr::left_join(
+      all_allowable_params |>
+        dplyr::mutate(allowable = TRUE),
+      by = c("attributes", "coefficient")
+    ) |>
     dplyr::filter(is.na(.data$allowable)) |>
     dplyr::mutate(new_att = NA)
   good_params <- all_poss_params |>
-    dplyr::left_join(all_allowable_params |>
-                       dplyr::mutate(allowable = TRUE),
-                     by = c("attributes", "coefficient")) |>
+    dplyr::left_join(
+      all_allowable_params |>
+        dplyr::mutate(allowable = TRUE),
+      by = c("attributes", "coefficient")
+    ) |>
     dplyr::filter(!is.na(.data$allowable))
 
   for (ii in seq_len(nrow(params_to_update))) {
@@ -687,8 +708,11 @@ rename_parameters <- function(all_params, qmatrix, att_names, max_interaction,
 
     tmp_replacement <- good_params |>
       dplyr::filter(grepl(tmp_att, .data$attributes)) |>
-      tidyr::separate(col = "coefficient",
-                      into = c("item_param", "coefficient"), sep = "_")
+      tidyr::separate(
+        col = "coefficient",
+        into = c("item_param", "coefficient"),
+        sep = "_"
+      )
 
     params_to_update$coefficient[ii] <- tmp_replacement$coefficient[1]
     params_to_update$allowable[ii] <- TRUE
@@ -696,17 +720,24 @@ rename_parameters <- function(all_params, qmatrix, att_names, max_interaction,
   }
 
   stan_att_dict <- all_poss_params |>
-    dplyr::left_join(params_to_update |>
-                       dplyr::rename("new_coef" = "coefficient") |>
-                       dplyr::select(-"allowable"),
-                     by = c("attributes")) |>
-    tidyr::separate(col = "coefficient",
-                    into = c("item_param", "coefficient"), sep = "_") |>
+    dplyr::left_join(
+      params_to_update |>
+        dplyr::rename("new_coef" = "coefficient") |>
+        dplyr::select(-"allowable"),
+      by = c("attributes")
+    ) |>
+    tidyr::separate(
+      col = "coefficient",
+      into = c("item_param", "coefficient"),
+      sep = "_"
+    ) |>
     dplyr::select(-"item_param") |>
-    dplyr::mutate(coefficient = dplyr::case_when(is.na(.data$new_coef) ~
-                                                   .data$coefficient,
-                                                 !is.na(.data$new_coef) ~
-                                                   .data$new_coef)) |>
+    dplyr::mutate(
+      coefficient = dplyr::case_when(
+        is.na(.data$new_coef) ~ .data$coefficient,
+        !is.na(.data$new_coef) ~ .data$new_coef
+      )
+    ) |>
     dplyr::select(-"new_coef")
 
   all_params |>
