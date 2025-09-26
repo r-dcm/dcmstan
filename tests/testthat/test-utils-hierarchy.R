@@ -16,6 +16,7 @@ test_that("check_hierarchy", {
   expect_match(err$message, "not be cyclical")
 
   expect_null(check_hierarchy("x -> y -> z"))
+  expect_null(check_hierarchy(x = NULL))
 })
 
 test_that("check hierarchy names", {
