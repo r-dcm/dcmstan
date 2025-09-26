@@ -103,7 +103,7 @@ check_hierarchy_names <- function(
 #'
 #' @returns A string.
 #' @noRd
-determine_hierarchy_type <- function(x, allow_null = TRUE) {
+determine_hierarchy_type <- function(x, qmatrix, allow_null = TRUE) {
   if (is.null(x) && allow_null) {
     return(invisible(NULL))
   }
