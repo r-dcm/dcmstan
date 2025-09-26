@@ -129,7 +129,9 @@ test_that("lcdm with hierarchy works", {
     identifier = "item",
     measurement_model = lcdm(),
     structural_model = hdcm(
-      hierarchy = "referent_units -> appropriateness -> multiplicative_comparison partitioning_iterating -> appropriateness"
+      hierarchy =
+        "referent_units -> appropriateness -> multiplicative_comparison
+         partitioning_iterating -> appropriateness"
     )
   )
   expect_snapshot(stan_code(dtmr_lcdm_comp))
