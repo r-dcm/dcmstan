@@ -582,14 +582,23 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
     dplyr::mutate(
       new_params = lapply(
         .data$dat,
-        \(x, g) {
+        \(x, g, filtered_hierarchy) {
           if (nrow(x) == 2) {
             return(x)
           }
 
           item_atts <- x |>
             dplyr::filter(!is.na(attributes), !grepl("__", .data$attributes)) |>
+            dplyr::select("attributes") |>
+            dplyr::semi_join(filtered_hierarchy |>
+                               dplyr::select(-"direction") |>
+                               tidyr::pivot_longer(cols = dplyr::everything(),
+                                                   names_to = "type",
+                                                   values_to = "attributes"),
+                             by = c("attributes")) |>
             dplyr::pull("attributes")
+
+
 
           for (aa in item_atts) {
             ancs <- dagitty::ancestors(g, aa) |>
@@ -610,7 +619,7 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
 
           x
         },
-        g = g
+        g = g, filtered_hierarchy = filtered_hierarchy
       )
     ) |>
     dplyr::select(-"dat") |>
