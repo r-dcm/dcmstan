@@ -103,15 +103,19 @@ check_hierarchy_names <- function(
 #'
 #' @returns A string.
 #' @noRd
-determine_hierarchy_type <- function(x, qmatrix, allow_null = TRUE) {
-  if (is.null(x) && allow_null) return(invisible(NULL))
+determine_hierarchy_type <- function(x, allow_null = TRUE) {
+  if (is.null(x) && allow_null) {
+    return(invisible(NULL))
+  }
 
   check_string(x)
 
   g <- glue::glue(" graph { <x> } ", .open = "<", .close = ">")
   g <- dagitty::dagitty(g)
 
-  if (nrow(dagitty::edges(g)) == 0) return(invisible(NULL))
+  if (nrow(dagitty::edges(g)) == 0) {
+    return(invisible(NULL))
+  }
 
   hierarchy <- glue::glue(" dag { <x> } ", .open = "<", .close = ">")
   hierarchy <- ggdag::tidy_dagitty(hierarchy)
@@ -218,12 +222,14 @@ determine_hierarchy_type <- function(x, qmatrix, allow_null = TRUE) {
       parent_atts <- NA_character_
     }
 
-    tmp_hier <- tibble::tibble(attribute = tmp_att,
-                               type = tmp_type,
-                               converging_peers = list(succ_peer_att),
-                               diverging_peers = list(pred_peer_att),
-                               parents = list(parent_atts),
-                               children = list(child_atts))
+    tmp_hier <- tibble::tibble(
+      attribute = tmp_att,
+      type = tmp_type,
+      converging_peers = list(succ_peer_att),
+      diverging_peers = list(pred_peer_att),
+      parents = list(parent_atts),
+      children = list(child_atts)
+    )
 
     hier_type <- dplyr::bind_rows(hier_type, tmp_hier)
   }
@@ -260,8 +266,7 @@ update_constraints <- function(meas_params, hierarchy, qmatrix, att_names) {
     dplyr::group_by(.data$attribute) |>
     dplyr::mutate(child_num = dplyr::row_number()) |>
     dplyr::ungroup() |>
-    dplyr::mutate(child_num = paste0("child",
-                                     as.character(.data$child_num))) |>
+    dplyr::mutate(child_num = paste0("child", as.character(.data$child_num))) |>
     dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
     dplyr::select(-"attribute") |>
     dplyr::rename("attribute" = "new_name") |>
@@ -278,8 +283,11 @@ update_constraints <- function(meas_params, hierarchy, qmatrix, att_names) {
 
       tmp2 <- tmp_diverging |>
         dplyr::select(-"attribute") |>
-        tidyr::pivot_longer(cols = dplyr::everything(),
-                            names_to = "child_num", values_to = "att") |>
+        tidyr::pivot_longer(
+          cols = dplyr::everything(),
+          names_to = "child_num",
+          values_to = "att"
+        ) |>
         dplyr::select(-"child_num")
 
       possible_items <- qmatrix |>
@@ -311,8 +319,9 @@ update_constraints <- function(meas_params, hierarchy, qmatrix, att_names) {
     dplyr::group_by(.data$attribute) |>
     dplyr::mutate(parent_num = dplyr::row_number()) |>
     dplyr::ungroup() |>
-    dplyr::mutate(parent_num = paste0("parent",
-                                      as.character(.data$parent_num))) |>
+    dplyr::mutate(
+      parent_num = paste0("parent", as.character(.data$parent_num))
+    ) |>
     dplyr::left_join(att_dict, by = c("attribute" = "name")) |>
     dplyr::select(-"attribute") |>
     dplyr::rename("attribute" = "new_name") |>
@@ -329,8 +338,11 @@ update_constraints <- function(meas_params, hierarchy, qmatrix, att_names) {
 
       tmp2 <- tmp_converging |>
         dplyr::select(-"attribute") |>
-        tidyr::pivot_longer(cols = dplyr::everything(),
-                            names_to = "parent_num", values_to = "att") |>
+        tidyr::pivot_longer(
+          cols = dplyr::everything(),
+          names_to = "parent_num",
+          values_to = "att"
+        ) |>
         dplyr::select(-"parent_num")
 
       possible_items <- qmatrix |>
