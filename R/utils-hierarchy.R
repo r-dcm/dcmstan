@@ -204,8 +204,6 @@ determine_hierarchy_type <- function(x, allow_null = TRUE) {
       tmp_type <- "origin"
     } else if (nrow(successor_att) >= 1 && nrow(predecessor_att) == 0) {
       tmp_type <- "end"
-    } else {
-      tmp_type <- "non-hierarchical"
     }
 
     if (nrow(predecessor_att) > 0) {
