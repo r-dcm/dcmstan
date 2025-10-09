@@ -27,53 +27,76 @@ test_that("determine_hierarchy_type", {
   hier1 <- determine_hierarchy_type(x = "a -> c; b -> c; c -> d; c -> e; f")
   expect_equal(hier1$attribute, c("a", "b", "c", "d", "e"))
   expect_equal(hier1$type, c("origin", "origin", "complex", "end", "end"))
-  expect_equal(tidyr::unnest(hier1, converging_peers)$converging_peers,
-               c("b", "a", NA, NA, NA))
-  expect_equal(tidyr::unnest(hier1, diverging_peers)$diverging_peers,
-               c(NA, NA, NA,  "e", "d"))
-  expect_equal(tidyr::unnest(hier1, parents)$parents,
-               c(NA, NA, "a", "b", "c", "c"))
-  expect_equal(tidyr::unnest(hier1, children)$children,
-               c("c", "c", "d", "e", rep(NA, 2)))
+  expect_equal(
+    tidyr::unnest(hier1, converging_peers)$converging_peers,
+    c("b", "a", NA, NA, NA)
+  )
+  expect_equal(
+    tidyr::unnest(hier1, diverging_peers)$diverging_peers,
+    c(NA, NA, NA, "e", "d")
+  )
+  expect_equal(
+    tidyr::unnest(hier1, parents)$parents,
+    c(NA, NA, "a", "b", "c", "c")
+  )
+  expect_equal(
+    tidyr::unnest(hier1, children)$children,
+    c("c", "c", "d", "e", rep(NA, 2))
+  )
 
   hier2 <- determine_hierarchy_type(x = "a -> b -> c -> d -> e")
   expect_equal(hier2$attribute, c("a", "b", "c", "d", "e"))
-  expect_equal(hier2$type,
-               c("origin", "linear", "linear", "linear", "end"))
-  expect_equal(tidyr::unnest(hier2, converging_peers)$converging_peers,
-               rep(NA_character_, 5))
-  expect_equal(tidyr::unnest(hier2, diverging_peers)$diverging_peers,
-               rep(NA_character_, 5))
-  expect_equal(tidyr::unnest(hier2, parents)$parents,
-               c(NA, "a", "b", "c", "d"))
-  expect_equal(tidyr::unnest(hier2, children)$children,
-               c("b", "c", "d", "e", NA))
+  expect_equal(hier2$type, c("origin", "linear", "linear", "linear", "end"))
+  expect_equal(
+    tidyr::unnest(hier2, converging_peers)$converging_peers,
+    rep(NA_character_, 5)
+  )
+  expect_equal(
+    tidyr::unnest(hier2, diverging_peers)$diverging_peers,
+    rep(NA_character_, 5)
+  )
+  expect_equal(tidyr::unnest(hier2, parents)$parents, c(NA, "a", "b", "c", "d"))
+  expect_equal(
+    tidyr::unnest(hier2, children)$children,
+    c("b", "c", "d", "e", NA)
+  )
 
   hier3 <- determine_hierarchy_type(x = "a -> e; b -> e; c -> e; d -> e")
   expect_equal(hier3$attribute, c("a", "b", "c", "d", "e"))
-  expect_equal(hier3$type,
-               c("origin", "origin", "origin", "origin", "converging"))
-  expect_equal(tidyr::unnest(hier3, converging_peers)$converging_peers,
-               c("b", "c", "d", "a", "c", "d", "a", "b", "d", "a", "b", "c",
-                 NA))
-  expect_equal(tidyr::unnest(hier3, diverging_peers)$diverging_peers,
-               rep(NA_character_, 5))
-  expect_equal(tidyr::unnest(hier3, parents)$parents,
-               c(rep(NA, 4), "a", "b", "c", "d"))
-  expect_equal(tidyr::unnest(hier3, children)$children,
-               c(rep("e", 4), NA))
+  expect_equal(
+    hier3$type,
+    c("origin", "origin", "origin", "origin", "converging")
+  )
+  expect_equal(
+    tidyr::unnest(hier3, converging_peers)$converging_peers,
+    c("b", "c", "d", "a", "c", "d", "a", "b", "d", "a", "b", "c", NA)
+  )
+  expect_equal(
+    tidyr::unnest(hier3, diverging_peers)$diverging_peers,
+    rep(NA_character_, 5)
+  )
+  expect_equal(
+    tidyr::unnest(hier3, parents)$parents,
+    c(rep(NA, 4), "a", "b", "c", "d")
+  )
+  expect_equal(tidyr::unnest(hier3, children)$children, c(rep("e", 4), NA))
 
   hier4 <- determine_hierarchy_type(x = "a -> b; a -> c; a -> d; a -> e")
   expect_equal(hier4$attribute, c("a", "b", "c", "d", "e"))
   expect_equal(hier4$type, c("diverging", "end", "end", "end", "end"))
-  expect_equal(tidyr::unnest(hier4, converging_peers)$converging_peers,
-               rep(NA_character_, 5))
-  expect_equal(tidyr::unnest(hier4, diverging_peers)$diverging_peers,
-               c(NA, "c", "d", "e", "b", "d", "e", "b", "c", "e", "b", "c",
-                 "d"))
+  expect_equal(
+    tidyr::unnest(hier4, converging_peers)$converging_peers,
+    rep(NA_character_, 5)
+  )
+  expect_equal(
+    tidyr::unnest(hier4, diverging_peers)$diverging_peers,
+    c(NA, "c", "d", "e", "b", "d", "e", "b", "c", "e", "b", "c", "d")
+  )
   expect_equal(tidyr::unnest(hier4, parents)$parents, c(NA, rep("a", 4)))
-  expect_equal(tidyr::unnest(hier4, children)$children,
-               c("b", "c", "d", "e", rep(NA, 4)))
+  expect_equal(
+    tidyr::unnest(hier4, children)$children,
+    c("b", "c", "d", "e", rep(NA, 4))
+  )
 })
 
 test_that("check hierarchy names", {

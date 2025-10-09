@@ -130,9 +130,10 @@ test_that("lcdm with hierarchy works", {
     identifier = "item",
     measurement_model = lcdm(),
     structural_model = hdcm(
-      hierarchy =
-        "referent_units -> appropriateness -> multiplicative_comparison
-         partitioning_iterating -> appropriateness"
+      hierarchy = "
+        referent_units -> appropriateness -> multiplicative_comparison
+        partitioning_iterating -> appropriateness
+      "
     )
   )
   expect_snapshot(stan_code(dtmr_lcdm_comp))
@@ -142,10 +143,11 @@ test_that("lcdm with hierarchy works", {
     identifier = "item",
     measurement_model = lcdm(),
     structural_model = hdcm(
-      hierarchy =
-        "referent_units -> appropriateness
-         referent_units -> multiplicative_comparison
-         referent_units -> partitioning_iterating"
+      hierarchy = "
+        referent_units -> appropriateness
+        referent_units -> multiplicative_comparison
+        referent_units -> partitioning_iterating
+      "
     )
   )
   expect_snapshot(stan_code(dtmr_lcdm_4att_div))
@@ -155,10 +157,11 @@ test_that("lcdm with hierarchy works", {
     identifier = "item",
     measurement_model = lcdm(),
     structural_model = hdcm(
-      hierarchy =
-        "referent_units -> appropriateness
-         multiplicative_comparison -> appropriateness
-         partitioning_iterating -> appropriateness"
+      hierarchy = "
+        referent_units -> appropriateness
+        multiplicative_comparison -> appropriateness
+        partitioning_iterating -> appropriateness
+      "
     )
   )
   expect_snapshot(stan_code(dtmr_lcdm_4att_conv))
@@ -168,9 +171,10 @@ test_that("lcdm with hierarchy works", {
     identifier = "item",
     measurement_model = lcdm(),
     structural_model = hdcm(
-      hierarchy =
-        "referent_units -> appropriateness -> multiplicative_comparison
-         partitioning_iterating"
+      hierarchy = "
+        referent_units -> appropriateness -> multiplicative_comparison
+        partitioning_iterating
+      "
     )
   )
   expect_snapshot(stan_code(dtmr_lcdm_partial_linear))
