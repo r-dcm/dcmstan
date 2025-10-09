@@ -232,7 +232,7 @@ determine_hierarchy_type <- function(x, allow_null = TRUE) {
     hier_type <- dplyr::bind_rows(hier_type, tmp_hier)
   }
 
-  return(hier_type)
+  hier_type
 }
 
 #' Update parameter constraints when there is an attribute hierarchy
