@@ -33,7 +33,8 @@ lcdm_parameters <- function(
   item_names = NULL,
   hierarchy = NULL,
   rename_attributes = FALSE,
-  rename_items = FALSE
+  rename_items = FALSE,
+  allowable_params = FALSE
 ) {
   if (is.null(identifier)) {
     if (is.null(item_names)) {
@@ -111,7 +112,7 @@ lcdm_parameters <- function(
     dplyr::select("item_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
 
-  if (!is.null(hierarchy)) {
+  if (!is.null(hierarchy) && max_interaction > 1) {
     filtered_hierarchy <- glue::glue("dag {{ {hierarchy} }}") |>
       ggdag::tidy_dagitty() |>
       tibble::as_tibble() |>
@@ -149,6 +150,18 @@ lcdm_parameters <- function(
         dplyr::everything(),
         -"item_id"
       )
+  }
+
+  if (!is.null(hierarchy) && !allowable_params) {
+    all_params <- rename_parameters(
+      all_params,
+      qmatrix,
+      att_names,
+      max_interaction,
+      hierarchy,
+      rename_attributes,
+      rename_items
+    )
   }
 
   all_params
@@ -575,13 +588,24 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
     dplyr::mutate(
       new_params = lapply(
         .data$dat,
-        \(x, g) {
+        \(x, g, filtered_hierarchy) {
           if (nrow(x) == 2) {
             return(x)
           }
 
           item_atts <- x |>
             dplyr::filter(!is.na(attributes), !grepl("__", .data$attributes)) |>
+            dplyr::select("attributes") |>
+            dplyr::semi_join(
+              filtered_hierarchy |>
+                dplyr::select(-"direction") |>
+                tidyr::pivot_longer(
+                  cols = dplyr::everything(),
+                  names_to = "type",
+                  values_to = "attributes"
+                ),
+              by = c("attributes")
+            ) |>
             dplyr::pull("attributes")
 
           for (aa in item_atts) {
@@ -603,9 +627,142 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
 
           x
         },
-        g = g
+        g = g,
+        filtered_hierarchy = filtered_hierarchy
       )
     ) |>
     dplyr::select(-"dat") |>
     tidyr::unnest("new_params")
+}
+
+#' Rename parameters to be consistent with the attribute hierarchy
+#'
+#' @param all_params Parameters returned by [lcdm_parameters()].
+#' @param qmatrix A Q-matrix specifying which attributes are measured by which
+#'   items.
+#' @param att_names Vector of attribute names, as in the
+#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#' @param max_interaction For the LCDM, the highest level interaction that
+#'   should be included in the model. For the C-RUM, this is always 1 (i.e.,
+#'   main effects only).
+#' @param hierarchy If present, the quoted attribute hierarchy. See
+#'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
+#'   how to draw the attribute hierarchy.
+#' @param rename_attributes Logical. Should the output rename the attributes to
+#'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
+#'   the original attributes names in the Q-matrix (`FALSE`, the default).
+#' @param rename_items Logical. Should the output rename and number the items to
+#'   have consistent and generic names (e.g., `1`, `2`; `TRUE`) or keep the
+#'   original item names in the Q-matrix (`FALSE`, the default). If there are no
+#'   identifiers in the Q-matrix, generic names are always used.
+#'
+#' @returns An `all_params` object where parameters are renamed according to
+#' the attribute hierarhcy.
+#' @noRd
+rename_parameters <- function(
+  all_params,
+  qmatrix,
+  att_names,
+  max_interaction,
+  hierarchy,
+  rename_attributes,
+  rename_items
+) {
+  meas_all <- create_profiles(ncol(qmatrix))[2^ncol(qmatrix), ]
+  all_poss_params <- lcdm_parameters(
+    qmatrix = meas_all,
+    max_interaction = max_interaction,
+    att_names = att_names,
+    hierarchy = NULL,
+    rename_attributes = rename_attributes,
+    rename_items = rename_items
+  ) |>
+    dplyr::select("attributes", "coefficient")
+  all_allowable_params <- lcdm_parameters(
+    qmatrix = meas_all,
+    max_interaction = max_interaction,
+    att_names = att_names,
+    hierarchy = hierarchy,
+    rename_attributes = rename_attributes,
+    rename_items = rename_items,
+    allowable_params = TRUE
+  ) |>
+    dplyr::select("attributes", "coefficient")
+  params_to_update <- all_poss_params |>
+    dplyr::left_join(
+      all_allowable_params |>
+        dplyr::mutate(allowable = TRUE),
+      by = c("attributes", "coefficient")
+    ) |>
+    dplyr::filter(is.na(.data$allowable)) |>
+    dplyr::mutate(new_att = NA)
+  good_params <- all_poss_params |>
+    dplyr::left_join(
+      all_allowable_params |>
+        dplyr::mutate(allowable = TRUE),
+      by = c("attributes", "coefficient")
+    ) |>
+    dplyr::filter(!is.na(.data$allowable))
+
+  for (ii in seq_len(nrow(params_to_update))) {
+    tmp_att <- params_to_update$attributes[ii]
+    tmp_att <- strsplit(tmp_att, "__")[[1]]
+    tmp_att <- paste0(tmp_att, collapse = ".*")
+
+    tmp_replacement <- good_params |>
+      dplyr::filter(grepl(tmp_att, .data$attributes)) |>
+      tidyr::separate(
+        col = "coefficient",
+        into = c("item_param", "coefficient"),
+        sep = "_"
+      )
+
+    params_to_update$coefficient[ii] <- tmp_replacement$coefficient[1]
+    params_to_update$allowable[ii] <- TRUE
+    params_to_update$new_att[ii] <- tmp_replacement$attributes[1]
+  }
+
+  stan_att_dict <- all_poss_params |>
+    dplyr::left_join(
+      params_to_update |>
+        dplyr::rename("new_coef" = "coefficient") |>
+        dplyr::select(-"allowable"),
+      by = c("attributes")
+    ) |>
+    tidyr::separate(
+      col = "coefficient",
+      into = c("item_param", "coefficient"),
+      sep = "_"
+    ) |>
+    dplyr::select(-"item_param") |>
+    dplyr::mutate(
+      coefficient = dplyr::case_when(
+        is.na(.data$new_coef) ~ .data$coefficient,
+        !is.na(.data$new_coef) ~ .data$new_coef
+      )
+    ) |>
+    dplyr::select(-"new_coef")
+
+  all_params |>
+    tidyr::separate(
+      col = "coefficient",
+      into = c("item_param", "old_coef"),
+      sep = "_"
+    ) |>
+    dplyr::left_join(stan_att_dict, by = c("attributes")) |>
+    dplyr::mutate(
+      coefficient = paste0("l", .data$item_id, "_", .data$coefficient),
+      attributes = dplyr::case_when(
+        !is.na(.data$new_att) ~ .data$new_att,
+        TRUE ~ .data$attributes
+      )
+    ) |>
+    dplyr::select("item_id", "type", "attributes", "coefficient") |>
+    dplyr::mutate(
+      type = dplyr::case_when(
+        grepl("_0", .data$coefficient) ~ "intercept",
+        grepl("_1", .data$coefficient) ~ "maineffect",
+        TRUE ~ "interaction"
+      )
+    )
 }

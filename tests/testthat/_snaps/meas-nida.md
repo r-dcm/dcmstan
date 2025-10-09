@@ -1487,3 +1487,172 @@
         }
       }
 
+# nida with hierarchy works
+
+    Code
+      stan_code(ecpe_nida_hdcm)
+    Output
+      data {
+        int<lower=1> I;                      // number of items
+        int<lower=1> R;                      // number of respondents
+        int<lower=1> N;                      // number of observations
+        int<lower=1> C;                      // number of classes
+        array[N] int<lower=1,upper=I> ii;    // item for observation n
+        array[N] int<lower=1,upper=R> rr;    // respondent for observation n
+        array[N] int<lower=0,upper=1> y;     // score for observation n
+        array[R] int<lower=1,upper=N> start; // starting row for respondent R
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        int<lower=1> A;                      // number of attributes
+      }
+      parameters {
+        simplex[C] Vc;                  // base rates of class membership
+      
+        ////////////////////////////////// attribute parameters
+        array[A] real<lower=0,upper=1> slip;
+        array[A] real<lower=0,upper=1> guess;
+      }
+      transformed parameters {
+        vector[C] log_Vc = log(Vc);
+        matrix[I,C] pi;
+      
+        ////////////////////////////////// probability of correct response
+        pi[1,1] = guess[1]*guess[2];
+        pi[1,2] = guess[1]*guess[2];
+        pi[1,3] = guess[1]*(1 - slip[2]);
+        pi[1,4] = (1 - slip[1])*(1 - slip[2]);
+        pi[2,1] = guess[2];
+        pi[2,2] = guess[2];
+        pi[2,3] = (1 - slip[2]);
+        pi[2,4] = (1 - slip[2]);
+        pi[3,1] = guess[1]*guess[3];
+        pi[3,2] = guess[1]*(1 - slip[3]);
+        pi[3,3] = guess[1]*(1 - slip[3]);
+        pi[3,4] = (1 - slip[1])*(1 - slip[3]);
+        pi[4,1] = guess[3];
+        pi[4,2] = (1 - slip[3]);
+        pi[4,3] = (1 - slip[3]);
+        pi[4,4] = (1 - slip[3]);
+        pi[5,1] = guess[3];
+        pi[5,2] = (1 - slip[3]);
+        pi[5,3] = (1 - slip[3]);
+        pi[5,4] = (1 - slip[3]);
+        pi[6,1] = guess[3];
+        pi[6,2] = (1 - slip[3]);
+        pi[6,3] = (1 - slip[3]);
+        pi[6,4] = (1 - slip[3]);
+        pi[7,1] = guess[1]*guess[3];
+        pi[7,2] = guess[1]*(1 - slip[3]);
+        pi[7,3] = guess[1]*(1 - slip[3]);
+        pi[7,4] = (1 - slip[1])*(1 - slip[3]);
+        pi[8,1] = guess[2];
+        pi[8,2] = guess[2];
+        pi[8,3] = (1 - slip[2]);
+        pi[8,4] = (1 - slip[2]);
+        pi[9,1] = guess[3];
+        pi[9,2] = (1 - slip[3]);
+        pi[9,3] = (1 - slip[3]);
+        pi[9,4] = (1 - slip[3]);
+        pi[10,1] = guess[1];
+        pi[10,2] = guess[1];
+        pi[10,3] = guess[1];
+        pi[10,4] = (1 - slip[1]);
+        pi[11,1] = guess[1]*guess[3];
+        pi[11,2] = guess[1]*(1 - slip[3]);
+        pi[11,3] = guess[1]*(1 - slip[3]);
+        pi[11,4] = (1 - slip[1])*(1 - slip[3]);
+        pi[12,1] = guess[1]*guess[3];
+        pi[12,2] = guess[1]*(1 - slip[3]);
+        pi[12,3] = guess[1]*(1 - slip[3]);
+        pi[12,4] = (1 - slip[1])*(1 - slip[3]);
+        pi[13,1] = guess[1];
+        pi[13,2] = guess[1];
+        pi[13,3] = guess[1];
+        pi[13,4] = (1 - slip[1]);
+        pi[14,1] = guess[1];
+        pi[14,2] = guess[1];
+        pi[14,3] = guess[1];
+        pi[14,4] = (1 - slip[1]);
+        pi[15,1] = guess[3];
+        pi[15,2] = (1 - slip[3]);
+        pi[15,3] = (1 - slip[3]);
+        pi[15,4] = (1 - slip[3]);
+        pi[16,1] = guess[1]*guess[3];
+        pi[16,2] = guess[1]*(1 - slip[3]);
+        pi[16,3] = guess[1]*(1 - slip[3]);
+        pi[16,4] = (1 - slip[1])*(1 - slip[3]);
+        pi[17,1] = guess[2]*guess[3];
+        pi[17,2] = guess[2]*(1 - slip[3]);
+        pi[17,3] = (1 - slip[2])*(1 - slip[3]);
+        pi[17,4] = (1 - slip[2])*(1 - slip[3]);
+        pi[18,1] = guess[3];
+        pi[18,2] = (1 - slip[3]);
+        pi[18,3] = (1 - slip[3]);
+        pi[18,4] = (1 - slip[3]);
+        pi[19,1] = guess[3];
+        pi[19,2] = (1 - slip[3]);
+        pi[19,3] = (1 - slip[3]);
+        pi[19,4] = (1 - slip[3]);
+        pi[20,1] = guess[1]*guess[3];
+        pi[20,2] = guess[1]*(1 - slip[3]);
+        pi[20,3] = guess[1]*(1 - slip[3]);
+        pi[20,4] = (1 - slip[1])*(1 - slip[3]);
+        pi[21,1] = guess[1]*guess[3];
+        pi[21,2] = guess[1]*(1 - slip[3]);
+        pi[21,3] = guess[1]*(1 - slip[3]);
+        pi[21,4] = (1 - slip[1])*(1 - slip[3]);
+        pi[22,1] = guess[3];
+        pi[22,2] = (1 - slip[3]);
+        pi[22,3] = (1 - slip[3]);
+        pi[22,4] = (1 - slip[3]);
+        pi[23,1] = guess[2];
+        pi[23,2] = guess[2];
+        pi[23,3] = (1 - slip[2]);
+        pi[23,4] = (1 - slip[2]);
+        pi[24,1] = guess[2];
+        pi[24,2] = guess[2];
+        pi[24,3] = (1 - slip[2]);
+        pi[24,4] = (1 - slip[2]);
+        pi[25,1] = guess[1];
+        pi[25,2] = guess[1];
+        pi[25,3] = guess[1];
+        pi[25,4] = (1 - slip[1]);
+        pi[26,1] = guess[3];
+        pi[26,2] = (1 - slip[3]);
+        pi[26,3] = (1 - slip[3]);
+        pi[26,4] = (1 - slip[3]);
+        pi[27,1] = guess[1];
+        pi[27,2] = guess[1];
+        pi[27,3] = guess[1];
+        pi[27,4] = (1 - slip[1]);
+        pi[28,1] = guess[3];
+        pi[28,2] = (1 - slip[3]);
+        pi[28,3] = (1 - slip[3]);
+        pi[28,4] = (1 - slip[3]);
+      }
+      model {
+      
+        ////////////////////////////////// priors
+        Vc ~ dirichlet(rep_vector(1, C));
+        slip[1] ~ beta(5, 25);
+        guess[1] ~ beta(5, 25);
+        slip[2] ~ beta(5, 25);
+        guess[2] ~ beta(5, 25);
+        slip[3] ~ beta(5, 25);
+        guess[3] ~ beta(5, 25);
+      
+        ////////////////////////////////// likelihood
+        for (r in 1:R) {
+          row_vector[C] ps;
+          for (c in 1:C) {
+            array[num[r]] real log_items;
+            for (m in 1:num[r]) {
+              int i = ii[start[r] + m - 1];
+              log_items[m] = y[start[r] + m - 1] * log(pi[i,c]) +
+                             (1 - y[start[r] + m - 1]) * log(1 - pi[i,c]);
+            }
+            ps[c] = log_Vc[c] + sum(log_items);
+          }
+          target += log_sum_exp(ps);
+        }
+      }
+

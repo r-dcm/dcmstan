@@ -33,6 +33,16 @@ test_that("dina script works", {
     structural_model = loglinear()
   )
   expect_snapshot(stan_code(dtmr_dina_logl))
+
+  ecpe_dina_hdcm <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = dina(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_equal(stan_code(ecpe_dina_hdcm), stan_code(ecpe_dina_unst))
 })
 
 test_that("dino script works", {
@@ -70,4 +80,14 @@ test_that("dino script works", {
     structural_model = loglinear()
   )
   expect_snapshot(stan_code(dtmr_dino_logl))
+
+  ecpe_dino_hdcm <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = dino(),
+    structural_model = hdcm(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_equal(stan_code(ecpe_dino_hdcm), stan_code(ecpe_dino_unst))
 })

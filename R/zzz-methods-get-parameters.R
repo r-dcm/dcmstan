@@ -140,7 +140,8 @@ S7::method(get_parameters, CRUM) <- function(
     identifier = identifier,
     max_interaction = 1L,
     att_names = attributes,
-    item_names = items
+    item_names = items,
+    hierarchy = x@model_args$hierarchy
   )
 }
 
