@@ -62,9 +62,10 @@ dcm_specify <- function(
   ) {
     measurement_model@model_args$max_interaction <- 1L
   }
+
   if (
     measurement_model@model %in%
-      c("lcdm", "nida", "nido", "ncrum") &&
+      c("lcdm", "nida", "nido", "ncrum", "crum") &&
       S7::S7_inherits(structural_model, HDCM)
   ) {
     measurement_model@model_args$hierarchy <-

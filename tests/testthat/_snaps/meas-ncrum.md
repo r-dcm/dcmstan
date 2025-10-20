@@ -1919,3 +1919,293 @@
         }
       }
 
+# ncrum with hierarchy works
+
+    Code
+      stan_code(ecpe_ncrum_hdcm)
+    Output
+      data {
+        int<lower=1> I;                      // number of items
+        int<lower=1> R;                      // number of respondents
+        int<lower=1> N;                      // number of observations
+        int<lower=1> C;                      // number of classes
+        array[N] int<lower=1,upper=I> ii;    // item for observation n
+        array[N] int<lower=1,upper=R> rr;    // respondent for observation n
+        array[N] int<lower=0,upper=1> y;     // score for observation n
+        array[R] int<lower=1,upper=N> start; // starting row for respondent R
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+      }
+      parameters {
+        simplex[C] Vc;                  // base rates of class membership
+      
+        ////////////////////////////////// measurement parameters
+        real<lower=0,upper=1> pistar_1;
+        real<lower=0,upper=1> rstar_11;
+        real<lower=0,upper=1> rstar_12;
+        real<lower=0,upper=1> pistar_2;
+        real<lower=0,upper=1> rstar_22;
+        real<lower=0,upper=1> pistar_3;
+        real<lower=0,upper=1> rstar_31;
+        real<lower=0,upper=1> rstar_33;
+        real<lower=0,upper=1> pistar_4;
+        real<lower=0,upper=1> rstar_43;
+        real<lower=0,upper=1> pistar_5;
+        real<lower=0,upper=1> rstar_53;
+        real<lower=0,upper=1> pistar_6;
+        real<lower=0,upper=1> rstar_63;
+        real<lower=0,upper=1> pistar_7;
+        real<lower=0,upper=1> rstar_71;
+        real<lower=0,upper=1> rstar_73;
+        real<lower=0,upper=1> pistar_8;
+        real<lower=0,upper=1> rstar_82;
+        real<lower=0,upper=1> pistar_9;
+        real<lower=0,upper=1> rstar_93;
+        real<lower=0,upper=1> pistar_10;
+        real<lower=0,upper=1> rstar_101;
+        real<lower=0,upper=1> pistar_11;
+        real<lower=0,upper=1> rstar_111;
+        real<lower=0,upper=1> rstar_113;
+        real<lower=0,upper=1> pistar_12;
+        real<lower=0,upper=1> rstar_121;
+        real<lower=0,upper=1> rstar_123;
+        real<lower=0,upper=1> pistar_13;
+        real<lower=0,upper=1> rstar_131;
+        real<lower=0,upper=1> pistar_14;
+        real<lower=0,upper=1> rstar_141;
+        real<lower=0,upper=1> pistar_15;
+        real<lower=0,upper=1> rstar_153;
+        real<lower=0,upper=1> pistar_16;
+        real<lower=0,upper=1> rstar_161;
+        real<lower=0,upper=1> rstar_163;
+        real<lower=0,upper=1> pistar_17;
+        real<lower=0,upper=1> rstar_172;
+        real<lower=0,upper=1> rstar_173;
+        real<lower=0,upper=1> pistar_18;
+        real<lower=0,upper=1> rstar_183;
+        real<lower=0,upper=1> pistar_19;
+        real<lower=0,upper=1> rstar_193;
+        real<lower=0,upper=1> pistar_20;
+        real<lower=0,upper=1> rstar_201;
+        real<lower=0,upper=1> rstar_203;
+        real<lower=0,upper=1> pistar_21;
+        real<lower=0,upper=1> rstar_211;
+        real<lower=0,upper=1> rstar_213;
+        real<lower=0,upper=1> pistar_22;
+        real<lower=0,upper=1> rstar_223;
+        real<lower=0,upper=1> pistar_23;
+        real<lower=0,upper=1> rstar_232;
+        real<lower=0,upper=1> pistar_24;
+        real<lower=0,upper=1> rstar_242;
+        real<lower=0,upper=1> pistar_25;
+        real<lower=0,upper=1> rstar_251;
+        real<lower=0,upper=1> pistar_26;
+        real<lower=0,upper=1> rstar_263;
+        real<lower=0,upper=1> pistar_27;
+        real<lower=0,upper=1> rstar_271;
+        real<lower=0,upper=1> pistar_28;
+        real<lower=0,upper=1> rstar_283;
+      }
+      transformed parameters {
+        vector[C] log_Vc = log(Vc);
+        matrix[I,C] pi;
+      
+        ////////////////////////////////// probability of correct response
+        pi[1,1] = pistar_1*rstar_11*rstar_12;
+        pi[1,2] = pistar_1*rstar_11*rstar_12;
+        pi[1,3] = pistar_1*rstar_11;
+        pi[1,4] = pistar_1;
+        pi[2,1] = pistar_2*rstar_22;
+        pi[2,2] = pistar_2*rstar_22;
+        pi[2,3] = pistar_2;
+        pi[2,4] = pistar_2;
+        pi[3,1] = pistar_3*rstar_31*rstar_33;
+        pi[3,2] = pistar_3*rstar_31;
+        pi[3,3] = pistar_3*rstar_31;
+        pi[3,4] = pistar_3;
+        pi[4,1] = pistar_4*rstar_43;
+        pi[4,2] = pistar_4;
+        pi[4,3] = pistar_4;
+        pi[4,4] = pistar_4;
+        pi[5,1] = pistar_5*rstar_53;
+        pi[5,2] = pistar_5;
+        pi[5,3] = pistar_5;
+        pi[5,4] = pistar_5;
+        pi[6,1] = pistar_6*rstar_63;
+        pi[6,2] = pistar_6;
+        pi[6,3] = pistar_6;
+        pi[6,4] = pistar_6;
+        pi[7,1] = pistar_7*rstar_71*rstar_73;
+        pi[7,2] = pistar_7*rstar_71;
+        pi[7,3] = pistar_7*rstar_71;
+        pi[7,4] = pistar_7;
+        pi[8,1] = pistar_8*rstar_82;
+        pi[8,2] = pistar_8*rstar_82;
+        pi[8,3] = pistar_8;
+        pi[8,4] = pistar_8;
+        pi[9,1] = pistar_9*rstar_93;
+        pi[9,2] = pistar_9;
+        pi[9,3] = pistar_9;
+        pi[9,4] = pistar_9;
+        pi[10,1] = pistar_10*rstar_101;
+        pi[10,2] = pistar_10*rstar_101;
+        pi[10,3] = pistar_10*rstar_101;
+        pi[10,4] = pistar_10;
+        pi[11,1] = pistar_11*rstar_111*rstar_113;
+        pi[11,2] = pistar_11*rstar_111;
+        pi[11,3] = pistar_11*rstar_111;
+        pi[11,4] = pistar_11;
+        pi[12,1] = pistar_12*rstar_121*rstar_123;
+        pi[12,2] = pistar_12*rstar_121;
+        pi[12,3] = pistar_12*rstar_121;
+        pi[12,4] = pistar_12;
+        pi[13,1] = pistar_13*rstar_131;
+        pi[13,2] = pistar_13*rstar_131;
+        pi[13,3] = pistar_13*rstar_131;
+        pi[13,4] = pistar_13;
+        pi[14,1] = pistar_14*rstar_141;
+        pi[14,2] = pistar_14*rstar_141;
+        pi[14,3] = pistar_14*rstar_141;
+        pi[14,4] = pistar_14;
+        pi[15,1] = pistar_15*rstar_153;
+        pi[15,2] = pistar_15;
+        pi[15,3] = pistar_15;
+        pi[15,4] = pistar_15;
+        pi[16,1] = pistar_16*rstar_161*rstar_163;
+        pi[16,2] = pistar_16*rstar_161;
+        pi[16,3] = pistar_16*rstar_161;
+        pi[16,4] = pistar_16;
+        pi[17,1] = pistar_17*rstar_172*rstar_173;
+        pi[17,2] = pistar_17*rstar_172;
+        pi[17,3] = pistar_17;
+        pi[17,4] = pistar_17;
+        pi[18,1] = pistar_18*rstar_183;
+        pi[18,2] = pistar_18;
+        pi[18,3] = pistar_18;
+        pi[18,4] = pistar_18;
+        pi[19,1] = pistar_19*rstar_193;
+        pi[19,2] = pistar_19;
+        pi[19,3] = pistar_19;
+        pi[19,4] = pistar_19;
+        pi[20,1] = pistar_20*rstar_201*rstar_203;
+        pi[20,2] = pistar_20*rstar_201;
+        pi[20,3] = pistar_20*rstar_201;
+        pi[20,4] = pistar_20;
+        pi[21,1] = pistar_21*rstar_211*rstar_213;
+        pi[21,2] = pistar_21*rstar_211;
+        pi[21,3] = pistar_21*rstar_211;
+        pi[21,4] = pistar_21;
+        pi[22,1] = pistar_22*rstar_223;
+        pi[22,2] = pistar_22;
+        pi[22,3] = pistar_22;
+        pi[22,4] = pistar_22;
+        pi[23,1] = pistar_23*rstar_232;
+        pi[23,2] = pistar_23*rstar_232;
+        pi[23,3] = pistar_23;
+        pi[23,4] = pistar_23;
+        pi[24,1] = pistar_24*rstar_242;
+        pi[24,2] = pistar_24*rstar_242;
+        pi[24,3] = pistar_24;
+        pi[24,4] = pistar_24;
+        pi[25,1] = pistar_25*rstar_251;
+        pi[25,2] = pistar_25*rstar_251;
+        pi[25,3] = pistar_25*rstar_251;
+        pi[25,4] = pistar_25;
+        pi[26,1] = pistar_26*rstar_263;
+        pi[26,2] = pistar_26;
+        pi[26,3] = pistar_26;
+        pi[26,4] = pistar_26;
+        pi[27,1] = pistar_27*rstar_271;
+        pi[27,2] = pistar_27*rstar_271;
+        pi[27,3] = pistar_27*rstar_271;
+        pi[27,4] = pistar_27;
+        pi[28,1] = pistar_28*rstar_283;
+        pi[28,2] = pistar_28;
+        pi[28,3] = pistar_28;
+        pi[28,4] = pistar_28;
+      }
+      model {
+      
+        ////////////////////////////////// priors
+        Vc ~ dirichlet(rep_vector(1, C));
+        pistar_1 ~ beta(15, 3);
+        rstar_11 ~ beta(2, 2);
+        rstar_12 ~ beta(2, 2);
+        pistar_2 ~ beta(15, 3);
+        rstar_22 ~ beta(2, 2);
+        pistar_3 ~ beta(15, 3);
+        rstar_31 ~ beta(2, 2);
+        rstar_33 ~ beta(2, 2);
+        pistar_4 ~ beta(15, 3);
+        rstar_43 ~ beta(2, 2);
+        pistar_5 ~ beta(15, 3);
+        rstar_53 ~ beta(2, 2);
+        pistar_6 ~ beta(15, 3);
+        rstar_63 ~ beta(2, 2);
+        pistar_7 ~ beta(15, 3);
+        rstar_71 ~ beta(2, 2);
+        rstar_73 ~ beta(2, 2);
+        pistar_8 ~ beta(15, 3);
+        rstar_82 ~ beta(2, 2);
+        pistar_9 ~ beta(15, 3);
+        rstar_93 ~ beta(2, 2);
+        pistar_10 ~ beta(15, 3);
+        rstar_101 ~ beta(2, 2);
+        pistar_11 ~ beta(15, 3);
+        rstar_111 ~ beta(2, 2);
+        rstar_113 ~ beta(2, 2);
+        pistar_12 ~ beta(15, 3);
+        rstar_121 ~ beta(2, 2);
+        rstar_123 ~ beta(2, 2);
+        pistar_13 ~ beta(15, 3);
+        rstar_131 ~ beta(2, 2);
+        pistar_14 ~ beta(15, 3);
+        rstar_141 ~ beta(2, 2);
+        pistar_15 ~ beta(15, 3);
+        rstar_153 ~ beta(2, 2);
+        pistar_16 ~ beta(15, 3);
+        rstar_161 ~ beta(2, 2);
+        rstar_163 ~ beta(2, 2);
+        pistar_17 ~ beta(15, 3);
+        rstar_172 ~ beta(2, 2);
+        rstar_173 ~ beta(2, 2);
+        pistar_18 ~ beta(15, 3);
+        rstar_183 ~ beta(2, 2);
+        pistar_19 ~ beta(15, 3);
+        rstar_193 ~ beta(2, 2);
+        pistar_20 ~ beta(15, 3);
+        rstar_201 ~ beta(2, 2);
+        rstar_203 ~ beta(2, 2);
+        pistar_21 ~ beta(15, 3);
+        rstar_211 ~ beta(2, 2);
+        rstar_213 ~ beta(2, 2);
+        pistar_22 ~ beta(15, 3);
+        rstar_223 ~ beta(2, 2);
+        pistar_23 ~ beta(15, 3);
+        rstar_232 ~ beta(2, 2);
+        pistar_24 ~ beta(15, 3);
+        rstar_242 ~ beta(2, 2);
+        pistar_25 ~ beta(15, 3);
+        rstar_251 ~ beta(2, 2);
+        pistar_26 ~ beta(15, 3);
+        rstar_263 ~ beta(2, 2);
+        pistar_27 ~ beta(15, 3);
+        rstar_271 ~ beta(2, 2);
+        pistar_28 ~ beta(15, 3);
+        rstar_283 ~ beta(2, 2);
+      
+        ////////////////////////////////// likelihood
+        for (r in 1:R) {
+          row_vector[C] ps;
+          for (c in 1:C) {
+            array[num[r]] real log_items;
+            for (m in 1:num[r]) {
+              int i = ii[start[r] + m - 1];
+              log_items[m] = y[start[r] + m - 1] * log(pi[i,c]) +
+                             (1 - y[start[r] + m - 1]) * log(1 - pi[i,c]);
+            }
+            ps[c] = log_Vc[c] + sum(log_items);
+          }
+          target += log_sum_exp(ps);
+        }
+      }
+

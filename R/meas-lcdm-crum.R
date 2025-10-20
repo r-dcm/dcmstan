@@ -70,7 +70,6 @@ meas_lcdm <- function(
       constraint = dplyr::case_when(
         .data$param_level == 0 ~ glue::glue(""),
         .data$param_level == 1 ~ glue::glue("<lower=0>"),
-        .data$param_level >= 2 & !is.null(hierarchy) ~ glue::glue("<lower=0>"),
         .data$param_level >= 2 ~ glue::glue("<lower=-1 * min([{comp_atts}])>")
       ),
       param_def = dplyr::case_when(
@@ -79,6 +78,15 @@ meas_lcdm <- function(
       )
     ) |>
     dplyr::filter(.data$param_level <= max_interaction)
+
+  if (!is.null(hierarchy)) {
+    meas_params <- update_constraints(
+      meas_params,
+      hierarchy,
+      qmatrix,
+      att_names
+    )
+  }
 
   intercepts <- meas_params |>
     dplyr::filter(.data$param_level == 0) |>
@@ -215,6 +223,7 @@ meas_crum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
     qmatrix,
     max_interaction = 1L,
     priors = priors,
-    hierarchy = hierarchy
+    hierarchy = hierarchy,
+    att_names = att_names
   )
 }
