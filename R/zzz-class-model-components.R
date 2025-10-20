@@ -256,7 +256,7 @@ ncrum <- function() {
 #'
 #' hdcm(hierarchy = "att1 -> att2 -> att3")
 #'
-#' bayesnet()
+#' bayesnet(hierarchy = "att1 -> att2 -> att3")
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
