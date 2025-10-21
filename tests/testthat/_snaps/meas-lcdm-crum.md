@@ -2254,6 +2254,7 @@
         real g1_0;
         real g2_0;
         real g3_0;
+      
         ////////////////////////////////// structural main effects
         real<lower=0> g2_11;
         real<lower=0> g3_11;
@@ -2347,14 +2348,14 @@
         vector[C] log_Vc;
       
         ////////////////////////////////// class membership probabilities
-        Vc[1] = (1-inv_logit(g1_0))*(1-inv_logit(g2_0))*(1-inv_logit(g3_0));
-        Vc[2] = inv_logit(g1_0)*(1-inv_logit(g2_0+g2_11))*(1-inv_logit(g3_0+g3_11));
-        Vc[3] = (1-inv_logit(g1_0))*inv_logit(g2_0)*(1-inv_logit(g3_0+g3_12));
-        Vc[4] = (1-inv_logit(g1_0))*(1-inv_logit(g2_0))*inv_logit(g3_0);
-        Vc[5] = inv_logit(g1_0)*inv_logit(g2_0+g2_11)*(1-inv_logit(g3_0+g3_11+g3_12+g3_212));
-        Vc[6] = inv_logit(g1_0)*(1-inv_logit(g2_0+g2_11))*inv_logit(g3_0+g3_11);
-        Vc[7] = (1-inv_logit(g1_0))*inv_logit(g2_0)*inv_logit(g3_0+g3_12);
-        Vc[8] = inv_logit(g1_0)*inv_logit(g2_0+g2_11)*inv_logit(g3_0+g3_11+g3_12+g3_212);
+        Vc[1] = (1 - inv_logit(g1_0)) * (1 - inv_logit(g2_0)) * (1 - inv_logit(g3_0));
+        Vc[2] = inv_logit(g1_0) * (1 - inv_logit(g2_0 + g2_11)) * (1 - inv_logit(g3_0 + g3_11));
+        Vc[3] = (1 - inv_logit(g1_0)) * inv_logit(g2_0) * (1 - inv_logit(g3_0 + g3_12));
+        Vc[4] = (1 - inv_logit(g1_0)) * (1 - inv_logit(g2_0)) * inv_logit(g3_0);
+        Vc[5] = inv_logit(g1_0) * inv_logit(g2_0 + g2_11) * (1 - inv_logit(g3_0 + g3_11 + g3_12 + g3_212));
+        Vc[6] = inv_logit(g1_0) * (1 - inv_logit(g2_0 + g2_11)) * inv_logit(g3_0 + g3_11);
+        Vc[7] = (1 - inv_logit(g1_0)) * inv_logit(g2_0) * inv_logit(g3_0 + g3_12);
+        Vc[8] = inv_logit(g1_0) * inv_logit(g2_0 + g2_11) * inv_logit(g3_0 + g3_11 + g3_12 + g3_212);
       
         log_Vc = log(Vc);
         matrix[I,C] pi;
@@ -2590,10 +2591,10 @@
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
-        g2_11 ~ normal(0, 2);
         g3_0 ~ normal(0, 2);
-        g3_11 ~ normal(0, 2);
-        g3_12 ~ normal(0, 2);
+        g2_11 ~ lognormal(0, 1);
+        g3_11 ~ lognormal(0, 1);
+        g3_12 ~ lognormal(0, 1);
         g3_212 ~ normal(0, 2);
         l1_0 ~ normal(0, 2);
         l1_11 ~ lognormal(0, 1);
@@ -5296,6 +5297,7 @@
         real g1_0;
         real g2_0;
         real g3_0;
+      
         ////////////////////////////////// structural main effects
         real<lower=0> g2_11;
         real<lower=0> g3_11;
@@ -5378,14 +5380,14 @@
         vector[C] log_Vc;
       
         ////////////////////////////////// class membership probabilities
-        Vc[1] = (1-inv_logit(g1_0))*(1-inv_logit(g2_0))*(1-inv_logit(g3_0));
-        Vc[2] = inv_logit(g1_0)*(1-inv_logit(g2_0+g2_11))*(1-inv_logit(g3_0+g3_11));
-        Vc[3] = (1-inv_logit(g1_0))*inv_logit(g2_0)*(1-inv_logit(g3_0+g3_12));
-        Vc[4] = (1-inv_logit(g1_0))*(1-inv_logit(g2_0))*inv_logit(g3_0);
-        Vc[5] = inv_logit(g1_0)*inv_logit(g2_0+g2_11)*(1-inv_logit(g3_0+g3_11+g3_12+g3_212));
-        Vc[6] = inv_logit(g1_0)*(1-inv_logit(g2_0+g2_11))*inv_logit(g3_0+g3_11);
-        Vc[7] = (1-inv_logit(g1_0))*inv_logit(g2_0)*inv_logit(g3_0+g3_12);
-        Vc[8] = inv_logit(g1_0)*inv_logit(g2_0+g2_11)*inv_logit(g3_0+g3_11+g3_12+g3_212);
+        Vc[1] = (1 - inv_logit(g1_0)) * (1 - inv_logit(g2_0)) * (1 - inv_logit(g3_0));
+        Vc[2] = inv_logit(g1_0) * (1 - inv_logit(g2_0 + g2_11)) * (1 - inv_logit(g3_0 + g3_11));
+        Vc[3] = (1 - inv_logit(g1_0)) * inv_logit(g2_0) * (1 - inv_logit(g3_0 + g3_12));
+        Vc[4] = (1 - inv_logit(g1_0)) * (1 - inv_logit(g2_0)) * inv_logit(g3_0);
+        Vc[5] = inv_logit(g1_0) * inv_logit(g2_0 + g2_11) * (1 - inv_logit(g3_0 + g3_11 + g3_12 + g3_212));
+        Vc[6] = inv_logit(g1_0) * (1 - inv_logit(g2_0 + g2_11)) * inv_logit(g3_0 + g3_11);
+        Vc[7] = (1 - inv_logit(g1_0)) * inv_logit(g2_0) * inv_logit(g3_0 + g3_12);
+        Vc[8] = inv_logit(g1_0) * inv_logit(g2_0 + g2_11) * inv_logit(g3_0 + g3_11 + g3_12 + g3_212);
       
         log_Vc = log(Vc);
         matrix[I,C] pi;
@@ -5621,10 +5623,10 @@
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
-        g2_11 ~ normal(0, 2);
         g3_0 ~ normal(0, 2);
-        g3_11 ~ normal(0, 2);
-        g3_12 ~ normal(0, 2);
+        g2_11 ~ lognormal(0, 1);
+        g3_11 ~ lognormal(0, 1);
+        g3_12 ~ lognormal(0, 1);
         g3_212 ~ normal(0, 2);
         l1_0 ~ normal(0, 2);
         l1_11 ~ lognormal(0, 1);

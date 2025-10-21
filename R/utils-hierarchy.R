@@ -120,6 +120,42 @@ calculate_imatrix <- function(hierarchy) {
   as.data.frame(i_matrix)
 }
 
+saturated_bn <- function(att_names) {
+  tidyr::expand_grid(child = att_names, parent = att_names) |>
+    tibble::as_tibble() |>
+    dplyr::mutate(
+      child_id = stringr::str_remove(.data$child, "att"),
+      child_id = as.integer(.data$child_id),
+      parent_id = stringr::str_remove(.data$parent, "att"),
+      parent_id = as.integer(.data$parent_id)
+    ) |>
+    dplyr::filter(.data$parent_id > .data$child_id) |>
+    dplyr::select("child", "parent") |>
+    dplyr::mutate(
+      child = vapply(
+        .data$child,
+        rev_att_rename,
+        character(1),
+        att_names = att_names
+      ),
+      parent = vapply(
+        .data$parent,
+        rev_att_rename,
+        character(1),
+        att_names = att_names
+      ),
+      edge = paste(.data$child, "->", .data$parent)
+    ) |>
+    dplyr::select("edge") |>
+    dplyr::summarize(hierarchy = paste(.data$edge, collapse = "  ")) |>
+    dplyr::pull(.data$hierarchy)
+}
+
+rev_att_rename <- function(x, att_names) {
+  check_string(x)
+  names(att_names)[which(att_names == x)]
+}
+
 #' Determines the type of hierarchy
 #'
 #' @param x A character string containing the quoted attribute hierarchy.

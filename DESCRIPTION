@@ -31,24 +31,19 @@ Imports:
     dagitty,
     dplyr,
     ggdag,
-    purrr,
-    stringr,
     glue,
     lifecycle,
-    rdcmchecks (>= 0.0.0.9000),
+    rdcmchecks,
     rlang (>= 1.1.0),
     S7,
     tibble,
     tidyr
 Suggests: 
     cmdstanr,
-    dcmdata (>= 0.0.0.9000),
+    dcmdata,
     spelling,
     testthat (>= 3.0.0),
     withr
-Remotes: 
-    r-dcm/dcmdata,
-    r-dcm/rdcmchecks
 Additional_repositories: https://stan-dev.r-universe.dev
 Config/Needs/website: r-dcm/rdcmtemplate
 Config/testthat/edition: 3

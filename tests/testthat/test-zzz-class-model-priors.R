@@ -87,7 +87,7 @@ test_that("specify only measurement or structural", {
   )
   expect_equal(
     default_dcm_priors(structural_model = bayesnet()),
-    bayesnet_priors()
+    bayesnet_priors(hierarchy = NULL)
   )
 
   expect_equal(
@@ -233,10 +233,16 @@ test_that("hdcm default priors", {
 
 test_that("bayesnet default priors", {
   expect_identical(
-    prior_tibble(bayesnet_priors()),
-    tibble::tibble(type = c("structural"),
-                   coefficient = NA_character_,
-                   prior = c("normal(0, 2)"))
+    prior_tibble(bayesnet_priors(hierarchy = NULL)),
+    tibble::tibble(
+      type = c(
+        "structural_intercept",
+        "structural_maineffect",
+        "structural_interaction"
+      ),
+      coefficient = NA_character_,
+      prior = c("normal(0, 2)", "lognormal(0, 1)", "normal(0, 2)")
+    )
   )
 })
 

@@ -669,21 +669,21 @@ test_that("crum parameters work", {
     params,
     # nolint start: indentation_linter
     tibble::tribble(
-      ~question,         ~type,              ~attributes, ~coefficient,
-           "Q1",   "intercept",                       NA,       "l1_0",
-           "Q1",  "maineffect",                 "skill1",      "l1_11",
-           "Q2",   "intercept",                       NA,       "l2_0",
-           "Q2",  "maineffect",                 "skill2",      "l2_12",
-           "Q2",  "maineffect",                 "skill3",      "l2_13",
-           "Q3",   "intercept",                       NA,       "l3_0",
-           "Q3",  "maineffect",                 "skill1",      "l3_11",
-           "Q3",  "maineffect",                 "skill3",      "l3_13",
-           "Q3",  "maineffect",                 "skill4",      "l3_14",
-           "Q4",   "intercept",                       NA,       "l4_0",
-           "Q4",  "maineffect",                 "skill1",      "l4_11",
-           "Q4",  "maineffect",                 "skill2",      "l4_12",
-           "Q4",  "maineffect",                 "skill3",      "l4_13",
-           "Q4",  "maineffect",                 "skill4",      "l4_14"
+      ~question, ~type,        ~attributes, ~coefficient,
+      "Q1",      "intercept",        NA,    "l1_0",
+      "Q1",      "maineffect", "skill1",    "l1_11",
+      "Q2",      "intercept",        NA,    "l2_0",
+      "Q2",      "maineffect", "skill2",    "l2_12",
+      "Q2",      "maineffect", "skill3",    "l2_13",
+      "Q3",      "intercept",        NA,    "l3_0",
+      "Q3",      "maineffect", "skill1",    "l3_11",
+      "Q3",      "maineffect", "skill3",    "l3_13",
+      "Q3",      "maineffect", "skill4",    "l3_14",
+      "Q4",      "intercept",        NA,    "l4_0",
+      "Q4",      "maineffect", "skill1",    "l4_11",
+      "Q4",      "maineffect", "skill2",    "l4_12",
+      "Q4",      "maineffect", "skill3",    "l4_13",
+      "Q4",      "maineffect", "skill4",    "l4_14"
     )
     # nolint end
   )
@@ -698,21 +698,21 @@ test_that("crum parameters work", {
     ),
     # nolint start: indentation_linter
     tibble::tribble(
-      ~question,         ~type,              ~attributes, ~coefficient,
-           "Q1",   "intercept",                       NA,       "l1_0",
-           "Q1",  "maineffect",                   "att1",      "l1_11",
-           "Q2",   "intercept",                       NA,       "l2_0",
-           "Q2",  "maineffect",                   "att2",      "l2_12",
-           "Q2",  "maineffect",                   "att3",      "l2_13",
-           "Q3",   "intercept",                       NA,       "l3_0",
-           "Q3",  "maineffect",                   "att1",      "l3_11",
-           "Q3",  "maineffect",                   "att3",      "l3_13",
-           "Q3",  "maineffect",                   "att4",      "l3_14",
-           "Q4",   "intercept",                       NA,       "l4_0",
-           "Q4",  "maineffect",                   "att1",      "l4_11",
-           "Q4",  "maineffect",                   "att2",      "l4_12",
-           "Q4",  "maineffect",                   "att3",      "l4_13",
-           "Q4",  "maineffect",                   "att4",      "l4_14"
+      ~question, ~type,        ~attributes, ~coefficient,
+      "Q1",      "intercept",      NA,      "l1_0",
+      "Q1",      "maineffect", "att1",      "l1_11",
+      "Q2",      "intercept",      NA,      "l2_0",
+      "Q2",      "maineffect", "att2",      "l2_12",
+      "Q2",      "maineffect", "att3",      "l2_13",
+      "Q3",      "intercept",      NA,      "l3_0",
+      "Q3",      "maineffect", "att1",      "l3_11",
+      "Q3",      "maineffect", "att3",      "l3_13",
+      "Q3",      "maineffect", "att4",      "l3_14",
+      "Q4",      "intercept",      NA,      "l4_0",
+      "Q4",      "maineffect", "att1",      "l4_11",
+      "Q4",      "maineffect", "att2",      "l4_12",
+      "Q4",      "maineffect", "att3",      "l4_13",
+      "Q4",      "maineffect", "att4",      "l4_14"
     )
     # nolint end
   )
@@ -726,21 +726,21 @@ test_that("crum parameters work", {
     ),
     # nolint start: indentation_linter
     tibble::tribble(
-      ~item_id,         ~type,              ~attributes, ~coefficient,
-            1L,   "intercept",                       NA,       "l1_0",
-            1L,  "maineffect",                 "skill1",      "l1_11",
-            2L,   "intercept",                       NA,       "l2_0",
-            2L,  "maineffect",                 "skill2",      "l2_12",
-            2L,  "maineffect",                 "skill3",      "l2_13",
-            3L,   "intercept",                       NA,       "l3_0",
-            3L,  "maineffect",                 "skill1",      "l3_11",
-            3L,  "maineffect",                 "skill3",      "l3_13",
-            3L,  "maineffect",                 "skill4",      "l3_14",
-            4L,   "intercept",                       NA,       "l4_0",
-            4L,  "maineffect",                 "skill1",      "l4_11",
-            4L,  "maineffect",                 "skill2",      "l4_12",
-            4L,  "maineffect",                 "skill3",      "l4_13",
-            4L,  "maineffect",                 "skill4",      "l4_14"
+      ~item_id, ~type,        ~attributes, ~coefficient,
+            1L, "intercept",        NA,    "l1_0",
+            1L, "maineffect", "skill1",    "l1_11",
+            2L, "intercept",        NA,    "l2_0",
+            2L, "maineffect", "skill2",    "l2_12",
+            2L, "maineffect", "skill3",    "l2_13",
+            3L, "intercept",        NA,    "l3_0",
+            3L, "maineffect", "skill1",    "l3_11",
+            3L, "maineffect", "skill3",    "l3_13",
+            3L, "maineffect", "skill4",    "l3_14",
+            4L, "intercept",        NA,    "l4_0",
+            4L, "maineffect", "skill1",    "l4_11",
+            4L, "maineffect", "skill2",    "l4_12",
+            4L, "maineffect", "skill3",    "l4_13",
+            4L, "maineffect", "skill4",    "l4_14"
     )
     # nolint end
   )
@@ -755,21 +755,21 @@ test_that("crum parameters work", {
     ),
     # nolint start: indentation_linter
     tibble::tribble(
-      ~item_id,         ~type,              ~attributes, ~coefficient,
-            1L,   "intercept",                       NA,       "l1_0",
-            1L,  "maineffect",                   "att1",      "l1_11",
-            2L,   "intercept",                       NA,       "l2_0",
-            2L,  "maineffect",                   "att2",      "l2_12",
-            2L,  "maineffect",                   "att3",      "l2_13",
-            3L,   "intercept",                       NA,       "l3_0",
-            3L,  "maineffect",                   "att1",      "l3_11",
-            3L,  "maineffect",                   "att3",      "l3_13",
-            3L,  "maineffect",                   "att4",      "l3_14",
-            4L,   "intercept",                       NA,       "l4_0",
-            4L,  "maineffect",                   "att1",      "l4_11",
-            4L,  "maineffect",                   "att2",      "l4_12",
-            4L,  "maineffect",                   "att3",      "l4_13",
-            4L,  "maineffect",                   "att4",      "l4_14"
+      ~item_id, ~type,        ~attributes, ~coefficient,
+            1L, "intercept",      NA,      "l1_0",
+            1L, "maineffect", "att1",      "l1_11",
+            2L, "intercept",      NA,      "l2_0",
+            2L, "maineffect", "att2",      "l2_12",
+            2L, "maineffect", "att3",      "l2_13",
+            3L, "intercept",      NA,      "l3_0",
+            3L, "maineffect", "att1",      "l3_11",
+            3L, "maineffect", "att3",      "l3_13",
+            3L, "maineffect", "att4",      "l3_14",
+            4L, "intercept",      NA,      "l4_0",
+            4L, "maineffect", "att1",      "l4_11",
+            4L, "maineffect", "att2",      "l4_12",
+            4L, "maineffect", "att3",      "l4_13",
+            4L, "maineffect", "att4",      "l4_14"
     )
     # nolint end
   )
@@ -879,23 +879,23 @@ test_that("nida parameters (table 6.6)", {
     pi_code,
     # nolint start: line_length_linter
     tibble::tribble(
-      ~rupp_id, ~`Item 1`, ~`Item 2`, ~`Item 3`, ~`Item 4`,
-       1L, "guess[1]*guess[2]",           "guess[4]",      "guess[2]*guess[3]",           "guess[1]",
-       2L, "guess[1]*guess[2]",           "(1 - slip[4])", "guess[2]*guess[3]",           "guess[1]",
-       3L, "guess[1]*guess[2]",           "guess[4]",      "guess[2]*(1 - slip[3])",      "guess[1]",
-       4L, "guess[1]*guess[2]",           "(1 - slip[4])", "guess[2]*(1 - slip[3])",      "guess[1]",
-       5L, "guess[1]*(1 - slip[2])",      "guess[4]",      "(1 - slip[2])*guess[3]",      "guess[1]",
-       6L, "guess[1]*(1 - slip[2])",      "(1 - slip[4])", "(1 - slip[2])*guess[3]",      "guess[1]",
-       7L, "guess[1]*(1 - slip[2])",      "guess[4]",      "(1 - slip[2])*(1 - slip[3])", "guess[1]",
-       8L, "guess[1]*(1 - slip[2])",      "(1 - slip[4])", "(1 - slip[2])*(1 - slip[3])", "guess[1]",
-       9L, "(1 - slip[1])*guess[2]",      "guess[4]",      "guess[2]*guess[3]",           "(1 - slip[1])",
-      10L, "(1 - slip[1])*guess[2]",      "(1 - slip[4])", "guess[2]*guess[3]",           "(1 - slip[1])",
-      11L, "(1 - slip[1])*guess[2]",      "guess[4]",      "guess[2]*(1 - slip[3])",      "(1 - slip[1])",
-      12L, "(1 - slip[1])*guess[2]",      "(1 - slip[4])", "guess[2]*(1 - slip[3])",      "(1 - slip[1])",
-      13L, "(1 - slip[1])*(1 - slip[2])", "guess[4]",      "(1 - slip[2])*guess[3]",      "(1 - slip[1])",
-      14L, "(1 - slip[1])*(1 - slip[2])", "(1 - slip[4])", "(1 - slip[2])*guess[3]",      "(1 - slip[1])",
-      15L, "(1 - slip[1])*(1 - slip[2])", "guess[4]",      "(1 - slip[2])*(1 - slip[3])", "(1 - slip[1])",
-      16L, "(1 - slip[1])*(1 - slip[2])", "(1 - slip[4])", "(1 - slip[2])*(1 - slip[3])", "(1 - slip[1])"
+      ~rupp_id, ~`Item 1`,                     ~`Item 2`,       ~`Item 3`,                     ~`Item 4`,
+            1L, "guess[1]*guess[2]",           "guess[4]",      "guess[2]*guess[3]",           "guess[1]",
+            2L, "guess[1]*guess[2]",           "(1 - slip[4])", "guess[2]*guess[3]",           "guess[1]",
+            3L, "guess[1]*guess[2]",           "guess[4]",      "guess[2]*(1 - slip[3])",      "guess[1]",
+            4L, "guess[1]*guess[2]",           "(1 - slip[4])", "guess[2]*(1 - slip[3])",      "guess[1]",
+            5L, "guess[1]*(1 - slip[2])",      "guess[4]",      "(1 - slip[2])*guess[3]",      "guess[1]",
+            6L, "guess[1]*(1 - slip[2])",      "(1 - slip[4])", "(1 - slip[2])*guess[3]",      "guess[1]",
+            7L, "guess[1]*(1 - slip[2])",      "guess[4]",      "(1 - slip[2])*(1 - slip[3])", "guess[1]",
+            8L, "guess[1]*(1 - slip[2])",      "(1 - slip[4])", "(1 - slip[2])*(1 - slip[3])", "guess[1]",
+            9L, "(1 - slip[1])*guess[2]",      "guess[4]",      "guess[2]*guess[3]",           "(1 - slip[1])",
+           10L, "(1 - slip[1])*guess[2]",      "(1 - slip[4])", "guess[2]*guess[3]",           "(1 - slip[1])",
+           11L, "(1 - slip[1])*guess[2]",      "guess[4]",      "guess[2]*(1 - slip[3])",      "(1 - slip[1])",
+           12L, "(1 - slip[1])*guess[2]",      "(1 - slip[4])", "guess[2]*(1 - slip[3])",      "(1 - slip[1])",
+           13L, "(1 - slip[1])*(1 - slip[2])", "guess[4]",      "(1 - slip[2])*guess[3]",      "(1 - slip[1])",
+           14L, "(1 - slip[1])*(1 - slip[2])", "(1 - slip[4])", "(1 - slip[2])*guess[3]",      "(1 - slip[1])",
+           15L, "(1 - slip[1])*(1 - slip[2])", "guess[4]",      "(1 - slip[2])*(1 - slip[3])", "(1 - slip[1])",
+           16L, "(1 - slip[1])*(1 - slip[2])", "(1 - slip[4])", "(1 - slip[2])*(1 - slip[3])", "(1 - slip[1])"
     )
     # nolint end
   )
@@ -993,23 +993,23 @@ test_that("ncrum parameters (table 6.8)", {
     pi_code,
     # nolint start: line_length_linter
     tibble::tribble(
-      ~rupp_id, ~`Item 1`, ~`Item 2`, ~`Item 3`, ~`Item 4`,
-       1L, "pistar_1*rstar_11*rstar_12", "pistar_2*rstar_24", "pistar_3*rstar_32*rstar_33", "pistar_4*rstar_41",
-       2L, "pistar_1*rstar_11*rstar_12", "pistar_2",          "pistar_3*rstar_32*rstar_33", "pistar_4*rstar_41",
-       3L, "pistar_1*rstar_11*rstar_12", "pistar_2*rstar_24", "pistar_3*rstar_32",          "pistar_4*rstar_41",
-       4L, "pistar_1*rstar_11*rstar_12", "pistar_2",          "pistar_3*rstar_32",          "pistar_4*rstar_41",
-       5L, "pistar_1*rstar_11",          "pistar_2*rstar_24", "pistar_3*rstar_33",          "pistar_4*rstar_41",
-       6L, "pistar_1*rstar_11",          "pistar_2",          "pistar_3*rstar_33",          "pistar_4*rstar_41",
-       7L, "pistar_1*rstar_11",          "pistar_2*rstar_24", "pistar_3",                   "pistar_4*rstar_41",
-       8L, "pistar_1*rstar_11",          "pistar_2",          "pistar_3",                   "pistar_4*rstar_41",
-       9L, "pistar_1*rstar_12",          "pistar_2*rstar_24", "pistar_3*rstar_32*rstar_33", "pistar_4",
-      10L, "pistar_1*rstar_12",          "pistar_2",          "pistar_3*rstar_32*rstar_33", "pistar_4",
-      11L, "pistar_1*rstar_12",          "pistar_2*rstar_24", "pistar_3*rstar_32",          "pistar_4",
-      12L, "pistar_1*rstar_12",          "pistar_2",          "pistar_3*rstar_32",          "pistar_4",
-      13L, "pistar_1",                   "pistar_2*rstar_24", "pistar_3*rstar_33",          "pistar_4",
-      14L, "pistar_1",                   "pistar_2",          "pistar_3*rstar_33",          "pistar_4",
-      15L, "pistar_1",                   "pistar_2*rstar_24", "pistar_3",                   "pistar_4",
-      16L, "pistar_1",                   "pistar_2",          "pistar_3",                   "pistar_4"
+      ~rupp_id, ~`Item 1`,                    ~`Item 2`,           ~`Item 3`,                    ~`Item 4`,
+            1L, "pistar_1*rstar_11*rstar_12", "pistar_2*rstar_24", "pistar_3*rstar_32*rstar_33", "pistar_4*rstar_41",
+            2L, "pistar_1*rstar_11*rstar_12", "pistar_2",          "pistar_3*rstar_32*rstar_33", "pistar_4*rstar_41",
+            3L, "pistar_1*rstar_11*rstar_12", "pistar_2*rstar_24", "pistar_3*rstar_32",          "pistar_4*rstar_41",
+            4L, "pistar_1*rstar_11*rstar_12", "pistar_2",          "pistar_3*rstar_32",          "pistar_4*rstar_41",
+            5L, "pistar_1*rstar_11",          "pistar_2*rstar_24", "pistar_3*rstar_33",          "pistar_4*rstar_41",
+            6L, "pistar_1*rstar_11",          "pistar_2",          "pistar_3*rstar_33",          "pistar_4*rstar_41",
+            7L, "pistar_1*rstar_11",          "pistar_2*rstar_24", "pistar_3",                   "pistar_4*rstar_41",
+            8L, "pistar_1*rstar_11",          "pistar_2",          "pistar_3",                   "pistar_4*rstar_41",
+            9L, "pistar_1*rstar_12",          "pistar_2*rstar_24", "pistar_3*rstar_32*rstar_33", "pistar_4",
+           10L, "pistar_1*rstar_12",          "pistar_2",          "pistar_3*rstar_32*rstar_33", "pistar_4",
+           11L, "pistar_1*rstar_12",          "pistar_2*rstar_24", "pistar_3*rstar_32",          "pistar_4",
+           12L, "pistar_1*rstar_12",          "pistar_2",          "pistar_3*rstar_32",          "pistar_4",
+           13L, "pistar_1",                   "pistar_2*rstar_24", "pistar_3*rstar_33",          "pistar_4",
+           14L, "pistar_1",                   "pistar_2",          "pistar_3*rstar_33",          "pistar_4",
+           15L, "pistar_1",                   "pistar_2*rstar_24", "pistar_3",                   "pistar_4",
+           16L, "pistar_1",                   "pistar_2",          "pistar_3",                   "pistar_4"
     )
     # nolint end
   )
@@ -1115,23 +1115,23 @@ test_that("nido parameters (table 6.15)", {
     pi_code,
     # nolint start: line_length_linter
     tibble::tribble(
-      ~rupp_id, ~`Item 1`, ~`Item 2`, ~`Item 3`, ~`Item 4`,
-       1L, "l_01",      "l_02+l_03",           "l_04",      "l_02+l_03+l_04",
-       2L, "l_01",      "l_02+l_03",           "l_04+l_14", "l_02+l_03+l_04+l_14",
-       3L, "l_01",      "l_02+l_03+l_13",      "l_04",      "l_02+l_03+l_13+l_04",
-       4L, "l_01",      "l_02+l_03+l_13",      "l_04+l_14", "l_02+l_03+l_13+l_04+l_14",
-       5L, "l_01",      "l_02+l_12+l_03",      "l_04",      "l_02+l_12+l_03+l_04",
-       6L, "l_01",      "l_02+l_12+l_03",      "l_04+l_14", "l_02+l_12+l_03+l_04+l_14",
-       7L, "l_01",      "l_02+l_12+l_03+l_13", "l_04",      "l_02+l_12+l_03+l_13+l_04",
-       8L, "l_01",      "l_02+l_12+l_03+l_13", "l_04+l_14", "l_02+l_12+l_03+l_13+l_04+l_14",
-       9L, "l_01+l_11", "l_02+l_03",           "l_04",      "l_02+l_03+l_04",
-      10L, "l_01+l_11", "l_02+l_03",           "l_04+l_14", "l_02+l_03+l_04+l_14",
-      11L, "l_01+l_11", "l_02+l_03+l_13",      "l_04",      "l_02+l_03+l_13+l_04",
-      12L, "l_01+l_11", "l_02+l_03+l_13",      "l_04+l_14", "l_02+l_03+l_13+l_04+l_14",
-      13L, "l_01+l_11", "l_02+l_12+l_03",      "l_04",      "l_02+l_12+l_03+l_04",
-      14L, "l_01+l_11", "l_02+l_12+l_03",      "l_04+l_14", "l_02+l_12+l_03+l_04+l_14",
-      15L, "l_01+l_11", "l_02+l_12+l_03+l_13", "l_04",      "l_02+l_12+l_03+l_13+l_04",
-      16L, "l_01+l_11", "l_02+l_12+l_03+l_13", "l_04+l_14", "l_02+l_12+l_03+l_13+l_04+l_14"
+      ~rupp_id, ~`Item 1`,   ~`Item 2`,             ~`Item 3`,   ~`Item 4`,
+            1L, "l_01",      "l_02+l_03",           "l_04",      "l_02+l_03+l_04",
+            2L, "l_01",      "l_02+l_03",           "l_04+l_14", "l_02+l_03+l_04+l_14",
+            3L, "l_01",      "l_02+l_03+l_13",      "l_04",      "l_02+l_03+l_13+l_04",
+            4L, "l_01",      "l_02+l_03+l_13",      "l_04+l_14", "l_02+l_03+l_13+l_04+l_14",
+            5L, "l_01",      "l_02+l_12+l_03",      "l_04",      "l_02+l_12+l_03+l_04",
+            6L, "l_01",      "l_02+l_12+l_03",      "l_04+l_14", "l_02+l_12+l_03+l_04+l_14",
+            7L, "l_01",      "l_02+l_12+l_03+l_13", "l_04",      "l_02+l_12+l_03+l_13+l_04",
+            8L, "l_01",      "l_02+l_12+l_03+l_13", "l_04+l_14", "l_02+l_12+l_03+l_13+l_04+l_14",
+            9L, "l_01+l_11", "l_02+l_03",           "l_04",      "l_02+l_03+l_04",
+           10L, "l_01+l_11", "l_02+l_03",           "l_04+l_14", "l_02+l_03+l_04+l_14",
+           11L, "l_01+l_11", "l_02+l_03+l_13",      "l_04",      "l_02+l_03+l_13+l_04",
+           12L, "l_01+l_11", "l_02+l_03+l_13",      "l_04+l_14", "l_02+l_03+l_13+l_04+l_14",
+           13L, "l_01+l_11", "l_02+l_12+l_03",      "l_04",      "l_02+l_12+l_03+l_04",
+           14L, "l_01+l_11", "l_02+l_12+l_03",      "l_04+l_14", "l_02+l_12+l_03+l_04+l_14",
+           15L, "l_01+l_11", "l_02+l_12+l_03+l_13", "l_04",      "l_02+l_12+l_03+l_13+l_04",
+           16L, "l_01+l_11", "l_02+l_12+l_03+l_13", "l_04+l_14", "l_02+l_12+l_03+l_13+l_04+l_14"
     )
     # nolint end
   )
@@ -1226,23 +1226,23 @@ test_that("crum parameters (table 6.17)", {
     pi_code,
     # nolint start: line_length_linter
     tibble::tribble(
-      ~rupp_id, ~`Item 1`, ~`Item 2`, ~`Item 3`, ~`Item 4`,
-       1L, "l1_0",       "l2_0",             "l3_0",       "l4_0",
-       2L, "l1_0",       "l2_0",             "l3_0+l3_14", "l4_0+l4_14",
-       3L, "l1_0",       "l2_0+l2_13",       "l3_0",       "l4_0+l4_13",
-       4L, "l1_0",       "l2_0+l2_13",       "l3_0+l3_14", "l4_0+l4_13+l4_14",
-       5L, "l1_0",       "l2_0+l2_12",       "l3_0",       "l4_0+l4_12",
-       6L, "l1_0",       "l2_0+l2_12",       "l3_0+l3_14", "l4_0+l4_12+l4_14",
-       7L, "l1_0",       "l2_0+l2_12+l2_13", "l3_0",       "l4_0+l4_12+l4_13",
-       8L, "l1_0",       "l2_0+l2_12+l2_13", "l3_0+l3_14", "l4_0+l4_12+l4_13+l4_14",
-       9L, "l1_0+l1_11", "l2_0",             "l3_0",       "l4_0",
-      10L, "l1_0+l1_11", "l2_0",             "l3_0+l3_14", "l4_0+l4_14",
-      11L, "l1_0+l1_11", "l2_0+l2_13",       "l3_0",       "l4_0+l4_13",
-      12L, "l1_0+l1_11", "l2_0+l2_13",       "l3_0+l3_14", "l4_0+l4_13+l4_14",
-      13L, "l1_0+l1_11", "l2_0+l2_12",       "l3_0",       "l4_0+l4_12",
-      14L, "l1_0+l1_11", "l2_0+l2_12",       "l3_0+l3_14", "l4_0+l4_12+l4_14",
-      15L, "l1_0+l1_11", "l2_0+l2_12+l2_13", "l3_0",       "l4_0+l4_12+l4_13",
-      16L, "l1_0+l1_11", "l2_0+l2_12+l2_13", "l3_0+l3_14", "l4_0+l4_12+l4_13+l4_14"
+      ~rupp_id, ~`Item 1`,    ~`Item 2`,          ~`Item 3`,    ~`Item 4`,
+            1L, "l1_0",       "l2_0",             "l3_0",       "l4_0",
+            2L, "l1_0",       "l2_0",             "l3_0+l3_14", "l4_0+l4_14",
+            3L, "l1_0",       "l2_0+l2_13",       "l3_0",       "l4_0+l4_13",
+            4L, "l1_0",       "l2_0+l2_13",       "l3_0+l3_14", "l4_0+l4_13+l4_14",
+            5L, "l1_0",       "l2_0+l2_12",       "l3_0",       "l4_0+l4_12",
+            6L, "l1_0",       "l2_0+l2_12",       "l3_0+l3_14", "l4_0+l4_12+l4_14",
+            7L, "l1_0",       "l2_0+l2_12+l2_13", "l3_0",       "l4_0+l4_12+l4_13",
+            8L, "l1_0",       "l2_0+l2_12+l2_13", "l3_0+l3_14", "l4_0+l4_12+l4_13+l4_14",
+            9L, "l1_0+l1_11", "l2_0",             "l3_0",       "l4_0",
+           10L, "l1_0+l1_11", "l2_0",             "l3_0+l3_14", "l4_0+l4_14",
+           11L, "l1_0+l1_11", "l2_0+l2_13",       "l3_0",       "l4_0+l4_13",
+           12L, "l1_0+l1_11", "l2_0+l2_13",       "l3_0+l3_14", "l4_0+l4_13+l4_14",
+           13L, "l1_0+l1_11", "l2_0+l2_12",       "l3_0",       "l4_0+l4_12",
+           14L, "l1_0+l1_11", "l2_0+l2_12",       "l3_0+l3_14", "l4_0+l4_12+l4_14",
+           15L, "l1_0+l1_11", "l2_0+l2_12+l2_13", "l3_0",       "l4_0+l4_12+l4_13",
+           16L, "l1_0+l1_11", "l2_0+l2_12+l2_13", "l3_0+l3_14", "l4_0+l4_12+l4_13+l4_14"
     )
     # nolint end
   )
@@ -1342,53 +1342,6 @@ test_that("independent parameters work", {
   expect_equal(params, params2)
 })
 
-
-test_that("bayesian network parameters work", {
-  test_qmatrix <- tibble::tibble(
-    att1 = c(1, 0, 1, 1),
-    att2 = c(0, 1, 0, 1),
-    att3 = c(0, 1, 1, 1)
-  )
-
-  params <- get_parameters(bayesnet(), qmatrix = test_qmatrix)
-
-  expect_true(tibble::is_tibble(params))
-  expect_equal(colnames(params), c("child_id", "type", "attributes",
-                                   "coefficient"))
-
-  expect_equal(
-    params,
-    tibble::tribble(
-      ~child_id,         ~type,              ~attributes, ~coefficient,
-      1L,            "structural",        NA_character_,   "g1_0",
-      2L,            "structural",        NA_character_,   "g2_0",
-      2L,            "structural",        "att1",          "g2_11",
-      3L,            "structural",        NA_character_,   "g3_0",
-      3L,            "structural",        "att1",          "g3_11",
-      3L,            "structural",        "att2",          "g3_12",
-      3L,            "structural",        "att1__att2",    "g3_212"
-    )
-  )
-
-  params <- get_parameters(
-    bayesnet(hierarchy <- "att3 -> att2 -> att1"),
-    qmatrix = test_qmatrix
-    )
-
-  expect_equal(
-    params,
-    tibble::tribble(
-      ~child_id,         ~type,              ~attributes, ~coefficient,
-      1L,   "structural",       NA_character_,     "g1_0",
-      1L,   "structural",       "att2",            "g1_12",
-      2L,   "structural",       NA_character_,     "g2_0",
-      2L,   "structural",       "att3",            "g2_13",
-      3L,   "structural",       NA_character_,     "g3_0"
-    )
-  )
-
-})
-
 test_that("loglinear parameters work", {
   test_qmatrix <- tibble::tibble(
     att1 = c(1, 0, 1, 1),
@@ -1456,7 +1409,6 @@ test_that("loglinear parameters work", {
     )
     # nolint end
   )
-
 })
 
 test_that("hdcm parameters work", {
@@ -1487,6 +1439,189 @@ test_that("hdcm parameters work", {
 
   expect_equal(params, params2)
 })
+
+test_that("bayesian network parameters work", {
+  params <- get_parameters(
+    bayesnet(
+      "appropriateness -> multiplicative_comparison
+       appropriateness -> partitioning_iterating
+       multiplicative_comparison -> referent_units
+       partitioning_iterating -> referent_units"
+    ),
+    qmatrix = dcmdata::dtmr_qmatrix,
+    identifier = "item"
+  )
+
+  expect_true(tibble::is_tibble(params))
+  expect_equal(
+    colnames(params),
+    c("profile_id", "type", "attributes", "coefficient")
+  )
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~profile_id,                    ~type,                                         ~attributes, ~coefficient,
+               1L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               1L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               1L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               1L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               2L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               2L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               2L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               2L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               3L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               3L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+               3L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               3L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               3L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               4L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               4L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               4L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+               4L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               4L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               4L,  "structural_maineffect",                                   "appropriateness",      "g4_13",
+               5L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               5L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+               5L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               5L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               5L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               6L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               6L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+               6L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               6L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               6L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               7L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               7L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               7L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+               7L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               7L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               7L,  "structural_maineffect",                                   "appropriateness",      "g4_13",
+               8L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               8L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+               8L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               8L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               8L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               9L,   "structural_intercept",                                    "referent_units",       "g1_0",
+               9L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+               9L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+               9L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+               9L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+               9L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+               9L,  "structural_maineffect",                                   "appropriateness",      "g4_13",
+              10L,   "structural_intercept",                                    "referent_units",       "g1_0",
+              10L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+              10L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+              10L, "structural_interaction", "partitioning_iterating__multiplicative_comparison",     "g1_224",
+              10L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+              10L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+              10L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+              11L,   "structural_intercept",                                    "referent_units",       "g1_0",
+              11L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+              11L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+              11L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+              11L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+              11L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+              11L,  "structural_maineffect",                                   "appropriateness",      "g4_13",
+              12L,   "structural_intercept",                                    "referent_units",       "g1_0",
+              12L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+              12L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+              12L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+              12L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+              12L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+              12L,  "structural_maineffect",                                   "appropriateness",      "g4_13",
+              13L,   "structural_intercept",                                    "referent_units",       "g1_0",
+              13L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+              13L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+              13L, "structural_interaction", "partitioning_iterating__multiplicative_comparison",     "g1_224",
+              13L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+              13L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+              13L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+              14L,   "structural_intercept",                                    "referent_units",       "g1_0",
+              14L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+              14L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+              14L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+              14L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+              14L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+              14L,  "structural_maineffect",                                   "appropriateness",      "g4_13",
+              15L,   "structural_intercept",                                    "referent_units",       "g1_0",
+              15L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+              15L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+              15L, "structural_interaction", "partitioning_iterating__multiplicative_comparison",     "g1_224",
+              15L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+              15L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+              15L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+              15L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+              15L,  "structural_maineffect",                                   "appropriateness",      "g4_13",
+              16L,   "structural_intercept",                                    "referent_units",       "g1_0",
+              16L,  "structural_maineffect",                            "partitioning_iterating",      "g1_12",
+              16L,  "structural_maineffect",                         "multiplicative_comparison",      "g1_14",
+              16L, "structural_interaction", "partitioning_iterating__multiplicative_comparison",     "g1_224",
+              16L,   "structural_intercept",                            "partitioning_iterating",       "g2_0",
+              16L,  "structural_maineffect",                                   "appropriateness",      "g2_13",
+              16L,   "structural_intercept",                                   "appropriateness",       "g3_0",
+              16L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
+              16L,  "structural_maineffect",                                   "appropriateness",      "g4_13"
+    )
+  )
+
+  test_qmatrix <- tibble::tibble(
+    att1 = c(1, 0, 1, 1),
+    att2 = c(0, 1, 0, 1),
+    att3 = c(0, 1, 1, 1)
+  )
+
+  params <- get_parameters(
+    bayesnet(),
+    qmatrix = test_qmatrix
+  )
+
+  expect_equal(
+    params,
+    tibble::tribble(
+      ~profile_id,                    ~type,  ~attributes, ~coefficient,
+               1L,   "structural_intercept",       "att1",       "g1_0",
+               1L,   "structural_intercept",       "att2",       "g2_0",
+               1L,   "structural_intercept",       "att3",       "g3_0",
+               2L,   "structural_intercept",       "att1",       "g1_0",
+               2L,   "structural_intercept",       "att2",       "g2_0",
+               2L,  "structural_maineffect",       "att1",      "g2_11",
+               2L,   "structural_intercept",       "att3",       "g3_0",
+               2L,  "structural_maineffect",       "att1",      "g3_11",
+               3L,   "structural_intercept",       "att1",       "g1_0",
+               3L,   "structural_intercept",       "att2",       "g2_0",
+               3L,   "structural_intercept",       "att3",       "g3_0",
+               3L,  "structural_maineffect",       "att2",      "g3_12",
+               4L,   "structural_intercept",       "att1",       "g1_0",
+               4L,   "structural_intercept",       "att2",       "g2_0",
+               4L,   "structural_intercept",       "att3",       "g3_0",
+               5L,   "structural_intercept",       "att1",       "g1_0",
+               5L,   "structural_intercept",       "att2",       "g2_0",
+               5L,  "structural_maineffect",       "att1",      "g2_11",
+               5L,   "structural_intercept",       "att3",       "g3_0",
+               5L,  "structural_maineffect",       "att1",      "g3_11",
+               5L,  "structural_maineffect",       "att2",      "g3_12",
+               5L, "structural_interaction", "att1__att2",     "g3_212",
+               6L,   "structural_intercept",       "att1",       "g1_0",
+               6L,   "structural_intercept",       "att2",       "g2_0",
+               6L,  "structural_maineffect",       "att1",      "g2_11",
+               6L,   "structural_intercept",       "att3",       "g3_0",
+               6L,  "structural_maineffect",       "att1",      "g3_11",
+               7L,   "structural_intercept",       "att1",       "g1_0",
+               7L,   "structural_intercept",       "att2",       "g2_0",
+               7L,   "structural_intercept",       "att3",       "g3_0",
+               7L,  "structural_maineffect",       "att2",      "g3_12",
+               8L,   "structural_intercept",       "att1",       "g1_0",
+               8L,   "structural_intercept",       "att2",       "g2_0",
+               8L,  "structural_maineffect",       "att1",      "g2_11",
+               8L,   "structural_intercept",       "att3",       "g3_0",
+               8L,  "structural_maineffect",       "att1",      "g3_11",
+               8L,  "structural_maineffect",       "att2",      "g3_12",
+               8L, "structural_interaction", "att1__att2",     "g3_212"
+    )
+  )
+})
+
 
 # dcm specification parameters -------------------------------------------------
 test_that("warnings are produced for unnecessary arguments", {
@@ -1564,7 +1699,11 @@ test_that("combining parameters in a specification works", {
     dplyr::bind_rows(
       get_parameters(lcdm(), qmatrix = test_qmatrix),
       get_parameters(loglinear(), qmatrix = test_qmatrix)
-    )
+    ) |>
+      dplyr::select(
+        dplyr::any_of(c("item_id", "profile_id")),
+        dplyr::everything()
+      )
   )
 
   spec4 <- dcm_specify(
@@ -1577,6 +1716,10 @@ test_that("combining parameters in a specification works", {
     dplyr::bind_rows(
       get_parameters(lcdm(), qmatrix = test_qmatrix),
       get_parameters(loglinear(max_interaction = 1), qmatrix = test_qmatrix)
-    )
+    ) |>
+      dplyr::select(
+        dplyr::any_of(c("item_id", "profile_id")),
+        dplyr::everything()
+      )
   )
 })

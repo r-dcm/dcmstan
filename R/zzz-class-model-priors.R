@@ -110,7 +110,9 @@ default_dcm_priors <- function(
       independent = independent_priors(),
       loglinear = loglinear_priors(),
       hdcm = hdcm_priors(),
-      bayesnet = bayesnet_priors()
+      bayesnet = bayesnet_priors(
+        hierarchy = structural_model@model_args$hierarchy
+      )
     )
   }
 
@@ -176,8 +178,30 @@ loglinear_priors <- function() {
 
 hdcm_priors <- unconstrained_priors
 
-bayesnet_priors <- function() {
-  prior("normal(0, 2)", type = "structural")
+bayesnet_priors <- function(hierarchy) {
+  if (is.null(hierarchy)) {
+    prior <- c(
+      prior("normal(0, 2)", type = "structural_intercept"),
+      prior("lognormal(0, 1)", type = "structural_maineffect"),
+      prior("normal(0, 2)", type = "structural_interaction")
+    )
+    return(prior)
+  }
+
+  max_interaction <- determine_hierarchy_type(hierarchy, allow_null = FALSE) |>
+    dplyr::mutate(num_parent = vapply(.data$parents, length, integer(1))) |>
+    dplyr::pull(num_parent) |>
+    max()
+
+  prior <- c(
+    prior("normal(0, 2)", type = "structural_intercept"),
+    prior("lognormal(0, 1)", type = "structural_maineffect")
+  )
+  if (max_interaction > 1) {
+    prior = c(prior, prior("normal(0, 2)", type = "structural_interaction"))
+  }
+
+  prior
 }
 
 # dcmprior class ---------------------------------------------------------------

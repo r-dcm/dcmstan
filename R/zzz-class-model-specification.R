@@ -73,9 +73,18 @@ dcm_specify <- function(
   }
 
   # tweak structural model as needed -------------------------------------------
-  if (structural_model@model == "bayesnet" &&
-        ncol(qmatrix$clean_qmatrix) == 1) {
+  if (
+    structural_model@model == "bayesnet" &&
+      ncol(qmatrix$clean_qmatrix) == 1
+  ) {
     structural_model <- unconstrained()
+  } else if (
+    structural_model@model == "bayesnet" &&
+      is.null(structural_model@model_args$hierarchy)
+  ) {
+    structural_model@model_args$hierarchy <- saturated_bn(
+      att_names = qmatrix$attribute_names
+    )
   }
 
   # define priors --------------------------------------------------------------

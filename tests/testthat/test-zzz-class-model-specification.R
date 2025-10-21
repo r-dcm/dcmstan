@@ -123,7 +123,7 @@ test_that("printing works", {
     node3 = c(1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 1L, 1L)
   )
 
-  spec <- dcm_specify(
+  unst1 <- dcm_specify(
     qmatrix = test_qmatrix,
     identifier = "item",
     measurement_model = lcdm(max_interaction = 1),
@@ -137,7 +137,7 @@ test_that("printing works", {
     skill_3 = c(0L, 1L, 1L, 1L, 0L, 1L, 0L, 1L, 0L, 0L)
   )
 
-  spec2 <- dcm_specify(
+  indp1 <- dcm_specify(
     qmatrix = test_qmatrix2,
     identifier = "question",
     measurement_model = dina(),

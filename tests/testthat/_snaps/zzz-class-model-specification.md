@@ -145,11 +145,15 @@
       * "node3" (7 items)
       
       i Attribute structure:
-        Bayesian network
+        Bayesian network,
+        with structure:
+        node1 -> node2 node1 -> node3 node2 -> node3
       
       i Prior distributions:
         intercept ~ normal(0, 2)
         maineffect ~ lognormal(0, 1)
         interaction ~ normal(0, 2)
-        structural ~ normal(0, 2)
+        structural_intercept ~ normal(0, 2)
+        structural_maineffect ~ lognormal(0, 1)
+        structural_interaction ~ normal(0, 2)
 
