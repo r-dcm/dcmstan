@@ -91,7 +91,7 @@ lcdm_parameters <- function(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
           ) +
-          1
+          1 # nolint
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue(
@@ -521,7 +521,7 @@ loglinear_parameters <- function(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
           ) +
-          1
+          1 # nolint
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue("g_{param_level}", "{gsub(\"__\", \"\", atts)}"),
@@ -611,7 +611,7 @@ bayesnet_parameters <- function(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
           ) +
-          1
+          1 # nolint
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue(
