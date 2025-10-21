@@ -611,7 +611,7 @@ bayesnet_parameters <- function(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
           ) +
-            1
+          1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue(
