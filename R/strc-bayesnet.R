@@ -36,7 +36,7 @@ strc_bayesnet <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
             gregexpr(pattern = "__", text = .data$attributes),
             function(.x) length(attr(.x, "match.length"))
           ) +
-            1
+          1
       ),
       atts = gsub("[^0-9|_]", "", .data$attributes),
       comp_atts = mapply(
