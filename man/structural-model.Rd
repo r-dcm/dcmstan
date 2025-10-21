@@ -33,7 +33,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained, independent attributes, log-linear, and hierarchical diagnostic, classification model (HDCM).
+unconstrained, independent attributes, log-linear, hierarchical diagnostic classification model (HDCM), and, Bayesian network.
 See details for additional information on each model.
 }
 \details{
@@ -80,7 +80,7 @@ loglinear(max_interaction = 1)
 
 hdcm(hierarchy = "att1 -> att2 -> att3")
 
-bayesnet()
+bayesnet(hierarchy = "att1 -> att2 -> att3")
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification

@@ -124,10 +124,8 @@ saturated_bn <- function(att_names) {
   tidyr::expand_grid(child = att_names, parent = att_names) |>
     tibble::as_tibble() |>
     dplyr::mutate(
-      child_id = stringr::str_remove(.data$child, "att"),
-      child_id = as.integer(.data$child_id),
-      parent_id = stringr::str_remove(.data$parent, "att"),
-      parent_id = as.integer(.data$parent_id)
+      child_id = as.integer(gsub("att", "", .data$child)),
+      parent_id = as.integer(gsub("att", "", .data$parent))
     ) |>
     dplyr::filter(.data$parent_id > .data$child_id) |>
     dplyr::select("child", "parent") |>

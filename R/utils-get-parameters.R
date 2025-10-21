@@ -710,7 +710,7 @@ model_matrix_name_repair <- function(x) {
 
 #' Filter out nested parameters from the LCDM
 #'
-#' @param all_params Parameters returned by [lcdm_parameters()].
+#' @param all_params Parameters returned by `lcdm_parameters()`.
 #' @param filtered_hierarchy A tibble, as returned by [ggdag::tidy_dagitty()].
 #'
 #' @returns A filtered `all_params` object.
@@ -780,7 +780,7 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
 
 #' Rename parameters to be consistent with the attribute hierarchy
 #'
-#' @param all_params Parameters returned by [lcdm_parameters()].
+#' @param all_params Parameters returned by `lcdm_parameters()`.
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
 #' @param att_names Vector of attribute names, as in the

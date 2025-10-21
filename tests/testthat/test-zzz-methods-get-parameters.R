@@ -1575,7 +1575,8 @@ test_that("bayesian network parameters work", {
 
   params <- get_parameters(
     bayesnet(),
-    qmatrix = test_qmatrix
+    qmatrix = test_qmatrix,
+    attributes = paste0("att", 1:3)
   )
 
   expect_equal(
