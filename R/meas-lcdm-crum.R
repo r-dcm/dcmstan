@@ -54,7 +54,7 @@ meas_lcdm <- function(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
           ) +
-            1
+          1
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       comp_atts = mapply(
