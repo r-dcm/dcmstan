@@ -34,14 +34,6 @@ test_that("dina script works", {
   )
   expect_snapshot(stan_code(dtmr_dina_logl))
 
-  ecpe_dina_bn <- dcm_specify(
-    qmatrix = dcmdata::ecpe_qmatrix,
-    identifier = "item_id",
-    measurement_model = dina(),
-    structural_model = bayesnet()
-  )
-  expect_snapshot(stan_code(ecpe_dina_bn))
-
   ecpe_dina_hdcm <- dcm_specify(
     qmatrix = dcmdata::ecpe_qmatrix,
     identifier = "item_id",
@@ -51,6 +43,24 @@ test_that("dina script works", {
     )
   )
   expect_equal(stan_code(ecpe_dina_hdcm), stan_code(ecpe_dina_unst))
+
+  ecpe_dina_bn <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = dina(),
+    structural_model = bayesnet()
+  )
+  expect_snapshot(stan_code(ecpe_dina_bn))
+
+  ecpe_dina_bn_hier <- dcm_specify(
+    qmatrix = dcmdata::ecpe_qmatrix,
+    identifier = "item_id",
+    measurement_model = dina(),
+    structural_model = bayesnet(
+      hierarchy = "lexical -> cohesive -> morphosyntactic"
+    )
+  )
+  expect_snapshot(stan_code(ecpe_dina_bn_hier))
 })
 
 test_that("dino script works", {
