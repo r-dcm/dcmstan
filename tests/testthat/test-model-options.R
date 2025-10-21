@@ -11,11 +11,13 @@ test_that("structural models have functions", {
   for (i in seq_along(s_choice)) {
     expect_true(inherits(eval(rlang::sym(s_choice[i])), "function"))
     if (s_choice[i] == "bayesnet") {
-      mod_args <- list(hierarchy = ggdag::tidy_dagitty(" dag { x -> y }"),
-                       att_labels = tibble::tibble(att = c("att1",
-                                                           "att2"),
-                                                   att_labels = c("Test 1",
-                                                                  "Test 2")))
+      mod_args <- list(
+        hierarchy = ggdag::tidy_dagitty(" dag { x -> y }"),
+        att_labels = tibble::tibble(
+          att = c("att1", "att2"),
+          att_labels = c("Test 1", "Test 2")
+        )
+      )
     } else {
       mod_args <- list()
     }
