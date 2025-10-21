@@ -20,6 +20,9 @@ exclusions: list(
     "R/strc-loglinear.R" = list(
       object_usage_linter = Inf
     ),
+    "R/strc-bayesnet.R" = list(
+      object_usage_linter = Inf
+    ),
     "R/zzz-class-model-components.R" = list(
       object_name_linter = Inf
     ),

@@ -1460,6 +1460,7 @@ test_that("bayesian network parameters work", {
 
   expect_equal(
     params,
+    # nolint start: indentation_linter, line_length_linter
     tibble::tribble(
       ~profile_id,                    ~type,                                         ~attributes, ~coefficient,
                1L,   "structural_intercept",                                    "referent_units",       "g1_0",
@@ -1563,6 +1564,7 @@ test_that("bayesian network parameters work", {
               16L,   "structural_intercept",                         "multiplicative_comparison",       "g4_0",
               16L,  "structural_maineffect",                                   "appropriateness",      "g4_13"
     )
+    # nolint end
   )
 
   test_qmatrix <- tibble::tibble(
@@ -1578,6 +1580,7 @@ test_that("bayesian network parameters work", {
 
   expect_equal(
     params,
+    # nolint start: indentation_linter
     tibble::tribble(
       ~profile_id,                    ~type,  ~attributes, ~coefficient,
                1L,   "structural_intercept",       "att1",       "g1_0",
@@ -1619,6 +1622,7 @@ test_that("bayesian network parameters work", {
                8L,  "structural_maineffect",       "att2",      "g3_12",
                8L, "structural_interaction", "att1__att2",     "g3_212"
     )
+    # nolint end
   )
 })
 

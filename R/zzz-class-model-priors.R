@@ -190,7 +190,7 @@ bayesnet_priors <- function(hierarchy) {
 
   max_interaction <- determine_hierarchy_type(hierarchy, allow_null = FALSE) |>
     dplyr::mutate(num_parent = vapply(.data$parents, length, integer(1))) |>
-    dplyr::pull(num_parent) |>
+    dplyr::pull("num_parent") |>
     max()
 
   prior <- c(
