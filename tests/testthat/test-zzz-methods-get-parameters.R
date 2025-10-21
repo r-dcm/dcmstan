@@ -1625,6 +1625,52 @@ test_that("bayesian network parameters work", {
     )
     # nolint end
   )
+
+  params <- get_parameters(
+    bayesnet(hierarchy = "att1 -> att2 -> att3"),
+    qmatrix = test_qmatrix
+  )
+
+  expect_equal(
+    params,
+    # nolint start: indentation_linter
+    tibble::tribble(
+      ~profile_id,                   ~type, ~attributes, ~coefficient,
+               1L,  "structural_intercept",      "att1",       "g1_0",
+               1L,  "structural_intercept",      "att2",       "g2_0",
+               1L,  "structural_intercept",      "att3",       "g3_0",
+               2L,  "structural_intercept",      "att1",       "g1_0",
+               2L,  "structural_intercept",      "att2",       "g2_0",
+               2L, "structural_maineffect",      "att1",      "g2_11",
+               2L,  "structural_intercept",      "att3",       "g3_0",
+               3L,  "structural_intercept",      "att1",       "g1_0",
+               3L,  "structural_intercept",      "att2",       "g2_0",
+               3L,  "structural_intercept",      "att3",       "g3_0",
+               3L, "structural_maineffect",      "att2",      "g3_12",
+               4L,  "structural_intercept",      "att1",       "g1_0",
+               4L,  "structural_intercept",      "att2",       "g2_0",
+               4L,  "structural_intercept",      "att3",       "g3_0",
+               5L,  "structural_intercept",      "att1",       "g1_0",
+               5L,  "structural_intercept",      "att2",       "g2_0",
+               5L, "structural_maineffect",      "att1",      "g2_11",
+               5L,  "structural_intercept",      "att3",       "g3_0",
+               5L, "structural_maineffect",      "att2",      "g3_12",
+               6L,  "structural_intercept",      "att1",       "g1_0",
+               6L,  "structural_intercept",      "att2",       "g2_0",
+               6L, "structural_maineffect",      "att1",      "g2_11",
+               6L,  "structural_intercept",      "att3",       "g3_0",
+               7L,  "structural_intercept",      "att1",       "g1_0",
+               7L,  "structural_intercept",      "att2",       "g2_0",
+               7L,  "structural_intercept",      "att3",       "g3_0",
+               7L, "structural_maineffect",      "att2",      "g3_12",
+               8L,  "structural_intercept",      "att1",       "g1_0",
+               8L,  "structural_intercept",      "att2",       "g2_0",
+               8L, "structural_maineffect",      "att1",      "g2_11",
+               8L,  "structural_intercept",      "att3",       "g3_0",
+               8L, "structural_maineffect",      "att2",      "g3_12"
+    )
+    # nolint end
+  )
 })
 
 
