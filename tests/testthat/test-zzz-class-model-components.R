@@ -27,9 +27,11 @@ test_that("structural class works", {
   expect_true(S7::S7_inherits(independent(), structural))
   expect_true(S7::S7_inherits(loglinear(), structural))
   expect_true(S7::S7_inherits(hdcm(), structural))
+  expect_true(S7::S7_inherits(bayesnet(), structural))
 
   expect_true(S7::S7_inherits(unconstrained(), UNCONSTRAINED))
   expect_true(S7::S7_inherits(independent(), INDEPENDENT))
   expect_true(S7::S7_inherits(loglinear(), LOGLINEAR))
   expect_true(S7::S7_inherits(hdcm(), HDCM))
+  expect_true(S7::S7_inherits(bayesnet(), BAYESNET))
 })

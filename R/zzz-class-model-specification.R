@@ -72,6 +72,27 @@ dcm_specify <- function(
       structural_model@model_args$hierarchy
   }
 
+  # tweak structural model as needed -------------------------------------------
+  if (
+    structural_model@model == "loglinear" && ncol(qmatrix$clean_qmatrix) == 1
+  ) {
+    structural_model@model_args$max_interaction <- 1
+  }
+
+  if (
+    structural_model@model == "bayesnet" &&
+      ncol(qmatrix$clean_qmatrix) == 1
+  ) {
+    structural_model <- unconstrained()
+  } else if (
+    structural_model@model == "bayesnet" &&
+      is.null(structural_model@model_args$hierarchy)
+  ) {
+    structural_model@model_args$hierarchy <- saturated_bn(
+      att_names = qmatrix$attribute_names
+    )
+  }
+
   # define priors --------------------------------------------------------------
   if (is.null(priors)) {
     priors <- default_dcm_priors(

@@ -68,7 +68,11 @@ test_that("dcm_specification class errors when expected", {
       identifier = "item",
       measurement_model = lcdm(),
       structural_model = loglinear(),
-      priors = prior("beta(1, 1)", type = "structural", coefficient = "g_41234")
+      priors = prior(
+        "beta(1, 1)",
+        type = "structural_maineffect",
+        coefficient = "g_41234"
+      )
     ),
     "coefficients not included"
   )
@@ -123,7 +127,7 @@ test_that("printing works", {
     node3 = c(1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 1L, 1L)
   )
 
-  spec <- dcm_specify(
+  unst1 <- dcm_specify(
     qmatrix = test_qmatrix,
     identifier = "item",
     measurement_model = lcdm(max_interaction = 1),
@@ -137,7 +141,7 @@ test_that("printing works", {
     skill_3 = c(0L, 1L, 1L, 1L, 0L, 1L, 0L, 1L, 0L, 0L)
   )
 
-  spec2 <- dcm_specify(
+  indp1 <- dcm_specify(
     qmatrix = test_qmatrix2,
     identifier = "question",
     measurement_model = dina(),
@@ -185,17 +189,25 @@ test_that("printing works", {
     measurement_model = dina(),
     structural_model = hdcm(
       "skill_1 -> skill_2
-                                                skill_1 -> skill_3"
+       skill_1 -> skill_3"
     )
   )
 
+  bn1 <- dcm_specify(
+    qmatrix = test_qmatrix,
+    identifier = "item",
+    measurement_model = lcdm(),
+    structural_model = bayesnet()
+  )
+
   expect_snapshot({
-    spec
-    spec2
+    unst1
+    indp1
     logl1
     logl2
     logl3
     hdcm1
     hdcm2
+    bn1
   })
 })

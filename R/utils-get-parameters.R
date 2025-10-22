@@ -91,7 +91,7 @@ lcdm_parameters <- function(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
           ) +
-            1
+          1 # nolint
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue(
@@ -521,16 +521,162 @@ loglinear_parameters <- function(
             gregexpr(pattern = "__", text = .data$parameter),
             function(.x) length(attr(.x, "match.length"))
           ) +
-            1
+          1 # nolint
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue("g_{param_level}", "{gsub(\"__\", \"\", atts)}"),
-      type = "structural",
+      type = dplyr::case_when(
+        .data$param_level == 1 ~ "structural_maineffect",
+        .data$param_level > 1 ~ "structural_interaction"
+      ),
       attributes = .data$parameter
     ) |>
     dplyr::filter(.data$param_level <= max_interaction) |>
     dplyr::select("profile_id", "type", "attributes", "coefficient") |>
     dplyr::mutate(coefficient = as.character(.data$coefficient))
+
+  if (!rename_attributes) {
+    for (i in seq_along(att_names)) {
+      all_params <- dplyr::mutate(
+        all_params,
+        attributes = gsub(
+          paste0("att", i),
+          names(att_names)[i],
+          .data$attributes
+        )
+      )
+    }
+  }
+
+  all_params
+}
+
+
+#' Determine the possible parameters for a Bayesian network structural model
+#'
+#' @param imatrix An incidence matrix (structural version of a Q-matrix) that
+#'   details the conditional dependence relationships between the attributes in
+#'   structural model. Rows of the incidence matrix denote the child attributes
+#'   and the columns denote the parent attributes.
+#' @param identifier A character string identifying the column that contains
+#'   item identifiers. If there is no identifier column, this should be `NULL`
+#'   (the default).
+#' @returns A [tibble][tibble::tibble-package] with all possible parameters.
+#' @noRd
+bayesnet_parameters <- function(
+  qmatrix,
+  identifier = NULL,
+  hierarchy = NULL,
+  att_names = NULL,
+  rename_attributes = FALSE
+) {
+  if (is.null(identifier)) {
+    qmatrix <- qmatrix |>
+      tibble::rowid_to_column(var = "item_id")
+    identifier <- "item_id"
+  }
+
+  if (is.null(att_names)) {
+    att_names <- paste0("att", seq_len(ncol(qmatrix) - 1)) |>
+      rlang::set_names(
+        colnames(qmatrix[, -which(colnames(qmatrix) == identifier)])
+      )
+  } else if (is.null(names(att_names))) {
+    att_names <- rlang::set_names(att_names, att_names)
+  }
+
+  if (is.null(hierarchy)) {
+    hierarchy <- saturated_bn(att_names = att_names)
+  }
+  hierarchy <- replace_hierarchy_names(hierarchy, attribute_names = att_names)
+
+  i_matrix <- calculate_imatrix(hierarchy)
+
+  all_params <-
+    stats::model.matrix(
+      stats::as.formula(paste0("~ .^", max(ncol(i_matrix), 2L))),
+      i_matrix
+    ) |>
+    tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
+    tibble::rowid_to_column(var = "child_id") |>
+    tidyr::pivot_longer(
+      cols = -"child_id",
+      names_to = "parameter",
+      values_to = "value"
+    ) |>
+    dplyr::filter(.data$value == 1) |>
+    dplyr::mutate(
+      param_level = dplyr::case_when(
+        .data$parameter == "intercept" ~ 0,
+        !grepl("__", .data$parameter) ~ 1,
+        TRUE ~
+          sapply(
+            gregexpr(pattern = "__", text = .data$parameter),
+            function(.x) length(attr(.x, "match.length"))
+          ) +
+          1 # nolint
+      ),
+      atts = gsub("[^0-9|_]", "", .data$parameter),
+      coefficient = glue::glue(
+        "g{child_id}_{param_level}",
+        "{gsub(\"__\", \"\", atts)}"
+      ),
+      type = "structural",
+      attributes = dplyr::case_when(
+        .data$param_level == 0 ~ NA_character_,
+        .data$param_level >= 1 ~ .data$parameter
+      )
+    ) |>
+    dplyr::select("child_id", "type", "attributes", "coefficient") |>
+    dplyr::mutate(coefficient = as.character(.data$coefficient))
+
+  all_coef <- all_params |>
+    dplyr::mutate(
+      valid = dplyr::case_when(
+        grepl("_0", .data$coefficient) ~ "0,1",
+        .default = "1"
+      ),
+      all_coef = dplyr::case_when(
+        grepl("_0", .data$coefficient) ~
+          paste0("att", gsub("g([0-9]+)_0", "\\1", .data$coefficient)),
+        .default = .data$attributes
+      )
+    ) |>
+    tidyr::separate_longer_delim(cols = "valid", delim = ",") |>
+    dplyr::mutate(valid = as.integer(.data$valid))
+
+  profile_coef <- stats::model.matrix(
+    stats::as.formula(paste0("~ .^", max(length(att_names), 2L))),
+    create_profiles(length(att_names))
+  ) |>
+    tibble::as_tibble(.name_repair = model_matrix_name_repair) |>
+    tibble::rowid_to_column(var = "profile_id") |>
+    dplyr::select(-"intercept") |>
+    tidyr::pivot_longer(cols = -"profile_id") |>
+    dplyr::left_join(
+      all_coef,
+      by = c("name" = "all_coef", "value" = "valid"),
+      relationship = "many-to-many"
+    ) |>
+    dplyr::filter(!is.na(.data$coefficient)) |>
+    dplyr::distinct(.data$profile_id, .data$coefficient)
+
+  all_params <- all_params |>
+    dplyr::left_join(profile_coef, by = "coefficient") |>
+    dplyr::arrange(.data$profile_id) |>
+    dplyr::select("profile_id", "type", "attributes", "coefficient") |>
+    dplyr::mutate(
+      type = dplyr::case_when(
+        grepl("_0", .data$coefficient) ~ "structural_intercept",
+        grepl("_1", .data$coefficient) ~ "structural_maineffect",
+        .default = "structural_interaction"
+      ),
+      attributes = dplyr::case_when(
+        grepl("_0", .data$coefficient) ~
+          paste0("att", gsub("g([0-9]+)_0", "\\1", .data$coefficient)),
+        .default = .data$attributes
+      )
+    )
 
   if (!rename_attributes) {
     for (i in seq_along(att_names)) {
@@ -567,7 +713,7 @@ model_matrix_name_repair <- function(x) {
 
 #' Filter out nested parameters from the LCDM
 #'
-#' @param all_params Parameters returned by [lcdm_parameters()].
+#' @param all_params Parameters returned by `lcdm_parameters()`.
 #' @param filtered_hierarchy A tibble, as returned by [ggdag::tidy_dagitty()].
 #'
 #' @returns A filtered `all_params` object.
@@ -637,7 +783,7 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
 
 #' Rename parameters to be consistent with the attribute hierarchy
 #'
-#' @param all_params Parameters returned by [lcdm_parameters()].
+#' @param all_params Parameters returned by `lcdm_parameters()`.
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
 #' @param att_names Vector of attribute names, as in the

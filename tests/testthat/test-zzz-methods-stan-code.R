@@ -1,4 +1,10 @@
+if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
+  skip("No MCMC on CRAN")
+}
+
 test_that("stan code is syntactically correct", {
+  skip_on_cran()
+
   stan_dir <- withr::local_tempdir()
 
   combos <- expand.grid(
@@ -60,6 +66,8 @@ test_that("stan code is syntactically correct", {
 })
 
 test_that("generated quantities are syntactically correct", {
+  skip_on_cran()
+
   stan_dir <- withr::local_tempdir()
 
   combos <- expand.grid(

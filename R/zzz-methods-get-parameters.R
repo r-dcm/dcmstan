@@ -71,7 +71,11 @@ S7::method(get_parameters, dcm_specification) <- function(
       qmatrix = x@qmatrix,
       attributes = x@qmatrix_meta$attribute_names
     )
-  )
+  ) |>
+    dplyr::select(
+      dplyr::any_of(c("item_id", "profile_id")),
+      dplyr::everything()
+    )
 }
 
 # Methods for measurement models -----------------------------------------------
@@ -253,4 +257,20 @@ S7::method(get_parameters, HDCM) <- function(
   attributes = NULL
 ) {
   tibble::tibble(type = "structural", coefficient = "Vc")
+}
+
+S7::method(get_parameters, BAYESNET) <- function(
+  x,
+  qmatrix,
+  identifier = NULL,
+  attributes = NULL
+) {
+  qmatrix <- rdcmchecks::check_qmatrix(qmatrix, identifier = identifier)
+
+  bayesnet_parameters(
+    qmatrix = qmatrix,
+    identifier = identifier,
+    hierarchy = x@model_args$hierarchy,
+    att_names = attributes
+  )
 }

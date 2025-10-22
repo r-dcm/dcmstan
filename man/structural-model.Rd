@@ -6,6 +6,7 @@
 \alias{independent}
 \alias{loglinear}
 \alias{hdcm}
+\alias{bayesnet}
 \title{Structural models for diagnostic classification}
 \usage{
 unconstrained()
@@ -15,6 +16,8 @@ independent()
 loglinear(max_interaction = Inf)
 
 hdcm(hierarchy = NULL)
+
+bayesnet(hierarchy = NULL)
 }
 \arguments{
 \item{max_interaction}{For the log-linear structural model, the highest
@@ -30,7 +33,7 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained, independent attributes, log-linear, and hierarchical diagnostic, classification model (HDCM).
+unconstrained, independent attributes, log-linear, hierarchical diagnostic classification model (HDCM), and, Bayesian network.
 See details for additional information on each model.
 }
 \details{
@@ -55,6 +58,16 @@ is equivalent to an independent attributes model (e.g. Lee, 2016).
 The hierarchical attributes model assumes some attributes must be mastered
 before other attributes can be mastered. For an example of the hierarchical
 attributes model, see Leighton et al. (2004) and Templin & Bradshaw (2014).
+
+The Bayesian network model defines the statistical relationships between the
+attributes using a directed acyclic graph and a joint probability
+distribution. Attribute hierarchies are explicitly defined by decomposing the
+joint distribution for the latent attribute space into a series of marginal
+and conditional probability distributions. The unconstrained structural model
+described in Chapter 8 of Rupp et al. (2010) can be parameterized as a
+saturated Bayesian network (Hu & Templin, 2020). Further, structural models
+implying an attribute hierarchy are viewed as nested models within a
+saturated Bayesian network (Martinez & Templin, 2023).
 }
 \examples{
 unconstrained()
@@ -66,6 +79,8 @@ loglinear()
 loglinear(max_interaction = 1)
 
 hdcm(hierarchy = "att1 -> att2 -> att3")
+
+bayesnet(hierarchy = "att1 -> att2 -> att3")
 }
 \references{
 Hu, B., & Templin, J. (2020). Using diagnostic classification
@@ -82,6 +97,11 @@ attribute hierarchy method for cognitive assessment: A variation on
 Tatsuoka's rule-space approach.
 \emph{Journal of Educational Measurement, 41}(3), 205-237.
 \doi{10.1111/j.1745-3984.2004.tb01163.x}
+
+Martinez, A. J., & Templin, J. (2023). Approximate Invariance
+Testing in Diagnostic Classification Models in the Presence of Attribute
+Hierarchies: A Bayesian Network Approach. \emph{Psych, 5}(3), 688-714.
+\doi{10.3390/psych5030045}
 
 Rupp, A. A., Templin, J., & Henson, R. A. (2010). \emph{Diagnostic
 measurement: Theory, methods, and applications}. Guilford Press.

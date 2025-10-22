@@ -89,7 +89,10 @@ S7::method(create_profiles, HDCM) <-
     }
 
     if (is.null(names(attributes))) {
-      attributes <- rlang::set_names(attributes, attributes)
+      attributes <- rlang::set_names(
+        paste0("att", seq_along(attributes)),
+        attributes
+      )
     }
 
     hierarchy <- glue::glue(

@@ -205,6 +205,16 @@ ncrum <- function() {
 #' before other attributes can be mastered. For an example of the hierarchical
 #' attributes model, see Leighton et al. (2004) and Templin & Bradshaw (2014).
 #'
+#' The Bayesian network model defines the statistical relationships between the
+#' attributes using a directed acyclic graph and a joint probability
+#' distribution. Attribute hierarchies are explicitly defined by decomposing the
+#' joint distribution for the latent attribute space into a series of marginal
+#' and conditional probability distributions. The unconstrained structural model
+#' described in Chapter 8 of Rupp et al. (2010) can be parameterized as a
+#' saturated Bayesian network (Hu & Templin, 2020). Further, structural models
+#' implying an attribute hierarchy are viewed as nested models within a
+#' saturated Bayesian network (Martinez & Templin, 2023).
+#'
 #' @name structural-model
 #' @seealso [Measurement models][measurement-model]
 #' @export
@@ -221,6 +231,10 @@ ncrum <- function() {
 #'   Tatsuoka's rule-space approach.
 #'   *Journal of Educational Measurement, 41*(3), 205-237.
 #'   \doi{10.1111/j.1745-3984.2004.tb01163.x}
+#' @references Martinez, A. J., & Templin, J. (2023). Approximate Invariance
+#'   Testing in Diagnostic Classification Models in the Presence of Attribute
+#'   Hierarchies: A Bayesian Network Approach. *Psych, 5*(3), 688-714.
+#'   \doi{10.3390/psych5030045}
 #' @references Rupp, A. A., Templin, J., & Henson, R. A. (2010). *Diagnostic
 #'   measurement: Theory, methods, and applications*. Guilford Press.
 #' @references Templin, J. L., & Bradshaw, L. (2014). Hierarchical diagnostic
@@ -241,6 +255,8 @@ ncrum <- function() {
 #' loglinear(max_interaction = 1)
 #'
 #' hdcm(hierarchy = "att1 -> att2 -> att3")
+#'
+#' bayesnet(hierarchy = "att1 -> att2 -> att3")
 unconstrained <- function() {
   UNCONSTRAINED(model = "unconstrained")
 }
@@ -254,6 +270,7 @@ independent <- function() {
 #' @rdname structural-model
 #' @export
 loglinear <- function(max_interaction = Inf) {
+  check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
   LOGLINEAR(model = "loglinear", list(max_interaction = max_interaction))
 }
 
@@ -264,6 +281,12 @@ hdcm <- function(hierarchy = NULL) {
   HDCM(model = "hdcm", list(hierarchy = hierarchy))
 }
 
+#' @rdname structural-model
+#' @export
+bayesnet <- function(hierarchy = NULL) {
+  check_hierarchy(hierarchy)
+  BAYESNET(model = "bayesnet", list(hierarchy = hierarchy))
+}
 
 #' Generated quantities for diagnostic classification
 #'
@@ -539,14 +562,23 @@ INDEPENDENT <- S7::new_class(
   package = "dcmstan",
   properties = list(model = model_property)
 )
+
 LOGLINEAR <- S7::new_class(
   "LOGLINEAR",
   parent = structural,
   package = "dcmstan",
   properties = list(model = model_property)
 )
+
 HDCM <- S7::new_class(
   "HDCM",
+  parent = structural,
+  package = "dcmstan",
+  properties = list(model = model_property)
+)
+
+BAYESNET <- S7::new_class(
+  "BAYESNET",
   parent = structural,
   package = "dcmstan",
   properties = list(model = model_property)

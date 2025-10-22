@@ -95,6 +95,65 @@ check_hierarchy_names <- function(
   invisible(NULL)
 }
 
+replace_hierarchy_names <- function(x, attribute_names) {
+  for (i in seq_along(attribute_names)) {
+    x <- gsub(names(attribute_names[i]), attribute_names[i], x)
+  }
+
+  x
+}
+
+calculate_imatrix <- function(hierarchy) {
+  g <- glue::glue(" graph { <hierarchy> } ", .open = "<", .close = ">")
+  g <- dagitty::dagitty(g)
+
+  i_matrix <- matrix(
+    data = 0L,
+    nrow = length(names(g)),
+    ncol = length(names(g)),
+    dimnames = list(names(g), names(g))
+  )
+  for (i in names(g)) {
+    i_matrix[dagitty::children(g, i), i] <- 1L
+  }
+
+  as.data.frame(i_matrix)
+}
+
+saturated_bn <- function(att_names) {
+  tidyr::expand_grid(child = att_names, parent = att_names) |>
+    tibble::as_tibble() |>
+    dplyr::mutate(
+      child_id = as.integer(gsub("att", "", .data$child)),
+      parent_id = as.integer(gsub("att", "", .data$parent))
+    ) |>
+    dplyr::filter(.data$parent_id > .data$child_id) |>
+    dplyr::select("child", "parent") |>
+    dplyr::mutate(
+      child = vapply(
+        .data$child,
+        rev_att_rename,
+        character(1),
+        att_names = att_names
+      ),
+      parent = vapply(
+        .data$parent,
+        rev_att_rename,
+        character(1),
+        att_names = att_names
+      ),
+      edge = paste(.data$child, "->", .data$parent)
+    ) |>
+    dplyr::select("edge") |>
+    dplyr::summarize(hierarchy = paste(.data$edge, collapse = "  ")) |>
+    dplyr::pull(.data$hierarchy)
+}
+
+rev_att_rename <- function(x, att_names) {
+  check_string(x)
+  names(att_names)[which(att_names == x)]
+}
+
 #' Determines the type of hierarchy
 #'
 #' @param x A character string containing the quoted attribute hierarchy.
