@@ -17,6 +17,14 @@
 #'   truncated.
 #' @param upper_bound Optional. The upper bound where the distribution should be
 #'   truncated.
+#' @param ... Additional arguments passed to [prior()].
+#'
+#' @details
+#' [prior()] should be used for directly specifying priors. That is, when you
+#' are directly typing out or providing the distribution statement to the
+#' function. If you have previously created a variable with a distribution
+#' statement as a character string (e.g., `dist <- "normal(0, 2)"`), then you
+#' should use [prior_string()] to create your prior. See examples.
 #'
 #' @returns A `dcmprior` object.
 #' @seealso [get_parameters()]
@@ -27,16 +35,32 @@
 #'
 #' c(prior(beta(5, 17), type = "slip"),
 #'   prior(beta(5, 25), type = "guess"))
-prior <- function(distribution, type,
-                  coefficient = NA, lower_bound = NA, upper_bound = NA) {
+#'
+#' my_prior <- "normal(0, 2)"
+#' prior_string(my_prior, type = "intercept")
+prior <- function(
+  distribution,
+  type,
+  coefficient = NA,
+  lower_bound = NA,
+  upper_bound = NA
+) {
   call <- as.list(match.call()[-1])
   call <- lapply(call, deparse_no_string)
   if (any(names(call) %in% c("lower_bound", "upper_bound"))) {
     call[which(names(call) %in% c("lower_bound", "upper_bound"))] <-
-      lapply(call[which(names(call) %in% c("lower_bound", "upper_bound"))],
-             as.numeric)
+      lapply(
+        call[which(names(call) %in% c("lower_bound", "upper_bound"))],
+        as.numeric
+      )
   }
   do.call(dcmprior, call)
+}
+
+#' @rdname prior
+#' @export
+prior_string <- function(distribution, ...) {
+  dcmprior(distribution, ...)
 }
 
 # Default priors ---------------------------------------------------------------
@@ -53,8 +77,11 @@ prior <- function(distribution, type,
 #' @examples
 #' default_dcm_priors(lcdm(), unconstrained())
 #' default_dcm_priors(dina(), independent())
-default_dcm_priors <- function(measurement_model = NULL,
-                               structural_model = NULL) {
+#' default_dcm_priors(lcdm(), loglinear())
+default_dcm_priors <- function(
+  measurement_model = NULL,
+  structural_model = NULL
+) {
   meas_priors <- if (is.null(measurement_model)) {
     NULL
   } else {
@@ -66,6 +93,9 @@ default_dcm_priors <- function(measurement_model = NULL,
       ),
       dina = dina_priors(),
       dino = dino_priors(),
+      nida = nida_priors(),
+      nido = nido_priors(),
+      ncrum = ncrum_priors(),
       crum = crum_priors()
     )
   }
@@ -74,9 +104,18 @@ default_dcm_priors <- function(measurement_model = NULL,
     NULL
   } else {
     S7::check_is_S7(structural_model, class = structural)
-    switch(structural_model@model,
-           unconstrained = unconstrained_priors(),
-           independent = independent_priors())
+    switch(
+      structural_model@model,
+      unconstrained = unconstrained_priors(),
+      independent = independent_priors(),
+      loglinear = loglinear_priors(
+        max_interaction = structural_model@model_args$max_interaction
+      ),
+      hdcm = hdcm_priors(),
+      bayesnet = bayesnet_priors(
+        hierarchy = structural_model@model_args$hierarchy
+      )
+    )
   }
 
   c(dcmprior(), meas_priors, strc_priors)
@@ -84,26 +123,46 @@ default_dcm_priors <- function(measurement_model = NULL,
 
 ## measurement model defaults -----
 lcdm_priors <- function(max_interaction) {
-  prior <- c(prior("normal(0, 2)", type = "intercept"),
-             prior("lognormal(0, 1)", type = "maineffect"))
+  prior <- c(
+    prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect")
+  )
   if (max_interaction > 1) {
-    prior <- c(prior,
-               prior("normal(0, 2)", type = "interaction"))
+    prior <- c(prior, prior("normal(0, 2)", type = "interaction"))
   }
 
-  return(prior)
+  prior
 }
 
 dina_priors <- function() {
-  c(prior("beta(5, 25)", type = "slip"),
-    prior("beta(5, 25)", type = "guess"))
+  c(prior("beta(5, 25)", type = "slip"), prior("beta(5, 25)", type = "guess"))
 }
 
 dino_priors <- dina_priors
 
+nido_priors <- function() {
+  c(
+    prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect")
+  )
+}
+
+nida_priors <- dina_priors
+
+ncrum_priors <- function() {
+  prior <- c(
+    prior("beta(15, 3)", type = "baseline"),
+    prior("beta(2, 2)", type = "penalty")
+  )
+
+  prior
+}
+
 crum_priors <- function() {
-  c(prior("normal(0, 2)", type = "intercept"),
-    prior("lognormal(0, 1)", type = "maineffect"))
+  c(
+    prior("normal(0, 2)", type = "intercept"),
+    prior("lognormal(0, 1)", type = "maineffect")
+  )
 }
 
 ## structural model defaults -----
@@ -115,9 +174,66 @@ independent_priors <- function() {
   prior("beta(1, 1)", type = "structural")
 }
 
+loglinear_priors <- function(max_interaction) {
+  prior <- prior("normal(0, 10)", type = "structural_maineffect")
+
+  if (max_interaction > 1) {
+    prior <- c(prior, prior("normal(0, 10)", type = "structural_interaction"))
+  }
+
+  prior
+}
+
+hdcm_priors <- unconstrained_priors
+
+bayesnet_priors <- function(hierarchy) {
+  if (is.null(hierarchy)) {
+    prior <- c(
+      prior("normal(0, 2)", type = "structural_intercept"),
+      prior("lognormal(0, 1)", type = "structural_maineffect"),
+      prior("normal(0, 2)", type = "structural_interaction")
+    )
+    return(prior)
+  }
+
+  max_interaction <- determine_hierarchy_type(hierarchy, allow_null = FALSE) |>
+    dplyr::mutate(num_parent = vapply(.data$parents, length, integer(1))) |>
+    dplyr::pull("num_parent") |>
+    max()
+
+  prior <- c(
+    prior("normal(0, 2)", type = "structural_intercept"),
+    prior("lognormal(0, 1)", type = "structural_maineffect")
+  )
+  if (max_interaction > 1) {
+    prior = c(prior, prior("normal(0, 2)", type = "structural_interaction"))
+  }
+
+  prior
+}
 
 # dcmprior class ---------------------------------------------------------------
-dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
+#' S7 prior class
+#'
+#' The `dcmprior` constructor is exported to facilitate the defining
+#' of methods in other packages. We do not expect or recommend calling this
+#' function directly. Rather, to create a model specification, one should use
+#' [prior()] or [default_dcm_priors()].
+#'
+#' @inheritParams prior
+#'
+#' @returns A `dcmprior` object.
+#' @seealso [prior()], [default_dcm_priors()]
+#' @export
+#'
+#' @examples
+#' dcmprior(
+#'   distribution = "normal(0, 1)",
+#'   type = "intercept"
+#' )
+dcmprior <- S7::new_class(
+  "dcmprior",
+  package = "dcmstan",
   properties = list(
     distribution = S7::new_property(
       class = S7::class_character,
@@ -130,44 +246,61 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
         }
       }
     ),
-    type = S7::new_property(class = S7::class_character,
-                            default = NA_character_),
-    coefficient = S7::new_property(class = S7::class_character,
-                                   default = NA_character_),
-    lower_bound = S7::new_property(class = S7::class_numeric,
-                                   default = NA_real_),
-    upper_bound = S7::new_property(class = S7::class_numeric,
-                                   default = NA_real_),
+    type = S7::new_property(
+      class = S7::class_character,
+      default = NA_character_
+    ),
+    coefficient = S7::new_property(
+      class = S7::class_character,
+      default = NA_character_
+    ),
+    lower_bound = S7::new_property(
+      class = S7::class_numeric,
+      default = NA_real_
+    ),
+    upper_bound = S7::new_property(
+      class = S7::class_numeric,
+      default = NA_real_
+    ),
     prior = S7::new_property(
       class = S7::class_character,
       getter = function(self) {
-        if (!length(self@distribution)) return(character())
+        if (!length(self@distribution)) {
+          return(character())
+        }
         mapply(
           function(lb, ub, dist) {
             if (is.na(lb) && is.na(ub)) {
               return(dist)
-            } else {
-              as.character(
-                glue::glue("{dist}T[{lb},{ub}]", .na = "")
-              )
             }
+            as.character(glue::glue("{dist}T[{lb},{ub}]", .na = ""))
           },
-          self@lower_bound, self@upper_bound, self@distribution,
+          self@lower_bound,
+          self@upper_bound,
+          self@distribution,
           USE.NAMES = FALSE
         )
       }
     )
   ),
   validator = function(self) {
-    reverse <- mapply(\(dist, lb, ub) lb >= ub,
-                      self@prior, self@lower_bound, self@upper_bound)
+    reverse <- mapply(
+      \(dist, lb, ub) lb >= ub,
+      self@prior,
+      self@lower_bound,
+      self@upper_bound
+    )
     if (length(reverse)) {
-      bad <- cli::cli_vec(names(reverse[reverse & !is.na(reverse)]),
-                          style = list("vec-last" = ", and "))
-      err <- cli::cli_fmt(cli::cli_text("@lower_bound must be less than ",
-                                        "@upper_bound. ",
-                                        "Problematic specifications: ",
-                                        "{.val {bad}}"))
+      bad <- cli::cli_vec(
+        names(reverse[reverse & !is.na(reverse)]),
+        style = list("vec-last" = ", and ")
+      )
+      err <- cli::cli_fmt(cli::cli_text(
+        "@lower_bound must be less than ",
+        "@upper_bound. ",
+        "Problematic specifications: ",
+        "{.val {bad}}"
+      ))
     }
     if (any(reverse, na.rm = TRUE)) {
       err
@@ -177,8 +310,35 @@ dcmprior <- S7::new_class("dcmprior", package = "dcmstan",
 
 
 # dcmprior methods -------------------------------------------------------------
+#' Coerce a dcmprior object to a tibble
+#'
+#' When specifying prior distributions, it is often useful to see which
+#' parameters are included in a given model. Using the Q-matrix and type of
+#' diagnostic model to estimated, we can create a list of all included
+#' parameters for which a prior can be specified.
+#'
+#' @param x A model specification (e.g., [dcm_specify()], measurement model
+#'   (e.g., [lcdm()]), or structural model (e.g., [unconstrained()]) object.
+#' @param ... Additional arguments passed to methods. See details.
+#'
+#' @details
+#' Additional arguments passed to methods:
+#'
+#' @return A [tibble][tibble::tibble-package] showing the specified priors.
+#' @export
+#'
+#' @examples
+#' prior_tibble(default_dcm_priors(lcdm()))
+#'
+#' prior_tibble(default_dcm_priors(dina(), independent()))
 prior_tibble <- S7::new_generic("prior_tibble", "x")
 
+#' @details
+#' `.keep_all`: Logical indicating if all components should be returned. When
+#'   `FALSE` (the default), only the `@type`, `@coefficient`, and `@prior`
+#'   elements of the [dcmprior][prior()] object is return. When `TRUE`, the
+#'   `@distribtuion`, `@lower_bound`, and `@upper_bound` are also returned.
+#' @name prior_tibble
 S7::method(prior_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
   tib <- tibble::tibble(
     distribution = x@distribution,
@@ -211,15 +371,19 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
   }
 
   all_priors <- if (!replace) {
-    do.call(dplyr::bind_rows,
-            lapply(list(x, ...), prior_tibble, .keep_all = TRUE))
+    do.call(
+      dplyr::bind_rows,
+      lapply(list(x, ...), prior_tibble, .keep_all = TRUE)
+    )
   } else {
-    do.call(dplyr::bind_rows,
-            lapply(list(x, ...), prior_tibble, .keep_all = TRUE)) |>
+    do.call(
+      dplyr::bind_rows,
+      lapply(list(x, ...), prior_tibble, .keep_all = TRUE)
+    ) |>
       dplyr::distinct(.data$type, .data$coefficient, .keep_all = TRUE)
   }
 
   out <- do.call(dcmprior, as.list(dplyr::select(all_priors, -"prior")))
 
-  return(out)
+  out
 }

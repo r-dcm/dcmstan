@@ -7,3 +7,6 @@
 ^docs$
 ^pkgdown$
 ^\.lintr$
+^data-raw$
+^[.]?air[.]toml$
+^\.vscode$
