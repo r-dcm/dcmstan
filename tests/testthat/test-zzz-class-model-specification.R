@@ -68,7 +68,11 @@ test_that("dcm_specification class errors when expected", {
       identifier = "item",
       measurement_model = lcdm(),
       structural_model = loglinear(),
-      priors = prior("beta(1, 1)", type = "structural", coefficient = "g_41234")
+      priors = prior(
+        "beta(1, 1)",
+        type = "structural_maineffect",
+        coefficient = "g_41234"
+      )
     ),
     "coefficients not included"
   )

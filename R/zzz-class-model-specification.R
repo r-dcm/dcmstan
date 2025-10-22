@@ -74,6 +74,12 @@ dcm_specify <- function(
 
   # tweak structural model as needed -------------------------------------------
   if (
+    structural_model@model == "loglinear" && ncol(qmatrix$clean_qmatrix) == 1
+  ) {
+    structural_model@model_args$max_interaction <- 1
+  }
+
+  if (
     structural_model@model == "bayesnet" &&
       ncol(qmatrix$clean_qmatrix) == 1
   ) {

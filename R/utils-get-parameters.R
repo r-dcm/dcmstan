@@ -525,7 +525,10 @@ loglinear_parameters <- function(
       ),
       atts = gsub("[^0-9|_]", "", .data$parameter),
       coefficient = glue::glue("g_{param_level}", "{gsub(\"__\", \"\", atts)}"),
-      type = "structural",
+      type = dplyr::case_when(
+        .data$param_level == 1 ~ "structural_maineffect",
+        .data$param_level > 1 ~ "structural_interaction"
+      ),
       attributes = .data$parameter
     ) |>
     dplyr::filter(.data$param_level <= max_interaction) |>

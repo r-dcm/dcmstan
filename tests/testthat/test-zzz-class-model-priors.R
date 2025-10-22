@@ -79,7 +79,7 @@ test_that("specify only measurement or structural", {
   )
   expect_equal(
     default_dcm_priors(structural_model = loglinear()),
-    loglinear_priors()
+    loglinear_priors(max_interaction = Inf)
   )
   expect_equal(
     default_dcm_priors(structural_model = hdcm()),
@@ -211,9 +211,18 @@ test_that("independent default priors", {
 
 test_that("loglinear default priors", {
   expect_identical(
-    prior_tibble(loglinear_priors()),
+    prior_tibble(loglinear_priors(max_interaction = Inf)),
     tibble::tibble(
-      type = c("structural"),
+      type = c("structural_maineffect", "structural_interaction"),
+      coefficient = NA_character_,
+      prior = c("normal(0, 10)", "normal(0, 10)")
+    )
+  )
+
+  expect_identical(
+    prior_tibble(loglinear_priors(max_interaction = 1)),
+    tibble::tibble(
+      type = c("structural_maineffect"),
       coefficient = NA_character_,
       prior = c("normal(0, 10)")
     )

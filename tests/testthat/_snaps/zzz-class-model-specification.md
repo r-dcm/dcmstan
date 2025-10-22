@@ -54,7 +54,8 @@
         intercept ~ normal(0, 2)
         maineffect ~ lognormal(0, 1)
         interaction ~ normal(0, 2)
-        structural ~ normal(0, 10)
+        structural_maineffect ~ normal(0, 10)
+        structural_interaction ~ normal(0, 10)
     Code
       logl2
     Message
@@ -73,7 +74,7 @@
         intercept ~ normal(0, 2)
         maineffect ~ lognormal(0, 1)
         interaction ~ normal(0, 2)
-        structural ~ normal(0, 10)
+        structural_maineffect ~ normal(0, 10)
     Code
       logl3
     Message
@@ -92,7 +93,8 @@
         intercept ~ normal(0, 2)
         maineffect ~ lognormal(0, 1)
         interaction ~ normal(0, 2)
-        structural ~ normal(0, 10)
+        structural_maineffect ~ normal(0, 10)
+        structural_interaction ~ normal(0, 10)
     Code
       hdcm1
     Message
