@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dcmstan
+# dcmstan <a href="https://dcmstan.r-dcm.org"><img src="man/figures/logo.png" align="right" height="138" alt="dcmstan website" /></a>
 
 <!-- badges: start -->
 
@@ -21,10 +21,8 @@ by](https://img.shields.io/badge/Keybase-Verified-brightgreen.svg)](https://keyb
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit)
 <!-- badges: end -->
 
-# Overview
-
 dcmstan provides functionality to automatically generate
-[Stan](https://mc-stan.org) code for estimating diagnostic
+[*Stan*](https://mc-stan.org) code for estimating diagnostic
 classification models. Using dcmstan, you can:
 
 - Mix and match different
@@ -56,9 +54,12 @@ pak::pak("r-dcm/dcmstan")
 library(dcmstan)
 library(dcmdata)
 
-new_model <- dcm_specify(qmatrix = mdm_qmatrix, identifier = "item",
-                         measurement_model = lcdm(),
-                         structural_model = unconstrained())
+new_model <- dcm_specify(
+  qmatrix = mdm_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = unconstrained()
+)
 
 stan_code(new_model)
 #> data {

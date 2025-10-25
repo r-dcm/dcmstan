@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# dcmstan
+# dcmstan <a href="https://dcmstan.r-dcm.org"><img src="man/figures/logo.png" align="right" height="138" alt="dcmstan website" /></a>
 
 <!-- badges: start -->
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -27,9 +27,7 @@ knitr::opts_chunk$set(
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit)
 <!-- badges: end -->
 
-# Overview
-
-dcmstan provides functionality to automatically generate [Stan](https://mc-stan.org) code for estimating diagnostic classification models.
+dcmstan provides functionality to automatically generate [*Stan*](https://mc-stan.org) code for estimating diagnostic classification models.
 Using dcmstan, you can:
 
 * Mix and match different [measurement](https://dcmstan.r-dcm.org/reference/measurement-model) and [structural](https://dcmstan.r-dcm.org/reference/structural-model) models to specify a diagnostic model with `dcm_specify()`,
@@ -54,9 +52,12 @@ pak::pak("r-dcm/dcmstan")
 library(dcmstan)
 library(dcmdata)
 
-new_model <- dcm_specify(qmatrix = mdm_qmatrix, identifier = "item",
-                         measurement_model = lcdm(),
-                         structural_model = unconstrained())
+new_model <- dcm_specify(
+  qmatrix = mdm_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = unconstrained()
+)
 
 stan_code(new_model)
 ```
