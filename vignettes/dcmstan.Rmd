@@ -77,7 +77,7 @@ Specifically, we support the six core DCMs identified by [@rupp-dcm], as well as
 | Noisy-input, deterministic "and" gate         | NIDA         | @nida     | `nida()`  |
 | Noisy-input, deterministic "or" gate          | NIDO         | @nido     | `nido()`  |
 | Noncompensatory reparameterized unified model | NC-RUM       | @ncrum    | `ncrum()` |
-| Compensatory reparameterized unified model    | C-RUM        | @crum2     | `crum()`  |
+| Compensatory reparameterized unified model    | C-RUM        | @crum     | `crum()`  |
 
 : Supported measurement models
 
