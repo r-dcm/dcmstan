@@ -1,19 +1,92 @@
 ---
-title: "Getting started with dcmstan"
+title: "Introduction to dcmstan"
 output: rmarkdown::html_vignette
+bibliography: bib/references.bib
+csl: bib/apa.csl
+link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Getting started with dcmstan}
+  %\VignetteIndexEntry{Introduction to dcmstan}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
+dcmstan is an R package that generates the [*Stan*](https://mc-stan.org) code needed for estimating diagnostic classification models (DCMs; also known as cognitive diagnostic models [CDMs]).
+dcmstan provides functionality for all major DCMs that are used in practice and supports the specification of both measurement and structural models.
+Here, you'll find a brief overview of how to specify a diagnostic model and generate the associated *Stan* code.
+
+```{r}
 library(dcmstan)
 ```
+
+## Specifying a DCM
+
+We create a specification using `dcm_specify()`.
+First, we must define our Q-matrix, which represents how the assessment items relate to the latent attributes.
+For this example, we'll create a specification for the simulated "Diagnostic Teachers' Multiplicative Reasoning" (DTMR) data.
+In the DTMR data, there are 27 items that collectively measure 4 attributes
+(for more information see `?dcmdata::dtmr`).
+
+```{r, dtmr}
+library(dcmdata)
+
+dtmr_qmatrix
+```
+
+In the Q-matrix, a `1` indicated that the attribute (in the columns) is measured by a given item (in the rows).
+Our Q-matrix also includes an item identifier with the item names or identifiers.
+We pass the Q-matrix and the (optional) identifier to `dcm_specify()`.
+We can then specify our chosen measurement and structural models.
+By default, dcmstan will use the loglinear cognitive diagnostic model for the measurement model and an unconstrained structural model.
+These options are described in more detail in the following sections.
+
+```{r}
+spec <- dcm_specify(
+  qmatrix = dtmr_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = unconstrained()
+)
+
+spec
+```
+
+### Measurement models
+
+The measurement model defines how attributes relate to the items.
+For example, take item 10b in the DTMR Q-matrix, which measures both Referent Units and Multiplicative Comparison.
+Does a respondent need to be proficient on both attributes in order to answer the item correct?
+Just one of the attributes?
+Or maybe proficiency on one of the attributes makes it more likely the respondent will provide a correct response, but not as likely as if they were proficient on both?
+
+These relationships are determined by the measurement model.
+dcmstan supports several measurement models that each make different assumptions about how items relate to the measured attributes.
+Specifically, we support the six core DCMs identified by [@rupp-dcm], as well as the general loglinear cognitive diagnostic model [LCDM\; @lcdm; @lcdm-handbook] which subsumes the more restrictive core DCMs.
+
+| Model                          | Abbreviation | Reference         | dcmstan   |
+|:-------------------------------|:------------:|:------------------|:---------:|
+| Loglinear cognitive diagnostic model          | LCDM         | @lcdm     | `lcdm()`  |
+| Deterministic input, noisy "and" gate         | DINA         | @dina     | `dina()`  |
+| Deterministic input, noisy "or" gate          | DINO         | @dino     | `dino()`  |
+| Noisy-input, deterministic "and" gate         | NIDA         | @nida     | `nida()`  |
+| Noisy-input, deterministic "or" gate          | NIDO         | @nido     | `nido()`  |
+| Noncompensatory reparameterized unified model | NC-RUM       | @ncrum    | `ncrum()` |
+| Compensatory reparameterized unified model    | C-RUM        | @crum2     | `crum()`  |
+
+: Supported measurement models
+
+### Structural models
+
+
+
+## From specification to estimation
+
+Once we have specified a model, we can create the necessary *Stan* code using `stan_code()`.
+
+## References
