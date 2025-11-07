@@ -49,7 +49,8 @@ The ```hdcm()``` and ```bayesnet()``` functions return S7 objects that include a
 Single structures represent relatively simple hierarchical systems composed of two or more attributes. Within this category, three primary structural specifications are commonly identified (see Figure \@ref(fig:single-strc-fig)): linear, divergent, and convergent structures.
 
 ```{r single-strc-fig, fig.cap="Examples of single structure hierarchies", echo = FALSE}
-knitr::include_graphics(here::here("vignettes", "articles", "figures", "single_structures.jpg"))
+knitr::include_graphics(here::here("vignettes", "articles", "figures",
+                                   "single_structures.jpg"))
 ```
 
 To demonstrate the process of specifying different types of single structure attribute hierarchies, we will use a six-item, three-attribute Q-matrix. The ```item``` column will serve as the item identifier for each model specification.
@@ -186,7 +187,7 @@ divergent_spec_bn
 Complex structures emerge from the combination of two or more single structures and typically involve three or more attributes. Liu (2018) characterized several common forms of these complex structures, often referred to as diamond structures, which illustrate how multiple learning paths can converge and diverge across attributes. Three diamond structure configurations are discussed in this vignette (see Figure \@ref(fig:complex-strc-fig)), each reflecting different complexity in the interrelationships among attributes: a two-level diamond structure; a three-level diamond structure; and a four-level diamond structure.
 
 ```{r complex-strc-fig, fig.cap="Examples of complex structure hierarchies", echo = FALSE}
-knitr::include_graphics(here::here("vignettes", "articles", "figures", 
+knitr::include_graphics(here::here("vignettes", "articles", "figures",
                                    "complex_structures.jpg"))
 ```
 
