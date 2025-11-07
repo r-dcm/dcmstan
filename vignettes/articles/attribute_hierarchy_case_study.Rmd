@@ -1,0 +1,317 @@
+---
+title: "Attribute hierarchy case study"
+output: rmarkdown::html_vignette
+bibliography: ../bib/references.bib
+csl: ../bib/apa.csl
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Attribute hierarchy case study}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+library(ratlas)
+library(showtext)
+library(english)
+
+font_add_google("Open Sans")
+showtext_auto()
+showtext_opts(dpi = 192)
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7.2916667,
+  fig.align = "center",
+  out.width = "90%"
+)
+
+options(mc.cores = 1,
+        tidyverse.quiet = TRUE)
+```
+
+REMOVE THIS LINE AFTER DEVELOPMENT IS COMPLETED!!
+```{r}
+#| echo: false
+#| message: false
+
+devtools::load_all(".")
+```
+
+
+In educational settings, student learning and development is often conceptualized as a sequential and cumulative process in which certain cognitive skills serve as foundational building blocks for the development of more complex cognitive skills. Within this framework, an attribute hierarchy represents the dependence relationships among cognitive skills or attributes, illustrating how mastery of one skill supports or is required for the acquisition of another (@leighton2004). In essence, attribute hierarchies describe the cognitive dependencies that organize latent attributes within a domain, thereby mapping the structure of learning and providing a theoretical basis for modeling how knowledge and skills develop progressively across levels of complexity. Within the context of diagnostic assessment, the attribute hierarchy framework provides a principled way to constrain the attribute space and to inform the design of the Q-matrix in a manner that reflects the interdependence of the cognitive skills of interest. These hierarchies can be classified into two broad categories (@liu2018): single structures and complex structures. In this case study, we describe common types of single and complex structures and show how these structures can be specified using the ```dcm_specify()``` function in the **dcmstan** R package.
+
+# Explore the `dcm_specify()` function
+
+## Function arguments
+
+The ```dcm_specify()``` function enables users the ability to specify various diagnostic classification model (DCM; @rupp-dcm) configurations by specifying five arguments: the Q-matrix (```qmatrix```); the item identifier (```identifier```); the DCM measurement model (```measurement_model```); the DCM structural model (```structural_model```); and parameter priors (```priors```). 
+
+
+## Defining the measurement and structural modeling frameworks
+
+The ```dcm_specify()``` function requires users to define a measurement model and a structural model for a DCM specification. For simplicity, we will select a loglinear cognitive diagnosis model (LCDM; @lcdm) measurement model for this vignette. An LCDM can be defined by setting the argument ```measurement_model = lcdm()```.
+
+For the structural model, attribute hierarchies can be imposed using two different psychometric framework: a hierarchical diagnostic classification modeling (HDCM; @hdcm) framework; and a bayesian network (BN; @hu2020) modeling framework. The HDCM framework imposes strict constraints onto the attribute space by allowing only attribute mastery profiles that are in accordance with the defined hierarchical specification. An attribute hierarchy based in an HDCM framework can be specified by selecting ```structural_model = hdcm()```. In contrast, the BN framework relaxes the strict hierarchical assumption, permitting all mastery profiles to be estimated. An attribute hierarchy based in an BN framework can be specified by selecting ```structural_model = bayesnet()```.
+
+The ```hdcm()``` and ```bayesnet()``` functions return S7 objects that include a ```hierarchy``` attribute. This attribute is stored as a quoted string and specifies the attribute hierarchy underlying the model structure. If the ```hierarchy``` attribute is not defined by the user, the default implementation encodes an unconstrained structural model representation. In the next section, we will introduce common structures that reflect attribute hierarchies and describe the process of building the hierarchies structures for inclusion in the ```dcm_specify()``` function.
+
+
+# Single structure hierarchies
+
+Single structures represent relatively simple hierarchical systems composed of two or more attributes. Within this category, three primary structural specifications are commonly identified: linear, divergent, and convergent structures.
+
+To demonstrate the process of specifying different types of single structure attribute hierarchies, we will use a six-item, three-attribute Q-matrix.
+
+```{r, echo = TRUE}
+single_qmatrix <- tibble::tibble(
+  item = 1:6,
+  A1 = c(1,1,0,0,0,0),
+  A2 = c(0,0,1,1,0,0),
+  A3 = c(0,0,0,0,1,1)
+)
+
+single_qmatrix
+```
+
+## Linear structure
+
+In a linear structure, each attribute serves as a prerequisite for the next in a sequential progression. This structure reflects a cumulative skill sequence, where mastery of higher-level attributes implies mastery of all preceding attributes. For instance, a three-attribute linear structure (see G1 in Figure X) illustrates this relationship where the first attribute serves as a prerequisite for the second, and the second attribute serves as a prerequisite for the third.
+
+We can build a linear hierarchical structure using a ```->``` notation.
+
+```{r}
+linear_strc <- 'A1 -> A2 -> A3'
+
+linear_strc
+```
+
+An HDCM that incorporates this strict linear hierarchy among attributes can be specified as follows:
+
+```{r}
+linear_spec_hdcm <- dcm_specify(
+  qmatrix = single_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = hdcm(hierarchy = linear_strc),
+  priors = NULL
+)
+```
+
+In contrast, users can relax the strict hierarchy assumption and model the linear hierarchy using a bayesian network structural model as follows:
+
+```{r}
+linear_spec_bn <- dcmstan::dcm_specify(
+  qmatrix = single_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = bayesnet(hierarchy = linear_strc),
+  priors = NULL
+)
+```
+
+
+## Convergent structure
+
+A convergent, or pyramid, structure reflects a hierarchy where multiple parent attributes jointly support the acquisition of a single child attribute. This structure represents convergence, as several foundational skills combine to enable mastery of a more advanced skill.
+
+```{r}
+convergent_strc <- 'A1 -> A2 -> A3'
+
+convergent_strc
+```
+
+An HDCM that incorporates a strict convergent hierarchy among attributes can be specified as follows:
+
+```{r}
+convergent_spec_hdcm <- dcmstan::dcm_specify(
+  qmatrix = single_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = hdcm(hierarchy = convergent_strc),
+  priors = NULL
+)
+```
+
+In contrast, a bayesian network structural model that reflects a convergent hierarchy can be specified as follows:
+
+```{r}
+convergent_spec_bn <- dcmstan::dcm_specify(
+  qmatrix = single_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = bayesnet(hierarchy = convergent_strc),
+  priors = NULL
+)
+```
+
+
+## Divergent structure
+
+A divergent, or inverted pyramid, structure reflects the pattern opposite of a convergent structure. A single parent attribute facilitates the acquisition of multiple child attributes. This structure represents divergence, as one foundational skill branches into several more advanced skills.
+
+```{r}
+divergent_strc <- 'A1 -> A3
+                   A2 -> A3'
+
+divergent_strc
+```
+
+An HDCM that incorporates a strict divergent hierarchy among attributes can be specified as follows:
+
+```{r}
+divergent_spec_hdcm <- dcmstan::dcm_specify(
+  qmatrix = single_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = hdcm(hierarchy = divergent_strc),
+  priors = NULL
+)
+```
+
+In contrast, a bayesian network structural model that reflects a divergent hierarchy can be specified as follows:
+
+```{r}
+divergent_spec_bn <- dcmstan::dcm_specify(
+  qmatrix = single_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = bayesnet(hierarchy = divergent_strc),
+  priors = NULL
+)
+```
+
+
+
+
+# Complex structure hierarchies
+
+Complex structures emerge from the combination of two or more single structures and typically involve three or more attributes. Liu (2018) characterized several common forms of these complex structures, often referred to as diamond structures, which illustrate how multiple learning paths can converge and diverge across attributes. Three diamond structure configurations are discussed in this vignette, each reflecting different complexity in the interrelationships among attributes: a two-level diamond structure; a three-level diamond structure; and a four-level diamond structure.
+
+To demonstrate the process of specifying different types of complex structure attribute hierarchies, we will use a 10-item, five-attribute Q-matrix.
+
+```{r, echo = TRUE}
+complex_qmatrix <- tibble::tibble(
+  item = 1:10,
+  A1 = c(1,1,0,0,0,0,0,0,0,0),
+  A2 = c(0,0,1,1,0,0,0,0,0,0),
+  A3 = c(0,0,0,0,1,1,0,0,0,0),
+  A4 = c(0,0,0,0,0,0,1,1,0,0),
+  A5 = c(0,0,0,0,0,0,0,0,1,1),
+)
+
+complex_qmatrix
+```
+
+## Two-level diamond structure
+
+A two-level diamond structure can represent a mixture of convergent or divergent structure. G4 in Figure 2 can be specified as follows.
+
+```{r}
+diamond_2lev_strc <- 'A1 -> A3
+                      A1 -> A4
+                      A2 -> A4
+                      A2 -> A5'
+```
+
+In the specification, attributes A1 and A2 serve as parent skills. Attribute A1 facilitates the development of A3 and A4, while A2 supports A4 and A5. This creates both divergence (attribute A1 and A2 branch into multiple child attributes) and convergence (attribute A4 has multiple parent attributes). 
+
+An HDCM that incorporates this strict two-level diamond hierarchy can be specified as follows:
+
+```{r}
+diamond_2lev_spec_hdcm <- dcmstan::dcm_specify(
+  qmatrix = complex_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = hdcm(hierarchy = diamond_2lev_strc),
+  priors = NULL
+)
+```
+
+In contrast, a bayesian network structural model that reflects this two-level diamond hierarchy can be specified as follows:
+
+```{r}
+diamond_2lev_spec_bn <- dcmstan::dcm_specify(
+  qmatrix = complex_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = bayesnet(hierarchy = diamond_2lev_strc),
+  priors = NULL
+)
+```
+
+
+## three-level diamond structure
+
+A three-level diamond structure extends the concept of divergence and convergence across three layers of attributes. G5 in Figure 2 can be specified as follows.
+
+
+```{r}
+diamond_3lev_strc <- 'A1 -> A2 -> A5
+                      A1 -> A3 -> A5
+                      A1 -> A4 -> A5'
+```
+
+Attribute A1 serves as the first skill in the sequence, which facilitates the development of three intermediate attributes, A2, A3, and A4. These intermediate attributes then converge into a single advanced attribute, A5. This configuration captures both divergent pathways (A1 branches into A2, A3, and A4) and convergent integration (A5 receives input from A2, A3, and A4).
+
+An HDCM that incorporates this strict three-level diamond hierarchy can be specified as follows:
+
+```{r}
+diamond_3lev_spec_hdcm <- dcmstan::dcm_specify(
+  qmatrix = complex_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = hdcm(hierarchy = diamond_3lev_strc),
+  priors = NULL
+)
+```
+
+In contrast, a bayesian network structural model that reflects this three-level diamond hierarchy can be specified as follows:
+
+```{r}
+diamond_3lev_spec_bn <- dcmstan::dcm_specify(
+  qmatrix = complex_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = bayesnet(hierarchy = diamond_3lev_strc),
+  priors = NULL
+)
+```
+
+## Four-level diamond structure
+
+A four-level diamond structure represents an extended hierarchical progression with multiple layers of divergence and convergence. G6 in Figure 2 can be specified as follows.
+
+```{r}
+diamond_4lev_strc <- 'A1 -> A2 -> A3 -> A5
+                      A1 -> A2 -> A4 -> A5'
+```
+
+Again, attribute A1 serves as the first skill in the sequence and initiates the development of A2. Attribute A2 then diverges into two parallel intermediate attributes, A3 and A4. These intermediate attributes subsequently converge into a single higher-level attribute, A5. This pattern reflects a multi-step skill acquisition process, where a linear hierarchy of foundational skills later branches into parallel intermediate skills that ultimately lead to a single, advanced skill.
+
+An HDCM that incorporates this strict four-level diamond hierarchy can be specified as follows:
+
+```{r}
+diamond_4lev_spec_hdcm <- dcmstan::dcm_specify(
+  qmatrix = complex_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = hdcm(hierarchy = diamond_4lev_strc),
+  priors = NULL
+)
+```
+
+In contrast, a bayesian network structural model that reflects this four-level diamond hierarchy can be specified as follows:
+
+```{r}
+diamond_4lev_spec_bn <- dcmstan::dcm_specify(
+  qmatrix = complex_qmatrix,
+  identifier = "item",
+  measurement_model = lcdm(),
+  structural_model = bayesnet(hierarchy = diamond_4lev_strc),
+  priors = NULL
+)
+```
+
+# References
