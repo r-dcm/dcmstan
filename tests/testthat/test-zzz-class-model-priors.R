@@ -298,7 +298,7 @@ test_that("c works", {
     upper_bound = 1
   )
 
-  err <- rlang::catch_cnd(c(prior1, penguins))
+  err <- rlang::catch_cnd(c(prior1, mtcars))
   expect_s3_class(err, "rlang_error")
   expect_match(err$message, "must be .*dcmprior.* objects")
 
