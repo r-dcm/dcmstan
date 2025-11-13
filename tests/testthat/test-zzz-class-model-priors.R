@@ -297,6 +297,11 @@ test_that("c works", {
     lower_bound = 0,
     upper_bound = 1
   )
+
+  err <- rlang::catch_cnd(c(prior1, penguins))
+  expect_s3_class(err, "rlang_error")
+  expect_match(err$message, "must be .*dcmprior.* objects")
+
   prior2 <- prior("beta(5, 17)", type = "guess")
   prior3 <- prior("beta(5, 17)", type = "slip")
 

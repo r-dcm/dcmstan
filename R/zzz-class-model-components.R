@@ -494,7 +494,6 @@ model_property <- S7::new_property(
     if (!is.null(self@model)) {
       stop("@model is read-only", call. = FALSE)
     }
-    self@model <- value
   }
 )
 
