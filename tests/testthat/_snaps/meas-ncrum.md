@@ -15,7 +15,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real<lower=0,upper=1> pistar_1;
@@ -315,7 +315,6 @@
         pi[28,8] = pistar_28;
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         pistar_1 ~ beta(15, 3);
@@ -417,7 +416,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real<lower=0,upper=1> pistar_1;
@@ -444,7 +443,6 @@
         pi[4,2] = pistar_4;
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         pistar_1 ~ beta(15, 3);
@@ -489,7 +487,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real<lower=0,upper=1> pistar_1;
@@ -994,7 +992,6 @@
         pi[27,16] = pistar_27;
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         pistar_1 ~ beta(15, 3);
@@ -1404,7 +1401,6 @@
         pi[28,8] = pistar_28;
       }
       model {
-      
         ////////////////////////////////// priors
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
@@ -1508,7 +1504,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real<lower=0,upper=1> pistar_1;
@@ -1861,7 +1857,6 @@
         pi[19,16] = pistar_19;
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         pistar_1 ~ beta(15, 3);
@@ -1936,7 +1931,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real<lower=0,upper=1> pistar_1;
@@ -2124,7 +2119,6 @@
         pi[28,4] = pistar_28;
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         pistar_1 ~ beta(15, 3);

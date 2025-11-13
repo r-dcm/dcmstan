@@ -16,7 +16,7 @@
         int<lower=1> A;                      // number of attributes
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// attribute parameters
         array[A] real<lower=0,upper=1> slip;
@@ -253,7 +253,6 @@
         pi[28,8] = (1 - slip[3]);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -297,7 +296,7 @@
         int<lower=1> A;                      // number of attributes
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// attribute parameters
         array[A] real<lower=0,upper=1> slip;
@@ -318,7 +317,6 @@
         pi[4,2] = (1 - slip[1]);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -358,7 +356,7 @@
         int<lower=1> A;                      // number of attributes
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// attribute parameters
         array[A] real<lower=0,upper=1> slip;
@@ -803,7 +801,6 @@
         pi[27,16] = (1 - slip[1])*(1 - slip[2]);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -1096,7 +1093,6 @@
         pi[28,8] = (1 - slip[3]);
       }
       model {
-      
         ////////////////////////////////// priors
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
@@ -1142,7 +1138,7 @@
         int<lower=1> A;                      // number of attributes
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// attribute parameters
         array[A] real<lower=0,upper=1> slip;
@@ -1459,7 +1455,6 @@
         pi[19,16] = (1 - slip[1]);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -1505,7 +1500,7 @@
         int<lower=1> A;                      // number of attributes
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// attribute parameters
         array[A] real<lower=0,upper=1> slip;
@@ -1630,7 +1625,6 @@
         pi[28,4] = (1 - slip[3]);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
