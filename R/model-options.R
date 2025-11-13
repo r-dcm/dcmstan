@@ -38,14 +38,14 @@ strc_choices <- function() {
 #' @noRd
 print_choices <- function(x, sep = ", ", last = ", or ", format = FALSE) {
   txt <- if (format) {
-    cli::cli_fmt(
+    cli::format_message(
       cli::cli_text(
         "{.val {cli::cli_vec(x, style = list('vec-last' = last,
                                              'vec-sep' = sep))}}"
       )
     )
   } else {
-    cli::cli_fmt(
+    cli::format_message(
       cli::cli_text(
         "{cli::cli_vec(x, style = list('vec-last' = last, 'vec-sep' = sep))}"
       )

@@ -15,7 +15,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real l_01;
@@ -256,7 +256,6 @@
         pi[28,8] = inv_logit(l_03+l_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l_01 ~ normal(0, 2);
@@ -299,7 +298,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real l_01;
@@ -320,7 +319,6 @@
         pi[4,2] = inv_logit(l_01+l_11);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l_01 ~ normal(0, 2);
@@ -359,7 +357,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real l_01;
@@ -810,7 +808,6 @@
         pi[27,16] = inv_logit(l_01+l_11+l_02+l_12);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l_01 ~ normal(0, 2);
@@ -1107,7 +1104,6 @@
         pi[28,8] = inv_logit(l_03+l_13);
       }
       model {
-      
         ////////////////////////////////// priors
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
@@ -1152,7 +1148,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// measurement parameters
         real l_01;
@@ -1281,7 +1277,6 @@
         pi[28,4] = inv_logit(l_03+l_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l_01 ~ normal(0, 2);

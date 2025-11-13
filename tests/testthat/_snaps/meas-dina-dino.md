@@ -16,7 +16,7 @@
         matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -33,7 +33,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -127,7 +126,7 @@
         matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -144,7 +143,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -190,7 +188,7 @@
         matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -207,7 +205,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -327,7 +324,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
@@ -478,7 +474,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         g_11 ~ normal(0, 10);
         g_12 ~ normal(0, 10);
@@ -625,7 +620,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
@@ -763,7 +757,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
@@ -861,7 +854,7 @@
         matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -878,7 +871,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -972,7 +964,7 @@
         matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -989,7 +981,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -1035,7 +1026,7 @@
         matrix[I,C] Xi;                      // class attribute indicator
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item parameters
         array[I] real<lower=0,upper=1> slip;
@@ -1052,7 +1043,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
@@ -1172,7 +1162,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
@@ -1323,7 +1312,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         g_11 ~ normal(0, 10);
         g_12 ~ normal(0, 10);
@@ -1470,7 +1458,6 @@
         }
       }
       model {
-      
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);

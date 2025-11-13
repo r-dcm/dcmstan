@@ -1,4 +1,4 @@
-test_that("dcm_specification class errors when expected", {
+test_that("dcm_specify errors when expected", {
   test_qmatrix <- tibble::tibble(
     item = paste0("item_", 1:10),
     node1 = sample(0:1, size = 10, replace = TRUE),
@@ -78,6 +78,29 @@ test_that("dcm_specification class errors when expected", {
   )
 })
 
+test_that("dcm_specification errors when expected", {
+  test_qmatrix <- tibble::tibble(
+    item = paste0("item_", 1:10),
+    node1 = sample(0:1, size = 10, replace = TRUE),
+    node2 = sample(0:1, size = 10, replace = TRUE),
+    node3 = sample(0:1, size = 10, replace = TRUE)
+  )
+  expect_error(
+    dcm_specification(qmatrix = test_qmatrix),
+    "only numeric values of 0 or 1"
+  )
+
+  test_qmatrix2 <- tibble::tibble(
+    node1 = sample(0:1, size = 10, replace = TRUE),
+    node2 = sample(2:3, size = 10, replace = TRUE),
+    node3 = sample(0:1, size = 10, replace = TRUE)
+  )
+  expect_error(
+    dcm_specification(qmatrix = test_qmatrix2),
+    "only values of 0 or 1"
+  )
+})
+
 test_that("dcm_specification works", {
   test_qmatrix <- tibble::tibble(
     item = paste0("item_", 1:10),
@@ -116,6 +139,17 @@ test_that("dcm_specification works", {
   expect_identical(
     spec@priors,
     default_dcm_priors(lcdm(max_interaction = 1), unconstrained())
+  )
+
+  # check overwriting ----------------------------------------------------------
+  expect_error(
+    spec@qmatrix <- test_qmatrix,
+    "@qmatrix is read-only"
+  )
+
+  expect_error(
+    spec@qmatrix_meta <- spec@qmatrix_meta,
+    "@qmatrix_meta is read-only"
   )
 })
 

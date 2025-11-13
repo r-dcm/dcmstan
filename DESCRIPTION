@@ -41,6 +41,8 @@ Imports:
 Suggests: 
     cmdstanr,
     dcmdata,
+    knitr,
+    rmarkdown,
     spelling,
     testthat (>= 3.0.0),
     withr
@@ -51,3 +53,4 @@ Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+VignetteBuilder: knitr
