@@ -111,7 +111,6 @@ S7::method(stan_code, dcm_specification) <- function(x) {
   all_priors <- glue::as_glue(c(strc_code$priors, meas_code$priors))
   model_block <- glue::glue(
     "model {{",
-    "",
     "  ////////////////////////////////// priors",
     "  {glue::glue_collapse(all_priors, sep = \"\n  \")}",
     "",
