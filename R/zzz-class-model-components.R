@@ -225,7 +225,7 @@ ncrum <- function() {
 #'   \doi{10.1080/00273171.2019.1632165}
 #' @references Lee, S. Y. (2016). *Cognitive diagnosis model: DINA model with
 #'   independent attributes*.
-#'   https://mc-stan.org/documentation/case-studies/dina_independent.html
+#'   https://mc-stan.org/learn-stan/case-studies/dina_independent.html
 #' @references Leighton, J. P., Gierl, M. J., & Hunka, S. M. (2004). The
 #'   attribute hierarchy method for cognitive assessment: A variation on
 #'   Tatsuoka's rule-space approach.
