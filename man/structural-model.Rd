@@ -33,7 +33,8 @@ A structural model object.
 \description{
 Structural models define how the attributes are related to one another.
 The currently supported options for structural models are:
-unconstrained, independent attributes, log-linear, hierarchical diagnostic classification model (HDCM), and, Bayesian network.
+unconstrained, independent attributes, log-linear, hierarchical diagnostic
+classification model (HDCM), and Bayesian network.
 See details for additional information on each model.
 }
 \details{
@@ -90,7 +91,7 @@ Networks. \emph{Multivariate Behavioral Research, 55}(2), 300-311.
 
 Lee, S. Y. (2016). \emph{Cognitive diagnosis model: DINA model with
 independent attributes}.
-https://mc-stan.org/documentation/case-studies/dina_independent.html
+https://mc-stan.org/learn-stan/case-studies/dina_independent.html
 
 Leighton, J. P., Gierl, M. J., & Hunka, S. M. (2004). The
 attribute hierarchy method for cognitive assessment: A variation on

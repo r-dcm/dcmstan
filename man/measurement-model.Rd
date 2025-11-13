@@ -35,7 +35,11 @@ A measurement model object.
 \description{
 The measurement model defines how the items relate to the attributes. The
 currently supported options for measurement models are:
-loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and" gate (DINA); deterministic input,, noisy "or" gate (DINO); noisy-input, deterministic "and" gate (NIDA); noisy-input, deterministic "or" gate (NIDO);, noncompensatory reparameterized unified model (NC-RUM); and compensatory reparameterized unified model (C-RUM).
+loglinear cognitive diagnostic model (LCDM); deterministic input, noisy "and"
+gate (DINA); deterministic input, noisy "or" gate (DINO); noisy-input,
+deterministic "and" gate (NIDA); noisy-input, deterministic "or" gate (NIDO);
+noncompensatory reparameterized unified model (NC-RUM); and compensatory
+reparameterized unified model (C-RUM).
 See details for additional information on each model.
 }
 \details{
