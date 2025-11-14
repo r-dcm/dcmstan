@@ -1,8 +1,8 @@
 ---
 title: "Attribute hierarchy case study"
-# output: rmarkdown::html_vignette
-output: bookdown::html_document2
+output: rmarkdown::html_vignette
 bibliography: ../bib/references.bib
+biblio-style: apa
 csl: ../bib/apa.csl
 link-citations: true
 vignette: >
@@ -11,24 +11,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
-library(ratlas)
-library(showtext)
-library(english)
+```{r}
+#| labels: setup
+#| include: false
 
-font_add_google("Open Sans")
-showtext_auto()
-showtext_opts(dpi = 192)
+library(dcmstan)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.width = 7.2916667,
-  fig.align = "center",
-  out.width = "90%"
+  comment = "#>"
 )
-
-options(mc.cores = 1, tidyverse.quiet = TRUE)
 ```
 
 
