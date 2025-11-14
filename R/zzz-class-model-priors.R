@@ -366,7 +366,7 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
   dots_class <- sapply(dots, function(x) inherits(x, dcmprior))
   if (length(dots) && !all(dots_class)) {
     cli::cli_abort(
-      message = "All objects must be dcmprior objects"
+      message = "All objects must be {.cls dcmprior} objects"
     )
   }
 

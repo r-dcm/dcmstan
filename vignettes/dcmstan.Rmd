@@ -1,0 +1,147 @@
+---
+title: "Introduction to dcmstan"
+output: rmarkdown::html_vignette
+bibliography: bib/references.bib
+biblio-style: apa
+csl: bib/apa.csl
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Introduction to dcmstan}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+dcmstan is an R package that generates the [*Stan*](https://mc-stan.org) code needed for estimating diagnostic classification models (DCMs; also known as cognitive diagnostic models [CDMs]).
+dcmstan provides functionality for all major DCMs that are used in practice and supports the specification of both measurement and structural models.
+Here, you'll find a brief overview of how to specify a diagnostic model and generate the associated *Stan* code.
+
+```{r}
+#| label: load-dcmstan
+
+library(dcmstan)
+```
+
+## Specifying a DCM
+
+We create a specification using `dcm_specify()`.
+First, we must define our Q-matrix, which represents how the assessment items relate to the latent attributes.
+For this example, we'll create a specification for the simulated "Diagnostic Teachers' Multiplicative Reasoning" (DTMR) data.
+In the DTMR data, there are 27 items that collectively measure 4 attributes
+(for more information see `?dcmdata::dtmr`).
+
+```{r}
+#| label: dtmr
+
+library(dcmdata)
+
+dtmr_qmatrix
+```
+
+In the Q-matrix, a `1` indicates that the attribute (in the columns) is measured by a given item (in the rows).
+Our Q-matrix also includes an item identifier with the item names or identifiers.
+We pass the Q-matrix and the (optional) identifier to `dcm_specify()`.
+We can then specify our chosen measurement and structural models.
+Here, we keep the default `unconstrained()` structural model but overwrite the default `lcdm()` measurement model to specify a `dina()` model.
+These options are described in more detail in the following sections.
+
+```{r}
+#| label: create-spec
+
+spec <- dcm_specify(
+  qmatrix = dtmr_qmatrix,
+  identifier = "item",
+  measurement_model = dina(),
+  structural_model = bayesnet()
+)
+
+spec
+```
+
+### Measurement models
+
+The measurement model defines how attributes relate to the items.
+For example, take item 10b in the DTMR Q-matrix, which measures both Referent Units and Multiplicative Comparison.
+Does a respondent need to be proficient on both attributes in order to answer the item correct?
+Just one of the attributes?
+Or maybe proficiency on one of the attributes makes it more likely the respondent will provide a correct response, but not as likely as if they were proficient on both?
+
+These relationships are determined by the measurement model.
+dcmstan supports several measurement models that each make different assumptions about how items relate to the measured attributes.
+Specifically, we support the six core DCMs identified by [@rupp-dcm], as well as the general loglinear cognitive diagnostic model [LCDM\; @lcdm; @lcdm-handbook] which subsumes the more restrictive core DCMs.
+For more information on each measurement model, see `` ?`measurement-model` `` and the accompanying references.
+
+Table: Supported measurement models
+
+| Model                      | Abbreviation |        Reference      | dcmstan   |
+|:---------------------------|:------------:|:---------------------:|:---------:|
+| Loglinear cognitive diagnostic model          | LCDM         | @lcdm     | `lcdm()`  |
+| Deterministic input, noisy "and" gate         | DINA         | @dina     | `dina()`  |
+| Deterministic input, noisy "or" gate          | DINO         | @dino     | `dino()`  |
+| Noisy-input, deterministic "and" gate         | NIDA         | @nida     | `nida()`  |
+| Noisy-input, deterministic "or" gate          | NIDO         | @nido     | `nido()`  |
+| Noncompensatory reparameterized unified model | NC-RUM       | @ncrum    | `ncrum()` |
+| Compensatory reparameterized unified model    | C-RUM        | @crum     | `crum()`  |
+
+### Structural models
+
+Whereas the measurement model defines how the attributes relate to the items, the structural model defines how the attributes relate to each other.
+For example, it could be that the attributes following a specific ordering or hierarchy, such as a learning progression, where a respondent must be proficient on one attribute prior to gaining proficiency on another.
+Or perhaps the proficiency statuses of different attributes are completely independent.
+
+The inter-attribute relationships are defined by the structural model.
+dcmstan supports several structural models that each allow for different specifications for how the attributes relate to each other.
+Specifically, we support a range of interrelatedness from unconstrained to fully independent attributes with the unconstrained, independent, and loglinear models.
+We also support the specification of specific relationships and hierarchies through the hierarchical diagnostic classification model and Bayesian network structural models.
+For more information on each structural model, see `` ?`structural-model` `` and the accompanying references.
+
+Table: Supported structural models
+
+| Model                      | Abbreviation | Reference             | dcmstan   |
+|:---------------------------|:------------:|:---------------------:|:---------:|
+| Unconstrained              |              | @rupp-dcm             | `unconstrained()` |
+| Independent                |              | @independent          | `independent()`   |
+| Loglinear                  |              | @loglinear            | `loglinear()`     |
+| Hierarchical DCM           | HDCM         | @hdcm                 | `hdcm()`          |
+| Bayesian network           | BN           | @bayesnet             | `bayesnet()`      |
+
+
+## From specification to estimation
+
+Once we have specified a model, we can create the necessary *Stan* code using `stan_code()`.
+
+```{r}
+#| label: create-code
+
+stan_code(spec)
+```
+
+This provides the code need for `rstan::stan()` to estimate the model.
+You can either pass the code directly to the `model_code` argument, or save the code to a file, customize it as needed, and then provide the file path to the modified code to the `file` argument (see `?rstan::stan` for additional guidance).
+
+You will also need to create a list of data objects for *Stan*.
+This can be accomplished using `stan_data()`.
+This function takes our data set and the respondent identifier column name (can be excluded if not present in `data`), and provides a list that can be supplied to the `data` argument of `rstan::stan()`.
+
+```{r}
+#| label: create-data
+
+dtmr_data
+
+dat <- stan_data(spec, data = dtmr_data, identifier = "id")
+str(dat)
+```
+
+Note that the elements of the data list correspond to the variables that are declared in the `data` block of the code generated with `stan_code()`.
+If you customize the *Stan* code and include additional data variables, you will need to also add the corresponding data objects to the list.
+
+## References

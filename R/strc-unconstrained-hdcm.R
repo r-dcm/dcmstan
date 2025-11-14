@@ -15,7 +15,7 @@
 strc_unconstrained <- function(qmatrix, priors, att_names = NULL) {
   parameters_block <-
     glue::glue(
-      "  simplex[C] Vc;                  // base rates of class membership",
+      "  simplex[C] Vc;",
       .trim = FALSE
     )
 

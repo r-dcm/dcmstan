@@ -15,7 +15,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -328,7 +328,6 @@
         pi[28,8] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -439,7 +438,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -468,7 +467,6 @@
         pi[4,2] = inv_logit(l4_0+l4_11);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -513,7 +511,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -1030,7 +1028,6 @@
         pi[27,16] = inv_logit(l27_0+l27_11+l27_12+l27_212);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -1461,7 +1458,6 @@
         pi[28,8] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
@@ -2129,7 +2125,6 @@
         pi[27,16] = inv_logit(l27_0+l27_11+l27_12+l27_212);
       }
       model {
-      
         ////////////////////////////////// priors
         g_11 ~ normal(0, 10);
         g_12 ~ normal(0, 10);
@@ -2587,7 +2582,6 @@
         pi[28,8] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
@@ -2704,7 +2698,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -3059,7 +3053,6 @@
         pi[19,16] = inv_logit(l19_0+l19_11);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -3134,7 +3127,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -3436,7 +3429,6 @@
         pi[28,8] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -3538,7 +3530,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -3567,7 +3559,6 @@
         pi[4,2] = inv_logit(l4_0+l4_11);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -3612,7 +3603,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -4119,7 +4110,6 @@
         pi[27,16] = inv_logit(l27_0+l27_11+l27_12);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -4531,7 +4521,6 @@
         pi[28,8] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         eta[1] ~ beta(1, 1);
         eta[2] ~ beta(1, 1);
@@ -5180,7 +5169,6 @@
         pi[27,16] = inv_logit(l27_0+l27_11+l27_12);
       }
       model {
-      
         ////////////////////////////////// priors
         g_11 ~ normal(0, 10);
         g_12 ~ normal(0, 10);
@@ -5619,7 +5607,6 @@
         pi[28,8] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         g1_0 ~ normal(0, 2);
         g2_0 ~ normal(0, 2);
@@ -5727,7 +5714,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -5919,7 +5906,6 @@
         pi[28,4] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -6021,7 +6007,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -6242,7 +6228,6 @@
         pi[28,5] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -6345,7 +6330,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -6566,7 +6551,6 @@
         pi[28,5] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -6669,7 +6653,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -6919,7 +6903,6 @@
         pi[28,6] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -7023,7 +7006,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -7266,7 +7249,6 @@
         pi[27,6] = inv_logit(l27_0+l27_11+l27_12+l27_212);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -7369,7 +7351,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -7691,7 +7673,6 @@
         pi[27,9] = inv_logit(l27_0+l27_11+l27_212);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -7792,7 +7773,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -8120,7 +8101,6 @@
         pi[27,9] = inv_logit(l27_0+l27_11+l27_12+l27_212);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -8227,7 +8207,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -8526,7 +8506,6 @@
         pi[27,8] = inv_logit(l27_0+l27_11+l27_12+l27_212);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);
@@ -8631,7 +8610,7 @@
         array[R] int<lower=1,upper=I> num;   // number items for respondent R
       }
       parameters {
-        simplex[C] Vc;                  // base rates of class membership
+        simplex[C] Vc;
       
         ////////////////////////////////// item intercepts
         real l1_0;
@@ -8821,7 +8800,6 @@
         pi[28,4] = inv_logit(l28_0+l28_13);
       }
       model {
-      
         ////////////////////////////////// priors
         Vc ~ dirichlet(rep_vector(1, C));
         l1_0 ~ normal(0, 2);

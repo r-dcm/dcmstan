@@ -33,9 +33,5 @@
     Code
       print_choices(names(meas_choices()), sep = "; ", last = "; ", format = FALSE)
     Output
-      [1] "loglinear cognitive diagnostic model (LCDM); deterministic input, noisy \"and\""  
-      [2] "gate (DINA); deterministic input, noisy \"or\" gate (DINO); noisy-input,"         
-      [3] "deterministic \"and\" gate (NIDA); noisy-input, deterministic \"or\" gate (NIDO);"
-      [4] "noncompensatory reparameterized unified model (NC-RUM); compensatory"             
-      [5] "reparameterized unified model (C-RUM)"                                            
+      [1] "loglinear cognitive diagnostic model (LCDM); deterministic input, noisy \"and\" gate (DINA); deterministic input, noisy \"or\" gate (DINO); noisy-input, deterministic \"and\" gate (NIDA); noisy-input, deterministic \"or\" gate (NIDO); noncompensatory reparameterized unified model (NC-RUM); compensatory reparameterized unified model (C-RUM)"
 
