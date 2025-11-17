@@ -191,13 +191,15 @@ coordinates(dag_complex_2_level) <- list(
   y = c(A1 = 2.4, A2 = 2.4, A3 = 1.6, A4 = 1.6, A5 = 1.6)
 )
 
-dag_complex_3_level <- dagitty("dag { A1 -> A2 -> A5 A1 -> A3 -> A5 A1 -> A4 -> A5 }")
+dag_complex_3_level <- dagitty("dag { A1 -> A2 -> A5 A1 -> A3 -> A5 
+                                      A1 -> A4 -> A5 }")
 coordinates(dag_complex_3_level) <- list(
   x = c(A1 = 2, A2 = 1, A3 = 2, A4 = 3, A5 = 2),
   y = c(A1 = 2.6, A2 = 2, A3 = 2, A4 = 2, A5 = 1.4)
 )
 
-dag_complex_4_level <- dagitty("dag { A1 -> A2 -> A3 -> A5 A1-> A2 -> A4 -> A5 }")
+dag_complex_4_level <- dagitty("dag { A1 -> A2 -> A3 -> A5 
+                                      A1-> A2 -> A4 -> A5 }")
 coordinates(dag_complex_4_level) <- list(
   x = c(A1 = 2, A2 = 2, A3 = 1, A4 = 3, A5 = 2),
   y = c(A1 = 2.6, A2 = 2.2, A3 = 1.8, A4 = 1.8, A5 = 1.4)
@@ -205,14 +207,14 @@ coordinates(dag_complex_4_level) <- list(
 
 bind_rows(
   tidy_dagitty(dag_complex_2_level) |>
-  mutate(type = "Two-Level Complex") |>
-  as_tibble(),
+    mutate(type = "Two-Level Complex") |>
+    as_tibble(),
   tidy_dagitty(dag_complex_3_level) |>
-  mutate(type = "Three-Level Complex") |>
-  as_tibble(),
+    mutate(type = "Three-Level Complex") |>
+    as_tibble(),
   tidy_dagitty(dag_complex_4_level) |>
-  mutate(type = "Four-Level Complex") |>
-  as_tibble()
+    mutate(type = "Four-Level Complex") |>
+    as_tibble()
 ) |>
   mutate(
     type = factor(type, levels = c("Two-Level Complex", "Three-Level Complex",
