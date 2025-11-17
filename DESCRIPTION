@@ -47,7 +47,7 @@ Suggests:
     testthat (>= 3.0.0),
     withr
 Additional_repositories: https://stan-dev.r-universe.dev
-Config/Needs/website: r-dcm/rdcmtemplate
+Config/Needs/website: r-dcm/rdcmtemplate, ggplot2
 Config/Needs/documentation: openpharma/roxylint
 Config/roxylint: list(linters = roxylint::tidy)
 Config/testthat/edition: 3

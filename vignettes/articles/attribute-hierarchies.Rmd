@@ -141,7 +141,7 @@ All of the following specifications are equivalent.
 
 ```{r}
 #| label: converge
-#| results: "hide"
+#| results: hide
 
 hdcm(hierarchy = "A1 -> A3 <- A2")
 
@@ -159,7 +159,7 @@ Note that although we have used `hdcm()` in these examples, the same hierarchy s
 
 ```{r}
 #| label: diverge
-#| results: "hide"
+#| results: hide
 
 hdcm(hierarchy = "A2 <- A1 -> A3")
 
@@ -174,8 +174,9 @@ hdcm(hierarchy = diverge)
 
 ### Complex structures
 
-For complex structures, attributes can exhibit linear, converging, and diverging relationships within a single hierarchy. 
-These configurations are defined by the types of simple structures present and how the structures are arranged in the hierarchy.
+In a complex structures, multiple simple structures are combined into a larger web of attribute relationships.
+Depending on the number of attributes included on an assessment, there are an almost unlimited number of structures a hierarchy could take by mixing linear, convergent, and divergent relationships.
+As an overview of how different structures can be specified in dcmstan, we'll consider a few example structures with two, three, four-levels of hierarchy.
 
 ```{r}
 #| label: complex-structure
@@ -185,40 +186,48 @@ These configurations are defined by the types of simple structures present and h
 #| fig-height: 3.5
 #| fig-cap: Complex attribute structures
 
-dag_complex_2_level <- dagitty("dag { A3 <- A1 -> A4 <- A2 -> A5 }")
-coordinates(dag_complex_2_level) <- list(
-  x = c(A1 = 1.5, A2 = 2.5, A3 = 1, A4 = 2, A5 = 3),
-  y = c(A1 = 2.4, A2 = 2.4, A3 = 1.6, A4 = 1.6, A5 = 1.6)
+dag_complex2 <- dagitty("dag { A3 <- A1 -> A4 <- A2 -> A5 }")
+coordinates(dag_complex2) <- list(
+  x = c(A1 = 2, A2 = 4, A3 = 1, A4 = 3, A5 = 5),
+  y = c(A1 = 2.5, A2 = 2.5, A3 = 1.5, A4 = 1.5, A5 = 1.5)
 )
 
-dag_complex_3_level <- dagitty("dag { A1 -> A2 -> A5 A1 -> A3 -> A5 
-                                      A1 -> A4 -> A5 }")
-coordinates(dag_complex_3_level) <- list(
-  x = c(A1 = 2, A2 = 1, A3 = 2, A4 = 3, A5 = 2),
-  y = c(A1 = 2.6, A2 = 2, A3 = 2, A4 = 2, A5 = 1.4)
+dag_complex3 <- dagitty(
+  "dag { A1 -> A2 A1 -> A3 -> A5 A4 -> A3 }"
+)
+coordinates(dag_complex3) <- list(
+  x = c(A1 = 2.5, A2 = 1.5, A3 = 3.5, A4 = 4.5, A5 = 3.5),
+  y = c(A1 = 2.6, A2 = 2, A3 = 2, A4 = 2.6, A5 = 1.4)
 )
 
-dag_complex_4_level <- dagitty("dag { A1 -> A2 -> A3 -> A5 
-                                      A1-> A2 -> A4 -> A5 }")
-coordinates(dag_complex_4_level) <- list(
-  x = c(A1 = 2, A2 = 2, A3 = 1, A4 = 3, A5 = 2),
-  y = c(A1 = 2.6, A2 = 2.2, A3 = 1.8, A4 = 1.8, A5 = 1.4)
+dag_complex4 <- dagitty(
+  "dag { A1 -> A2 -> A3 -> A5 A2 -> A4 -> A5 }"
+)
+coordinates(dag_complex4) <- list(
+  x = c(A1 = 3, A2 = 3, A3 = 2, A4 = 4, A5 = 3),
+  y = c(A1 = 2.7, A2 = 2.25, A3 = 1.75, A4 = 1.75, A5 = 1.3)
 )
 
 bind_rows(
-  tidy_dagitty(dag_complex_2_level) |>
-    mutate(type = "Two-Level Complex") |>
+  tidy_dagitty(dag_complex2) |>
+    mutate(type = "Two-Level Hierarchy") |>
     as_tibble(),
-  tidy_dagitty(dag_complex_3_level) |>
-    mutate(type = "Three-Level Complex") |>
+  tidy_dagitty(dag_complex3) |>
+    mutate(type = "Three-Level Hierarchy") |>
     as_tibble(),
-  tidy_dagitty(dag_complex_4_level) |>
-    mutate(type = "Four-Level Complex") |>
+  tidy_dagitty(dag_complex4) |>
+    mutate(type = "Four-Level Hierarchy") |>
     as_tibble()
 ) |>
   mutate(
-    type = factor(type, levels = c("Two-Level Complex", "Three-Level Complex",
-                                   "Four-Level Complex"))
+    type = factor(
+      type,
+      levels = c(
+        "Two-Level Hierarchy",
+        "Three-Level Hierarchy",
+        "Four-Level Hierarchy"
+      )
+    )
   ) |>
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   facet_wrap(~type, nrow = 1) +
@@ -229,7 +238,7 @@ bind_rows(
     edge_width = 2,
     arrow_directed = grid::arrow(length = grid::unit(5, "pt"), type = "closed")
   ) +
-  expand_limits(x = c(0, 4), y = c(1.3, 2.7)) +
+  expand_limits(x = c(0, 6), y = c(1.2, 2.8)) +
   theme_void() +
   theme(
     strip.text = element_text(
@@ -241,14 +250,15 @@ bind_rows(
   )
 ```
 
-Consider a two-level complex structure that includes two diverging structures and one converging structure. 
-In this configuration, A1 and A2 serve as precursors to two attributes each.
-A3 and A4 are the culminating attribute of A1, while A4 and A5 are the culminating attribute of A2.
-A4 is the culminating attribute of both A1 and A2.
+In the two-level structure, A1 and A2 serve as precursors to two attributes each.
+A3 and A4 are the culminating attributes of A1, while A4 and A5 are the culminating attributes of A2.
+A4 represents a converging relationship between A1 and A2.
+As with the simple structures, this relationship can be specified as one continuous chain or as a series of different relationships.
+All are equivalent.
 
 ```{r}
-#| label: "two-level-complex"
-#| results: "hide"
+#| label: two-level-hierarcy
+#| results: hide
 
 hdcm(hierarchy = "A3 <- A1 -> A4 <- A2 -> A5")
 
@@ -263,42 +273,40 @@ complex2 <- "
 hdcm(hierarchy = complex2)
 ```
 
-Similarly, we can define a three-level complex structure that mixes linear, converging, and diverging structures.
-In this configuration, A1 is a precursor to A2, A3, and A4. 
-A5 is the culminating attribute of A2, A3, and A4.
-This configuration forms three linear pathways from A1 to A5.
-
+Similarly, we can define a three-level hierarchical structure that mixes linear, converging, and diverging structures.
+In this configuration, A1 diverges to A2 and A3. 
+A3 then is a convergence between A1 and A4.
+Finally, A5 has a linear dependency on A3.
+In this example, the full structure can not be written as a single chain .
+Therefore, we can specify the structure in as two smaller relationships, such as `"A2 <- A1 -> A3 <- A4"` and `"A3 -> A5"`, or as a series of pairwise relationships as in the previous examples.
 
 ```{r}
-#| label: "three-level-complex"
-#| results: "hide"
+#| label: three-level-hierarchy
+#| results: hide
 
-hdcm(hierarchy = "A1 -> A2 -> A5 A1-> A3 -> A5 A1 -> A4 -> A5")
-
-hdcm(hierarchy = "A1 -> A2 A2 -> A5 A1 -> A3 A3 -> A5 A1 -> A4 A4 -> A5")
+hdcm(hierarchy = "A2 <- A1 -> A3 <- A4 A3 -> A5")
 
 complex3 <- "
   A1 -> A2
   A1 -> A3
-  A1 -> A4
-  A2 -> A5
+  A4 -> A3
   A3 -> A5
-  A4 -> A5
 "
 hdcm(hierarchy = complex3)
 ```
 
-Lastly, we can define a four-level complex structure that connects linear, diverging, and converging structures.
-In this configuration, A1 is a precursor to A2.
-A2 is a precursor to A3 and A4, and A5 is the culminating attribute of A3 and A4.
+Finally consider a four-level hierarchy that also mixes all three simple structures, but in different configurations.
+In this example, A1 is a linear precursor to A2.
+A2 then diverges into A3 and A4, which both then converge back on A5.
+This structure again can be defined in a single chain, multiple smaller relationships, or pairwise relationships equivalently.
 
 ```{r}
-#| label: "four-level-complex"
-#| results: "hide"
+#| label: four-level-hierarchy
+#| results: hide
 
-hdcm(hierarchy = "A1 -> A2 -> A3 -> A5 A1 -> A2 -> A4 -> A5")
+hdcm(hierarchy = "A1 -> A2 -> A3 -> A5 <- A4 <- A2")
 
-hdcm(hierarchy = "A1 -> A2 A2 -> A3 A3 -> A5 A2 -> A4 A4 -> A5")
+hdcm(hierarchy = "A1 -> A2 -> A3 -> A5 A2 -> A4 -> A5")
 
 complex4 <- "
   A1 -> A2
@@ -308,6 +316,89 @@ complex4 <- "
   A4 -> A5
 "
 hdcm(hierarchy = complex4)
+```
+
+## Disallowed structures
+
+So far, we have discussed how different attribute structures can be specified within dcmstan.
+However, there are some structures that are not allowed.
+Namely, a structure must be a directed acyclic graph [DAG\; @almond2015], meaning that if we follow the directions of the arrows, we must not be able to form a closed loop and return to an attribute we have already visited.
+
+```{r}
+#| label: cyclic-structure
+#| echo: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 3
+#| fig-cap: Invalid attribute structures
+
+dag_cyclic1 <- dagitty("dag { A1 -> A2 -> A3 -> A1 }")
+coordinates(dag_cyclic1) <- list(
+  x = c(A1 = 3, A2 = 2, A3 = 4),
+  y = c(A1 = 2.5, A2 = 1.5, A3 = 1.5)
+)
+
+dag_cyclic2 <- dagitty("dag { A1 -> A5 -> A2 -> A3 -> A4 A2 -> A4 A4 -> A1 }")
+coordinates(dag_cyclic2) <- list(
+  x = c(A1 = 3, A2 = 3, A3 = 3, A4 = 5, A5 = 1),
+  y = c(A1 = 2.6, A2 = 2, A3 = 1.4, A4 = 2, A5 = 2)
+)
+
+bind_rows(
+  tidy_dagitty(dag_cyclic1) |>
+    mutate(type = "Example 1") |>
+    as_tibble(),
+  tidy_dagitty(dag_cyclic2) |>
+    mutate(type = "Example 2") |>
+    as_tibble()
+) |>
+  mutate(
+    type = factor(
+      type,
+      levels = c(
+        "Example 1",
+        "Example 2"
+      )
+    )
+  ) |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  facet_wrap(~type, nrow = 1) +
+  geom_dag_node() +
+  geom_dag_text(color = "white") +
+  geom_dag_edges(
+    edge_color = "black",
+    edge_width = 2,
+    arrow_directed = grid::arrow(length = grid::unit(5, "pt"), type = "closed")
+  ) +
+  expand_limits(x = c(0, 6), y = c(1.3, 2.7)) +
+  theme_void() +
+  theme(
+    strip.text = element_text(
+      size = 12,
+      margin = margin(0, 0, 4, 0),
+      face = "bold"
+    ),
+    plot.margin = margin(5, 0, 0, 0)
+  )
+```
+
+In the first example, we can start at A1 and return to A1 by following the path `A1 -> A2 -> A3 -> A1`.
+Similarly in the second example, there are multiple closed loops.
+For example, we can create a loop from `A1 -> A5 -> A2 -> A4 -> A1` or `A3 -> A4 -> A1 -> A5 -> A2 -> A3`.
+Thus, both of these structures would be invalid.
+If you specify and invalid attribute structure, you will be met with an error.
+
+```{r}
+#| label: bad-structure
+#| error: true
+
+hdcm(hierarchy = "A1 -> A2 -> A3 -> A1")
+
+attribute_structure <- "
+  A4 -> A1 -> A5 -> A2
+  A3 <- A2 -> A4 <- A3
+"
+hdcm(hierarchy = attribute_structure)
 ```
 
 ## References
