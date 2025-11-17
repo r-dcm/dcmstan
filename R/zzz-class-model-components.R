@@ -300,7 +300,7 @@ bayesnet <- function(hierarchy = NULL) {
 #' @param probabilities Logical indicating whether class and attribute
 #'   proficiency probabilities should be generated.
 #' @param ppmc Logical indicating whether replicated data sets for
-#'   \acronym{PPMCs] should be generated.
+#'   \acronym{PPMCs} should be generated.
 #'
 #' @returns A generated quantities object.
 #'
