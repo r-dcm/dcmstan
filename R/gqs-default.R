@@ -6,8 +6,8 @@
 #' @param loglik Logical indicating whether log-likelihood should be generated.
 #' @param probabilities Logical indicating whether class and attribute
 #'   proficiency probabilities should be generated.
-#' @param ppmc Logical indicating whether replicated data sets for PPMCs should
-#'   be generated.
+#' @param ppmc Logical indicating whether replicated data sets for posterior
+#'   predictive model checks should be generated.
 #'
 #' @returns A [glue::glue()] object containing the `generated quantities` block.
 #' @rdname gqs

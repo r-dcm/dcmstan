@@ -55,5 +55,6 @@ my_prior <- "normal(0, 2)"
 prior_string(my_prior, type = "intercept")
 }
 \seealso{
-\code{\link[=get_parameters]{get_parameters()}}
+\code{\link[=get_parameters]{get_parameters()}}.
 }
+\concept{Stan}

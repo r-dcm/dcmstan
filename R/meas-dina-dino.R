@@ -1,4 +1,4 @@
-#' 'Stan' code for the DINA and DINO models
+#' 'Stan' code for the \acronym{DINA} and \acronym{DINO} models
 #'
 #' Create the `parameters` and `transformed parameters` blocks that are needed
 #' for the DINA and DINO models. The function also returns the code that defines
@@ -9,7 +9,8 @@
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.

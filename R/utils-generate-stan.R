@@ -1,4 +1,4 @@
-#' Identify the lower level components of an LCDM parameter
+#' Identify the lower level components of an \acronym{LCDM} parameter
 #'
 #' @param x A character string indicating the attributes measured by an item,
 #'   separated by a double underscore (`__`).

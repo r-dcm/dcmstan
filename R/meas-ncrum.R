@@ -1,4 +1,4 @@
-#' 'Stan' code for the NC-RUM model
+#' 'Stan' code for the \acronym{NC-RUM} model
 #'
 #' Create the `parameters` and `transformed parameters` blocks that are needed
 #' for the NC-RUM model. The function also returns the code that defines the
@@ -8,7 +8,7 @@
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM} specification][dcm_specify()].
 #' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
 #'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
 #'   how to draw the attribute hierarchy.

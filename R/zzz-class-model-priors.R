@@ -26,8 +26,10 @@
 #' statement as a character string (e.g., `dist <- "normal(0, 2)"`), then you
 #' should use [prior_string()] to create your prior. See examples.
 #'
+#' @concept Stan
+#'
 #' @returns A `dcmprior` object.
-#' @seealso [get_parameters()]
+#' @seealso [get_parameters()].
 #' @export
 #'
 #' @examples
@@ -223,7 +225,7 @@ bayesnet_priors <- function(hierarchy) {
 #' @inheritParams prior
 #'
 #' @returns A `dcmprior` object.
-#' @seealso [prior()], [default_dcm_priors()]
+#' @seealso [prior()], [default_dcm_priors()].
 #' @export
 #'
 #' @examples

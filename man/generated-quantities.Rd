@@ -12,9 +12,6 @@ generated_quantities(loglik = FALSE, probabilities = FALSE, ppmc = FALSE)
 
 \item{probabilities}{Logical indicating whether class and attribute
 proficiency probabilities should be generated.}
-
-\item{ppmc}{Logical indicating whether replicated data sets for PPMCs should
-be generated.}
 }
 \value{
 A generated quantities object.
