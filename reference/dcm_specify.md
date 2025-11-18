@@ -61,7 +61,7 @@ A `dcm_specification` object.
 ## See also
 
 [measurement-model](https://dcmstan.r-dcm.org/reference/measurement-model.md),
-[structural-model](https://dcmstan.r-dcm.org/reference/structural-model.md)
+[structural-model](https://dcmstan.r-dcm.org/reference/structural-model.md).
 
 ## Examples
 

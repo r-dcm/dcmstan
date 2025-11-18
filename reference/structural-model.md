@@ -112,7 +112,7 @@ Testing Service.
 ## See also
 
 [Measurement
-models](https://dcmstan.r-dcm.org/reference/measurement-model.md)
+models](https://dcmstan.r-dcm.org/reference/measurement-model.md).
 
 ## Examples
 

@@ -149,7 +149,7 @@ disorders using cognitive diagnosis models. *Psychological Methods,
 ## See also
 
 [Structural
-models](https://dcmstan.r-dcm.org/reference/structural-model.md)
+models](https://dcmstan.r-dcm.org/reference/structural-model.md).
 
 ## Examples
 

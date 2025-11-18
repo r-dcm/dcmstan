@@ -54,7 +54,7 @@ A `dcmprior` object.
 ## See also
 
 [`prior()`](https://dcmstan.r-dcm.org/reference/prior.md),
-[`default_dcm_priors()`](https://dcmstan.r-dcm.org/reference/default_dcm_priors.md)
+[`default_dcm_priors()`](https://dcmstan.r-dcm.org/reference/default_dcm_priors.md).
 
 ## Examples
 

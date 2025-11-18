@@ -2,8 +2,9 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  articles/attribute-hierarchies: attribute-hierarchies.html
   dcmstan: dcmstan.html
-last_built: 2025-11-13T23:49Z
+last_built: 2025-11-18T01:22Z
 urls:
   reference: https://dcmstan.r-dcm.org/reference
   article: https://dcmstan.r-dcm.org/articles

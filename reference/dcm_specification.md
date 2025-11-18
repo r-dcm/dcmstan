@@ -53,7 +53,7 @@ A `dcm_specification` object.
 
 ## See also
 
-[`dcm_specify()`](https://dcmstan.r-dcm.org/reference/dcm_specify.md)
+[`dcm_specify()`](https://dcmstan.r-dcm.org/reference/dcm_specify.md).
 
 ## Examples
 

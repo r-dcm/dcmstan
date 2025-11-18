@@ -61,7 +61,7 @@ create your prior. See examples.
 
 ## See also
 
-[`get_parameters()`](https://dcmstan.r-dcm.org/reference/get_parameters.md)
+[`get_parameters()`](https://dcmstan.r-dcm.org/reference/get_parameters.md).
 
 ## Examples
 
