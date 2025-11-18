@@ -13,6 +13,8 @@
 #' @param att_labels A named vector of attribute names. Should come from the
 #'   model specification (e.g., `spec@qmatrix_meta$attribute_names`).
 #'
+#' @concept Bayesian
+#'
 #' @returns A list with three element: `parameters`, `transformed_parameters`,
 #'   and `priors`.
 #' @noRd

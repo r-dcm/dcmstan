@@ -20,7 +20,7 @@
 #'   default prior distributions defined by [default_dcm_priors()] are used.
 #'
 #' @returns A `dcm_specification` object.
-#' @seealso [measurement-model], [structural-model]
+#' @seealso [measurement-model], [structural-model].
 #' @export
 #'
 #' @examples
@@ -143,7 +143,7 @@ dcm_specify <- function(
 #' @param priors A [prior][prior()] object.
 #'
 #' @returns A `dcm_specification` object.
-#' @seealso [dcm_specify()]
+#' @seealso [dcm_specify()].
 #' @export
 #'
 #' @examples

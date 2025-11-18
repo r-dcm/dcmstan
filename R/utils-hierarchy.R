@@ -304,7 +304,8 @@ determine_hierarchy_type <- function(x, allow_null = TRUE) {
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #'
 #' @returns An updated `meas_params` object.
 #' @noRd

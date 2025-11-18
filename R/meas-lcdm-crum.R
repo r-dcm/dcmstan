@@ -1,4 +1,4 @@
-#' 'Stan' code for the LCDM and C-RUM models
+#' 'Stan' code for the \acronym{LCDM} and \acronym{C-RUM} models
 #'
 #' Create the `parameters` and `transformed parameters` blocks that are needed
 #' for the LCDM and C-RUM models. The function also returns the code that
@@ -9,9 +9,11 @@
 #' @param priors Priors for the model, specified through a combination of
 #'   [default_dcm_priors()] and [prior()].
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param max_interaction The highest level interaction that should be included
-#'   in the model. For the C-RUM, this is always 1 (i.e., main effects only).
+#'   in the model. For the \acronym{C-RUM}, this is always 1 (i.e., main effects
+#'   only).
 #' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
 #'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
 #'   how to draw the attribute hierarchy.

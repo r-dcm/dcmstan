@@ -47,10 +47,12 @@ Suggests:
     testthat (>= 3.0.0),
     withr
 Additional_repositories: https://stan-dev.r-universe.dev
-Config/Needs/website: r-dcm/rdcmtemplate
+Config/Needs/website: r-dcm/rdcmtemplate, ggplot2
+Config/Needs/documentation: openpharma/roxylint
+Config/roxylint: list(linters = roxylint::tidy)
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd", "roxylint::roxylint"))
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr

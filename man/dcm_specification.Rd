@@ -51,5 +51,5 @@ dcm_specification(qmatrix = qmatrix,
                   priors = default_dcm_priors(lcdm(), unconstrained()))
 }
 \seealso{
-\code{\link[=dcm_specify]{dcm_specify()}}
+\code{\link[=dcm_specify]{dcm_specify()}}.
 }

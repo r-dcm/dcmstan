@@ -1,4 +1,5 @@
-#' Determine the possible parameters for an LCDM or C-RUM model
+#' Determine the possible parameters for an \acronym{LCDM} or \acronym{C-RUM}
+#' model
 #'
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
@@ -9,9 +10,11 @@
 #'   should be included in the model. For the C-RUM, this is always 1 (i.e.,
 #'   main effects only).
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param item_names Vector of item names, as in the
-#'   `qmatrix_meta$item_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$item_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param hierarchy Optional. If present, the quoted attribute hierarchy. See
 #'   \code{vignette("dagitty4semusers", package = "dagitty")} for a tutorial on
 #'   how to draw the attribute hierarchy.
@@ -168,7 +171,8 @@ lcdm_parameters <- function(
 }
 
 
-#' Determine the possible parameters for a DINA or DINO model
+#' Determine the possible parameters for a \acronym{DINA} or \acronym{DINO}
+#' model
 #'
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
@@ -176,7 +180,8 @@ lcdm_parameters <- function(
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
 #' @param item_names Vector of item names, as in the
-#'   `qmatrix_meta$item_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$item_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param rename_items Logical. Should the output rename and number the items to
 #'   have consistent and generic names (e.g., `1`, `2`; `TRUE`) or keep the
 #'   original item names in the Q-matrix (`FALSE`, the default). If there are no
@@ -232,7 +237,7 @@ dina_parameters <- function(
 }
 
 
-#' Determine the possible parameters for a NIDA model
+#' Determine the possible parameters for a \acronym{NIDA} model
 #'
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
@@ -286,7 +291,7 @@ nida_parameters <- function(
 }
 
 
-#' Determine the possible parameters for a NIDO model
+#' Determine the possible parameters for a \acronym{NIDO} model
 #'
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
@@ -294,7 +299,8 @@ nida_parameters <- function(
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param rename_attributes Logical. Should the output rename the attributes to
 #'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
 #'   the original attributes names in the Q-matrix (`FALSE`, the default).
@@ -354,9 +360,11 @@ nido_parameters <- function(
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param item_names Vector of item names, as in the
-#'   `qmatrix_meta$item_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$item_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param rename_attributes Logical. Should the output rename the attributes to
 #'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
 #'   the original attributes names in the Q-matrix (`FALSE`, the default).
@@ -463,7 +471,8 @@ ncrum_parameters <- function(
 #' @param max_interaction Positive integer. For the Log-linear structural
 #' model, the highest structural-level interaction to include in the model.
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param rename_attributes Logical. Should the output rename the attributes to
 #'   have consistent and generic names (e.g., `att1`, `att2`; `TRUE`), or keep
 #'   the original attributes names in the Q-matrix (`FALSE`, the default).
@@ -561,6 +570,9 @@ loglinear_parameters <- function(
 #' @param identifier A character string identifying the column that contains
 #'   item identifiers. If there is no identifier column, this should be `NULL`
 #'   (the default).
+#'
+#' @concept Bayesian
+#'
 #' @returns A [tibble][tibble::tibble-package] with all possible parameters.
 #' @noRd
 bayesnet_parameters <- function(
@@ -711,7 +723,7 @@ model_matrix_name_repair <- function(x) {
 }
 
 
-#' Filter out nested parameters from the LCDM
+#' Filter out nested parameters from the \acronym{LCDM}
 #'
 #' @param all_params Parameters returned by `lcdm_parameters()`.
 #' @param filtered_hierarchy A tibble, as returned by [ggdag::tidy_dagitty()].
@@ -787,7 +799,8 @@ filter_hierarchy <- function(all_params, filtered_hierarchy) {
 #' @param qmatrix A Q-matrix specifying which attributes are measured by which
 #'   items.
 #' @param att_names Vector of attribute names, as in the
-#'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
+#'   `qmatrix_meta$attribute_names` of a [\acronym{DCM}
+#'   specification][dcm_specify()].
 #' @param max_interaction For the LCDM, the highest level interaction that
 #'   should be included in the model. For the C-RUM, this is always 1 (i.e.,
 #'   main effects only).

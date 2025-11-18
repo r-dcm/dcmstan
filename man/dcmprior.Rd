@@ -47,5 +47,5 @@ dcmprior(
 )
 }
 \seealso{
-\code{\link[=prior]{prior()}}, \code{\link[=default_dcm_priors]{default_dcm_priors()}}
+\code{\link[=prior]{prior()}}, \code{\link[=default_dcm_priors]{default_dcm_priors()}}.
 }

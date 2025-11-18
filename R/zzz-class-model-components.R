@@ -78,7 +78,7 @@
 #' terms are included for the C-RUM.
 #'
 #' @name measurement-model
-#' @seealso [Structural models][structural-model]
+#' @seealso [Structural models][structural-model].
 #' @export
 #'
 #' @references de la Torre, J., & Douglas, J. A. (2004). Higher-order latent
@@ -216,7 +216,7 @@ ncrum <- function() {
 #' saturated Bayesian network (Martinez & Templin, 2023).
 #'
 #' @name structural-model
-#' @seealso [Measurement models][measurement-model]
+#' @seealso [Measurement models][measurement-model].
 #' @export
 #'
 #' @references Hu, B., & Templin, J. (2020). Using diagnostic classification
@@ -299,8 +299,8 @@ bayesnet <- function(hierarchy = NULL) {
 #' @param loglik Logical indicating whether log-likelihood should be generated.
 #' @param probabilities Logical indicating whether class and attribute
 #'   proficiency probabilities should be generated.
-#' @param ppmc Logical indicating whether replicated data sets for PPMCs should
-#'   be generated.
+#' @param ppmc Logical indicating whether replicated data sets for
+#'   \acronym{PPMCs} should be generated.
 #'
 #' @returns A generated quantities object.
 #'
