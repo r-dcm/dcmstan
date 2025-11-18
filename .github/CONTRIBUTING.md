@@ -33,11 +33,11 @@ See the tidyverse guide on [how to create a great issue](https://code-review.tid
 ### Code style
 
 *   New code should follow the tidyverse [style guide](https://style.tidyverse.org). 
-    You can use the [styler](https://CRAN.R-project.org/package=styler) package to apply these styles, but please don't restyle code that has nothing to do with your PR.  
+    You can use the [styler](https://CRAN.R-project.org/web/packages/styler) package to apply these styles, but please don't restyle code that has nothing to do with your PR.  
 
-*  We use [roxygen2](https://cran.r-project.org/package=roxygen2), with [Markdown syntax](https://cran.r-project.org/web/packages/roxygen2/vignettes/rd-formatting.html), for documentation.  
+*  We use [roxygen2](https://cran.r-project.org/web/packages/roxygen2), with [Markdown syntax](https://cran.r-project.org/web/packages/roxygen2/vignettes/rd-formatting.html), for documentation.  
 
-*  We use [testthat](https://cran.r-project.org/package=testthat) for unit tests. 
+*  We use [testthat](https://cran.r-project.org/web/packages/testthat) for unit tests. 
    Contributions with test cases included are easier to accept.  
 
 ## Code of Conduct

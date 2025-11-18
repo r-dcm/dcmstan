@@ -10,11 +10,11 @@ state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R package
-version](https://www.r-pkg.org/badges/version/dcmstan)](https://cran.r-project.org/package=dcmstan)
+version](https://www.r-pkg.org/badges/version/dcmstan)](https://cran.r-project.org/web/packages/dcmstan)
 [![Package
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/dcmstan)](https://cran.r-project.org/package=dcmstan)</br>
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/dcmstan)](https://cran.r-project.org/web/packages/dcmstan)</br>
 [![R-CMD-check](https://github.com/r-dcm/dcmstan/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-dcm/dcmstan/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/r-dcm/dcmstan/graph/badge.svg?token=D6qTsKTROZ)](https://codecov.io/gh/r-dcm/dcmstan)
+[![codecov](https://codecov.io/gh/r-dcm/dcmstan/graph/badge.svg?token=D6qTsKTROZ)](https://app.codecov.io/gh/r-dcm/dcmstan)
 [![pages-build-deployment](https://github.com/r-dcm/dcmstan/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/r-dcm/dcmstan/actions/workflows/pages/pages-build-deployment)</br>
 [![Signed
 by](https://img.shields.io/badge/Keybase-Verified-brightgreen.svg)](https://keybase.io/wjakethompson)
