@@ -40,8 +40,14 @@ to generate Stan code yourself.
 
 ## Installation
 
-You can install the development version of dcmstan from
-[GitHub](https://github.com/) with:
+You can install the released version of dcmstan from
+[CRAN](https://cran.r-project.org/) with:
+
+``` r
+install.packages("dcmstan")
+```
+
+And the development version from [GitHub](https://github.com) with:
 
 ``` r
 # install.packages("pak")
@@ -49,6 +55,11 @@ pak::pak("r-dcm/dcmstan")
 ```
 
 ## Usage
+
+We can create a specification for a diagnostic model using
+`dcm_specify()`, which requires a Q-matrix, the name of the item
+identifier column in the Q-matrix (optional), and the choice of
+measurement and structural models.
 
 ``` r
 library(dcmstan)
@@ -61,6 +72,26 @@ new_model <- dcm_specify(
   structural_model = unconstrained()
 )
 
+new_model
+#> A loglinear cognitive diagnostic model (LCDM) measuring 1 attributes with 4
+#> items.
+#> 
+#> ℹ Attributes:
+#> • "multiplication" (4 items)
+#> 
+#> ℹ Attribute structure:
+#>   Unconstrained
+#> 
+#> ℹ Prior distributions:
+#>   intercept ~ normal(0, 2)
+#>   maineffect ~ lognormal(0, 1)
+#>   `Vc` ~ dirichlet(1)
+```
+
+We can then generate the *Stan* code and data list required for
+estimating the model with `{rstan}` or `{cmdstanr}`.
+
+``` r
 stan_code(new_model)
 #> data {
 #>   int<lower=1> I;                      // number of items
@@ -74,7 +105,7 @@ stan_code(new_model)
 #>   array[R] int<lower=1,upper=I> num;   // number items for respondent R
 #> }
 #> parameters {
-#>   simplex[C] Vc;                  // base rates of class membership
+#>   simplex[C] Vc;
 #> 
 #>   ////////////////////////////////// item intercepts
 #>   real l1_0;
@@ -103,7 +134,6 @@ stan_code(new_model)
 #>   pi[4,2] = inv_logit(l4_0+l4_11);
 #> }
 #> model {
-#> 
 #>   ////////////////////////////////// priors
 #>   Vc ~ dirichlet(rep_vector(1, C));
 #>   l1_0 ~ normal(0, 2);
@@ -130,6 +160,19 @@ stan_code(new_model)
 #>     target += log_sum_exp(ps);
 #>   }
 #> }
+
+stan_data(new_model, data = mdm_data, identifier = "respondent") |>
+  str()
+#> List of 9
+#>  $ I    : int 4
+#>  $ R    : int 142
+#>  $ N    : int 568
+#>  $ C    : int 2
+#>  $ ii   : num [1:568] 1 2 3 4 1 2 3 4 1 2 ...
+#>  $ rr   : num [1:568] 1 1 1 1 2 2 2 2 3 3 ...
+#>  $ y    : int [1:568] 1 1 1 1 1 1 1 1 1 1 ...
+#>  $ start: int [1:142] 1 5 9 13 17 21 25 29 33 37 ...
+#>  $ num  : int [1:142] 4 4 4 4 4 4 4 4 4 4 ...
 ```
 
 ------------------------------------------------------------------------

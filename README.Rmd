@@ -39,7 +39,13 @@ If you use measr to estimate your models, you will not need to use dcmstan to ge
 
 ## Installation
 
-You can install the development version of dcmstan from [GitHub](https://github.com/) with:
+You can install the released version of dcmstan from [CRAN](https://cran.r-project.org/) with:
+
+```r
+install.packages("dcmstan")
+```
+
+And the development version from [GitHub](https://github.com) with:
 
 ``` r
 # install.packages("pak")
@@ -47,6 +53,8 @@ pak::pak("r-dcm/dcmstan")
 ```
 
 ## Usage
+
+We can create a specification for a diagnostic model using `dcm_specify()`, which requires a Q-matrix, the name of the item identifier column in the Q-matrix (optional), and the choice of measurement and structural models.
 
 ```{r example}
 library(dcmstan)
@@ -59,7 +67,16 @@ new_model <- dcm_specify(
   structural_model = unconstrained()
 )
 
+new_model
+```
+
+We can then generate the *Stan* code and data list required for estimating the model with `{rstan}` or `{cmdstanr}`.
+
+```{r}
 stan_code(new_model)
+
+stan_data(new_model, data = mdm_data, identifier = "respondent") |>
+  str()
 ```
 
 ---
