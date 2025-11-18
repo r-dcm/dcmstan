@@ -4,7 +4,7 @@
 \name{dcmstan-package}
 \alias{dcmstan}
 \alias{dcmstan-package}
-\title{dcmstan: Generate 'Stan' Code for Estimating Diagnostic Classification Models}
+\title{dcmstan: Generate 'Stan' Code for Diagnostic Classification Models}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
