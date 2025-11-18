@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   articles/attribute-hierarchies: attribute-hierarchies.html
   dcmstan: dcmstan.html
-last_built: 2025-11-18T01:22Z
+last_built: 2025-11-18T18:10Z
 urls:
   reference: https://dcmstan.r-dcm.org/reference
   article: https://dcmstan.r-dcm.org/articles

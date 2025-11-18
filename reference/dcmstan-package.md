@@ -1,4 +1,4 @@
-# dcmstan: Generate 'Stan' Code for Estimating Diagnostic Classification Models
+# dcmstan: Generate 'Stan' Code for Diagnostic Classification Models
 
 Diagnostic classification models are psychometric models used to
 categorically estimate respondents mastery, or proficiency, on a set of

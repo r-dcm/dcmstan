@@ -23,11 +23,11 @@ Source:
 [`DESCRIPTION`](https://github.com/r-dcm/dcmstan/blob/main/DESCRIPTION)
 
 Thompson W, Hoover J, Jimenez A (2025). *dcmstan: Generate 'Stan' Code
-for Estimating Diagnostic Classification Models*. R package version
-0.0.0.9001, <https://dcmstan.r-dcm.org>.
+for Diagnostic Classification Models*. R package version 0.0.0.9001,
+<https://dcmstan.r-dcm.org>.
 
     @Manual{,
-      title = {dcmstan: Generate 'Stan' Code for Estimating Diagnostic Classification Models},
+      title = {dcmstan: Generate 'Stan' Code for Diagnostic Classification Models},
       author = {W. Jake Thompson and Jeffrey Hoover and Auburn Jimenez},
       year = {2025},
       note = {R package version 0.0.0.9001},
