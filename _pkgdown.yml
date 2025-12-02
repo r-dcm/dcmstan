@@ -32,3 +32,8 @@ reference:
   - dcm_specification
   - dcmprior
   - prior_tibble
+
+news:
+  releases:
+  - text: "Version 0.1.0"
+    href: https://r-dcm.org/blog/2025-11-dcmstan-0.1.0/
