@@ -83,15 +83,12 @@ stan_code(model_spec)
 #>   real l5_0;
 #> 
 #>   ////////////////////////////////// item main effects
-#>   real<lower=0> l1_11;
-#>   real<lower=0> l1_12;
 #>   real<lower=0> l2_11;
-#>   real<lower=0> l3_12;
-#>   real<lower=0> l4_11;
+#>   real<lower=0> l5_11;
 #>   real<lower=0> l5_12;
 #> 
 #>   ////////////////////////////////// item interactions
-#>   real<lower=-1 * min([l1_11,l1_12])> l1_212;
+#>   real<lower=-1 * min([l5_11,l5_12])> l5_212;
 #> }
 #> transformed parameters {
 #>   vector[C] log_Vc = log(Vc);
@@ -99,41 +96,38 @@ stan_code(model_spec)
 #> 
 #>   ////////////////////////////////// probability of correct response
 #>   pi[1,1] = inv_logit(l1_0);
-#>   pi[1,2] = inv_logit(l1_0+l1_11);
-#>   pi[1,3] = inv_logit(l1_0+l1_12);
-#>   pi[1,4] = inv_logit(l1_0+l1_11+l1_12+l1_212);
+#>   pi[1,2] = inv_logit(l1_0);
+#>   pi[1,3] = inv_logit(l1_0);
+#>   pi[1,4] = inv_logit(l1_0);
 #>   pi[2,1] = inv_logit(l2_0);
 #>   pi[2,2] = inv_logit(l2_0+l2_11);
 #>   pi[2,3] = inv_logit(l2_0);
 #>   pi[2,4] = inv_logit(l2_0+l2_11);
 #>   pi[3,1] = inv_logit(l3_0);
 #>   pi[3,2] = inv_logit(l3_0);
-#>   pi[3,3] = inv_logit(l3_0+l3_12);
-#>   pi[3,4] = inv_logit(l3_0+l3_12);
+#>   pi[3,3] = inv_logit(l3_0);
+#>   pi[3,4] = inv_logit(l3_0);
 #>   pi[4,1] = inv_logit(l4_0);
-#>   pi[4,2] = inv_logit(l4_0+l4_11);
+#>   pi[4,2] = inv_logit(l4_0);
 #>   pi[4,3] = inv_logit(l4_0);
-#>   pi[4,4] = inv_logit(l4_0+l4_11);
+#>   pi[4,4] = inv_logit(l4_0);
 #>   pi[5,1] = inv_logit(l5_0);
-#>   pi[5,2] = inv_logit(l5_0);
+#>   pi[5,2] = inv_logit(l5_0+l5_11);
 #>   pi[5,3] = inv_logit(l5_0+l5_12);
-#>   pi[5,4] = inv_logit(l5_0+l5_12);
+#>   pi[5,4] = inv_logit(l5_0+l5_11+l5_12+l5_212);
 #> }
 #> model {
 #>   ////////////////////////////////// priors
 #>   Vc ~ dirichlet(rep_vector(1, C));
 #>   l1_0 ~ normal(0, 2);
-#>   l1_11 ~ lognormal(0, 1);
-#>   l1_12 ~ lognormal(0, 1);
-#>   l1_212 ~ normal(0, 2);
 #>   l2_0 ~ normal(0, 2);
 #>   l2_11 ~ lognormal(0, 1);
 #>   l3_0 ~ normal(0, 2);
-#>   l3_12 ~ lognormal(0, 1);
 #>   l4_0 ~ normal(0, 2);
-#>   l4_11 ~ lognormal(0, 1);
 #>   l5_0 ~ normal(0, 2);
+#>   l5_11 ~ lognormal(0, 1);
 #>   l5_12 ~ lognormal(0, 1);
+#>   l5_212 ~ normal(0, 2);
 #> 
 #>   ////////////////////////////////// likelihood
 #>   for (r in 1:R) {

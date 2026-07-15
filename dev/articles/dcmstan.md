@@ -9,6 +9,7 @@ you’ll find a brief overview of how to specify a diagnostic model and
 generate the associated *Stan* code.
 
 ``` r
+
 library(dcmstan)
 ```
 
@@ -24,6 +25,7 @@ collectively measure 4 attributes (for more information see
 [`?dcmdata::dtmr`](https://dcmdata.r-dcm.org/reference/dtmr.html)).
 
 ``` r
+
 library(dcmdata)
 
 dtmr_qmatrix
@@ -60,6 +62,7 @@ model. These options are described in more detail in the following
 sections.
 
 ``` r
+
 spec <- dcm_specify(
   qmatrix = dtmr_qmatrix,
   identifier = "item",
@@ -114,17 +117,17 @@ core DCMs. For more information on each measurement model, see
 [`` ?`measurement-model` ``](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)
 and the accompanying references.
 
-| Model                                         | Abbreviation |                 Reference                 |                                  dcmstan                                  |
-|:----------------------------------------------|:------------:|:-----------------------------------------:|:-------------------------------------------------------------------------:|
-| Loglinear cognitive diagnostic model          |     LCDM     |     Henson et al. ([2009](#ref-lcdm))     | [`lcdm()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)  |
-| Deterministic input, noisy “and” gate         |     DINA     | de la Torre & Douglas ([2004](#ref-dina)) | [`dina()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)  |
-| Deterministic input, noisy “or” gate          |     DINO     |   Templin & Henson ([2006](#ref-dino))    | [`dino()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)  |
-| Noisy-input, deterministic “and” gate         |     NIDA     |   Junker & Sijtsma ([2001](#ref-nida))    | [`nida()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)  |
-| Noisy-input, deterministic “or” gate          |     NIDO     |        Templin ([2006](#ref-nido))        | [`nido()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)  |
-| Noncompensatory reparameterized unified model |    NC-RUM    |    DiBello et al. ([1995](#ref-ncrum))    | [`ncrum()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
-| Compensatory reparameterized unified model    |    C-RUM     |         Hartz ([2002](#ref-crum))         | [`crum()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)  |
+| Model | Abbreviation | Reference | dcmstan |
+|:---|:--:|:--:|:--:|
+| Loglinear cognitive diagnostic model | LCDM | Henson et al. ([2009](#ref-lcdm)) | [`lcdm()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
+| Deterministic input, noisy “and” gate | DINA | de la Torre & Douglas ([2004](#ref-dina)) | [`dina()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
+| Deterministic input, noisy “or” gate | DINO | Templin & Henson ([2006](#ref-dino)) | [`dino()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
+| Noisy-input, deterministic “and” gate | NIDA | Junker & Sijtsma ([2001](#ref-nida)) | [`nida()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
+| Noisy-input, deterministic “or” gate | NIDO | Templin ([2006](#ref-nido)) | [`nido()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
+| Noncompensatory reparameterized unified model | NC-RUM | DiBello et al. ([1995](#ref-ncrum)) | [`ncrum()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
+| Compensatory reparameterized unified model | C-RUM | Hartz ([2002](#ref-crum)) | [`crum()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md) |
 
-Supported measurement models
+Supported measurement models {.table style="width:100%;"}
 
 ### Structural models
 
@@ -148,15 +151,15 @@ information on each structural model, see
 [`` ?`structural-model` ``](https://dcmstan.r-dcm.org/dev/reference/structural-model.md)
 and the accompanying references.
 
-| Model            | Abbreviation |                Reference                 |                                     dcmstan                                      |
-|:-----------------|:------------:|:----------------------------------------:|:--------------------------------------------------------------------------------:|
-| Unconstrained    |              |   Rupp et al. ([2010](#ref-rupp-dcm))    | [`unconstrained()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md) |
-| Independent      |              |      Lee ([2017](#ref-independent))      |  [`independent()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md)  |
-| Loglinear        |              | Xu & von Davier ([2008](#ref-loglinear)) |   [`loglinear()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md)   |
-| Hierarchical DCM |     HDCM     |  Templin & Bradshaw ([2014](#ref-hdcm))  |     [`hdcm()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md)      |
-| Bayesian network |      BN      |   Hu & Templin ([2020](#ref-bayesnet))   |   [`bayesnet()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md)    |
+| Model | Abbreviation | Reference | dcmstan |
+|:---|:--:|:--:|:--:|
+| Unconstrained |  | Rupp et al. ([2010](#ref-rupp-dcm)) | [`unconstrained()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md) |
+| Independent |  | Lee ([2017](#ref-independent)) | [`independent()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md) |
+| Loglinear |  | Xu & von Davier ([2008](#ref-loglinear)) | [`loglinear()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md) |
+| Hierarchical DCM | HDCM | Templin & Bradshaw ([2014](#ref-hdcm)) | [`hdcm()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md) |
+| Bayesian network | BN | Hu & Templin ([2020](#ref-bayesnet)) | [`bayesnet()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md) |
 
-Supported structural models
+Supported structural models {.table style="width:100%;"}
 
 ## From specification to estimation
 
@@ -165,6 +168,7 @@ using
 [`stan_code()`](https://dcmstan.r-dcm.org/dev/reference/stan_code.md).
 
 ``` r
+
 stan_code(spec)
 #> data {
 #>   int<lower=1> I;                      // number of items
@@ -338,6 +342,7 @@ name (can be excluded if not present in `data`), and provides a list
 that can be supplied to the `data` argument of `rstan::stan()`.
 
 ``` r
+
 dtmr_data
 #> # A tibble: 990 × 28
 #>    id      `1`   `2`   `3`   `4`   `5`   `6`   `7`  `8a`  `8b`  `8c`  `8d`

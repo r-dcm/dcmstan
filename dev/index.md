@@ -26,12 +26,14 @@ You can install the released version of dcmstan from
 [CRAN](https://cran.r-project.org/) with:
 
 ``` r
+
 install.packages("dcmstan")
 ```
 
 And the development version from [GitHub](https://github.com) with:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("r-dcm/dcmstan")
 ```
@@ -45,6 +47,7 @@ Q-matrix (optional), and the choice of measurement and structural
 models.
 
 ``` r
+
 library(dcmstan)
 library(dcmdata)
 
@@ -76,6 +79,7 @@ estimating the model with [rstan](https://mc-stan.org/rstan/) or
 [cmdstanr](https://mc-stan.org/cmdstanr/).
 
 ``` r
+
 stan_code(new_model)
 #> data {
 #>   int<lower=1> I;                      // number of items

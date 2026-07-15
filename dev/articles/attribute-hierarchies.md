@@ -7,6 +7,7 @@ words, the attributes form a hierarchy. In this article, we describe how
 to define different hierarchical relationships with dcmstan.
 
 ``` r
+
 library(dcmstan)
 ```
 
@@ -56,6 +57,7 @@ proficient on A1 before they can acquire the skills in A2, followed by
 A3. We can specify this relationship in dcmstan as:
 
 ``` r
+
 hdcm(hierarchy = "A1 -> A2 -> A3")
 ```
 
@@ -71,6 +73,7 @@ before a culminating attribute. All of the following specifications are
 equivalent.
 
 ``` r
+
 hdcm(hierarchy = "A1 -> A3 <- A2")
 
 hdcm(hierarchy = "A1 -> A3 A2 -> A3")
@@ -91,6 +94,7 @@ in these examples, the same hierarchy specifications can be provided to
 as well.
 
 ``` r
+
 hdcm(hierarchy = "A2 <- A1 -> A3")
 
 hdcm(hierarchy = "A1 -> A2 A1 -> A3")
@@ -125,6 +129,7 @@ structures, this relationship can be specified as one continuous chain
 or as a series of different relationships. All are equivalent.
 
 ``` r
+
 hdcm(hierarchy = "A3 <- A1 -> A4 <- A2 -> A5")
 
 hdcm(hierarchy = "A1 -> A3 A2 -> A5 A1 -> A4 <- A2")
@@ -148,6 +153,7 @@ specify the structure in as two smaller relationships, such as
 relationships as in the previous examples.
 
 ``` r
+
 hdcm(hierarchy = "A2 <- A1 -> A3 <- A4 A3 -> A5")
 
 complex3 <- "
@@ -167,6 +173,7 @@ chain, multiple smaller relationships, or pairwise relationships
 equivalently.
 
 ``` r
+
 hdcm(hierarchy = "A1 -> A2 -> A3 -> A5 <- A4 <- A2")
 
 hdcm(hierarchy = "A1 -> A2 -> A3 -> A5 A2 -> A4 -> A5")
@@ -203,6 +210,7 @@ Thus, both of these structures would be invalid. If you specify and
 invalid attribute structure, you will be met with an error.
 
 ``` r
+
 hdcm(hierarchy = "A1 -> A2 -> A3 -> A1")
 #> Error in `hdcm()`:
 #> ! `hierarchy` must not be cyclical

@@ -80,10 +80,10 @@ dcm_specify(qmatrix = qmatrix,
 #> 15 items.
 #> 
 #> ℹ Attributes:
-#> • "att1" (9 items)
+#> • "att1" (8 items)
 #> • "att2" (8 items)
 #> • "att3" (10 items)
-#> • "att4" (4 items)
+#> • "att4" (5 items)
 #> 
 #> ℹ Attribute structure:
 #>   Unconstrained
