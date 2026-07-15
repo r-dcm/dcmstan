@@ -37,6 +37,9 @@ exclusions: list(
     ),
     "R/zzz-methods-stan-data.R" = list(
       object_name_linter = Inf
+    ),
+    "tests/testthat/test-zzz-methods-get-parameters.R" = list(
+      commas_linter = Inf
     )
   )
 encoding: "UTF-8"
