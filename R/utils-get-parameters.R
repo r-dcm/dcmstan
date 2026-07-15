@@ -129,6 +129,18 @@ lcdm_parameters <- function(
     )
   }
 
+  if (!is.null(hierarchy) && !allowable_params) {
+    all_params <- rename_parameters(
+      all_params = all_params,
+      qmatrix = qmatrix,
+      att_names = att_names,
+      max_interaction = max_interaction,
+      hierarchy = hierarchy,
+      rename_attributes = rename_attributes,
+      rename_items = rename_items
+    )
+  }
+
   if (!rename_attributes) {
     for (i in seq_along(att_names)) {
       all_params <- dplyr::mutate(
@@ -153,18 +165,6 @@ lcdm_parameters <- function(
         dplyr::everything(),
         -"item_id"
       )
-  }
-
-  if (!is.null(hierarchy) && !allowable_params) {
-    all_params <- rename_parameters(
-      all_params,
-      qmatrix,
-      att_names,
-      max_interaction,
-      hierarchy,
-      rename_attributes,
-      rename_items
-    )
   }
 
   all_params
@@ -833,8 +833,8 @@ rename_parameters <- function(
     max_interaction = max_interaction,
     att_names = att_names,
     hierarchy = NULL,
-    rename_attributes = rename_attributes,
-    rename_items = rename_items
+    rename_attributes = TRUE,
+    rename_items = TRUE
   ) |>
     dplyr::select("attributes", "coefficient")
   all_allowable_params <- lcdm_parameters(
@@ -842,8 +842,8 @@ rename_parameters <- function(
     max_interaction = max_interaction,
     att_names = att_names,
     hierarchy = hierarchy,
-    rename_attributes = rename_attributes,
-    rename_items = rename_items,
+    rename_attributes = TRUE,
+    rename_items = TRUE,
     allowable_params = TRUE
   ) |>
     dplyr::select("attributes", "coefficient")
@@ -910,7 +910,7 @@ rename_parameters <- function(
     ) |>
     dplyr::left_join(stan_att_dict, by = c("attributes")) |>
     dplyr::mutate(
-      coefficient = paste0("l", .data$item_id, "_", .data$coefficient),
+      coefficient = paste0(.data$item_param, "_", .data$coefficient),
       attributes = dplyr::case_when(
         !is.na(.data$new_att) ~ .data$new_att,
         TRUE ~ .data$attributes
