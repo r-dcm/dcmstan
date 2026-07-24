@@ -14,16 +14,16 @@ dcm_specification(
 }
 \arguments{
 \item{qmatrix}{A cleaned Q-matrix, as returned by
-\code{\link[rdcmchecks:check_qmatrix]{rdcmchecks::clean_qmatrix()}}.}
+\code{\link[rdcmchecks:clean_qmatrix]{rdcmchecks::clean_qmatrix()}}.}
 
 \item{qmatrix_meta}{A list of Q-matrix metadata consisting of the other
-(not Q-matrix) elements returned by \code{\link[rdcmchecks:check_qmatrix]{rdcmchecks::clean_qmatrix()}}.}
+(not Q-matrix) elements returned by \code{\link[rdcmchecks:clean_qmatrix]{rdcmchecks::clean_qmatrix()}}.}
 
 \item{measurement_model}{A \link[=measurement-model]{measurement model} object.}
 
 \item{structural_model}{A \link[=structural-model]{structural model} object.}
 
-\item{priors}{A \link[=prior]{prior} object.}
+\item{priors}{A \link{prior} object.}
 }
 \value{
 A \code{dcm_specification} object.

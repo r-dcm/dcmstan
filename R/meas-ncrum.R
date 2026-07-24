@@ -40,7 +40,11 @@ meas_ncrum <- function(qmatrix, priors, att_names = NULL, hierarchy = NULL) {
   all_profiles <- if (is.null(hierarchy)) {
     create_profiles(ncol(qmatrix))
   } else {
-    create_profiles(hdcm(hierarchy = hierarchy), attributes = att_names)
+    create_profiles(
+      hdcm(hierarchy = hierarchy),
+      attributes = att_names,
+      keep_names = FALSE
+    )
   }
 
   pi_def <- all_params |>

@@ -78,7 +78,8 @@ S7::method(stan_data, dcm_specification) <- function(
 
   profiles <- create_profiles(
     x@structural_model,
-    attributes = x@qmatrix_meta$attribute_names
+    attributes = x@qmatrix_meta$attribute_names,
+    keep_names = FALSE
   )
 
   stan_data <- list(
@@ -148,7 +149,8 @@ S7::method(stan_data, quantities) <- function(
 
   profiles <- create_profiles(
     dcm_spec@structural_model,
-    attributes = dcm_spec@qmatrix_meta$attribute_names
+    attributes = dcm_spec@qmatrix_meta$attribute_names,
+    keep_names = FALSE
   )
 
   stan_data <- list(
@@ -179,7 +181,8 @@ S7::method(extra_data, S7::class_any) <- function(x, dcm_spec) NULL
 S7::method(extra_data, DINA) <- function(x, dcm_spec) {
   profiles <- create_profiles(
     dcm_spec@structural_model,
-    attributes = dcm_spec@qmatrix_meta$attribute_names
+    attributes = dcm_spec@qmatrix_meta$attribute_names,
+    keep_names = FALSE
   )
 
   xi <- matrix(0, nrow = nrow(dcm_spec@qmatrix), ncol = nrow(profiles))
@@ -195,7 +198,8 @@ S7::method(extra_data, DINA) <- function(x, dcm_spec) {
 S7::method(extra_data, DINO) <- function(x, dcm_spec) {
   profiles <- create_profiles(
     dcm_spec@structural_model,
-    attributes = dcm_spec@qmatrix_meta$attribute_names
+    attributes = dcm_spec@qmatrix_meta$attribute_names,
+    keep_names = FALSE
   )
 
   xi <- matrix(0, nrow = nrow(dcm_spec@qmatrix), ncol = nrow(profiles))
@@ -215,7 +219,8 @@ S7::method(extra_data, NIDA) <- function(x, dcm_spec) {
 S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
   profiles <- create_profiles(
     dcm_spec@structural_model,
-    attributes = dcm_spec@qmatrix_meta$attribute_names
+    attributes = dcm_spec@qmatrix_meta$attribute_names,
+    keep_names = FALSE
   )
 
   list(

@@ -5,6 +5,12 @@
 \title{Create a list of data objects for 'Stan'}
 \usage{
 stan_data(x, ...)
+
+## S7 method for class <dcmstan::dcm_specification>
+stan_data(x, ..., data, missing = NA, identifier = NULL)
+
+## S7 method for class <dcmstan::quantities>
+stan_data(x, ..., dcm_spec, data, missing = NA, identifier = NULL)
 }
 \arguments{
 \item{x}{An object (e.g., a \link[=dcm_specify]{model specification}) to create
@@ -39,7 +45,7 @@ encoded (e.g., \code{NA}, \code{"."}, \code{-99}). The default is \code{NA}.
 Arguments for \link[=generated_quantities]{generated quantities} method:
 \itemize{
 \item \code{dcm_spec}: A cleaned data object, as returned by
-\code{\link[rdcmchecks:check_data]{rdcmchecks::clean_data()}}.
+\code{\link[rdcmchecks:clean_data]{rdcmchecks::clean_data()}}.
 \item \code{data}: The response data. A data frame with 1 row per respondent and 1
 column per item. May optionally include an additional column of item
 identifiers. If an identifier is included, this should be specified with

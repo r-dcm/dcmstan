@@ -5,6 +5,9 @@
 \title{Coerce a dcmprior object to a tibble}
 \usage{
 prior_tibble(x, ...)
+
+## S7 method for class <dcmstan::dcmprior>
+prior_tibble(x, .keep_all = FALSE)
 }
 \arguments{
 \item{x}{A model specification (e.g., \code{\link[=dcm_specify]{dcm_specify()}}, measurement model

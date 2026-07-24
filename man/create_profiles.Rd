@@ -2,7 +2,7 @@
 % Please edit documentation in R/zzz-methods-create-profiles.R
 \name{create_profiles}
 \alias{create_profiles}
-\title{Generate mastery profiles}
+\title{Possible attribute profiles}
 \usage{
 create_profiles(x, ...)
 }
@@ -21,20 +21,21 @@ patterns. Each row is a profile, and each column indicates whether
 the attribute in that column was present (1) or not (0).
 }
 \description{
-Given the number of attributes or model specification, generate all possible
-attribute patterns.
+\code{create_profiles()} determines the possible attribute profiles.
 }
-\details{
-Additional arguments passed to methods:
+\section{Methods}{
+\code{create_profiles()} is an S7 generic with methods available for the following
+classes:
 
-\code{keep_names}: When \code{x} is a \link[=dcm_specify]{model specification}, should
-the real attribute names be used (\code{TRUE}; the default), or replaced with
-generic names (\code{FALSE}; e.g., \code{"att1"}, \code{"att2"}, \code{"att3"}).
-
-\code{attributes}: When \code{x} is a \link[=structural-model]{structural model}, a vector of
-attribute names, as in the \code{qmatrix_meta$attribute_names} of a
-\link[=dcm_specify]{DCM specification}.
+\itemize{
+\item \code{dcmstan::HDCM}
+\item \code{dcmstan::dcm_specification}
+\item \code{dcmstan::structural}
+\item \code{double}
+\item \code{integer}
 }
+}
+
 \examples{
 create_profiles(3L)
 
@@ -42,6 +43,5 @@ create_profiles(5)
 
 create_profiles(unconstrained(), attributes = c("att1", "att2"))
 
-create_profiles(hdcm("att1 -> att2 -> att3"),
-                attributes = c("att1", "att2", "att3"))
+create_profiles(hdcm("first -> second -> third"), keep_name = TRUE)
 }
