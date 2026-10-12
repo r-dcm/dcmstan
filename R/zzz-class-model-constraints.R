@@ -1,11 +1,11 @@
 #' Scoring model constraint definitions for diagnostic classification models
 
-#' @rdname model-constraint
+#' @rdname scoring-constraint
 #' @export
 none <- function() {
   NONE(constraint = "none")
 }
-#' @rdname model-constraint
+#' @rdname scoring-constraint
 #' @export
 posterior <- function() {
   POSTERIOR(constraint = "posterior")
@@ -16,8 +16,8 @@ posterior <- function() {
 #' S7 class for scoring model constraints
 #'
 #' @noRd
-constrain <- S7::new_class(
-  "constrain",
+scoring <- S7::new_class(
+  "scoring",
   package = "dcmstan",
   properties = list(
     constraint = S7::new_property(
@@ -50,12 +50,12 @@ constraint_property <- S7::new_property(
 ## Measurement models -----
 NONE <- S7::new_class(
   "NONE",
-  parent = constrain,
+  parent = scoring,
   properties = list(constraint = constraint_property)
 )
 
 POSTERIOR <- S7::new_class(
   "POSTERIOR",
-  parent = constrain,
+  parent = scoring,
   properties = list(constraint = constraint_property)
 )

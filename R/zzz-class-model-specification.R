@@ -39,12 +39,14 @@ dcm_specify <- function(
   identifier = NULL,
   measurement_model = lcdm(),
   structural_model = unconstrained(),
-  priors = NULL
+  priors = NULL,
+  scoring_constraint = none()
 ) {
   check_string(identifier, allow_null = TRUE)
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
+  S7::check_is_S7(scoring_constraint, scoring)
   if (!is.null(structural_model@model_args$hierarchy)) {
     check_hierarchy_names(
       structural_model@model_args$hierarchy,
@@ -121,7 +123,8 @@ dcm_specify <- function(
     ),
     measurement_model = measurement_model,
     structural_model = structural_model,
-    priors = priors
+    priors = priors,
+    scoring_constraint = scoring_constraint
   )
 }
 
@@ -204,6 +207,10 @@ dcm_specification <- S7::new_class(
     ),
     priors = S7::new_property(
       class = dcmprior,
+      default = NULL
+    ),
+    scoring_constraint = S7::new_property(
+      class = scoring,
       default = NULL
     )
   ),
