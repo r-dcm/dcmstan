@@ -23,3 +23,26 @@ constrain <- S7::new_class(
     )
   )
 )
+
+# Define child classes for scoring model constraints ---------------------------
+constraint_property <- S7::new_property(
+  class = S7::class_character,
+  setter = function(self, value) {
+    if (!is.null(self@constraint)) {
+      stop("@constraint is read-only", call. = FALSE)
+    }
+  }
+)
+
+## Measurement models -----
+NONE <- S7::new_class(
+  "NONE",
+  parent = constrain,
+  properties = list(constraint = constraint_property)
+)
+
+POSTERIOR <- S7::new_class(
+  "POSTERIOR",
+  parent = constrain,
+  properties = list(constraint = constraint_property)
+)
