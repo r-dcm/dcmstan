@@ -322,6 +322,12 @@ S7::method(print, dcm_specification) <- function(x, ...) {
     dplyr::arrange(.data$class, .data$coefficient) |>
     dplyr::pull("prior")
 
+  # scoring model constraint name -----
+  scor_cnst_name <- names(cnst_choices())[
+    which(cnst_choices() == x@scoring_constraint@constraint)
+  ]
+  scor_cnst_name <- gsub("^([a-z])", "\\U\\1", scor_cnst_name, perl = TRUE)
+
   # printing -----
   cli::cli_text(
     "A {mod_name} measuring ",
@@ -337,4 +343,7 @@ S7::method(print, dcm_specification) <- function(x, ...) {
   cli::cli_text("")
   cli::cli_alert_info("Prior distributions:")
   cli::cli_bullets(rlang::set_names(prior_statements, " "))
+  cli::cli_text("")
+  cli::cli_alert_info("Scoring model constraints:")
+  cli::cli_bullets(rlang::set_names(scor_cnst_name, " "))
 }
