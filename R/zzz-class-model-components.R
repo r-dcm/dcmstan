@@ -372,7 +372,7 @@ measurement <- S7::new_class(
     ),
     model_args = S7::new_property(
       class = S7::class_list,
-      default = quote(list())
+      default = list()
     )
   ),
   validator = function(self) {
@@ -425,7 +425,7 @@ structural <- S7::new_class(
     ),
     model_args = S7::new_property(
       class = S7::class_list,
-      default = quote(list())
+      default = list()
     )
   ),
   validator = function(self) {
@@ -462,7 +462,7 @@ quantities <- S7::new_class(
   properties = list(
     model_args = S7::new_property(
       class = S7::class_list,
-      default = quote(list())
+      default = list()
     )
   ),
   validator = function(self) {
