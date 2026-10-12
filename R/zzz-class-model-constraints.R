@@ -1,3 +1,16 @@
+#' Scoring model constraint definitions for diagnostic classification models
+
+#' @rdname model-constraint
+#' @export
+none <- function() {
+  NONE(constraint = "none")
+}
+#' @rdname model-constraint
+#' @export
+posterior <- function() {
+  POSTERIOR(constraint = "posterior")
+}
+
 
 # Define scoring model constraint classes --------------------------------------
 #' S7 class for scoring model constraints
