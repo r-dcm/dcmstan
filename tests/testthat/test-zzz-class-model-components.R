@@ -99,3 +99,32 @@ test_that("model_property cannot be overwritten", {
     "@model is read-only"
   )
 })
+
+test_that("public model constructors initialize the model once", {
+  models <- list(
+    lcdm = lcdm,
+    dina = dina,
+    dino = dino,
+    nida = nida,
+    nido = nido,
+    ncrum = ncrum,
+    crum = crum,
+    unconstrained = unconstrained,
+    independent = independent,
+    loglinear = loglinear,
+    hdcm = hdcm,
+    bayesnet = bayesnet
+  )
+  for (name in names(models)) {
+    x <- models[[name]]()
+    expect_identical(x@model, name)
+  }
+  expect_identical(
+    lcdm(max_interaction = 2)@model_args,
+    list(max_interaction = 2)
+  )
+  expect_snapshot(error = TRUE, {
+    x <- dina()
+    x@model <- "dino"
+  })
+})
