@@ -7,7 +7,21 @@ none <- function() {
 }
 #' @rdname scoring-constraint
 #' @export
-posterior <- function() {
+posterior <- function(
+    data,
+    missing = NA,
+    identifier = NULL
+) {
+
+  # validate data -----
+  check_string(identifier, allow_null = TRUE)
+
+
+
+  # split data in constraint_args:
+  #   1. pattern data
+  #   2. constraints
+
   POSTERIOR(constraint = "posterior")
 }
 
