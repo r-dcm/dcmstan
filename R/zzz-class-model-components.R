@@ -127,7 +127,7 @@
 #' crum()
 lcdm <- function(max_interaction = Inf) {
   check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
-  LCDM(model = "lcdm", list(max_interaction = max_interaction))
+  LCDM(model = "lcdm", model_args = list(max_interaction = max_interaction))
 }
 
 #' @rdname measurement-model
@@ -271,21 +271,24 @@ independent <- function() {
 #' @export
 loglinear <- function(max_interaction = Inf) {
   check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
-  LOGLINEAR(model = "loglinear", list(max_interaction = max_interaction))
+  LOGLINEAR(
+    model = "loglinear",
+    model_args = list(max_interaction = max_interaction)
+  )
 }
 
 #' @rdname structural-model
 #' @export
 hdcm <- function(hierarchy = NULL) {
   check_hierarchy(hierarchy)
-  HDCM(model = "hdcm", list(hierarchy = hierarchy))
+  HDCM(model = "hdcm", model_args = list(hierarchy = hierarchy))
 }
 
 #' @rdname structural-model
 #' @export
 bayesnet <- function(hierarchy = NULL) {
   check_hierarchy(hierarchy)
-  BAYESNET(model = "bayesnet", list(hierarchy = hierarchy))
+  BAYESNET(model = "bayesnet", model_args = list(hierarchy = hierarchy))
 }
 
 #' Generated quantities for diagnostic classification
@@ -487,22 +490,10 @@ quantities <- S7::new_class(
   }
 )
 
-construct_measurement <- function(model = "lcdm", model_args = list()) {
-  S7::new_object(measurement(model = model, model_args = model_args))
-}
-
-construct_structural <- function(model = "unconstrained", model_args = list()) {
-  S7::new_object(structural(model = model, model_args = model_args))
-}
-
 # Define child classes for measurement and structural models -------------------
 model_property <- S7::new_property(
   class = S7::class_character,
-  setter = function(self, value) {
-    if (!is.null(self@model)) {
-      stop("@model is read-only", call. = FALSE)
-    }
-  }
+  getter = \(self) self@model
 )
 
 ## Measurement models -----
@@ -510,56 +501,49 @@ LCDM <- S7::new_class(
   "LCDM",
   parent = measurement,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_measurement
+  properties = list(model = model_property)
 )
 
 DINA <- S7::new_class(
   "DINA",
   parent = measurement,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_measurement
+  properties = list(model = model_property)
 )
 
 DINO <- S7::new_class(
   "DINO",
   parent = measurement,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_measurement
+  properties = list(model = model_property)
 )
 
 NIDA <- S7::new_class(
   "NIDA",
   parent = measurement,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_measurement
+  properties = list(model = model_property)
 )
 
 NIDO <- S7::new_class(
   "NIDO",
   parent = measurement,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_measurement
+  properties = list(model = model_property)
 )
 
 NCRUM <- S7::new_class(
   "NCRUM",
   parent = measurement,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_measurement
+  properties = list(model = model_property)
 )
 
 CRUM <- S7::new_class(
   "CRUM",
   parent = measurement,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_measurement
+  properties = list(model = model_property)
 )
 
 ## Structural models -----
@@ -567,40 +551,35 @@ UNCONSTRAINED <- S7::new_class(
   "UNCONSTRAINED",
   parent = structural,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_structural
+  properties = list(model = model_property)
 )
 
 INDEPENDENT <- S7::new_class(
   "INDEPENDENT",
   parent = structural,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_structural
+  properties = list(model = model_property)
 )
 
 LOGLINEAR <- S7::new_class(
   "LOGLINEAR",
   parent = structural,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_structural
+  properties = list(model = model_property)
 )
 
 HDCM <- S7::new_class(
   "HDCM",
   parent = structural,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_structural
+  properties = list(model = model_property)
 )
 
 BAYESNET <- S7::new_class(
   "BAYESNET",
   parent = structural,
   package = "dcmstan",
-  properties = list(model = model_property),
-  constructor = construct_structural
+  properties = list(model = model_property)
 )
 
 ## Generated quantities -----

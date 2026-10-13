@@ -87,17 +87,14 @@ test_that("quantities class errors", {
 })
 
 test_that("model_property cannot be overwritten", {
-  meas_mod <- lcdm()
-  expect_error(
-    meas_mod@model <- "dina",
-    "@model is read-only"
-  )
-
-  strc_mod <- loglinear()
-  expect_error(
-    strc_mod@model <- "hdcm",
-    "@model is read-only"
-  )
+  expect_snapshot(error = TRUE, {
+    meas_mod <- lcdm()
+    meas_mod@model <- "dina"
+  })
+  expect_snapshot(error = TRUE, {
+    strc_mod <- loglinear()
+    strc_mod@model <- "hdcm"
+  })
 })
 
 test_that("public model constructors initialize the model once", {
@@ -118,13 +115,52 @@ test_that("public model constructors initialize the model once", {
   for (name in names(models)) {
     x <- models[[name]]()
     expect_identical(x@model, name)
+    if (name %in% c("lcdm", "loglinear")) {
+      expect_identical(x@model_args, list(max_interaction = Inf))
+    } else if (name %in% c("hdcm", "bayesnet")) {
+      expect_identical(x@model_args, list(hierarchy = NULL))
+    } else {
+      expect_identical(x@model_args, list())
+    }
   }
   expect_identical(
     lcdm(max_interaction = 2)@model_args,
     list(max_interaction = 2)
   )
+  expect_identical(
+    loglinear(max_interaction = 1)@model_args,
+    list(max_interaction = 1)
+  )
+  hierarchy <- "att1 -> att2 -> att3"
+  expect_identical(
+    hdcm(hierarchy = hierarchy)@model_args,
+    list(hierarchy = hierarchy)
+  )
+  expect_identical(
+    bayesnet(hierarchy = hierarchy)@model_args,
+    list(hierarchy = hierarchy)
+  )
   expect_snapshot(error = TRUE, {
     x <- dina()
     x@model <- "dino"
+  })
+})
+
+test_that("public models retain parent validation", {
+  expect_snapshot(error = TRUE, {
+    model <- S7::S7_class(dina())
+    model(model = "unknown")
+  })
+  expect_snapshot(error = TRUE, {
+    model <- S7::S7_class(loglinear())
+    model(model = "unknown")
+  })
+  expect_snapshot(error = TRUE, {
+    x <- dina()
+    x@model_args <- list(max_interaction = 1)
+  })
+  expect_snapshot(error = TRUE, {
+    x <- loglinear()
+    x@model_args <- list(hierarchy = "att1 -> att2")
   })
 })
