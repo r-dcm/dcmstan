@@ -26,4 +26,3 @@
     Output
       <dcmstan::LOGLINEAR> object is invalid:
       - @model_args contains unknown arguments for `loglinear()`: `hierarchy`
-
