@@ -87,14 +87,17 @@ test_that("quantities class errors", {
 })
 
 test_that("model_property cannot be overwritten", {
-  expect_snapshot(error = TRUE, {
-    meas_mod <- lcdm()
-    meas_mod@model <- "dina"
-  })
-  expect_snapshot(error = TRUE, {
-    strc_mod <- loglinear()
-    strc_mod@model <- "hdcm"
-  })
+  meas_mod <- lcdm()
+  expect_error(
+    meas_mod@model <- "dina",
+    "Can't set read-only property"
+  )
+
+  strc_mod <- loglinear()
+  expect_error(
+    strc_mod@model <- "hdcm",
+    "Can't set read-only property"
+  )
 })
 
 test_that("public model constructors initialize the model once", {
@@ -122,6 +125,20 @@ test_that("public model constructors initialize the model once", {
     } else {
       expect_identical(x@model_args, list())
     }
+    error <- tryCatch(
+      {
+        x@model <- "changed"
+        NULL
+      },
+      error = identity
+    )
+    expect_s3_class(error, "error")
+    expect_match(
+      conditionMessage(error),
+      "Can't set read-only property",
+      fixed = TRUE
+    )
+    expect_identical(x@model, name)
   }
   expect_identical(
     lcdm(max_interaction = 2)@model_args,
@@ -140,27 +157,30 @@ test_that("public model constructors initialize the model once", {
     bayesnet(hierarchy = hierarchy)@model_args,
     list(hierarchy = hierarchy)
   )
-  expect_snapshot(error = TRUE, {
-    x <- dina()
-    x@model <- "dino"
-  })
 })
 
 test_that("public models retain parent validation", {
-  expect_snapshot(error = TRUE, {
+  error_message <- function(expr) {
+    error <- tryCatch(expr, error = identity)
+    expect_s3_class(error, "error")
+    conditionMessage(error)
+  }
+  expect_snapshot({
     model <- S7::S7_class(dina())
-    model(model = "unknown")
-  })
-  expect_snapshot(error = TRUE, {
+    cat(error_message(model(model = "unknown")), "\n", sep = "")
     model <- S7::S7_class(loglinear())
-    model(model = "unknown")
-  })
-  expect_snapshot(error = TRUE, {
+    cat(error_message(model(model = "unknown")), "\n", sep = "")
     x <- dina()
-    x@model_args <- list(max_interaction = 1)
-  })
-  expect_snapshot(error = TRUE, {
+    cat(
+      error_message(x@model_args <- list(max_interaction = 1)),
+      "\n",
+      sep = ""
+    )
     x <- loglinear()
-    x@model_args <- list(hierarchy = "att1 -> att2")
+    cat(
+      error_message(x@model_args <- list(hierarchy = "att1 -> att2")),
+      "\n",
+      sep = ""
+    )
   })
 })
