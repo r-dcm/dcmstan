@@ -28,9 +28,9 @@ the attribute in that column was present (1) or not (0).
 classes:
 
 \itemize{
-\item \code{dcmstan::HDCM}
-\item \code{dcmstan::dcm_specification}
-\item \code{dcmstan::structural}
+\item \code{\link[=create_profiles-dcmstan-HDCM-method]{dcmstan::HDCM}}
+\item \code{\link[=create_profiles-dcmstan-dcm_specification-method]{dcmstan::dcm_specification}}
+\item \code{\link[=create_profiles-dcmstan-structural-method]{dcmstan::structural}}
 \item \code{double}
 \item \code{integer}
 }
@@ -41,7 +41,7 @@ create_profiles(3L)
 
 create_profiles(5)
 
-create_profiles(unconstrained(), attributes = c("att1", "att2"))
+create_profiles(unconstrained(), attributes = c("math", "science"))
 
-create_profiles(hdcm("first -> second -> third"), keep_name = TRUE)
+create_profiles(hdcm("first -> second -> third"), keep_names = FALSE)
 }

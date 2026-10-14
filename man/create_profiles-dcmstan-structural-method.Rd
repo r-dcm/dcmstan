@@ -10,7 +10,7 @@ create_profiles(x, attributes, keep_names = TRUE)
 \arguments{
 \item{x}{A \code{\link[=unconstrained]{structural}} object.}
 
-\item{attributes}{A names vector of attributes, as in the
+\item{attributes}{A named vector of attributes, as in the
 \code{qmatrix_meta$attribute_names} of a \link[=dcm_specify]{DCM specification}.}
 
 \item{keep_names}{Logical. Should the real attriubte names as defined in

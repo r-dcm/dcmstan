@@ -208,14 +208,14 @@ bayesnet_priors <- function(hierarchy) {
     prior("lognormal(0, 1)", type = "structural_maineffect")
   )
   if (max_interaction > 1) {
-    prior = c(prior, prior("normal(0, 2)", type = "structural_interaction"))
+    prior <- c(prior, prior("normal(0, 2)", type = "structural_interaction"))
   }
 
   prior
 }
 
 # dcmprior class ---------------------------------------------------------------
-#' S7 prior class
+#' A prior
 #'
 #' The `dcmprior` constructor is exported to facilitate the defining
 #' of methods in other packages. We do not expect or recommend calling this
@@ -223,8 +223,9 @@ bayesnet_priors <- function(hierarchy) {
 #' [prior()] or [default_dcm_priors()].
 #'
 #' @inheritParams prior
+#' @prop prior The *Stan* syntax for the prior distribution.
 #'
-#' @returns A `dcmprior` object.
+#' @returns A `dcmprior` S7 object.
 #' @seealso [prior()], [default_dcm_priors()].
 #' @export
 #'
