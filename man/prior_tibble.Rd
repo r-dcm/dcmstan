@@ -2,15 +2,25 @@
 % Please edit documentation in R/zzz-class-model-priors.R
 \name{prior_tibble}
 \alias{prior_tibble}
+\alias{prior_tibble,dcmstan::dcmprior-method}
 \title{Coerce a dcmprior object to a tibble}
 \usage{
 prior_tibble(x, ...)
+
+## S7 method for class <dcmstan::dcmprior>
+\special{prior_tibble(x, .keep_all = FALSE)}
 }
 \arguments{
 \item{x}{An object containing prior specifications (e.g., a
 \code{\link[=prior]{dcmprior}} object).}
 
 \item{...}{Additional arguments passed to methods.}
+
+\item{.keep_all}{Logical indicating if all components should be returned.
+When \code{FALSE} (the default), only the \verb{@type}, \verb{@coefficient}, and \verb{@prior}
+properties of the \code{\link[=prior]{dcmprior}} object are returned. When \code{TRUE},
+the \verb{@distribution}, \verb{@lower_bound}, and \verb{@upper_bound} properties are
+also returned.}
 }
 \value{
 A \link[tibble:tibble-package]{tibble} showing the specified priors.
@@ -24,7 +34,7 @@ A \link[tibble:tibble-package]{tibble} showing the specified priors.
 classes:
 
 \itemize{
-\item \code{\link[=prior_tibble-dcmstan-dcmprior-method]{dcmstan::dcmprior}}
+\item \code{dcmstan::dcmprior}
 }
 }
 

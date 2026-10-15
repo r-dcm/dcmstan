@@ -338,19 +338,12 @@ dcmprior <- S7::new_class(
 #' prior_tibble(default_dcm_priors(dina(), independent()))
 prior_tibble <- S7::new_generic("prior_tibble", "x")
 
-#' Coerce a dcmprior object to a tibble
-#'
-#' [prior_tibble()] for a [`dcmprior`][prior()] object.
-#'
-#' @param x A [`dcmprior`][prior()] object.
 #' @param .keep_all Logical indicating if all components should be returned.
 #'   When `FALSE` (the default), only the `@type`, `@coefficient`, and `@prior`
 #'   properties of the [`dcmprior`][prior()] object are returned. When `TRUE`,
 #'   the `@distribution`, `@lower_bound`, and `@upper_bound` properties are
 #'   also returned.
-#'
-#' @return A [tibble][tibble::tibble-package] showing the specified priors.
-#' @aliases prior_tibble-dcmstan-dcmprior-method
+#' @rdname prior_tibble
 S7::method(prior_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
   tib <- tibble::tibble(
     distribution = x@distribution,
