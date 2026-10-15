@@ -315,17 +315,19 @@ dcmprior <- S7::new_class(
 # dcmprior methods -------------------------------------------------------------
 #' Coerce a dcmprior object to a tibble
 #'
-#' When specifying prior distributions, it is often useful to see which
-#' parameters are included in a given model. Using the Q-matrix and type of
-#' diagnostic model to estimated, we can create a list of all included
-#' parameters for which a prior can be specified.
+#' @description
+#' `prior_tibble()` converts prior specifications into a
+#' [tibble][tibble::tibble-package], with one row per prior.
 #'
-#' @param x A model specification (e.g., [dcm_specify()], measurement model
-#'   (e.g., [lcdm()]), or structural model (e.g., [unconstrained()]) object.
-#' @param ... Additional arguments passed to methods. See details.
+#' # Methods
+#' `prior_tibble()` is an S7 generic with methods available for the following
+#' classes:
 #'
-#' @details
-#' Additional arguments passed to methods:
+#' `r doclisting::methods_list("prior_tibble")`
+#'
+#' @param x An object containing prior specifications (e.g., a
+#'   [`dcmprior`][prior()] object).
+#' @param ... Additional arguments passed to methods.
 #'
 #' @return A [tibble][tibble::tibble-package] showing the specified priors.
 #' @export
@@ -336,12 +338,19 @@ dcmprior <- S7::new_class(
 #' prior_tibble(default_dcm_priors(dina(), independent()))
 prior_tibble <- S7::new_generic("prior_tibble", "x")
 
-#' @details
-#' `.keep_all`: Logical indicating if all components should be returned. When
-#'   `FALSE` (the default), only the `@type`, `@coefficient`, and `@prior`
-#'   elements of the [dcmprior][prior()] object is return. When `TRUE`, the
-#'   `@distribtuion`, `@lower_bound`, and `@upper_bound` are also returned.
-#' @name prior_tibble
+#' Coerce a dcmprior object to a tibble
+#'
+#' [prior_tibble()] for a [`dcmprior`][prior()] object.
+#'
+#' @param x A [`dcmprior`][prior()] object.
+#' @param .keep_all Logical indicating if all components should be returned.
+#'   When `FALSE` (the default), only the `@type`, `@coefficient`, and `@prior`
+#'   properties of the [`dcmprior`][prior()] object are returned. When `TRUE`,
+#'   the `@distribution`, `@lower_bound`, and `@upper_bound` properties are
+#'   also returned.
+#'
+#' @return A [tibble][tibble::tibble-package] showing the specified priors.
+#' @aliases prior_tibble-dcmstan-dcmprior-method
 S7::method(prior_tibble, dcmprior) <- function(x, .keep_all = FALSE) {
   tib <- tibble::tibble(
     distribution = x@distribution,
@@ -366,7 +375,7 @@ S7::method(c, dcmprior) <- function(x, ..., replace = FALSE) {
   check_bool(replace)
 
   dots <- list(...)
-  dots_class <- sapply(dots, function(x) inherits(x, dcmprior))
+  dots_class <- sapply(dots, function(x) S7::S7_inherits(x, dcmprior))
   if (length(dots) && !all(dots_class)) {
     cli::cli_abort(
       message = "All objects must be {.cls dcmprior} objects"

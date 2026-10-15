@@ -2,20 +2,21 @@
 % Please edit documentation in R/zzz-methods-create-profiles.R
 \name{create_profiles,dcmstan::HDCM-method}
 \alias{create_profiles,dcmstan::HDCM-method}
-\title{Possible attribute profiles for a DCM specification}
+\alias{create_profiles-dcmstan-HDCM-method}
+\title{Possible attribute profiles for a hierarchical DCM}
 \usage{
 ## S7 method for class <dcmstan::HDCM>
-create_profiles(x, attributes = NULL, keep_names = TRUE)
+\special{create_profiles(x, attributes = NULL, keep_names = TRUE)}
 }
 \arguments{
-\item{x}{An \link[=hdcm]{`HDCM``} structural model.}
+\item{x}{An \code{\link[=hdcm]{HDCM}} structural model.}
 
 \item{attributes}{A named vector of attributes, as in the
 \code{qmatrix_meta$attribute_names} of a \link[=dcm_specify]{DCM specification}. If
-\code{NULL} (the default), attributes names are pulled the hierarchy specified
+\code{NULL} (the default), attribute names are pulled from the hierarchy specified
 in \code{\link[=hdcm]{hdcm()}}.}
 
-\item{keep_names}{Logical. Should the real attriubte names be used (\code{TRUE};
+\item{keep_names}{Logical. Should the real attribute names be used (\code{TRUE};
 the default) or replaced with generic names (\code{FALSE}; e.g., \code{"att1"},
 \code{"att2"}, \code{"att3"}).}
 }

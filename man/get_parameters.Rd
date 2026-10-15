@@ -32,6 +32,27 @@ parameters are included in a given model. Using the Q-matrix and type of
 diagnostic model to estimated, we can create a list of all included
 parameters for which a prior can be specified.
 }
+\section{Methods}{
+\code{get_parameters()} is an S7 generic with methods available for the following
+classes:
+
+\itemize{
+\item \code{dcmstan::BAYESNET}
+\item \code{dcmstan::CRUM}
+\item \code{dcmstan::DINA}
+\item \code{dcmstan::DINO}
+\item \code{dcmstan::HDCM}
+\item \code{dcmstan::INDEPENDENT}
+\item \code{dcmstan::LCDM}
+\item \code{dcmstan::LOGLINEAR}
+\item \code{dcmstan::NCRUM}
+\item \code{dcmstan::NIDA}
+\item \code{dcmstan::NIDO}
+\item \code{dcmstan::UNCONSTRAINED}
+\item \code{dcmstan::dcm_specification}
+}
+}
+
 \examples{
 qmatrix <- tibble::tibble(item = paste0("item_", 1:10),
                           att1 = sample(0:1, size = 10, replace = TRUE),

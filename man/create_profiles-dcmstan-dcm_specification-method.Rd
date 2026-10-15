@@ -2,15 +2,16 @@
 % Please edit documentation in R/zzz-methods-create-profiles.R
 \name{create_profiles,dcmstan::dcm_specification-method}
 \alias{create_profiles,dcmstan::dcm_specification-method}
+\alias{create_profiles-dcmstan-dcm_specification-method}
 \title{Possible attribute profiles for a DCM specification}
 \usage{
 ## S7 method for class <dcmstan::dcm_specification>
-create_profiles(x, keep_names = TRUE)
+\special{create_profiles(x, keep_names = TRUE)}
 }
 \arguments{
 \item{x}{A \code{\link[=dcm_specify]{dcm_specification}} object.}
 
-\item{keep_names}{Logical. Should the real attriubte names be used (\code{TRUE};
+\item{keep_names}{Logical. Should the real attribute names be used (\code{TRUE};
 the default) or replaced with generic names (\code{FALSE}; e.g., \code{"att1"},
 \code{"att2"}, \code{"att3"}).}
 }

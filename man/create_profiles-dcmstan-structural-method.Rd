@@ -2,10 +2,11 @@
 % Please edit documentation in R/zzz-methods-create-profiles.R
 \name{create_profiles,dcmstan::structural-method}
 \alias{create_profiles,dcmstan::structural-method}
+\alias{create_profiles-dcmstan-structural-method}
 \title{Possible attribute profiles for a DCM structural model}
 \usage{
 ## S7 method for class <dcmstan::structural>
-create_profiles(x, attributes, keep_names = TRUE)
+\special{create_profiles(x, attributes, keep_names = TRUE)}
 }
 \arguments{
 \item{x}{A \code{\link[=unconstrained]{structural}} object.}
@@ -13,7 +14,7 @@ create_profiles(x, attributes, keep_names = TRUE)
 \item{attributes}{A named vector of attributes, as in the
 \code{qmatrix_meta$attribute_names} of a \link[=dcm_specify]{DCM specification}.}
 
-\item{keep_names}{Logical. Should the real attriubte names as defined in
+\item{keep_names}{Logical. Should the real attribute names as defined in
 \code{attributes} be used (\code{TRUE}; the default) or replaced with generic names
 (\code{FALSE}; e.g., \code{"att1"}, \code{"att2"}, \code{"att3"}).}
 }

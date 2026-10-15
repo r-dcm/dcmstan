@@ -5,33 +5,29 @@
 \title{Coerce a dcmprior object to a tibble}
 \usage{
 prior_tibble(x, ...)
-
-## S7 method for class <dcmstan::dcmprior>
-prior_tibble(x, .keep_all = FALSE)
 }
 \arguments{
-\item{x}{A model specification (e.g., \code{\link[=dcm_specify]{dcm_specify()}}, measurement model
-(e.g., \code{\link[=lcdm]{lcdm()}}), or structural model (e.g., \code{\link[=unconstrained]{unconstrained()}}) object.}
+\item{x}{An object containing prior specifications (e.g., a
+\code{\link[=prior]{dcmprior}} object).}
 
-\item{...}{Additional arguments passed to methods. See details.}
+\item{...}{Additional arguments passed to methods.}
 }
 \value{
 A \link[tibble:tibble-package]{tibble} showing the specified priors.
 }
 \description{
-When specifying prior distributions, it is often useful to see which
-parameters are included in a given model. Using the Q-matrix and type of
-diagnostic model to estimated, we can create a list of all included
-parameters for which a prior can be specified.
+\code{prior_tibble()} converts prior specifications into a
+\link[tibble:tibble-package]{tibble}, with one row per prior.
 }
-\details{
-Additional arguments passed to methods:
+\section{Methods}{
+\code{prior_tibble()} is an S7 generic with methods available for the following
+classes:
 
-\code{.keep_all}: Logical indicating if all components should be returned. When
-\code{FALSE} (the default), only the \verb{@type}, \verb{@coefficient}, and \verb{@prior}
-elements of the \link[=prior]{dcmprior} object is return. When \code{TRUE}, the
-\verb{@distribtuion}, \verb{@lower_bound}, and \verb{@upper_bound} are also returned.
+\itemize{
+\item \code{\link[=prior_tibble-dcmstan-dcmprior-method]{dcmstan::dcmprior}}
 }
+}
+
 \examples{
 prior_tibble(default_dcm_priors(lcdm()))
 

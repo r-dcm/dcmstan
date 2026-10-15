@@ -57,13 +57,14 @@ S7::method(create_profiles, S7::class_numeric) <- function(x) {
 #' model and the Q-matrix defined in the specification object.
 #'
 #' @param x A [`dcm_specification`][dcm_specify()] object.
-#' @param keep_names Logical. Should the real attriubte names be used (`TRUE`;
+#' @param keep_names Logical. Should the real attribute names be used (`TRUE`;
 #'   the default) or replaced with generic names (`FALSE`; e.g., `"att1"`,
 #'   `"att2"`, `"att3"`).
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible attribute
 #'   patterns. Each row is a profile, and each column indicates whether
 #'   the attribute in that column was present (1) or not (0).
+#' @aliases create_profiles-dcmstan-dcm_specification-method
 S7::method(create_profiles, dcm_specification) <-
   function(x, keep_names = TRUE) {
     create_profiles(
@@ -81,13 +82,14 @@ S7::method(create_profiles, dcm_specification) <-
 #' @param x A [`structural`][unconstrained()] object.
 #' @param attributes A named vector of attributes, as in the
 #'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()].
-#' @param keep_names Logical. Should the real attriubte names as defined in
+#' @param keep_names Logical. Should the real attribute names as defined in
 #'   `attributes` be used (`TRUE`; the default) or replaced with generic names
 #'   (`FALSE`; e.g., `"att1"`, `"att2"`, `"att3"`).
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible attribute
 #'   patterns. Each row is a profile, and each column indicates whether
 #'   the attribute in that column was present (1) or not (0).
+#' @aliases create_profiles-dcmstan-structural-method
 S7::method(create_profiles, structural) <-
   function(x, attributes, keep_names = TRUE) {
     profs <- create_profiles(length(attributes))
@@ -107,23 +109,24 @@ S7::method(create_profiles, structural) <-
 
 
 # specific structural models ---------------------------------------------------
-#' Possible attribute profiles for a DCM specification
+#' Possible attribute profiles for a hierarchical DCM
 #'
 #' [create_profiles()] for a hierarchical DCM, as determined by the defined
 #' hierarchy.
 #'
-#' @param x An [`HDCM``][hdcm()] structural model.
+#' @param x An [`HDCM`][hdcm()] structural model.
 #' @param attributes A named vector of attributes, as in the
 #'   `qmatrix_meta$attribute_names` of a [DCM specification][dcm_specify()]. If
-#'   `NULL` (the default), attributes names are pulled the hierarchy specified
+#'   `NULL` (the default), attribute names are pulled from the hierarchy specified
 #'   in [hdcm()].
-#' @param keep_names Logical. Should the real attriubte names be used (`TRUE`;
+#' @param keep_names Logical. Should the real attribute names be used (`TRUE`;
 #'   the default) or replaced with generic names (`FALSE`; e.g., `"att1"`,
 #'   `"att2"`, `"att3"`).
 #'
 #' @returns A [tibble][tibble::tibble-package] with all possible attribute
 #'   patterns. Each row is a profile, and each column indicates whether
 #'   the attribute in that column was present (1) or not (0).
+#' @aliases create_profiles-dcmstan-HDCM-method
 S7::method(create_profiles, HDCM) <-
   function(x, attributes = NULL, keep_names = TRUE) {
     if (is.null(x@model_args$hierarchy)) {
