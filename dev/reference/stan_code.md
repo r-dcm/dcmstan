@@ -31,6 +31,15 @@ stan_code(x, ...)
 A [glue](https://glue.tidyverse.org/reference/as_glue.html) object
 containing the 'Stan' code for the specified model.
 
+## Methods
+
+`stan_code()` is an S7 generic with methods available for the following
+classes:
+
+- [`dcmstan::dcm_specification`](https://dcmstan.r-dcm.org/dev/reference/dcm_specification.md)
+
+- `dcmstan::quantities`
+
 ## References
 
 da Silva, M. A., de Oliveira, E. S. B., von Davier, A. A., and Bazán, J.

@@ -47,6 +47,37 @@ A [tibble](https://tibble.tidyverse.org/reference/tibble-package.html)
 showing the available parameter types and coefficients for a specified
 model.
 
+## Methods
+
+`get_parameters()` is an S7 generic with methods available for the
+following classes:
+
+- `dcmstan::BAYESNET`
+
+- `dcmstan::CRUM`
+
+- `dcmstan::DINA`
+
+- `dcmstan::DINO`
+
+- `dcmstan::HDCM`
+
+- `dcmstan::INDEPENDENT`
+
+- `dcmstan::LCDM`
+
+- `dcmstan::LOGLINEAR`
+
+- `dcmstan::NCRUM`
+
+- `dcmstan::NIDA`
+
+- `dcmstan::NIDO`
+
+- `dcmstan::UNCONSTRAINED`
+
+- [`dcmstan::dcm_specification`](https://dcmstan.r-dcm.org/dev/reference/dcm_specification.md)
+
 ## Examples
 
 ``` r

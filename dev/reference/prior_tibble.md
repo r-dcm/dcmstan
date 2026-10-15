@@ -1,47 +1,50 @@
 # Coerce a dcmprior object to a tibble
 
-When specifying prior distributions, it is often useful to see which
-parameters are included in a given model. Using the Q-matrix and type of
-diagnostic model to estimated, we can create a list of all included
-parameters for which a prior can be specified.
+`prior_tibble()` converts prior specifications into a
+[tibble](https://tibble.tidyverse.org/reference/tibble-package.html),
+with one row per prior.
 
 ## Usage
 
 ``` r
 prior_tibble(x, ...)
+
+## S7 method for class <dcmstan::dcmprior>
+prior_tibble(x, .keep_all = FALSE)
 ```
 
 ## Arguments
 
 - x:
 
-  A model specification (e.g.,
-  [`dcm_specify()`](https://dcmstan.r-dcm.org/dev/reference/dcm_specify.md),
-  measurement model (e.g.,
-  [`lcdm()`](https://dcmstan.r-dcm.org/dev/reference/measurement-model.md)),
-  or structural model (e.g.,
-  [`unconstrained()`](https://dcmstan.r-dcm.org/dev/reference/structural-model.md))
-  object.
+  An object containing prior specifications (e.g., a
+  [`dcmprior`](https://dcmstan.r-dcm.org/dev/reference/prior.md)
+  object).
 
 - ...:
 
-  Additional arguments passed to methods. See details.
+  Additional arguments passed to methods.
+
+- .keep_all:
+
+  Logical indicating if all components should be returned. When `FALSE`
+  (the default), only the `@type`, `@coefficient`, and `@prior`
+  properties of the
+  [`dcmprior`](https://dcmstan.r-dcm.org/dev/reference/prior.md) object
+  are returned. When `TRUE`, the `@distribution`, `@lower_bound`, and
+  `@upper_bound` properties are also returned.
 
 ## Value
 
 A [tibble](https://tibble.tidyverse.org/reference/tibble-package.html)
 showing the specified priors.
 
-## Details
+## Methods
 
-Additional arguments passed to methods:
+`prior_tibble()` is an S7 generic with methods available for the
+following classes:
 
-`.keep_all`: Logical indicating if all components should be returned.
-When `FALSE` (the default), only the `@type`, `@coefficient`, and
-`@prior` elements of the
-[dcmprior](https://dcmstan.r-dcm.org/dev/reference/prior.md) object is
-return. When `TRUE`, the `@distribtuion`, `@lower_bound`, and
-`@upper_bound` are also returned.
+- [`dcmstan::dcmprior`](https://dcmstan.r-dcm.org/dev/reference/dcmprior.md)
 
 ## Examples
 

@@ -1,4 +1,4 @@
-# S7 prior class
+# A prior
 
 The `dcmprior` constructor is exported to facilitate the defining of
 methods in other packages. We do not expect or recommend calling this
@@ -49,12 +49,18 @@ dcmprior(
 
 ## Value
 
-A `dcmprior` object.
+A `dcmprior` S7 object.
 
 ## See also
 
 [`prior()`](https://dcmstan.r-dcm.org/dev/reference/prior.md),
 [`default_dcm_priors()`](https://dcmstan.r-dcm.org/dev/reference/default_dcm_priors.md).
+
+## Additional properties
+
+- `@prior`:
+
+  The *Stan* syntax for the prior distribution.
 
 ## Examples
 

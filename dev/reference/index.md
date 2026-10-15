@@ -5,7 +5,7 @@
 - [`dcm_specify()`](https://dcmstan.r-dcm.org/dev/reference/dcm_specify.md)
   : Specify a diagnostic classification model
 - [`create_profiles()`](https://dcmstan.r-dcm.org/dev/reference/create_profiles.md)
-  : Generate mastery profiles
+  : Possible attribute profiles
 
 ### Model components
 
