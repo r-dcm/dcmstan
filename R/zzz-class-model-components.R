@@ -491,9 +491,11 @@ quantities <- S7::new_class(
 model_property <- S7::new_property(
   class = S7::class_character,
   setter = function(self, value) {
-    if (!is.null(self@model)) {
+    if (length(self@model) && !identical(self@model, value)) {
       stop("@model is read-only", call. = FALSE)
     }
+    self@model <- value
+    self
   }
 )
 
