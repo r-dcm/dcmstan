@@ -23,6 +23,16 @@ estimate the model. For details on how the code blocks relate to diagnostic
 models, see da Silva et al. (2017), Jiang and Carter (2019),
 and Thompson (2019).
 }
+\section{Methods}{
+\code{stan_code()} is an S7 generic with methods available for the following
+classes:
+
+\itemize{
+\item \code{dcmstan::dcm_specification}
+\item \code{dcmstan::quantities}
+}
+}
+
 \examples{
 qmatrix <- data.frame(
   att1 = sample(0:1, size = 5, replace = TRUE),

@@ -115,7 +115,7 @@ test_that("check hierarchy names", {
     )
   )
   expect_s3_class(err, "rlang_error")
-  expect_match(err$message, "only include attributes")
+  expect_match(err$message, "only include attributes present in `qmatrix`")
   expect_match(err$footer, "blue")
 
   err <- rlang::catch_cnd(
@@ -125,8 +125,19 @@ test_that("check hierarchy names", {
     )
   )
   expect_s3_class(err, "rlang_error")
-  expect_match(err$message, "include all attributes")
+  expect_match(err$message, "include all attributes present in `qmatrix`")
   expect_match(err$footer, "green")
+
+  err <- rlang::catch_cnd(
+    check_hierarchy_names(
+      "first -> second <- third",
+      attribute_names = paste0("att", 1:3),
+      present_in = "attributes"
+    )
+  )
+  expect_s3_class(err, "rlang_error")
+  expect_match(err$message, "only include attributes present in `attributes`")
+  expect_match(err$footer, ".*first.*, .*second.*, .*third.*")
 
   expect_null(
     check_hierarchy_names(

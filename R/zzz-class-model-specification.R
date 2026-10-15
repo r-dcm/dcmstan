@@ -49,6 +49,7 @@ dcm_specify <- function(
     check_hierarchy_names(
       structural_model@model_args$hierarchy,
       attribute_names = names(qmatrix$attribute_names),
+      present_in = "qmatrix",
       arg = rlang::caller_arg(structural_model)
     )
   }

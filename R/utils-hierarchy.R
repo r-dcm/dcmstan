@@ -51,6 +51,7 @@ check_hierarchy <- function(
 check_hierarchy_names <- function(
   x,
   attribute_names,
+  present_in = "qmatrix",
   arg = rlang::caller_arg(x),
   call = rlang::caller_env()
 ) {
@@ -73,7 +74,9 @@ check_hierarchy_names <- function(
   if (length(extr_hier)) {
     rdcmchecks::abort_bad_argument(
       arg = arg,
-      must = "only include attributes in a hierarchy present in the Q-matrix",
+      must = cli::format_message(
+        "only include attributes present in {.arg {present_in}}"
+      ),
       footer = cli::format_message(
         c(i = "Extra attributes: {.val {extr_hier}}")
       ),
@@ -84,7 +87,9 @@ check_hierarchy_names <- function(
   if (length(miss_hier)) {
     rdcmchecks::abort_bad_argument(
       arg = arg,
-      must = "include all attributes in a hierarchy present in the Q-matrix",
+      must = cli::format_message(
+        "include all attributes present in {.arg {present_in}}"
+      ),
       footer = cli::format_message(
         c(i = "Missing attributes: {.val {miss_hier}}")
       ),
