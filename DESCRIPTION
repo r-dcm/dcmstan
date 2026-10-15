@@ -34,7 +34,7 @@ Imports:
     lifecycle,
     rdcmchecks,
     rlang (>= 1.1.0),
-    S7,
+    S7 (>= 0.2.2.9000),
     tibble,
     tidyr
 Suggests: 
@@ -45,6 +45,8 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     withr
+Remotes:
+    RConsortium/S7
 Additional_repositories: https://stan-dev.r-universe.dev
 Config/Needs/website: r-dcm/rdcmtemplate, ggplot2
 Config/Needs/documentation: openpharma/roxylint
