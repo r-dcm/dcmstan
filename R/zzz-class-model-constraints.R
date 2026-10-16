@@ -8,21 +8,31 @@ none <- function() {
 #' @rdname scoring-constraint
 #' @export
 posterior <- function(
-    data,
+    constraints,
     missing = NA,
-    identifier = NULL
+    thresholds,
+    pattern_identifier = NULL,
+    attribute_identifier = "attribute",
+    classification_identifier = "classification",
+    threshold_identifier = "threshold"
 ) {
 
-  # validate data -----
-  check_string(identifier, allow_null = TRUE)
+  cleaned_constraints <- clean_constraints(
+    constraints = constraints,
+    missing = missing,
+    thresholds = thresholds,
+    pattern_identifier = pattern_identifier,
+    attribute_identifier = attribute_identifier,
+    classification_identifier = classification_identifier,
+    threshold_identifier = threshold_identifier
+  )
 
+  POSTERIOR(constraint = "posterior",
+            constraint_args = list(
+              patterns = cleaned_constraints$patterns,
+              constraints = cleaned_constraints$constraints
+            ))
 
-
-  # split data in constraint_args:
-  #   1. pattern data
-  #   2. constraints
-
-  POSTERIOR(constraint = "posterior")
 }
 
 
@@ -47,6 +57,10 @@ scoring <- S7::new_class(
         }
       },
       default = "none"
+    ),
+    constraint_args = S7::new_property(
+      class = S7::class_list,
+      default = list()
     )
   )
 )
