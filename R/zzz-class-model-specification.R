@@ -54,6 +54,13 @@ dcm_specify <- function(
       arg = rlang::caller_arg(structural_model)
     )
   }
+  if (!is.null(scoring_constraint@constraint_args$patterns)) {
+    check_pattern_names(
+      scoring_constraint@constraint_args$patterns,
+      item_names = names(qmatrix$item_names),
+      arg = rlang::caller_arg(scoring_constraint)
+    )
+  }
 
   # tweak measurement model as needed ------------------------------------------
   if (measurement_model@model == "lcdm" && ncol(qmatrix$clean_qmatrix) == 1) {

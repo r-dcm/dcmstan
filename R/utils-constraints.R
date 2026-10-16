@@ -143,8 +143,8 @@ check_threshold_data <- function(
     )
   }
 
-  classification_count <- thresholds %>%
-    dplyr::select({{ classification_identifier }}) %>%
+  classification_count <- thresholds |>
+    dplyr::select({{ classification_identifier }}) |>
     dplyr::summarize(n = dplyr::n(),
                      .by = {{ classification_identifier }})
 
@@ -156,7 +156,7 @@ check_threshold_data <- function(
     )
   }
 
-  thresholds <- thresholds %>%
+  thresholds <- thresholds |>
     dplyr::arrange({{ classification_identifier }})
 
   if (any(diff(thresholds$threshold) > 0)) {
@@ -256,13 +256,13 @@ clean_constraints <- function(
                      by = c("class"))
 
   patt_data <- lookup |>
-    dplyr::select(pattern = stan_pattern, response_cols) %>%
+    dplyr::select(pattern = stan_pattern, response_cols) |>
     dplyr::distinct()
 
   patt_data <- rdcmchecks::check_data(patt_data, identifier = "pattern",
                                       missing = NA)
 
-  patt_data <- patt_data %>%
+  patt_data <- patt_data |>
     tidyr::pivot_longer(cols = -c(pattern),
                         names_to = "item", values_to = "score")
 
@@ -277,42 +277,44 @@ clean_constraints <- function(
 }
 
 
+#' @param item_names A vector of expected items.
+#' @noRd
+check_pattern_names <- function(
+    x,
+    item_names,
+    arg = rlang::caller_arg(x),
+    call = rlang::caller_env()
+) {
+  check_character(item_names)
 
-#' #' @param item_names A vector of expected items.
-#' #' @noRd
-#' check_constraint_names <- function(
-#'     x,
-#'     item_names,
-#'     arg = rlang::caller_arg(x),
-#'     call = rlang::caller_env()
-#' ) {
-#'   check_character(item_names)
-#'   cnst_item_names <- names(x)
-#'
-#'   extr_item <- setdiff(cnst_item_names, item_names)
-#'   miss_item <- setdiff(item_names, cnst_item_names)
-#'
-#'   if (length(extr_item)) {
-#'     rdcmchecks::abort_bad_argument(
-#'       arg = arg,
-#'       must = "only include items in `constraints` arg present in the Q-matrix",
-#'       footer = cli::format_message(
-#'         c(i = "Extra items: {.val {extr_item}}")
-#'       ),
-#'       call = call
-#'     )
-#'   }
-#'
-#'   if (length(miss_item)) {
-#'     rdcmchecks::abort_bad_argument(
-#'       arg = arg,
-#'       must = "include all item in `constraints` arg present in the Q-matrix",
-#'       footer = cli::format_message(
-#'         c(i = "Missing items: {.val {miss_item}}")
-#'       ),
-#'       call = call
-#'     )
-#'   }
-#'
-#'   invisible(NULL)
-#' }
+  patt_item_names <- x |>
+    dplyr::distinct(item) |>
+    dplyr::pull(item)
+
+  extr_item <- setdiff(patt_item_names, item_names)
+  miss_item <- setdiff(item_names, patt_item_names)
+
+  if (length(extr_item)) {
+    rdcmchecks::abort_bad_argument(
+      arg = arg,
+      must = "only include items present in the Q-matrix",
+      footer = cli::format_message(
+        c(i = "Extra items: {.val {extr_item}}")
+      ),
+      call = call
+    )
+  }
+
+  if (length(miss_item)) {
+    rdcmchecks::abort_bad_argument(
+      arg = arg,
+      must = "include all items present in the Q-matrix",
+      footer = cli::format_message(
+        c(i = "Missing items: {.val {miss_item}}")
+      ),
+      call = call
+    )
+  }
+
+  invisible(NULL)
+}
