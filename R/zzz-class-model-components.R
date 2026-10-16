@@ -127,7 +127,7 @@
 #' crum()
 lcdm <- function(max_interaction = Inf) {
   check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
-  LCDM(model = "lcdm", list(max_interaction = max_interaction))
+  LCDM(model = "lcdm", model_args = list(max_interaction = max_interaction))
 }
 
 #' @rdname measurement-model
@@ -271,21 +271,24 @@ independent <- function() {
 #' @export
 loglinear <- function(max_interaction = Inf) {
   check_number_whole(max_interaction, min = 0, allow_infinite = TRUE)
-  LOGLINEAR(model = "loglinear", list(max_interaction = max_interaction))
+  LOGLINEAR(
+    model = "loglinear",
+    model_args = list(max_interaction = max_interaction)
+  )
 }
 
 #' @rdname structural-model
 #' @export
 hdcm <- function(hierarchy = NULL) {
   check_hierarchy(hierarchy)
-  HDCM(model = "hdcm", list(hierarchy = hierarchy))
+  HDCM(model = "hdcm", model_args = list(hierarchy = hierarchy))
 }
 
 #' @rdname structural-model
 #' @export
 bayesnet <- function(hierarchy = NULL) {
   check_hierarchy(hierarchy)
-  BAYESNET(model = "bayesnet", list(hierarchy = hierarchy))
+  BAYESNET(model = "bayesnet", model_args = list(hierarchy = hierarchy))
 }
 
 #' Generated quantities for diagnostic classification
@@ -490,13 +493,7 @@ quantities <- S7::new_class(
 # Define child classes for measurement and structural models -------------------
 model_property <- S7::new_property(
   class = S7::class_character,
-  setter = function(self, value) {
-    if (length(self@model) && !identical(self@model, value)) {
-      stop("@model is read-only", call. = FALSE)
-    }
-    self@model <- value
-    self
-  }
+  getter = \(self) self@model
 )
 
 ## Measurement models -----
