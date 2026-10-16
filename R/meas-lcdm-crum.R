@@ -128,7 +128,11 @@ meas_lcdm <- function(
   all_profiles <- if (is.null(hierarchy)) {
     create_profiles(ncol(qmatrix))
   } else {
-    create_profiles(hdcm(hierarchy = hierarchy), attributes = att_names)
+    create_profiles(
+      hdcm(hierarchy = hierarchy),
+      attributes = att_names,
+      keep_names = FALSE
+    )
   }
 
   profile_params <-

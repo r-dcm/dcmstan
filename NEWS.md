@@ -1,6 +1,6 @@
 # dcmstan (development version)
 
-* Updates for compatibility with S7 > 0.2.2.
+* Model identifiers are read-only after construction, including assignment of the existing value.
 
 # dcmstan 0.1.0
 

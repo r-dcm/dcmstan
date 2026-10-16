@@ -1,10 +1,17 @@
 #' Generate 'Stan' code for a diagnostic classification models
 #'
+#' @description
 #' Given a specification for a diagnostic classification model or a generated
 #' quantities definition, automatically generate the 'Stan' code necessary to
 #' estimate the model. For details on how the code blocks relate to diagnostic
 #' models, see da Silva et al. (2017), Jiang and Carter (2019),
 #' and Thompson (2019).
+#'
+#' # Methods
+#' `stan_code()` is an S7 generic with methods available for the following
+#' classes:
+#'
+#' `r doclisting::methods_list("stan_code")`
 #'
 #' @param x A [model specification][dcm_specify()] or
 #'   [generated quantities][generated_quantities()] object.

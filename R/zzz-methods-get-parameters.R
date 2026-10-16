@@ -1,9 +1,16 @@
 #' Identify parameters included in a diagnostic classification model
 #'
+#' @description
 #' When specifying prior distributions, it is often useful to see which
 #' parameters are included in a given model. Using the Q-matrix and type of
 #' diagnostic model to estimated, we can create a list of all included
 #' parameters for which a prior can be specified.
+#'
+#' # Methods
+#' `get_parameters()` is an S7 generic with methods available for the following
+#' classes:
+#'
+#' `r doclisting::methods_list("get_parameters")`
 #'
 #' @inheritParams dcm_specify
 #' @param x A model specification (e.g., [dcm_specify()], measurement model

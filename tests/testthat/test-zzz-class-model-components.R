@@ -184,3 +184,15 @@ test_that("public models retain parent validation", {
     )
   })
 })
+
+
+test_that("model identifiers reject assignment of their current value", {
+  expect_snapshot(error = TRUE, {
+    x <- lcdm()
+    x@model <- "lcdm"
+  })
+  expect_snapshot(error = TRUE, {
+    x <- loglinear()
+    x@model <- "loglinear"
+  })
+})

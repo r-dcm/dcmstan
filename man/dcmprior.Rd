@@ -2,7 +2,7 @@
 % Please edit documentation in R/zzz-class-model-priors.R
 \name{dcmprior}
 \alias{dcmprior}
-\title{S7 prior class}
+\title{A prior}
 \usage{
 dcmprior(
   distribution = character(0),
@@ -32,7 +32,7 @@ truncated.}
 truncated.}
 }
 \value{
-A \code{dcmprior} object.
+A \code{dcmprior} S7 object.
 }
 \description{
 The \code{dcmprior} constructor is exported to facilitate the defining
@@ -49,3 +49,9 @@ dcmprior(
 \seealso{
 \code{\link[=prior]{prior()}}, \code{\link[=default_dcm_priors]{default_dcm_priors()}}.
 }
+\section{Additional properties}{
+
+\describe{
+\item{\code{@prior}}{The \emph{Stan} syntax for the prior distribution.}
+}}
+

@@ -26,3 +26,21 @@
     Output
       <dcmstan::LOGLINEAR> object is invalid:
       - @model_args contains unknown arguments for `loglinear()`: `hierarchy`
+
+# model identifiers reject assignment of their current value
+
+    Code
+      x <- lcdm()
+      x@model <- "lcdm"
+    Condition
+      Error in `<dcmstan::LCDM>@model`:
+      ! Can't set read-only property.
+
+---
+
+    Code
+      x <- loglinear()
+      x@model <- "loglinear"
+    Condition
+      Error in `<dcmstan::LOGLINEAR>@model`:
+      ! Can't set read-only property.

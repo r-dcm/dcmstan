@@ -2,9 +2,21 @@
 % Please edit documentation in R/zzz-methods-create-profiles.R
 \name{create_profiles}
 \alias{create_profiles}
-\title{Generate mastery profiles}
+\alias{create_profiles,dcmstan::dcm_specification-method}
+\alias{create_profiles,dcmstan::structural-method}
+\alias{create_profiles,dcmstan::HDCM-method}
+\title{Possible attribute profiles}
 \usage{
 create_profiles(x, ...)
+
+## S7 method for class <dcmstan::dcm_specification>
+\special{create_profiles(x, keep_names = TRUE)}
+
+## S7 method for class <dcmstan::structural>
+\special{create_profiles(x, attributes, keep_names = TRUE)}
+
+## S7 method for class <dcmstan::HDCM>
+\special{create_profiles(x, attributes = NULL, keep_names = TRUE)}
 }
 \arguments{
 \item{x}{An object used to generate the possible patterns. This could be a
@@ -13,7 +25,16 @@ defines attribute relationships (e.g., a
 \link[=structural-model]{structural model} or
 \link[=dcm_specify]{model specification}).}
 
-\item{...}{Additional arguments passed to methods. See details.}
+\item{...}{Additional arguments passed to methods.}
+
+\item{keep_names}{Logical. Should the real attribute names be used (\code{TRUE};
+the default) or replaced with generic names (\code{FALSE}; e.g., \code{"att1"},
+\code{"att2"}, \code{"att3"}).}
+
+\item{attributes}{A named vector of attributes, as in the
+\code{qmatrix_meta$attribute_names} of a \link[=dcm_specify]{DCM specification}.
+For \code{\link[=hdcm]{hdcm()}} structural models, \code{attributes} may be \code{NULL} (the default),
+in which case attribute names are pulled from the specified hierarchy.}
 }
 \value{
 A \link[tibble:tibble-package]{tibble} with all possible attribute
@@ -21,27 +42,27 @@ patterns. Each row is a profile, and each column indicates whether
 the attribute in that column was present (1) or not (0).
 }
 \description{
-Given the number of attributes or model specification, generate all possible
-attribute patterns.
+\code{create_profiles()} determines the possible attribute profiles.
 }
-\details{
-Additional arguments passed to methods:
+\section{Methods}{
+\code{create_profiles()} is an S7 generic with methods available for the following
+classes:
 
-\code{keep_names}: When \code{x} is a \link[=dcm_specify]{model specification}, should
-the real attribute names be used (\code{TRUE}; the default), or replaced with
-generic names (\code{FALSE}; e.g., \code{"att1"}, \code{"att2"}, \code{"att3"}).
-
-\code{attributes}: When \code{x} is a \link[=structural-model]{structural model}, a vector of
-attribute names, as in the \code{qmatrix_meta$attribute_names} of a
-\link[=dcm_specify]{DCM specification}.
+\itemize{
+\item \code{dcmstan::HDCM}
+\item \code{dcmstan::dcm_specification}
+\item \code{dcmstan::structural}
+\item \code{double}
+\item \code{integer}
 }
+}
+
 \examples{
 create_profiles(3L)
 
 create_profiles(5)
 
-create_profiles(unconstrained(), attributes = c("att1", "att2"))
+create_profiles(unconstrained(), attributes = c("math", "science"))
 
-create_profiles(hdcm("att1 -> att2 -> att3"),
-                attributes = c("att1", "att2", "att3"))
+create_profiles(hdcm("first -> second -> third"), keep_names = FALSE)
 }
