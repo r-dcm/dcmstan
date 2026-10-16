@@ -39,18 +39,27 @@ dcm_specify <- function(
   identifier = NULL,
   measurement_model = lcdm(),
   structural_model = unconstrained(),
-  priors = NULL
+  priors = NULL,
+  scoring_constraint = none()
 ) {
   check_string(identifier, allow_null = TRUE)
   qmatrix <- rdcmchecks::clean_qmatrix(qmatrix, identifier = identifier)
   S7::check_is_S7(measurement_model, measurement)
   S7::check_is_S7(structural_model, structural)
+  S7::check_is_S7(scoring_constraint, scoring)
   if (!is.null(structural_model@model_args$hierarchy)) {
     check_hierarchy_names(
       structural_model@model_args$hierarchy,
       attribute_names = names(qmatrix$attribute_names),
       present_in = "qmatrix",
       arg = rlang::caller_arg(structural_model)
+    )
+  }
+  if (!is.null(scoring_constraint@constraint_args$patterns)) {
+    check_pattern_names(
+      scoring_constraint@constraint_args$patterns,
+      item_names = names(qmatrix$item_names),
+      arg = rlang::caller_arg(scoring_constraint)
     )
   }
 
@@ -122,7 +131,8 @@ dcm_specify <- function(
     ),
     measurement_model = measurement_model,
     structural_model = structural_model,
-    priors = priors
+    priors = priors,
+    scoring_constraint = scoring_constraint
   )
 }
 
@@ -205,6 +215,10 @@ dcm_specification <- S7::new_class(
     ),
     priors = S7::new_property(
       class = dcmprior,
+      default = NULL
+    ),
+    scoring_constraint = S7::new_property(
+      class = scoring,
       default = NULL
     )
   ),
@@ -316,6 +330,12 @@ S7::method(print, dcm_specification) <- function(x, ...) {
     dplyr::arrange(.data$class, .data$coefficient) |>
     dplyr::pull("prior")
 
+  # scoring model constraint name -----
+  scor_cnst_name <- names(cnst_choices())[
+    which(cnst_choices() == x@scoring_constraint@constraint)
+  ]
+  scor_cnst_name <- gsub("^([a-z])", "\\U\\1", scor_cnst_name, perl = TRUE)
+
   # printing -----
   cli::cli_text(
     "A {mod_name} measuring ",
@@ -331,4 +351,7 @@ S7::method(print, dcm_specification) <- function(x, ...) {
   cli::cli_text("")
   cli::cli_alert_info("Prior distributions:")
   cli::cli_bullets(rlang::set_names(prior_statements, " "))
+  cli::cli_text("")
+  cli::cli_alert_info("Scoring model constraints:")
+  cli::cli_bullets(rlang::set_names(scor_cnst_name, " "))
 }

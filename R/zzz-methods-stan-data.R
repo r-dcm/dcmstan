@@ -223,3 +223,7 @@ S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
     Alpha = as.matrix(profiles)
   )
 }
+
+S7::method(extra_data, POSTERIOR) <- function(x, dcm_spec) {
+
+}
