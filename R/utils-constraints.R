@@ -259,18 +259,12 @@ clean_constraints <- function(
     dplyr::select(pattern = stan_pattern, response_cols) |>
     dplyr::distinct()
 
-  patt_data <- rdcmchecks::check_data(patt_data, identifier = "pattern",
-                                      missing = NA)
-
-  patt_data <- patt_data |>
-    tidyr::pivot_longer(cols = -c(pattern),
-                        names_to = "item", values_to = "score")
-
   cnst_data <- lookup |>
     dplyr::select(pattern = stan_pattern, att, class, tau)
 
   list(
     patterns = patt_data,
+    missing = missing,
     constraints = cnst_data
   )
 
@@ -279,42 +273,31 @@ clean_constraints <- function(
 
 #' @param item_names A vector of expected items.
 #' @noRd
-check_pattern_names <- function(
+check_constrained_attributes <- function(
     x,
-    item_names,
+    attribute_names,
     arg = rlang::caller_arg(x),
     call = rlang::caller_env()
 ) {
-  check_character(item_names)
+  check_character(attribute_names)
 
-  patt_item_names <- x |>
-    dplyr::distinct(item) |>
-    dplyr::pull(item)
+  cnst_att_names <- x |>
+    dplyr::distinct(att) |>
+    dplyr::pull(att)
 
-  extr_item <- setdiff(patt_item_names, item_names)
-  miss_item <- setdiff(item_names, patt_item_names)
+  extr_att <- setdiff(cnst_att_names, names(attribute_names))
 
-  if (length(extr_item)) {
+  if (length(extr_att)) {
     rdcmchecks::abort_bad_argument(
       arg = arg,
-      must = "only include items present in the Q-matrix",
+      must = "only include attributes present in the Q-matrix",
       footer = cli::format_message(
-        c(i = "Extra items: {.val {extr_item}}")
+        c(i = "Extra items: {.val {extr_att}}")
       ),
       call = call
     )
   }
 
-  if (length(miss_item)) {
-    rdcmchecks::abort_bad_argument(
-      arg = arg,
-      must = "include all items present in the Q-matrix",
-      footer = cli::format_message(
-        c(i = "Missing items: {.val {miss_item}}")
-      ),
-      call = call
-    )
-  }
 
-  invisible(NULL)
+  attribute_names
 }

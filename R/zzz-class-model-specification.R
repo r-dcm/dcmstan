@@ -55,11 +55,31 @@ dcm_specify <- function(
     )
   }
   if (!is.null(scoring_constraint@constraint_args$patterns)) {
-    check_pattern_names(
+    cleaned_patterns <- rdcmchecks::clean_data(
       scoring_constraint@constraint_args$patterns,
-      item_names = names(qmatrix$item_names),
-      arg = rlang::caller_arg(scoring_constraint)
+      identifier = "pattern",
+      missing = scoring_constraint@constraint_args$missing,
+      cleaned_qmatrix = qmatrix
     )
+    scoring_constraint@constraint_args$patterns <-
+      dplyr::rename(cleaned_patterns$clean_data, pattern = resp_id)
+    scoring_constraint@constraint_args$pattern_names <-
+      cleaned_patterns$respondent_names
+    scoring_constraint@constraint_args$missing <- NULL
+
+    cnst_att_names <- check_constrained_attributes(
+      scoring_constraint@constraint_args$constraints,
+      attribute_names = qmatrix$attribute_names,
+      arg = scoring_constraint@constraint_args$constraints
+    )
+
+    scoring_constraint@constraint_args$constraints <-
+      scoring_constraint@constraint_args$constraints |>
+      dplyr::mutate(
+        pattern = factor(pattern,
+                         levels = names(cleaned_patterns$respondent_names)),
+        att = factor(att, levels = names(cnst_att_names))
+      )
   }
 
   # tweak measurement model as needed ------------------------------------------

@@ -30,7 +30,8 @@ posterior <- function(
   POSTERIOR(constraint = "posterior",
             constraint_args = list(
               patterns = cleaned_constraints$patterns,
-              constraints = cleaned_constraints$constraints
+              constraints = cleaned_constraints$constraints,
+              missing = cleaned_constraints$missing
             ))
 
 }
