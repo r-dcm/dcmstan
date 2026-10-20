@@ -66,8 +66,6 @@ S7::method(stan_code, dcm_specification) <- function(x) {
   meas_data <- stan_data_code(x@measurement_model)
   strc_data <- stan_data_code(x@structural_model)
   cnst_data <- stan_data_code(x@scoring_constraint)
-  cnst_add0 <- any(x@scoring_constraint@constraint_args$constraints$class==0)
-  cnst_add1 <- any(x@scoring_constraint@constraint_args$constraints$class==1)
   data_block <- glue::glue(
     "data {{",
     "  int<lower=1> I;                      // number of items",
@@ -81,9 +79,7 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "  array[R] int<lower=1,upper=I> num;   // number items for respondent R",
     if (!is.null(meas_data)) glue::glue("{meas_data}"),
     if (!is.null(strc_data)) glue::glue("{strc_data}"),
-    if (!is.null(cnst_data)) glue::glue("{cnst_data$base}"),
-    if (cnst_add1) glue::glue("{cnst_data$class_01}"),
-    if (cnst_add0) glue::glue("{cnst_data$class_00}"),
+    if (!is.null(cnst_data)) glue::glue("{cnst_data}"),
     "}}",
     .sep = "\n",
     .null = NULL
@@ -192,39 +188,45 @@ S7::method(stan_data_code, INDEPENDENT) <- function(x) {
 }
 
 S7::method(stan_data_code, POSTERIOR) <- function(x) {
-  data_block_base <- glue::glue(
-    "  int<lower=1> R_patt;                                ",
-    "  int<lower=1> N_patt;                                ",
-    "  array[N_patt] int<lower=1,upper=I> ii_patt;         ",
-    "  array[N_patt] int<lower=1,upper=R_cstr> rr_patt;    ",
-    "  array[N_patt] int<lower=0,upper=1> y_patt;          ",
-    "  array[R_patt] int<lower=1,upper=N_cstr> start_patt; ",
-    "  array[R_patt] int<lower=1> num_patt;                ",
+
+  class_00 <- glue::glue(
+    "  int<lower=1> N_0;",
+    "  array[N_0] int<lower=1,upper=A> aa_0;",
+    "  array[R_patt] int<lower=0,upper=N_0> start_0;",
+    "  array[R_patt] int<lower=0> num_0;",
+    "  real<lower=0,upper=1> tau_0;",
     .sep = "\n",
     .trim = FALSE
   )
-  data_block_00 <- glue::glue(
-    "  int<lower=1> N_0;                                   ",
-    "  array[N_0] int<lower=1,upper=A> aa_0;               ",
-    "  array[R_patt] int<lower=0,upper=N_0> start_0;       ",
-    "  array[R_patt] int<lower=0> num_0;                   ",
-    .sep = "\n",
-    .trim = FALSE
-  )
-  data_block_01 <- glue::glue(
-    "  int<lower=1> N_1;                                   ",
-    "  array[N_1] int<lower=1,upper=A> aa_1;               ",
-    "  array[R_patt] int<lower=0,upper=N_1> start_1;       ",
-    "  array[R_patt] int<lower=0> num_1;                   ",
+  class_01 <- glue::glue(
+    "  int<lower=1> N_1;",
+    "  array[N_1] int<lower=1,upper=A> aa_1;",
+    "  array[R_patt] int<lower=0,upper=N_1> start_1;",
+    "  array[R_patt] int<lower=0> num_1;",
+    "  real<lower=0,upper=1> tau_1;",
     .sep = "\n",
     .trim = FALSE
   )
 
-  list(
-    base = data_block_base,
-    class_00 = data_block_00,
-    class_01 = data_block_01
+  add_code_00 <- any(x@constraint_args$constraints$class == 0)
+  add_code_01 <- any(x@constraint_args$constraints$class == 1)
+
+  code <- glue::glue(
+    "  int<lower=1> R_patt;",
+    "  int<lower=1> N_patt;",
+    "  array[N_patt] int<lower=1,upper=I> ii_patt;",
+    "  array[N_patt] int<lower=1,upper=R_cstr> rr_patt;",
+    "  array[N_patt] int<lower=0,upper=1> y_patt;",
+    "  array[R_patt] int<lower=1,upper=N_cstr> start_patt;",
+    "  array[R_patt] int<lower=1> num_patt;",
+    if (add_code_00) glue::glue("{class_00}"),
+    if (add_code_01) glue::glue("{class_01}"),
+    .sep = "\n",
+    .trim = FALSE,
+    .null = NULL
   )
+
+  code
 }
 
 # Method for generated quantities ----------------------------------------------
