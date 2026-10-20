@@ -101,10 +101,13 @@ S7::method(stan_code, dcm_specification) <- function(x) {
   )
 
   # transformed parameters block -----
+  cnst_transformed_pars <-
+    stan_transformed_parameters_code(x@scoring_constraint)
   transformed_parameters_block <- glue::glue(
     "transformed parameters {{",
     "{strc_code$transformed_parameters}",
     "{meas_code$transformed_parameters}",
+    if (!is.null(cnst_transformed_pars)) glue::glue("{cnst_transformed_pars}"),
     "}}",
     .sep = "\n"
   )
@@ -227,6 +230,84 @@ S7::method(stan_data_code, POSTERIOR) <- function(x) {
   )
 
   code
+}
+
+## DCM transformed parameters block --------------------------------------------
+stan_transformed_parameters_code <-
+  S7::new_generic("stan_transformed_parameters_code", "x")
+
+S7::method(stan_transformed_parameters_code, scoring) <- function(x) NULL
+
+S7::method(stan_transformed_parameters_code, POSTERIOR) <- function(x) {
+
+  class_00 <- glue::glue(
+    "    if (num_0[r] > 0) {{",
+    "      for (m in 1:num_0[r]) {{",
+    "        int i = start_0[r] + m - 1;",
+    "        int a = aa_0[i];",
+    "        vector[C] prob_attr_class;",
+    "        for (c in 1:C) {{",
+    "          prob_attr_class[c] = prob_resp_class[c] * Alpha[c,a];",
+    "        }}",
+    "        prob_resp_attr_0[i] = sum(prob_attr_class);",
+    "      }}",
+    "    }}",
+    .sep = "\n",
+    .trim = FALSE,
+    .open = "$",
+    .close = "$"
+  )
+
+  class_01 <- glue::glue(
+    "    if (num_1[r] > 0) {{",
+    "      for (m in 1:num_1[r]) {{",
+    "        int i = start_1[r] + m - 1;",
+    "        int a = aa_1[i];",
+    "        vector[C] prob_attr_class;",
+    "        for (c in 1:C) {{",
+    "          prob_attr_class[c] = prob_resp_class[c] * Alpha[c,a];",
+    "        }}",
+    "        prob_resp_attr_1[i] = sum(prob_attr_class);",
+    "      }}",
+    "    }}",
+    .sep = "\n",
+    .trim = FALSE,
+    .open = "$",
+    .close = "$"
+  )
+
+  add_code_00 <- any(x@constraint_args$constraints$class == 0)
+  add_code_01 <- any(x@constraint_args$constraints$class == 1)
+
+  code <- glue::glue(
+    "  // posterior mastery probabilities",
+    "  vector[N_1] prob_resp_attr_1;",
+    "  vector[N_0] prob_resp_attr_0;",
+    "  for (r in 1:R_patt) {{",
+    "    vector[C] prob_joint;",
+    "    vector[C] prob_resp_class;",
+    "    for (c in 1:C) {{",
+    "      array[num_patt[r]] real log_items;",
+    "      for (m in 1:num_patt[r]) {{",
+    "        int i = ii_patt[start_patt[r] + m - 1];",
+    "        log_items[m] = y_patt[start_patt[r] + m - 1] * log(pi[i,c]) +",
+    "        (1 - y_patt[start_patt[r] + m - 1]) * log(1 - pi[i,c]);",
+    "      }}",
+    "      prob_joint[c] = log(Vc[c]) + sum(log_items);",
+    "    }}",
+    "    prob_resp_class = exp(prob_joint) / exp(log_sum_exp(prob_joint));",
+    if (add_code_00) glue::glue("{class_00}"),
+    if (add_code_01) glue::glue("{class_01}"),
+    "  }}",
+    .sep = "\n",
+    .trim = FALSE,
+    .open = "$",
+    .close = "$",
+    .null = NULL
+  )
+
+  code
+
 }
 
 # Method for generated quantities ----------------------------------------------
