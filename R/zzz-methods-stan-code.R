@@ -114,10 +114,13 @@ S7::method(stan_code, dcm_specification) <- function(x) {
 
   # model block -----
   all_priors <- glue::as_glue(c(strc_code$priors, meas_code$priors))
+  cnst_model <- stan_model_code(x@scoring_constraint)
   model_block <- glue::glue(
     "model {{",
     "  ////////////////////////////////// priors",
     "  {glue::glue_collapse(all_priors, sep = \"\n  \")}",
+    "",
+    if (!is.null(cnst_model)) glue::glue("{cnst_model}"),
     "",
     "  ////////////////////////////////// likelihood",
     "  for (r in 1:R) {{",
@@ -303,6 +306,37 @@ S7::method(stan_transformed_parameters_code, POSTERIOR) <- function(x) {
     .trim = FALSE,
     .open = "$",
     .close = "$",
+    .null = NULL
+  )
+
+  code
+
+}
+
+## DCM transformed parameters block --------------------------------------------
+stan_model_code <-
+  S7::new_generic("stan_model_code", "x")
+
+S7::method(stan_model_code, scoring) <- function(x) NULL
+
+S7::method(stan_model_code, POSTERIOR) <- function(x) {
+
+  class_00 <- glue::glue(
+    "  target += sum(log_inv_logit(200 * (tau_0 - prob_resp_attr_0)));"
+  )
+
+  class_01 <- glue::glue(
+    "  target += sum(log_inv_logit(200 * (prob_resp_attr_1 - tau_1)));"
+  )
+
+  add_code_00 <- any(x@constraint_args$constraints$class == 0)
+  add_code_01 <- any(x@constraint_args$constraints$class == 1)
+
+  code <- glue::glue(
+    if (add_code_00) glue::glue("{class_00}"),
+    if (add_code_01) glue::glue("{class_01}"),
+    .sep = "\n",
+    .trim = FALSE,
     .null = NULL
   )
 
