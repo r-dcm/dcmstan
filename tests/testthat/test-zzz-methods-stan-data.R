@@ -260,4 +260,42 @@ test_that("constraint data objects are correct", {
   expect_equal(dat$rr_1, 2)
   expect_equal(dat$start_1, c(0,1))
   expect_equal(dat$num_1, c(0,1))
+
+  model_spec <- dcm_specify(
+    dcmdata::mdm_qmatrix,
+    identifier = "item",
+    measurement_model = lcdm(),
+    structural_model = unconstrained(),
+    scoring_constraint = posterior(
+      constraints = tibble::tibble(
+        mdm1 = c(1),
+        mdm2 = c(1),
+        mdm3 = c(1),
+        mdm4 = c(1),
+        attribute = c("multiplication"),
+        classification = c(1L)
+      ),
+      missing = NA,
+      thresholds = tibble::tibble(
+        classification = c(1L),
+        threshold = c(0.80)
+      ),
+      pattern_identifier = NULL,
+      attribute_identifier = "attribute",
+      classification_identifier = "classification",
+      threshold_identifier = "threshold"
+    )
+  )
+  dat <- stan_data(
+    model_spec,
+    data = dcmdata::mdm_data,
+    identifier = "respondent"
+  )
+
+  extra_cnst_names <-
+    c("R_patt", "N_patt", "ii_patt", "rr_patt", "y_patt", "start_patt",
+      "num_patt",
+      "R_1", "N_1", "aa_1", "rr_1", "start_1", "num_1", "tau_1")
+
+  expect_equal(names(dat), c(default_data_names, extra_cnst_names))
 })
