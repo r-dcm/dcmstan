@@ -109,7 +109,8 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "{meas_code$transformed_parameters}",
     if (!is.null(cnst_transformed_pars)) glue::glue("{cnst_transformed_pars}"),
     "}}",
-    .sep = "\n"
+    .sep = "\n",
+    .null = NULL
   )
 
   # model block -----
@@ -137,7 +138,8 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "    target += log_sum_exp(ps);",
     "  }}",
     "}}",
-    .sep = "\n"
+    .sep = "\n",
+    .null = NULL
   )
 
   full_script <- glue::glue(
@@ -218,12 +220,14 @@ S7::method(stan_data_code, POSTERIOR) <- function(x) {
   add_code_01 <- any(x@constraint_args$constraints$class == 1)
 
   code <- glue::glue(
+    "  int<lower=1> A;                      // number of attributes",
+    "  matrix[C,A] Alpha;                   // attribute pattern for class",
     "  int<lower=1> R_patt;",
     "  int<lower=1> N_patt;",
     "  array[N_patt] int<lower=1,upper=I> ii_patt;",
-    "  array[N_patt] int<lower=1,upper=R_cstr> rr_patt;",
+    "  array[N_patt] int<lower=1,upper=R_patt> rr_patt;",
     "  array[N_patt] int<lower=0,upper=1> y_patt;",
-    "  array[R_patt] int<lower=1,upper=N_cstr> start_patt;",
+    "  array[R_patt] int<lower=1,upper=N_patt> start_patt;",
     "  array[R_patt] int<lower=1> num_patt;",
     if (add_code_00) glue::glue("{class_00}"),
     if (add_code_01) glue::glue("{class_01}"),
@@ -314,8 +318,7 @@ S7::method(stan_transformed_parameters_code, POSTERIOR) <- function(x) {
 }
 
 ## DCM transformed parameters block --------------------------------------------
-stan_model_code <-
-  S7::new_generic("stan_model_code", "x")
+stan_model_code <- S7::new_generic("stan_model_code", "x")
 
 S7::method(stan_model_code, scoring) <- function(x) NULL
 

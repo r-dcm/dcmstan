@@ -60,7 +60,20 @@ scoring <- S7::new_class(
       class = S7::class_list,
       default = list()
     )
-  )
+  ),
+  validator = function(self) {
+    provided <- names(self@constraint_args)
+    opts <- c("patterns", "constraints")
+    diff <- setdiff(provided, opts)
+    err <- cli::cli_fmt(
+      cli::cli_text(
+        "@constraint_args contains unknown arguments for ",
+        "{.fun {self@constraint}}: ",
+        "{.var {diff}}"
+      )
+    )
+    if (!all(provided %in% opts)) err
+  }
 )
 
 # Define child classes for scoring model constraints ---------------------------

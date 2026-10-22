@@ -227,6 +227,11 @@ S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
 
 S7::method(extra_data, POSTERIOR) <- function(x, dcm_spec) {
 
+  profiles <- create_profiles(
+    dcm_spec@structural_model,
+    attributes = dcm_spec@qmatrix_meta$attribute_names
+  )
+
   constraint_args <- dcm_spec@scoring_constraint@constraint_args
 
   patt_ragged_array <- constraint_args$patterns |>
@@ -276,7 +281,6 @@ S7::method(extra_data, POSTERIOR) <- function(x, dcm_spec) {
     cnst_stan_data <- c(cnst_stan_data, class_00_stan_data)
   }
 
-
   class_01_cnst_data <- constraint_args$constraints |>
     dplyr::select(pattern, att, class, tau) |>
     dplyr::filter(class == 1L) |>
@@ -305,6 +309,12 @@ S7::method(extra_data, POSTERIOR) <- function(x, dcm_spec) {
     cnst_stan_data <- c(cnst_stan_data, class_01_stan_data)
   }
 
-  cnst_stan_data
+  c(
+    list(
+      A = length(dcm_spec@qmatrix_meta$attribute_names),
+      Alpha = as.matrix(profiles)
+      ),
+    cnst_stan_data
+  )
 
 }
