@@ -9,7 +9,6 @@ none <- function() {
 #' @export
 posterior <- function(
     constraints,
-    missing = NA,
     thresholds,
     pattern_identifier = NULL,
     attribute_identifier = "attribute",
@@ -19,7 +18,6 @@ posterior <- function(
 
   cleaned_constraints <- clean_constraints(
     constraints = constraints,
-    missing = missing,
     thresholds = thresholds,
     pattern_identifier = pattern_identifier,
     attribute_identifier = attribute_identifier,
@@ -30,8 +28,7 @@ posterior <- function(
   POSTERIOR(constraint = "posterior",
             constraint_args = list(
               patterns = cleaned_constraints$patterns,
-              constraints = cleaned_constraints$constraints,
-              missing = cleaned_constraints$missing
+              constraints = cleaned_constraints$constraints
             ))
 
 }

@@ -175,7 +175,6 @@ check_threshold_data <- function(
 
 clean_constraints <- function(
     constraints,
-    missing,
     thresholds,
     pattern_identifier,
     attribute_identifier,
@@ -264,7 +263,6 @@ clean_constraints <- function(
 
   list(
     patterns = patt_data,
-    missing = missing,
     constraints = cnst_data
   )
 

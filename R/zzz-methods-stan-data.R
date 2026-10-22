@@ -236,7 +236,7 @@ S7::method(extra_data, POSTERIOR) <- function(x, dcm_spec) {
     dplyr::arrange(.data$pattern)
 
   cnst_stan_data <- list(
-    R_patt = length(constraint_args$pattern_names),
+    R_patt = dplyr::n_distinct(patt_ragged_array$pattern),
     N_patt = nrow(constraint_args$patterns),
     ii_patt = as.integer(constraint_args$patterns$item_id),
     rr_patt = as.integer(constraint_args$patterns$pattern),

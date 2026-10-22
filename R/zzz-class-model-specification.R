@@ -58,14 +58,11 @@ dcm_specify <- function(
     cleaned_patterns <- rdcmchecks::clean_data(
       scoring_constraint@constraint_args$patterns,
       identifier = "pattern",
-      missing = scoring_constraint@constraint_args$missing,
+      missing = NA,
       cleaned_qmatrix = qmatrix
     )
     scoring_constraint@constraint_args$patterns <-
       dplyr::rename(cleaned_patterns$clean_data, pattern = resp_id)
-    scoring_constraint@constraint_args$pattern_names <-
-      cleaned_patterns$respondent_names
-    scoring_constraint@constraint_args$missing <- NULL
 
     cnst_att_names <- check_constrained_attributes(
       scoring_constraint@constraint_args$constraints,
