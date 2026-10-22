@@ -262,6 +262,7 @@
         slip[3] ~ beta(5, 25);
         guess[3] ~ beta(5, 25);
       
+      
         ////////////////////////////////// likelihood
         for (r in 1:R) {
           row_vector[C] ps;
@@ -321,6 +322,7 @@
         Vc ~ dirichlet(rep_vector(1, C));
         slip[1] ~ beta(5, 25);
         guess[1] ~ beta(5, 25);
+      
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
@@ -812,6 +814,7 @@
         slip[4] ~ beta(5, 25);
         guess[4] ~ beta(5, 25);
       
+      
         ////////////////////////////////// likelihood
         for (r in 1:R) {
           row_vector[C] ps;
@@ -1103,6 +1106,7 @@
         guess[2] ~ beta(5, 25);
         slip[3] ~ beta(5, 25);
         guess[3] ~ beta(5, 25);
+      
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {
@@ -1466,6 +1470,7 @@
         slip[4] ~ beta(5, 25);
         guess[4] ~ beta(5, 25);
       
+      
         ////////////////////////////////// likelihood
         for (r in 1:R) {
           row_vector[C] ps;
@@ -1633,6 +1638,127 @@
         guess[2] ~ beta(5, 25);
         slip[3] ~ beta(5, 25);
         guess[3] ~ beta(5, 25);
+      
+      
+        ////////////////////////////////// likelihood
+        for (r in 1:R) {
+          row_vector[C] ps;
+          for (c in 1:C) {
+            array[num[r]] real log_items;
+            for (m in 1:num[r]) {
+              int i = ii[start[r] + m - 1];
+              log_items[m] = y[start[r] + m - 1] * log(pi[i,c]) +
+                             (1 - y[start[r] + m - 1]) * log(1 - pi[i,c]);
+            }
+            ps[c] = log_Vc[c] + sum(log_items);
+          }
+          target += log_sum_exp(ps);
+        }
+      }
+
+# nida with posterior-space constraints works
+
+    Code
+      stan_code(mdm_nida_posterior_constrain)
+    Output
+      data {
+        int<lower=1> I;                      // number of items
+        int<lower=1> R;                      // number of respondents
+        int<lower=1> N;                      // number of observations
+        int<lower=1> C;                      // number of classes
+        array[N] int<lower=1,upper=I> ii;    // item for observation n
+        array[N] int<lower=1,upper=R> rr;    // respondent for observation n
+        array[N] int<lower=0,upper=1> y;     // score for observation n
+        array[R] int<lower=1,upper=N> start; // starting row for respondent R
+        array[R] int<lower=1,upper=I> num;   // number items for respondent R
+        int<lower=1> A;                      // number of attributes
+        matrix[C,A] Alpha;                   // attribute pattern for class
+        int<lower=1> R_patt;
+        int<lower=1> N_patt;
+        array[N_patt] int<lower=1,upper=I> ii_patt;
+        array[N_patt] int<lower=1,upper=R_patt> rr_patt;
+        array[N_patt] int<lower=0,upper=1> y_patt;
+        array[R_patt] int<lower=1,upper=N_patt> start_patt;
+        array[R_patt] int<lower=1> num_patt;
+        int<lower=1> N_0;
+        array[N_0] int<lower=1,upper=A> aa_0;
+        array[R_patt] int<lower=0,upper=N_0> start_0;
+        array[R_patt] int<lower=0> num_0;
+        real<lower=0,upper=1> tau_0;
+        int<lower=1> N_1;
+        array[N_1] int<lower=1,upper=A> aa_1;
+        array[R_patt] int<lower=0,upper=N_1> start_1;
+        array[R_patt] int<lower=0> num_1;
+        real<lower=0,upper=1> tau_1;
+      }
+      parameters {
+        simplex[C] Vc;
+      
+        ////////////////////////////////// attribute parameters
+        array[A] real<lower=0,upper=1> slip;
+        array[A] real<lower=0,upper=1> guess;
+      }
+      transformed parameters {
+        vector[C] log_Vc = log(Vc);
+        matrix[I,C] pi;
+      
+        ////////////////////////////////// probability of correct response
+        pi[1,1] = guess[1];
+        pi[1,2] = (1 - slip[1]);
+        pi[2,1] = guess[1];
+        pi[2,2] = (1 - slip[1]);
+        pi[3,1] = guess[1];
+        pi[3,2] = (1 - slip[1]);
+        pi[4,1] = guess[1];
+        pi[4,2] = (1 - slip[1]);
+        // posterior mastery probabilities
+        vector[N_1] prob_resp_attr_1;
+        vector[N_0] prob_resp_attr_0;
+        for (r in 1:R_patt) {
+          vector[C] prob_joint;
+          vector[C] prob_resp_class;
+          for (c in 1:C) {
+            array[num_patt[r]] real log_items;
+            for (m in 1:num_patt[r]) {
+              int i = ii_patt[start_patt[r] + m - 1];
+              log_items[m] = y_patt[start_patt[r] + m - 1] * log(pi[i,c]) +
+              (1 - y_patt[start_patt[r] + m - 1]) * log(1 - pi[i,c]);
+            }
+            prob_joint[c] = log(Vc[c]) + sum(log_items);
+          }
+          prob_resp_class = exp(prob_joint) / exp(log_sum_exp(prob_joint));
+          if (num_0[r] > 0) {
+            for (m in 1:num_0[r]) {
+              int i = start_0[r] + m - 1;
+              int a = aa_0[i];
+              vector[C] prob_attr_class;
+              for (c in 1:C) {
+                prob_attr_class[c] = prob_resp_class[c] * Alpha[c,a];
+              }
+              prob_resp_attr_0[i] = sum(prob_attr_class);
+            }
+          }
+          if (num_1[r] > 0) {
+            for (m in 1:num_1[r]) {
+              int i = start_1[r] + m - 1;
+              int a = aa_1[i];
+              vector[C] prob_attr_class;
+              for (c in 1:C) {
+                prob_attr_class[c] = prob_resp_class[c] * Alpha[c,a];
+              }
+              prob_resp_attr_1[i] = sum(prob_attr_class);
+            }
+          }
+        }
+      }
+      model {
+        ////////////////////////////////// priors
+        Vc ~ dirichlet(rep_vector(1, C));
+        slip[1] ~ beta(5, 25);
+        guess[1] ~ beta(5, 25);
+      
+        target += sum(log_inv_logit(200 * (tau_0 - prob_resp_attr_0)));
+        target += sum(log_inv_logit(200 * (prob_resp_attr_1 - tau_1)));
       
         ////////////////////////////////// likelihood
         for (r in 1:R) {

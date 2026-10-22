@@ -18,6 +18,9 @@
         intercept ~ normal(0, 2)
         maineffect ~ lognormal(0, 1)
         `Vc` ~ dirichlet(1, 1, 1)
+      
+      i Scoring model constraints:
+        No constraints
     Code
       indp1
     Message
@@ -36,6 +39,9 @@
         slip ~ beta(5, 25)
         guess ~ beta(5, 25)
         structural ~ beta(1, 1)
+      
+      i Scoring model constraints:
+        No constraints
     Code
       logl1
     Message
@@ -56,6 +62,9 @@
         interaction ~ normal(0, 2)
         structural_maineffect ~ normal(0, 10)
         structural_interaction ~ normal(0, 10)
+      
+      i Scoring model constraints:
+        No constraints
     Code
       logl2
     Message
@@ -75,6 +84,9 @@
         maineffect ~ lognormal(0, 1)
         interaction ~ normal(0, 2)
         structural_maineffect ~ normal(0, 10)
+      
+      i Scoring model constraints:
+        No constraints
     Code
       logl3
     Message
@@ -95,6 +107,9 @@
         interaction ~ normal(0, 2)
         structural_maineffect ~ normal(0, 10)
         structural_interaction ~ normal(0, 10)
+      
+      i Scoring model constraints:
+        No constraints
     Code
       hdcm1
     Message
@@ -115,6 +130,9 @@
         intercept ~ normal(0, 2)
         maineffect ~ lognormal(0, 1)
         `Vc` ~ dirichlet(1, 1, 1)
+      
+      i Scoring model constraints:
+        No constraints
     Code
       hdcm2
     Message
@@ -135,6 +153,9 @@
         slip ~ beta(5, 25)
         guess ~ beta(5, 25)
         `Vc` ~ dirichlet(1, 1, 1)
+      
+      i Scoring model constraints:
+        No constraints
     Code
       bn1
     Message
@@ -158,4 +179,7 @@
         structural_intercept ~ normal(0, 2)
         structural_maineffect ~ lognormal(0, 1)
         structural_interaction ~ normal(0, 2)
+      
+      i Scoring model constraints:
+        No constraints
 

@@ -49,3 +49,31 @@ test_that("ncrum with hierarchy works", {
   )
   expect_snapshot(stan_code(ecpe_ncrum_hdcm))
 })
+
+test_that("ncrum with posterior-space constraints works", {
+  mdm_ncrum_posterior_constrain <- dcm_specify(
+    dcmdata::mdm_qmatrix,
+    identifier = "item",
+    measurement_model = ncrum(),
+    structural_model = unconstrained(),
+    scoring_constraint = posterior(
+      constraints = tibble::tibble(
+        mdm1 = c(1, 0),
+        mdm2 = c(1, 0),
+        mdm3 = c(1, 0),
+        mdm4 = c(1, 0),
+        attribute = c("multiplication", "multiplication"),
+        classification = c(1L, 0L)
+      ),
+      thresholds = tibble::tibble(
+        classification = c(1L, 0L),
+        threshold = c(0.70, 0.30)
+      ),
+      pattern_identifier = NULL,
+      attribute_identifier = "attribute",
+      classification_identifier = "classification",
+      threshold_identifier = "threshold"
+    )
+  )
+  expect_snapshot(stan_code(mdm_ncrum_posterior_constrain))
+})

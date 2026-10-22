@@ -161,13 +161,6 @@ test_that("check_threshold_data", {
 
 test_that("check_constraints", {
 
-  test_constraints0 <- tibble::tribble(
-    ~pattern , ~attribute , ~classification, ~item_1 , ~item_2 , ~item_3 , ~item_4 ,
-    "001"    , "att1"     , 1L             , 1L      , 1L      , 0L      , 0L      ,
-    "002"    , "att1"     , 0L             , 0L      , 0L      , 0L      , 0L      ,
-    "003"    , "att2"     , 1L             , 0L      , 0L      , 1L      , 1L      ,
-    "002"    , "att2"     , 0L             , 0L      , 0L      , 0L      , 0L
-  )
   test_constraints <- tibble::tribble(
     ~attribute , ~classification, ~item_1 , ~item_2 , ~item_3 , ~item_4 ,
     "att1"     , 1L             , 1L      , 1L      , 0L      , 0L      ,
@@ -175,16 +168,23 @@ test_that("check_constraints", {
     "att2"     , 1L             , 0L      , 0L      , 1L      , 1L      ,
     "att2"     , 0L             , 0L      , 0L      , 0L      , 0L
   )
-  test_thresholds0 <- tibble::tribble(
+  test_constraints2 <- tibble::tribble(
+    ~attribute , ~classification, ~item_1 , ~item_2 , ~item_3 , ~item_4 ,
+    "att1"     , 1L             , 1L      , 1L      , 0L      , 0L      ,
+    "att1"     , 0L             , 0L      , 0L      , 0L      , 0L      ,
+    "att2"     , 1L             , 0L      , 0L      , 1L      , 1L      ,
+    "att2"     , 0L             , 0L      , 0L      , 0L      , 0L
+  )
+  test_thresholds <- tibble::tribble(
     ~classification , ~threshold ,
     1L              , 0.70       ,
     0L              , 0.30
   )
-  test_thresholds <- tibble::tribble(
+  test_thresholds2 <- tibble::tribble(
     ~classification , ~threshold ,
     1L              , 0.70
   )
-  test_thresholds2 <- tibble::tribble(
+  test_thresholds3 <- tibble::tribble(
     ~classification , ~threshold ,
     2L              , 0.90       ,
     1L              , 0.70       ,
@@ -193,9 +193,8 @@ test_that("check_constraints", {
 
   expect_error(
     clean_constraints(
-      constraints = test_constraints,
-      missing = NA,
-      thresholds = test_thresholds,
+      constraints = test_constraints2,
+      thresholds = test_thresholds2,
       pattern_identifier = NULL,
       attribute_identifier = "attribute",
       classification_identifier = "classification",
@@ -206,9 +205,8 @@ test_that("check_constraints", {
 
   expect_error(
     clean_constraints(
-      constraints = test_constraints,
-      missing = NA,
-      thresholds = test_thresholds2,
+      constraints = test_constraints2,
+      thresholds = test_thresholds3,
       pattern_identifier = NULL,
       attribute_identifier = "attribute",
       classification_identifier = "classification",
@@ -218,18 +216,17 @@ test_that("check_constraints", {
   )
 
   cleaned_constraints <- clean_constraints(
-    constraints = test_constraints0,
-    missing = NA,
-    thresholds = test_thresholds0,
+    constraints = test_constraints,
+    thresholds = test_thresholds,
     pattern_identifier = NULL,
     attribute_identifier = "attribute",
     classification_identifier = "classification",
     threshold_identifier = "threshold"
   )
-  expect_equal(names(cleaned_constraints), c("patterns", "constraints"))
+  expect_equal(names(cleaned_constraints),
+               c("patterns", "constraints"))
   expect_equal(names(cleaned_constraints$patterns),
-               c("pattern", "item", "score"))
+               c("pattern", "item_1", "item_2", "item_3", "item_4"))
   expect_equal(names(cleaned_constraints$constraints),
                c("pattern", "att", "class", "tau"))
-
 })

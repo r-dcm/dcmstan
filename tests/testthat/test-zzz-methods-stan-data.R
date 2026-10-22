@@ -217,7 +217,6 @@ test_that("constraint data objects are correct", {
         attribute = c("multiplication", "multiplication"),
         classification = c(1L, 0L)
       ),
-      missing = NA,
       thresholds = tibble::tibble(
         classification = c(1L, 0L),
         threshold = c(0.80, 0.35)
@@ -235,12 +234,14 @@ test_that("constraint data objects are correct", {
   )
 
   extra_cnst_names <-
-    c("R_patt", "N_patt", "ii_patt", "rr_patt", "y_patt", "start_patt",
-      "num_patt",
+    c("A", "Alpha", "R_patt", "N_patt", "ii_patt", "rr_patt", "y_patt",
+      "start_patt", "num_patt",
       "R_0", "N_0", "aa_0", "rr_0", "start_0", "num_0", "tau_0",
       "R_1", "N_1", "aa_1", "rr_1", "start_1", "num_1", "tau_1")
 
   expect_equal(names(dat), c(default_data_names, extra_cnst_names))
+  expect_equal(dat$A, 1)
+  expect_equal(dat$Alpha, as.matrix(create_profiles(1)))
   expect_equal(dat$R_patt, 2)
   expect_equal(dat$N_patt, 2 * 4)
   expect_equal(dat$ii_patt, rep(1:4, 2))
@@ -248,6 +249,8 @@ test_that("constraint data objects are correct", {
   expect_true(all(dat$y_patt %in% c(0, 1)))
   expect_equal(dat$start_patt, seq(1, 2 * 4, by = 4))
   expect_equal(dat$num_patt, rep(4, 2))
+  expect_equal(dat$A, 1)
+  expect_equal(dat$Alpha, as.matrix(create_profiles(1)))
   expect_equal(dat$R_0, 1)
   expect_equal(dat$N_0, 1)
   expect_equal(dat$aa_0, 1)
@@ -275,7 +278,6 @@ test_that("constraint data objects are correct", {
         attribute = c("multiplication"),
         classification = c(1L)
       ),
-      missing = NA,
       thresholds = tibble::tibble(
         classification = c(1L),
         threshold = c(0.80)
@@ -293,8 +295,8 @@ test_that("constraint data objects are correct", {
   )
 
   extra_cnst_names <-
-    c("R_patt", "N_patt", "ii_patt", "rr_patt", "y_patt", "start_patt",
-      "num_patt",
+    c("A", "Alpha", "R_patt", "N_patt", "ii_patt", "rr_patt", "y_patt",
+      "start_patt", "num_patt",
       "R_1", "N_1", "aa_1", "rr_1", "start_1", "num_1", "tau_1")
 
   expect_equal(names(dat), c(default_data_names, extra_cnst_names))
