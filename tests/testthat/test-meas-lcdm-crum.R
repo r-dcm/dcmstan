@@ -54,6 +54,34 @@ test_that("lcdm script works", {
   expect_snapshot(stan_code(dtmr_edge))
 })
 
+test_that("lcdm with posterior-space constraints works", {
+  mdm_lcdm_posterior_constrain <- dcm_specify(
+    dcmdata::mdm_qmatrix,
+    identifier = "item",
+    measurement_model = lcdm(),
+    structural_model = unconstrained(),
+    scoring_constraint = posterior(
+      constraints = tibble::tibble(
+        mdm1 = c(1, 0),
+        mdm2 = c(1, 0),
+        mdm3 = c(1, 0),
+        mdm4 = c(1, 0),
+        attribute = c("multiplication", "multiplication"),
+        classification = c(1L, 0L)
+      ),
+      thresholds = tibble::tibble(
+        classification = c(1L, 0L),
+        threshold = c(0.70, 0.30)
+      ),
+      pattern_identifier = NULL,
+      attribute_identifier = "attribute",
+      classification_identifier = "classification",
+      threshold_identifier = "threshold"
+    )
+  )
+  expect_snapshot(stan_code(mdm_lcdm_posterior_constrain))
+})
+
 test_that("crum script works", {
   ecpe_crum_unst <- dcm_specify(
     qmatrix = dcmdata::ecpe_qmatrix,
@@ -206,4 +234,32 @@ test_that("crum with hierarchy works", {
     )
   )
   expect_snapshot(stan_code(ecpe_crum_hdcm))
+})
+
+test_that("crum with posterior-space constraints works", {
+  mdm_crum_posterior_constrain <- dcm_specify(
+    dcmdata::mdm_qmatrix,
+    identifier = "item",
+    measurement_model = crum(),
+    structural_model = unconstrained(),
+    scoring_constraint = posterior(
+      constraints = tibble::tibble(
+        mdm1 = c(1, 0),
+        mdm2 = c(1, 0),
+        mdm3 = c(1, 0),
+        mdm4 = c(1, 0),
+        attribute = c("multiplication", "multiplication"),
+        classification = c(1L, 0L)
+      ),
+      thresholds = tibble::tibble(
+        classification = c(1L, 0L),
+        threshold = c(0.70, 0.30)
+      ),
+      pattern_identifier = NULL,
+      attribute_identifier = "attribute",
+      classification_identifier = "classification",
+      threshold_identifier = "threshold"
+    )
+  )
+  expect_snapshot(stan_code(mdm_crum_posterior_constrain))
 })

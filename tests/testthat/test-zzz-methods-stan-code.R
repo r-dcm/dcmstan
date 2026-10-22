@@ -65,6 +65,57 @@ test_that("stan code is syntactically correct", {
   }
 })
 
+test_that(
+  "stan code with posterior-space constraints is syntactically correct", {
+    skip_on_cran()
+
+    stan_dir <- withr::local_tempdir()
+
+    combos <- expand.grid(
+      meas = meas_choices(),
+      strc = strc_choices(),
+      stringsAsFactors = FALSE
+    )
+
+    for (i in seq_len(nrow(combos))) {
+      mdm_spec <- dcm_specify(
+        qmatrix = dcmdata::mdm_qmatrix,
+        identifier = "item",
+        measurement_model = do.call(combos$meas[i], args = list()),
+        structural_model = do.call(combos$strc[i], args = list()),
+        scoring_constraint =
+          do.call(posterior,
+                  args = list(
+                    constraints = tibble::tibble(
+                      mdm1 = c(1,0),
+                      mdm2 = c(1,0),
+                      mdm3 = c(1,0),
+                      mdm4 = c(1,0),
+                      attribute = c("multiplication","multiplication"),
+                      classification = c(1L,0L)
+                    ),
+                    thresholds = tibble::tibble(
+                      classification = c(1L,0L),
+                      threshold = c(0.70,0.30)
+                    ),
+                    pattern_identifier = NULL,
+                    attribute_identifier = "attribute",
+                    classification_identifier = "classification",
+                    threshold_identifier = "threshold"
+                  ))
+      )
+
+      mdm_file <- cmdstanr::write_stan_file(
+        stan_code(mdm_spec),
+        dir = stan_dir,
+        force_overwrite = TRUE
+      )
+      mdm_model <- cmdstanr::cmdstan_model(mdm_file, compile = FALSE)
+
+      expect_true(mdm_model$check_syntax(quiet = TRUE))
+    }
+  })
+
 test_that("generated quantities are syntactically correct", {
   skip_on_cran()
 

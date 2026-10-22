@@ -48,6 +48,32 @@ test_that("dcm_specify errors when expected", {
       identifier = "item",
       measurement_model = lcdm(),
       structural_model = unconstrained(),
+      scoring_constraint = "none"
+    ),
+    "must be a <dcmstan::scoring>"
+  )
+  expect_error(
+    dcm_specify(
+      qmatrix = test_qmatrix,
+      identifier = "item",
+      scoring_constraint = lcdm()
+    ),
+    "must be a <dcmstan::scoring>"
+  )
+  expect_error(
+    dcm_specify(
+      qmatrix = test_qmatrix,
+      identifier = "item",
+      scoring_constraint = unconstrained()
+    ),
+    "must be a <dcmstan::scoring>"
+  )
+  expect_error(
+    dcm_specify(
+      qmatrix = test_qmatrix,
+      identifier = "item",
+      measurement_model = lcdm(),
+      structural_model = unconstrained(),
       priors = prior("beta(1, 1)", type = "slip")
     ),
     "types not included"

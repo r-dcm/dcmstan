@@ -72,6 +72,7 @@ S7::method(stan_code, dcm_specification) <- function(x) {
   # data block -----
   meas_data <- stan_data_code(x@measurement_model)
   strc_data <- stan_data_code(x@structural_model)
+  cnst_data <- stan_data_code(x@scoring_constraint)
   data_block <- glue::glue(
     "data {{",
     "  int<lower=1> I;                      // number of items",
@@ -85,6 +86,7 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "  array[R] int<lower=1,upper=I> num;   // number items for respondent R",
     if (!is.null(meas_data)) glue::glue("{meas_data}"),
     if (!is.null(strc_data)) glue::glue("{strc_data}"),
+    if (!is.null(cnst_data)) glue::glue("{cnst_data}"),
     "}}",
     .sep = "\n",
     .null = NULL
@@ -106,20 +108,27 @@ S7::method(stan_code, dcm_specification) <- function(x) {
   )
 
   # transformed parameters block -----
+  cnst_transformed_pars <-
+    stan_transformed_parameters_code(x@scoring_constraint)
   transformed_parameters_block <- glue::glue(
     "transformed parameters {{",
     "{strc_code$transformed_parameters}",
     "{meas_code$transformed_parameters}",
+    if (!is.null(cnst_transformed_pars)) glue::glue("{cnst_transformed_pars}"),
     "}}",
-    .sep = "\n"
+    .sep = "\n",
+    .null = NULL
   )
 
   # model block -----
   all_priors <- glue::as_glue(c(strc_code$priors, meas_code$priors))
+  cnst_model <- stan_model_code(x@scoring_constraint)
   model_block <- glue::glue(
     "model {{",
     "  ////////////////////////////////// priors",
     "  {glue::glue_collapse(all_priors, sep = \"\n  \")}",
+    "",
+    if (!is.null(cnst_model)) glue::glue("{cnst_model}"),
     "",
     "  ////////////////////////////////// likelihood",
     "  for (r in 1:R) {{",
@@ -136,7 +145,8 @@ S7::method(stan_code, dcm_specification) <- function(x) {
     "    target += log_sum_exp(ps);",
     "  }}",
     "}}",
-    .sep = "\n"
+    .sep = "\n",
+    .null = NULL
   )
 
   full_script <- glue::glue(
@@ -155,6 +165,7 @@ stan_data_code <- S7::new_generic("stan_data_code", "x")
 
 S7::method(stan_data_code, measurement) <- function(x) NULL
 S7::method(stan_data_code, structural) <- function(x) NULL
+S7::method(stan_data_code, scoring) <- function(x) NULL
 
 S7::method(stan_data_code, DINA) <- function(x) {
   data_block <- glue::glue(
@@ -189,6 +200,158 @@ S7::method(stan_data_code, INDEPENDENT) <- function(x) {
   )
 
   data_block
+}
+
+S7::method(stan_data_code, POSTERIOR) <- function(x) {
+
+  class_00 <- glue::glue(
+    "  int<lower=1> N_0;",
+    "  array[N_0] int<lower=1,upper=A> aa_0;",
+    "  array[R_patt] int<lower=0,upper=N_0> start_0;",
+    "  array[R_patt] int<lower=0> num_0;",
+    "  real<lower=0,upper=1> tau_0;",
+    .sep = "\n",
+    .trim = FALSE
+  )
+  class_01 <- glue::glue(
+    "  int<lower=1> N_1;",
+    "  array[N_1] int<lower=1,upper=A> aa_1;",
+    "  array[R_patt] int<lower=0,upper=N_1> start_1;",
+    "  array[R_patt] int<lower=0> num_1;",
+    "  real<lower=0,upper=1> tau_1;",
+    .sep = "\n",
+    .trim = FALSE
+  )
+
+  add_code_00 <- any(x@constraint_args$constraints$class == 0)
+  add_code_01 <- any(x@constraint_args$constraints$class == 1)
+
+  code <- glue::glue(
+    "  int<lower=1> A;                      // number of attributes",
+    "  matrix[C,A] Alpha;                   // attribute pattern for class",
+    "  int<lower=1> R_patt;",
+    "  int<lower=1> N_patt;",
+    "  array[N_patt] int<lower=1,upper=I> ii_patt;",
+    "  array[N_patt] int<lower=1,upper=R_patt> rr_patt;",
+    "  array[N_patt] int<lower=0,upper=1> y_patt;",
+    "  array[R_patt] int<lower=1,upper=N_patt> start_patt;",
+    "  array[R_patt] int<lower=1> num_patt;",
+    if (add_code_00) glue::glue("{class_00}"),
+    if (add_code_01) glue::glue("{class_01}"),
+    .sep = "\n",
+    .trim = FALSE,
+    .null = NULL
+  )
+
+  code
+}
+
+## DCM transformed parameters block --------------------------------------------
+stan_transformed_parameters_code <-
+  S7::new_generic("stan_transformed_parameters_code", "x")
+
+S7::method(stan_transformed_parameters_code, scoring) <- function(x) NULL
+
+S7::method(stan_transformed_parameters_code, POSTERIOR) <- function(x) {
+
+  class_00 <- glue::glue(
+    "    if (num_0[r] > 0) {{",
+    "      for (m in 1:num_0[r]) {{",
+    "        int i = start_0[r] + m - 1;",
+    "        int a = aa_0[i];",
+    "        vector[C] prob_attr_class;",
+    "        for (c in 1:C) {{",
+    "          prob_attr_class[c] = prob_resp_class[c] * Alpha[c,a];",
+    "        }}",
+    "        prob_resp_attr_0[i] = sum(prob_attr_class);",
+    "      }}",
+    "    }}",
+    .sep = "\n",
+    .trim = FALSE,
+    .open = "$",
+    .close = "$"
+  )
+
+  class_01 <- glue::glue(
+    "    if (num_1[r] > 0) {{",
+    "      for (m in 1:num_1[r]) {{",
+    "        int i = start_1[r] + m - 1;",
+    "        int a = aa_1[i];",
+    "        vector[C] prob_attr_class;",
+    "        for (c in 1:C) {{",
+    "          prob_attr_class[c] = prob_resp_class[c] * Alpha[c,a];",
+    "        }}",
+    "        prob_resp_attr_1[i] = sum(prob_attr_class);",
+    "      }}",
+    "    }}",
+    .sep = "\n",
+    .trim = FALSE,
+    .open = "$",
+    .close = "$"
+  )
+
+  add_code_00 <- any(x@constraint_args$constraints$class == 0)
+  add_code_01 <- any(x@constraint_args$constraints$class == 1)
+
+  code <- glue::glue(
+    "  // posterior mastery probabilities",
+    "  vector[N_1] prob_resp_attr_1;",
+    "  vector[N_0] prob_resp_attr_0;",
+    "  for (r in 1:R_patt) {{",
+    "    vector[C] prob_joint;",
+    "    vector[C] prob_resp_class;",
+    "    for (c in 1:C) {{",
+    "      array[num_patt[r]] real log_items;",
+    "      for (m in 1:num_patt[r]) {{",
+    "        int i = ii_patt[start_patt[r] + m - 1];",
+    "        log_items[m] = y_patt[start_patt[r] + m - 1] * log(pi[i,c]) +",
+    "        (1 - y_patt[start_patt[r] + m - 1]) * log(1 - pi[i,c]);",
+    "      }}",
+    "      prob_joint[c] = log(Vc[c]) + sum(log_items);",
+    "    }}",
+    "    prob_resp_class = exp(prob_joint) / exp(log_sum_exp(prob_joint));",
+    if (add_code_00) glue::glue("{class_00}"),
+    if (add_code_01) glue::glue("{class_01}"),
+    "  }}",
+    .sep = "\n",
+    .trim = FALSE,
+    .open = "$",
+    .close = "$",
+    .null = NULL
+  )
+
+  code
+
+}
+
+## DCM transformed parameters block --------------------------------------------
+stan_model_code <- S7::new_generic("stan_model_code", "x")
+
+S7::method(stan_model_code, scoring) <- function(x) NULL
+
+S7::method(stan_model_code, POSTERIOR) <- function(x) {
+
+  class_00 <- glue::glue(
+    "  target += sum(log_inv_logit(200 * (tau_0 - prob_resp_attr_0)));"
+  )
+
+  class_01 <- glue::glue(
+    "  target += sum(log_inv_logit(200 * (prob_resp_attr_1 - tau_1)));"
+  )
+
+  add_code_00 <- any(x@constraint_args$constraints$class == 0)
+  add_code_01 <- any(x@constraint_args$constraints$class == 1)
+
+  code <- glue::glue(
+    if (add_code_00) glue::glue("{class_00}"),
+    if (add_code_01) glue::glue("{class_01}"),
+    .sep = "\n",
+    .trim = FALSE,
+    .null = NULL
+  )
+
+  code
+
 }
 
 # Method for generated quantities ----------------------------------------------

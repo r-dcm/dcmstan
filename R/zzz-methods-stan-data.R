@@ -103,9 +103,10 @@ S7::method(stan_data, dcm_specification) <- function(
   # extra data elements --------------------------------------------------------
   extra_meas <- extra_data(x@measurement_model, dcm_spec = x)
   extra_strc <- extra_data(x@structural_model, dcm_spec = x)
+  extra_cnst <- extra_data(x@scoring_constraint, dcm_spec = x)
 
   # return data ----------------------------------------------------------------
-  c(stan_data, extra_meas, extra_strc)
+  c(stan_data, extra_meas, extra_strc, extra_cnst)
 }
 
 # generated quantities method --------------------------------------------------
@@ -222,4 +223,98 @@ S7::method(extra_data, INDEPENDENT) <- function(x, dcm_spec) {
     A = length(dcm_spec@qmatrix_meta$attribute_names),
     Alpha = as.matrix(profiles)
   )
+}
+
+S7::method(extra_data, POSTERIOR) <- function(x, dcm_spec) {
+
+  profiles <- create_profiles(
+    dcm_spec@structural_model,
+    attributes = dcm_spec@qmatrix_meta$attribute_names
+  )
+
+  constraint_args <- dcm_spec@scoring_constraint@constraint_args
+
+  patt_ragged_array <- constraint_args$patterns |>
+    tibble::rowid_to_column() |>
+    dplyr::group_by(.data$pattern) |>
+    dplyr::summarize(start = min(.data$rowid), num = dplyr::n()) |>
+    dplyr::arrange(.data$pattern)
+
+  cnst_stan_data <- list(
+    R_patt = dplyr::n_distinct(patt_ragged_array$pattern),
+    N_patt = nrow(constraint_args$patterns),
+    ii_patt = as.integer(constraint_args$patterns$item_id),
+    rr_patt = as.integer(constraint_args$patterns$pattern),
+    y_patt = constraint_args$patterns$score,
+    start_patt = patt_ragged_array$start,
+    num_patt = patt_ragged_array$num
+  )
+
+  cnst_data <- constraint_args$constraints |>
+    dplyr::select(pattern, att, tau)
+
+  class_00_cnst_data <- constraint_args$constraints |>
+    dplyr::select(pattern, att, class, tau) |>
+    dplyr::filter(class == 0L) |>
+    tibble::rowid_to_column()
+  if (nrow(class_00_cnst_data) > 0) {
+    class_00_ragged_array <- cnst_data |>
+      dplyr::left_join(class_00_cnst_data |>
+                         dplyr::group_by(.data$pattern) |>
+                         dplyr::summarize(start = min(.data$rowid),
+                                          num = dplyr::n()),
+                       by = c("pattern")) %>%
+      dplyr::mutate(
+        start = tidyr::replace_na(.data$start, 0L),
+        num = tidyr::replace_na(.data$num, 0L)
+      )
+    class_00_stan_data <- list(
+      R_0 = dplyr::n_distinct(class_00_cnst_data$pattern),
+      N_0 = nrow(class_00_cnst_data),
+      aa_0 = as.integer(class_00_cnst_data$att),
+      rr_0 = as.integer(class_00_cnst_data$pattern),
+      start_0 = class_00_ragged_array$start,
+      num_0 = class_00_ragged_array$num,
+      tau_0 = unique(class_00_cnst_data$tau)
+    )
+
+    cnst_stan_data <- c(cnst_stan_data, class_00_stan_data)
+  }
+
+  class_01_cnst_data <- constraint_args$constraints |>
+    dplyr::select(pattern, att, class, tau) |>
+    dplyr::filter(class == 1L) |>
+    tibble::rowid_to_column()
+  if (nrow(class_01_cnst_data) > 0) {
+    class_01_ragged_array <- cnst_data |>
+      dplyr::left_join(class_01_cnst_data |>
+                         dplyr::group_by(.data$pattern) |>
+                         dplyr::summarize(start = min(.data$rowid),
+                                          num = dplyr::n()),
+                       by = c("pattern")) %>%
+      dplyr::mutate(
+        start = tidyr::replace_na(.data$start, 0L),
+        num = tidyr::replace_na(.data$num, 0L)
+      )
+    class_01_stan_data <- list(
+      R_1 = dplyr::n_distinct(class_01_cnst_data$pattern),
+      N_1 = nrow(class_01_cnst_data),
+      aa_1 = as.integer(class_01_cnst_data$att),
+      rr_1 = as.integer(class_01_cnst_data$pattern),
+      start_1 = class_01_ragged_array$start,
+      num_1 = class_01_ragged_array$num,
+      tau_1 = unique(class_01_cnst_data$tau)
+    )
+
+    cnst_stan_data <- c(cnst_stan_data, class_01_stan_data)
+  }
+
+  c(
+    list(
+      A = length(dcm_spec@qmatrix_meta$attribute_names),
+      Alpha = as.matrix(profiles)
+      ),
+    cnst_stan_data
+  )
+
 }
